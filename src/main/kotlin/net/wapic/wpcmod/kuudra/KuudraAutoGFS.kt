@@ -8,7 +8,7 @@ import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.Utils
 
-object Kuudra {
+object KuudraAutoGFS {
 
     val client: MinecraftClient = MinecraftClient.getInstance()
     val config = WpcMod.config.instance.kuudraConfig
