@@ -32,7 +32,7 @@ object ShortcutHandler {
     fun onTick(client: MinecraftClient){
         if(client.currentScreen != null) return
         allShortcuts.forEach { shortcut ->
-           if(shortcut.getKeyCode() == GLFW.GLFW_KEY_UNKNOWN) return@forEach
+           if(shortcut.getKeyCode() == GLFW.GLFW_KEY_UNKNOWN || shortcut.getScanCode() == GLFW.GLFW_KEY_UNKNOWN) return@forEach
            if(GLFW.glfwGetKey(client.window.handle, shortcut.getKeyCode()) == GLFW.GLFW_PRESS && canTrigger) {
                Utils.addToCommandQueue(shortcut.getCommand())
                canTrigger = false
