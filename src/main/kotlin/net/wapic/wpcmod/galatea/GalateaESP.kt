@@ -59,8 +59,8 @@ object GalateaESP {
             is PandaEntity -> return ESPSettings(config.pandaSettings.box, config.pandaSettings.tracer, config.pandaSettings.color)
             is PufferfishEntity -> return ESPSettings(config.pufferfishSettings.box, config.pufferfishSettings.tracer, config.pufferfishSettings.color)
             is ArmorStandEntity -> return ESPSettings(
-                config.invisibugSettings.box && entity.velocity != Vec3d(0.0, 0.0, 0.0) && entity.y > 94 && entity.boundingBox.averageSideLength == 0.0,
-                config.invisibugSettings.tracer && entity.velocity != Vec3d(0.0, 0.0, 0.0) && entity.y > 94 && entity.boundingBox.averageSideLength == 0.0,
+                config.invisibugSettings.box && entity.velocity != Vec3d.ZERO && entity.y > 92 && entity.boundingBox.averageSideLength == 0.0,
+                config.invisibugSettings.tracer && entity.velocity != Vec3d.ZERO && entity.y > 92 && entity.boundingBox.averageSideLength == 0.0,
                 config.invisibugSettings.color
             )
         }
@@ -84,7 +84,7 @@ object GalateaESP {
     }
 
     fun onParticle(packet: ParticleS2CPacket, world: ClientWorld) {
-        if(Utils.getLocation() != Island.GALATEA) return
+        if(Utils.getLocation() != Island.GALATEA || !config.forestNodeSettings.box || !config.forestNodeSettings.tracer) return
 
         if(ParticleTypes.HAPPY_VILLAGER.type.equals(packet.parameters.type)) {
             val pos: BlockPos = BlockPos.ofFloored(packet.x, packet.y - 1, packet.z)
