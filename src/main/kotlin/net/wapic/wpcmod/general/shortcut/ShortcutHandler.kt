@@ -1,0 +1,50 @@
+package net.wapic.wpcmod.general.shortcut
+
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
+import net.minecraft.client.MinecraftClient
+import net.wapic.wpcmod.util.Utils
+import org.lwjgl.glfw.GLFW
+import java.io.File
+
+object ShortcutHandler {
+
+    val allShortcuts: MutableList<Shortcut> = mutableListOf()
+    var gson: Gson = GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().create()
+    var canTrigger = false
+    val saveFile = File("./config/wpcmod").resolve("shortcuts.json")
+
+    fun init() {
+        ClientTickEvents.END_CLIENT_TICK.register(::onTick)
+
+        ClientLifecycleEvents.CLIENT_STARTED.register {
+            if(saveFile.exists() && !saveFile.readLines().isEmpty()){
+                val loadedShortcuts: List<Shortcut> = gson.fromJson(saveFile.reader(), Array<Shortcut>::class.java).toList()
+                allShortcuts.addAll(loadedShortcuts)
+            }
+        }
+
+        ClientLifecycleEvents.CLIENT_STOPPING.register(::saveShortcuts)
+    }
+
+    fun onTick(client: MinecraftClient){
+        if(client.currentScreen != null) return
+        allShortcuts.forEach { shortcut ->
+           if(shortcut.getKeyCode() == GLFW.GLFW_KEY_UNKNOWN) return@forEach
+           if(GLFW.glfwGetKey(client.window.handle, shortcut.getKeyCode()) == GLFW.GLFW_PRESS && canTrigger) {
+               Utils.addToCommandQueue(shortcut.getCommand())
+               canTrigger = false
+           }
+
+           if(GLFW.glfwGetKey(client.window.handle, shortcut.getKeyCode()) == GLFW.GLFW_RELEASE) {
+               canTrigger = true
+           }
+        }
+    }
+
+    fun saveShortcuts(client: MinecraftClient) {
+        saveFile.writeText(gson.toJson(allShortcuts))
+    }
+}
