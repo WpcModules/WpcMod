@@ -73,13 +73,13 @@ object GalateaESP {
 
     fun onAttackBlock(player: PlayerEntity, world: World, hand: Hand, pos: BlockPos, dir: Direction): ActionResult {
         if(Utils.getLocation() != Island.GALATEA) return ActionResult.PASS
-        forestNodes.remove(Box.of(pos.toCenterPos(), 1.0, 1.0, 1.0))
+        forestNodes.removeIf { it == Box.of(pos.toCenterPos(), 1.0, 1.0, 1.0) }
         return ActionResult.PASS
     }
 
     fun onUseBlock(player: PlayerEntity, world: World, hand: Hand, hitResult: BlockHitResult): ActionResult  {
         if(Utils.getLocation() != Island.GALATEA) return ActionResult.PASS
-        forestNodes.remove(Box.of(hitResult.blockPos.toCenterPos(), 1.0, 1.0, 1.0))
+        forestNodes.removeIf { it == Box.of(hitResult.blockPos.toCenterPos(), 1.0, 1.0, 1.0) }
         return ActionResult.PASS
     }
 

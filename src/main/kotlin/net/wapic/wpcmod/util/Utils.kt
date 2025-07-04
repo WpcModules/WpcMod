@@ -27,7 +27,7 @@ object Utils {
 
     fun addToCommandQueue(command: String) {
         val time = Util.getMeasuringTimeMs() - lastCommand
-        if(time < MIN_DELAY || !commandQueue.isEmpty()){
+        if(time < MIN_DELAY || commandQueue.isNotEmpty()){
             commandQueue.add(command)
             return
         }
@@ -39,13 +39,9 @@ object Utils {
     }
 
     private fun onTick(client: MinecraftClient){
-        val iterator = commandQueue.iterator()
-        if(Util.getMeasuringTimeMs() - lastCommand > MIN_DELAY){
-            while(iterator.hasNext()) {
-                runCommand(iterator.next())
-                iterator.remove()
-                return
-            }
+        if(Util.getMeasuringTimeMs() - lastCommand > MIN_DELAY && commandQueue.isNotEmpty()){
+            runCommand(commandQueue.first())
+            commandQueue.removeFirst()
         }
     }
 
