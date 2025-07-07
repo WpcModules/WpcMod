@@ -40,7 +40,7 @@ dependencies {
 
 	modRuntimeOnly "me.djtheredstoner:DevAuth-fabric:${project.devauth_version}"
 
-	shadowModImpl "org.notenoughupdates.moulconfig:modern-1.21.5:3.11.0"
+	shadowModImpl "org.notenoughupdates.moulconfig:modern-1.21.5:4.0.1-beta"
 
 	configurations.shadowModImpl.dependencies.each {
 		modImplementation(it)
