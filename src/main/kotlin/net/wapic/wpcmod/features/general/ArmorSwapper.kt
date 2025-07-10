@@ -14,6 +14,8 @@ import org.lwjgl.glfw.GLFW
 
 class ArmorSwapper {
 
+    private val config get() = WpcMod.config.instance.generalConfig
+
     private val armorSwapBind: KeyBinding = KeyBindingHelper.registerKeyBinding(KeyBinding("Armor Swap", InputUtil.GLFW_KEY_V, "WpcMod"))
     private val wardrobeTitle = "Wardrobe \\((?<page>[1-2])/2\\)".toRegex()
     private var sorrowPiece = "(?:Ancient|Renowned) Sorrow Boots".toRegex()
@@ -27,7 +29,7 @@ class ArmorSwapper {
     }
 
     private fun onTick(client: MinecraftClient){
-        if(armorSwapBind.wasPressed()){
+        if(armorSwapBind.wasPressed() && config.armorSwapper){
             Utils.addToCommandQueue("wardrobe")
             shouldSwap = true
         }

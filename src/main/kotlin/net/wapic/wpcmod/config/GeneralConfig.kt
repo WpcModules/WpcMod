@@ -19,6 +19,12 @@ class GeneralConfig {
 
     @Expose
     @JvmField
+    @ConfigOption(name = "Armor Swapper", desc = "Instantly swap to Sorrow when Keybind is hit")
+    @ConfigEditorBoolean
+    var armorSwapper: Boolean = false
+
+    @Expose
+    @JvmField
     @ConfigOption(name = "Command Keybind Editor", desc = "Opens the screen to manage command keybinds")
     @ConfigEditorButton(buttonText = "Open")
     val runnable = Runnable {
