@@ -33,11 +33,11 @@ class AutoExperiments {
     private var handledScreen: GenericContainerScreenHandler? = null
 
     private val ultraSequenceItems = listOf<Item>(
-        Items.BONE_MEAL, Items.LAPIS_LAZULI,
-        Items.RED_DYE, Items.BLACK_DYE, Items.BROWN_DYE, Items.GREEN_DYE,
-        Items.WHITE_DYE, Items.BLUE_DYE, Items.CYAN_DYE, Items.GRAY_DYE,
-        Items.LIGHT_BLUE_DYE, Items.LIGHT_GRAY_DYE, Items.LIME_DYE, Items.MAGENTA_DYE,
-        Items.ORANGE_DYE, Items.PINK_DYE, Items.PURPLE_DYE, Items.YELLOW_DYE
+        Items.WHITE_DYE, Items.BROWN_DYE, Items.BLACK_DYE, Items.BLUE_DYE, Items.GRAY_DYE, Items.LIGHT_GRAY_DYE, //Unused dyes but we leave em here just in case
+        Items.BONE_MEAL, Items.LAPIS_LAZULI, Items.RED_DYE,
+        Items.GREEN_DYE,Items.CYAN_DYE, Items.LIGHT_BLUE_DYE,
+        Items.LIME_DYE, Items.MAGENTA_DYE, Items.ORANGE_DYE,
+        Items.PINK_DYE, Items.PURPLE_DYE, Items.YELLOW_DYE
     )
 
     init {
