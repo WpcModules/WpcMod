@@ -10,14 +10,14 @@ import net.minecraft.item.Item
 import net.minecraft.item.Items
 import net.minecraft.screen.GenericContainerScreenHandler
 import net.minecraft.screen.slot.SlotActionType
-import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.config.ConfigManager
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.Utils
 import org.lwjgl.glfw.GLFW
 
 class AutoExperiments {
 
-    private val config get() = WpcMod.config.instance.generalConfig.experimentSettings
+    private val config get() = ConfigManager.config.generalConfig.experimentSettings
 
     private var currentExperiment = ExperimentType.NONE
 

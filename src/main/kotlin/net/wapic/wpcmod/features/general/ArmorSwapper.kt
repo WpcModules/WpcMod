@@ -9,12 +9,13 @@ import net.minecraft.client.util.InputUtil
 import net.minecraft.item.Items
 import net.minecraft.screen.slot.SlotActionType
 import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.config.ConfigManager
 import net.wapic.wpcmod.util.Utils
 import org.lwjgl.glfw.GLFW
 
 class ArmorSwapper {
 
-    private val config get() = WpcMod.config.instance.generalConfig
+    private val config get() = ConfigManager.config.generalConfig
 
     private val armorSwapBind: KeyBinding = KeyBindingHelper.registerKeyBinding(KeyBinding("Armor Swap", InputUtil.GLFW_KEY_V, "WpcMod"))
     private val wardrobeTitle = "Wardrobe \\((?<page>[1-2])/2\\)".toRegex()

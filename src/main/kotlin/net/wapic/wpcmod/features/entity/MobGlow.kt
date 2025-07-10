@@ -8,7 +8,7 @@ import net.minecraft.entity.passive.AxolotlEntity
 import net.minecraft.entity.passive.FrogEntity
 import net.minecraft.entity.passive.PandaEntity
 import net.minecraft.entity.passive.PufferfishEntity
-import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.config.ConfigManager
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.Utils
 
@@ -16,7 +16,7 @@ object MobGlow {
 
     data class GlowOptions(var shouldGlow: Boolean, var color: ChromaColour)
 
-    private val config get() = WpcMod.config.instance
+    private val config get() = ConfigManager.config
 
     fun computeGlow(entity: Entity): GlowOptions {
         return when(entity) {
@@ -28,7 +28,7 @@ object MobGlow {
             is PufferfishEntity -> GlowOptions(Utils.getLocation() == Island.GALATEA && config.galateaConfig.espSettings.pufferfishSettings.glow, config.galateaConfig.espSettings.pufferfishSettings.color)
 
             //Kuudra
-            is MagmaCubeEntity -> GlowOptions(Utils.getLocation() == Island.KUUDRA && config.kuudraConfig.espSettings.kuudraSetings.glow && entity.size == 30, config.kuudraConfig.espSettings.kuudraSetings.color)
+            is MagmaCubeEntity -> GlowOptions(Utils.getLocation() == Island.KUUDRA && config.kuudraConfig.espSettings.kuudraSettings.glow && entity.size == 30, config.kuudraConfig.espSettings.kuudraSettings.color)
 
             //Default
             else -> GlowOptions(false, ChromaColour(1f, 1f, 1f, 0, 0xff))
