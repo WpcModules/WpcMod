@@ -1,4 +1,4 @@
-package net.wapic.wpcmod.general.shortcut
+package net.wapic.wpcmod.features.general.shortcut
 
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.option.GameOptionsScreen
@@ -7,7 +7,6 @@ import net.minecraft.client.gui.widget.DirectionalLayoutWidget
 import net.minecraft.screen.ScreenTexts
 import net.minecraft.text.Text
 import net.minecraft.util.Util
-import net.wapic.wpcmod.general.shortcut.ShortcutHandler
 import org.lwjgl.glfw.GLFW
 
 class ShortcutScreen : GameOptionsScreen(null, MinecraftClient.getInstance().options, Text.of("Command Shortcuts")) {
@@ -25,7 +24,7 @@ class ShortcutScreen : GameOptionsScreen(null, MinecraftClient.getInstance().opt
     }
 
     override fun close() {
-        ShortcutHandler.saveShortcuts(this.client!!)
+        ShortcutHandler.saveShortcuts()
         super.close()
     }
 

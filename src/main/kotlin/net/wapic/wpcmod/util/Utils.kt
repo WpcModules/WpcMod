@@ -6,7 +6,6 @@ import net.hypixel.modapi.packet.impl.clientbound.event.ClientboundLocationPacke
 import net.minecraft.client.MinecraftClient
 import net.minecraft.util.Util
 import net.wapic.wpcmod.WpcMod
-import kotlin.jvm.optionals.getOrDefault
 
 object Utils {
     private const val MIN_DELAY: Long = 500
@@ -16,7 +15,7 @@ object Utils {
     private var location: Island? = null
 
     fun init() {
-        ClientTickEvents.END_CLIENT_TICK.register(::onTick)
+        ClientTickEvents.END_CLIENT_TICK.register { onTick() }
         HypixelModAPI.getInstance().subscribeToEventPacket(ClientboundLocationPacket::class.java)
         HypixelModAPI.getInstance().createHandler(ClientboundLocationPacket::class.java, ::onHypixelLocationPacket)
     }
@@ -26,19 +25,18 @@ object Utils {
     }
 
     fun addToCommandQueue(command: String) {
-        val time = Util.getMeasuringTimeMs() - lastCommand
-        if(time < MIN_DELAY || commandQueue.isNotEmpty()){
+        if(Util.getMeasuringTimeMs() - lastCommand < MIN_DELAY || commandQueue.isNotEmpty()){
             commandQueue.add(command)
             return
         }
         runCommand(command)
     }
     private fun runCommand(command: String) {
-        MinecraftClient.getInstance().networkHandler?.sendCommand(if(command[0] == '/') command.removePrefix("/") else command)
+        MinecraftClient.getInstance().networkHandler?.sendCommand(command.removePrefix("/"))
         lastCommand = Util.getMeasuringTimeMs()
     }
 
-    private fun onTick(client: MinecraftClient){
+    private fun onTick(){
         if(Util.getMeasuringTimeMs() - lastCommand > MIN_DELAY && commandQueue.isNotEmpty()){
             runCommand(commandQueue.first())
             commandQueue.removeFirst()

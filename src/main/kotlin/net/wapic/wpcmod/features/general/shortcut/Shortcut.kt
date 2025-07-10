@@ -1,4 +1,4 @@
-package net.wapic.wpcmod.general.shortcut
+package net.wapic.wpcmod.features.general.shortcut
 
 import com.google.common.collect.Maps
 import com.google.gson.annotations.Expose

@@ -1,4 +1,4 @@
-package net.wapic.wpcmod.galatea
+package net.wapic.wpcmod.features.galatea
 
 import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents
@@ -15,75 +15,62 @@ import net.minecraft.entity.passive.AxolotlEntity
 import net.minecraft.entity.passive.FrogEntity
 import net.minecraft.entity.passive.PandaEntity
 import net.minecraft.entity.passive.PufferfishEntity
-import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.Items
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket
 import net.minecraft.particle.ParticleTypes
 import net.minecraft.util.ActionResult
-import net.minecraft.util.Hand
-import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
-import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Vec3d
-import net.minecraft.world.World
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.PacketEvents
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.render.RenderUtils
 
-object GalateaESP {
+class GalateaESP {
 
-    val forestNodes: MutableSet<Box> = mutableSetOf()
-    val config = WpcMod.config.instance.galateaConfig.espSettings
+    private val forestNodes: MutableSet<Box> = mutableSetOf()
+    private val config get() = WpcMod.config.instance.galateaConfig.espSettings
     data class ESPSettings(var box: Boolean, var tracer: Boolean, var color: ChromaColour)
 
-    fun init() {
+    init {
         WorldRenderEvents.END.register(::renderWorld)
 
-        //Forest Nodes
+        // Forest Nodes
         PacketEvents.PARTICLE.register(::onParticle)
-        AttackBlockCallback.EVENT.register(::onAttackBlock)
-        UseBlockCallback.EVENT.register(::onUseBlock)
-        ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register { client, world ->
-            forestNodes.clear()
-        }
+        AttackBlockCallback.EVENT.register { _, _, _, pos, _ -> onBlockInteract(pos) }
+        UseBlockCallback.EVENT.register { _, _, _, hitResult -> onBlockInteract(hitResult.blockPos) }
+        ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register { _, _ -> forestNodes.clear() }
     }
 
-    fun getSettings(entity: Entity): ESPSettings {
-        when(entity) {
-            is ShulkerEntity -> return ESPSettings(config.shulkerSettings.box, config.shulkerSettings.tracer, config.shulkerSettings.color)
-            is AxolotlEntity -> return ESPSettings(config.axolotlSettings.box, config.axolotlSettings.tracer, config.axolotlSettings.color)
-            is FrogEntity -> return ESPSettings(config.frogSettings.box, config.frogSettings.tracer, config.frogSettings.color)
-            is PandaEntity -> return ESPSettings(config.pandaSettings.box, config.pandaSettings.tracer, config.pandaSettings.color)
-            is PufferfishEntity -> return ESPSettings(config.pufferfishSettings.box, config.pufferfishSettings.tracer, config.pufferfishSettings.color)
-            is ArmorStandEntity -> return ESPSettings(
+    private fun getSettings(entity: Entity): ESPSettings {
+        return when(entity) {
+            is ShulkerEntity -> ESPSettings(config.shulkerSettings.box, config.shulkerSettings.tracer, config.shulkerSettings.color)
+            is AxolotlEntity -> ESPSettings(config.axolotlSettings.box, config.axolotlSettings.tracer, config.axolotlSettings.color)
+            is FrogEntity -> ESPSettings(config.frogSettings.box, config.frogSettings.tracer, config.frogSettings.color)
+            is PandaEntity -> ESPSettings(config.pandaSettings.box, config.pandaSettings.tracer, config.pandaSettings.color)
+            is PufferfishEntity -> ESPSettings(config.pufferfishSettings.box, config.pufferfishSettings.tracer, config.pufferfishSettings.color)
+            is ArmorStandEntity -> ESPSettings(
                 config.invisibugSettings.box && entity.velocity != Vec3d.ZERO && entity.y > 92 && entity.boundingBox.averageSideLength == 0.0,
                 config.invisibugSettings.tracer && entity.velocity != Vec3d.ZERO && entity.y > 92 && entity.boundingBox.averageSideLength == 0.0,
                 config.invisibugSettings.color
             )
+            else -> ESPSettings(box = false, tracer = false, color = ChromaColour(1f,1f,1f,0,0xff))
         }
-        return ESPSettings(false, false, ChromaColour(1f,1f,1f,0,0xff))
     }
 
-    fun stringCount(entity: DisplayEntity.ItemDisplayEntity): Boolean {
+    private fun stringCount(entity: DisplayEntity.ItemDisplayEntity): Boolean {
         return !entity.itemStack.isEmpty && entity.itemStack.item.equals(Items.STRING)
     }
 
-    fun onAttackBlock(player: PlayerEntity, world: World, hand: Hand, pos: BlockPos, dir: Direction): ActionResult {
+    private fun onBlockInteract(pos: BlockPos): ActionResult  {
         if(Utils.getLocation() != Island.GALATEA) return ActionResult.PASS
         forestNodes.removeIf { it == Box.of(pos.toCenterPos(), 1.0, 1.0, 1.0) }
         return ActionResult.PASS
     }
 
-    fun onUseBlock(player: PlayerEntity, world: World, hand: Hand, hitResult: BlockHitResult): ActionResult  {
-        if(Utils.getLocation() != Island.GALATEA) return ActionResult.PASS
-        forestNodes.removeIf { it == Box.of(hitResult.blockPos.toCenterPos(), 1.0, 1.0, 1.0) }
-        return ActionResult.PASS
-    }
-
-    fun onParticle(packet: ParticleS2CPacket, world: ClientWorld) {
+    private fun onParticle(packet: ParticleS2CPacket, world: ClientWorld) {
         if(Utils.getLocation() != Island.GALATEA || !config.forestNodeSettings.box || !config.forestNodeSettings.tracer) return
 
         if(ParticleTypes.HAPPY_VILLAGER.type.equals(packet.parameters.type)) {
@@ -92,16 +79,12 @@ object GalateaESP {
 
             if(forestNodes.contains(box)) return
 
-            val entities: List<DisplayEntity.ItemDisplayEntity> = world.getEntitiesByClass(
-                DisplayEntity.ItemDisplayEntity::class.java, box) {
-                    entities -> true
-            }
-
+            val entities: List<DisplayEntity.ItemDisplayEntity> = world.getEntitiesByClass(DisplayEntity.ItemDisplayEntity::class.java, box) { true }
             if(entities.count(::stringCount) == 3) forestNodes.add(box)
         }
     }
 
-    fun renderWorld(worldRenderContext: WorldRenderContext) {
+    private fun renderWorld(worldRenderContext: WorldRenderContext) {
         if(Utils.getLocation() != Island.GALATEA) return
 
         worldRenderContext.world().entities.forEach { entity ->

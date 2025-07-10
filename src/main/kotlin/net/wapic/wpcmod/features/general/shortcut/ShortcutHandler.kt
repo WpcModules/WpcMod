@@ -1,4 +1,4 @@
-package net.wapic.wpcmod.general.shortcut
+package net.wapic.wpcmod.features.general.shortcut
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -9,14 +9,11 @@ import net.wapic.wpcmod.util.Utils
 import org.lwjgl.glfw.GLFW
 import java.io.File
 
-object ShortcutHandler {
+class ShortcutHandler {
 
-    val allShortcuts: MutableList<Shortcut> = mutableListOf()
-    var gson: Gson = GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().create()
     var canTrigger = false
-    val saveFile = File("./config/wpcmod").resolve("shortcuts.json")
 
-    fun init() {
+    init {
         ClientTickEvents.END_CLIENT_TICK.register(::onTick)
 
         ClientLifecycleEvents.CLIENT_STARTED.register {
@@ -26,13 +23,17 @@ object ShortcutHandler {
             }
         }
 
-        ClientLifecycleEvents.CLIENT_STOPPING.register(::saveShortcuts)
+        ClientLifecycleEvents.CLIENT_STOPPING.register {
+            saveShortcuts()
+        }
     }
 
-    fun onTick(client: MinecraftClient){
+    private fun onTick(client: MinecraftClient){
         if(client.currentScreen != null) return
+
         allShortcuts.forEach { shortcut ->
            if(shortcut.getKeyCode() == GLFW.GLFW_KEY_UNKNOWN || shortcut.getScanCode() == GLFW.GLFW_KEY_UNKNOWN) return@forEach
+
            if(GLFW.glfwGetKey(client.window.handle, shortcut.getKeyCode()) == GLFW.GLFW_PRESS && canTrigger) {
                Utils.addToCommandQueue(shortcut.getCommand())
                canTrigger = false
@@ -44,7 +45,13 @@ object ShortcutHandler {
         }
     }
 
-    fun saveShortcuts(client: MinecraftClient) {
-        saveFile.writeText(gson.toJson(allShortcuts))
+    companion object {
+        val allShortcuts: MutableList<Shortcut> = mutableListOf()
+        val saveFile = File("./config/wpcmod").resolve("shortcuts.json")
+        private val gson: Gson = GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().create()
+
+        fun saveShortcuts() {
+            saveFile.writeText(gson.toJson(allShortcuts))
+        }
     }
 }

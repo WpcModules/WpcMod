@@ -1,4 +1,4 @@
-package net.wapic.wpcmod.general.shortcut
+package net.wapic.wpcmod.features.general.shortcut
 
 import com.google.common.collect.ImmutableList
 import net.minecraft.client.MinecraftClient
@@ -10,8 +10,7 @@ import net.minecraft.client.gui.widget.ElementListWidget
 import net.minecraft.client.gui.widget.TextFieldWidget
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
-import net.wapic.wpcmod.general.shortcut.ShortcutHandler
-import net.wapic.wpcmod.general.shortcut.ShortcutListWidget.Entry
+import net.wapic.wpcmod.features.general.shortcut.ShortcutListWidget.Entry
 import java.util.function.Consumer
 
 class ShortcutListWidget : ElementListWidget<Entry> {
