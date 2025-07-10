@@ -12,10 +12,11 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallba
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.minecraft.client.MinecraftClient
 import net.wapic.wpcmod.config.WpcConfig
-import net.wapic.wpcmod.galatea.GalateaESP
-import net.wapic.wpcmod.general.shortcut.ShortcutHandler
-import net.wapic.wpcmod.general.shortcut.ShortcutScreen
-import net.wapic.wpcmod.kuudra.KuudraAutoGFS
+import net.wapic.wpcmod.features.galatea.GalateaESP
+import net.wapic.wpcmod.features.general.AutoExperiments
+import net.wapic.wpcmod.features.general.shortcut.ShortcutHandler
+import net.wapic.wpcmod.features.general.shortcut.ShortcutScreen
+import net.wapic.wpcmod.features.kuudra.KuudraAutoGFS
 import net.wapic.wpcmod.util.Utils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -56,9 +57,19 @@ object WpcMod : ModInitializer {
 			globalJob.cancel()
 		}
 
+
+		// Helpers
 		Utils.init()
-		ShortcutHandler.init()
-		GalateaESP.init()
-		KuudraAutoGFS.init()
+
+		/* Initialize features */
+		// General
+		ShortcutHandler()
+		AutoExperiments()
+
+		// Galatea
+		GalateaESP()
+
+		// Kuudra
+		KuudraAutoGFS()
 	}
 }
