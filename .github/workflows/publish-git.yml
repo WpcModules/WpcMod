@@ -24,4 +24,4 @@ jobs:
         env:
           ORG_GRADLE_PROJECT_WapicMavenRepoUsername: ${{secrets.MAVEN_NAME}}
           ORG_GRADLE_PROJECT_WapicMavenRepoPassword: ${{secrets.MAVEN_SECRET}}
-        run: ./gradlew build publish -Psha=${{github.sha}} --stacktrace
+        run: ./gradlew build publish -Psha=+${{github.sha}} --stacktrace
