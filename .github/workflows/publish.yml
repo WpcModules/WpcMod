@@ -21,6 +21,6 @@ jobs:
         run: chmod +x ./gradlew
       - name: Publish with Gradle
         env:
-          WapicMavenRepoUsername: ${{secrets.MAVEN_NAME}}
-          WapicMavenRepoPassword: ${{secrets.MAVEN_SECRET}}
+          ORG_GRADLE_PROJECT_WapicMavenRepoUsername: ${{secrets.MAVEN_NAME}}
+          ORG_GRADLE_PROJECT_WapicMavenRepoPassword: ${{secrets.MAVEN_SECRET}}
         run: ./gradlew build publish --stacktrace
