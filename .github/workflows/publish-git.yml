@@ -1,8 +1,13 @@
 name: publish-git
-on: [pull_request, push]
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
   publish-git:
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: checkout repository
@@ -18,6 +23,6 @@ jobs:
         run: chmod +x ./gradlew
       - name: Publish with Gradle
         env:
-          WapicMavenRepoUsername: ${{secrets.MAVEN_NAME}}
-          WapicMavenRepoPassword: ${{secrets.MAVEN_SECRET}}
-        run: ./gradlew build publish -Psha=${{github.sha}} --stacktrace
+          ORG_GRADLE_PROJECT_WapicMavenRepoUsername: ${{secrets.MAVEN_NAME}}
+          ORG_GRADLE_PROJECT_WapicMavenRepoPassword: ${{secrets.MAVEN_SECRET}}
+        run: ./gradlew publish -Psha=${{github.sha}} --stacktrace
