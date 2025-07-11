@@ -108,7 +108,7 @@ publishing {
 		create("mavenJava", MavenPublication) {
 			artifactId = project.archives_base_name
 			groupId = project.maven_group
-			version = project.mod_version
+			version = project.mod_version + project.properties.getOrDefault("sha", "")
 			from components.java
 		}
 	}
@@ -117,15 +117,13 @@ publishing {
 	repositories {
 		maven {
 			name = "WapicMavenRepo"
-			url = "https://maven.wapic.net/releases"
+			def repoUrl = 'https://maven.wapic.net/'
+			url = "https://maven.wapic.net/${project.properties.get("sha") ? "snapshots": "releases"}"
+			print("url: " + url)
 			credentials(PasswordCredentials)
 			authentication {
 				basic(BasicAuthentication)
 			}
 		}
-		// Add repositories to publish to here.
-		// Notice: This block does NOT have the same function as the block in the top level.
-		// The repositories here will be used for publishing your artifact, not for
-		// retrieving dependencies.
 	}
 }

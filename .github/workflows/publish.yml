@@ -1,0 +1,22 @@
+name: Release
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-24-04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+      - name: Grant execute permissions for gradlew
+        run: chmod +x gradlew
+      - name: Publish with Gradle
+        env:
+          WapicMavenRepoUsername: ${{secrets.MAVEN_NAME}}
+          WapicMavenRepoPassword: ${{secrets.MAVEN_SECRET}}
+        run: ./gradlew build publish --stacktrace
