@@ -18,4 +18,7 @@ class WpcConfig : Config() {
 
     @Category(name = "Kuudra", desc = "Configuration options for Kuudra")
     var kuudraConfig: KuudraConfig = KuudraConfig()
+
+    @Category(name = "Dungeons", desc = "Configuration options for Dungeons")
+    var dungeonConfig: DungeonConfig = DungeonConfig()
 }

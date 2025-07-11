@@ -19,16 +19,18 @@ import net.fabricmc.loader.api.Version
 import net.fabricmc.loader.api.metadata.ModMetadata
 import net.minecraft.client.MinecraftClient
 import net.minecraft.text.ClickEvent
+import net.minecraft.text.HoverEvent
 import net.minecraft.text.Style
 import net.minecraft.text.Text
-import net.minecraft.util.Formatting
 import net.wapic.wpcmod.config.ConfigManager
+import net.wapic.wpcmod.dungeons.AutoCloseChests
 import net.wapic.wpcmod.features.galatea.GalateaESP
 import net.wapic.wpcmod.features.general.ArmorSwapper
 import net.wapic.wpcmod.features.general.AutoExperiments
 import net.wapic.wpcmod.features.general.shortcut.ShortcutHandler
 import net.wapic.wpcmod.features.general.shortcut.ShortcutScreen
 import net.wapic.wpcmod.features.kuudra.KuudraAutoGFS
+import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.Utils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -36,7 +38,6 @@ import kotlin.coroutines.EmptyCoroutineContext
 
 object WpcMod : ModInitializer {
 	const val MOD_ID = "wpcmod"
-	const val PREFIX = "§b[WpcMod]§r:"
 
 	private val metadata: ModMetadata by lazy {
 		FabricLoader.getInstance().getModContainer(MOD_ID).orElseThrow().metadata
@@ -75,12 +76,12 @@ object WpcMod : ModInitializer {
 					0
 				}).then(ClientCommandManager.literal("update").executes {
 					if(potentialUpdate.isUpdateAvailable) {
-						MinecraftClient.getInstance().inGameHud.chatHud.addMessage(
-							Text.of("$PREFIX Updating from ${updateContext.currentVersion} to ${potentialUpdate.update.versionName}")
-						)
-						potentialUpdate.launchUpdate()
+						ChatUtils.sendMessage("Launching update...")
+						potentialUpdate.launchUpdate().thenRun {
+							ChatUtils.sendMessage("Download complete! Update will apply after you restart")
+						}
 					} else {
-						MinecraftClient.getInstance().inGameHud.chatHud.addMessage(Text.of("$PREFIX No Updates Available"))
+						ChatUtils.sendMessage("No Updates Available")
 					}
 					0
 				})
@@ -88,15 +89,13 @@ object WpcMod : ModInitializer {
 		}
 
 		ClientPlayConnectionEvents.JOIN.register { handler, sender, client ->
-			if(!potentialUpdate.isUpdateAvailable) return@register
-
-			MinecraftClient.getInstance().inGameHud.chatHud.addMessage(
-				Text.literal("$PREFIX Update found: ${potentialUpdate.update.versionName}").append(
-					Text.literal("Click here to Update!").setStyle(
-						Style.EMPTY.withColor(Formatting.AQUA).withColor(Formatting.UNDERLINE).withClickEvent(ClickEvent.RunCommand("/wpcmod update"))
-					)
-				)
-			)
+			if(potentialUpdate.isUpdateAvailable || FabricLoader.getInstance().isDevelopmentEnvironment) {
+				ChatUtils.sendMessage("Update found: §e${updateContext.currentVersion.display()}§r. -> §e${potentialUpdate.update.versionName}§r Click here to update", Style.EMPTY.withHoverEvent(
+					HoverEvent.ShowText(Text.of("Click to update"))
+				).withClickEvent(
+					ClickEvent.RunCommand("/wpcmod update")
+				))
+			}
 		}
 
 		ClientLifecycleEvents.CLIENT_STOPPING.register {
@@ -112,6 +111,9 @@ object WpcMod : ModInitializer {
 		ShortcutHandler()
 		AutoExperiments()
 		ArmorSwapper()
+
+		// Dungeons
+		AutoCloseChests()
 
 		// Galatea
 		GalateaESP()
