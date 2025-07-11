@@ -37,13 +37,13 @@ import org.slf4j.LoggerFactory
 import kotlin.coroutines.EmptyCoroutineContext
 
 object WpcMod : ModInitializer {
-	const val MOD_ID = "wpcmod"
-
+	private const val MOD_ID = "wpcmod"
 	private val metadata: ModMetadata by lazy {
 		FabricLoader.getInstance().getModContainer(MOD_ID).orElseThrow().metadata
 	}
-	val version: Version by lazy { metadata.version }
+	private var updateNotified = false
 
+	val version: Version by lazy { metadata.version }
     val logger: Logger = LoggerFactory.getLogger("WpcMod")
 
 	val globalJob = Job()
@@ -89,7 +89,8 @@ object WpcMod : ModInitializer {
 		}
 
 		ClientPlayConnectionEvents.JOIN.register { handler, sender, client ->
-			if(potentialUpdate.isUpdateAvailable || FabricLoader.getInstance().isDevelopmentEnvironment) {
+			if((potentialUpdate.isUpdateAvailable || FabricLoader.getInstance().isDevelopmentEnvironment) && !updateNotified) {
+				updateNotified = true
 				ChatUtils.sendMessage("Update found: §e${updateContext.currentVersion.display()}§r. -> §e${potentialUpdate.update.versionName}§r Click here to update", Style.EMPTY.withHoverEvent(
 					HoverEvent.ShowText(Text.of("Click to update"))
 				).withClickEvent(

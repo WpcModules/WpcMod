@@ -2,36 +2,67 @@ package net.wapic.wpcmod.features.entity
 
 import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.entity.Entity
+import net.minecraft.entity.EquipmentSlot
+import net.minecraft.entity.decoration.ArmorStandEntity
 import net.minecraft.entity.mob.MagmaCubeEntity
 import net.minecraft.entity.mob.ShulkerEntity
 import net.minecraft.entity.passive.AxolotlEntity
+import net.minecraft.entity.passive.BatEntity
 import net.minecraft.entity.passive.FrogEntity
 import net.minecraft.entity.passive.PandaEntity
 import net.minecraft.entity.passive.PufferfishEntity
+import net.minecraft.predicate.entity.EntityPredicates
 import net.wapic.wpcmod.config.ConfigManager
 import net.wapic.wpcmod.util.Island
+import net.wapic.wpcmod.util.ItemUtils
 import net.wapic.wpcmod.util.Utils
 
 object MobGlow {
 
     data class GlowOptions(var shouldGlow: Boolean, var color: ChromaColour)
+    private val NO_GLOW = GlowOptions(false, ChromaColour(1f, 1f, 1f, 0, 0xff))
+    private const val FEL_HEAD_TEXTURE: String = "ewogICJ0aW1lc3RhbXAiIDogMTcyMDAyNTQ4Njg2MywKICAicHJvZmlsZUlkIiA6ICIzZDIxZTYyMTk2NzQ0Y2QwYjM3NjNkNTU3MWNlNGJlZSIsCiAgInByb2ZpbGVOYW1lIiA6ICJTcl83MUJsYWNrYmlyZCIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9jMjg2ZGFjYjBmMjE0NGQ3YTQxODdiZTM2YmJhYmU4YTk4ODI4ZjdjNzlkZmY1Y2UwMTM2OGI2MzAwMTU1NjYzIiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0="
 
     private val config get() = ConfigManager.config
 
     fun computeGlow(entity: Entity): GlowOptions {
-        return when(entity) {
-            // Galatea
-            is ShulkerEntity -> GlowOptions(Utils.getLocation() == Island.GALATEA && config.galateaConfig.espSettings.shulkerSettings.glow, config.galateaConfig.espSettings.shulkerSettings.color)
-            is AxolotlEntity -> GlowOptions(Utils.getLocation() == Island.GALATEA && config.galateaConfig.espSettings.axolotlSettings.glow, config.galateaConfig.espSettings.axolotlSettings.color)
-            is FrogEntity -> GlowOptions(Utils.getLocation() == Island.GALATEA && config.galateaConfig.espSettings.frogSettings.glow, config.galateaConfig.espSettings.frogSettings.color)
-            is PandaEntity -> GlowOptions(Utils.getLocation() == Island.GALATEA && config.galateaConfig.espSettings.pandaSettings.glow, config.galateaConfig.espSettings.pandaSettings.color)
-            is PufferfishEntity -> GlowOptions(Utils.getLocation() == Island.GALATEA && config.galateaConfig.espSettings.pufferfishSettings.glow, config.galateaConfig.espSettings.pufferfishSettings.color)
-
-            //Kuudra
-            is MagmaCubeEntity -> GlowOptions(Utils.getLocation() == Island.KUUDRA && config.kuudraConfig.espSettings.kuudraSettings.glow && entity.size == 30, config.kuudraConfig.espSettings.kuudraSettings.color)
-
-            //Default
-            else -> GlowOptions(false, ChromaColour(1f, 1f, 1f, 0, 0xff))
+        if(Utils.getLocation() == Island.GALATEA) {
+            return when(entity) {
+                is ShulkerEntity -> GlowOptions(config.galateaConfig.espSettings.shulkerSettings.glow, config.galateaConfig.espSettings.shulkerSettings.color)
+                is AxolotlEntity -> GlowOptions(config.galateaConfig.espSettings.axolotlSettings.glow, config.galateaConfig.espSettings.axolotlSettings.color)
+                is FrogEntity -> GlowOptions(config.galateaConfig.espSettings.frogSettings.glow, config.galateaConfig.espSettings.frogSettings.color)
+                is PandaEntity -> GlowOptions(config.galateaConfig.espSettings.pandaSettings.glow, config.galateaConfig.espSettings.pandaSettings.color)
+                is PufferfishEntity -> GlowOptions(config.galateaConfig.espSettings.pufferfishSettings.glow, config.galateaConfig.espSettings.pufferfishSettings.color)
+                else -> NO_GLOW
+            }
         }
+
+        if(Utils.getLocation() == Island.KUUDRA) {
+            return when(entity) {
+                is MagmaCubeEntity -> GlowOptions(config.kuudraConfig.espSettings.kuudraSettings.glow && entity.size == 30, config.kuudraConfig.espSettings.kuudraSettings.color)
+                else -> NO_GLOW
+            }
+        }
+
+        if(Utils.getLocation() == Island.DUNGEON) {
+            return when(entity) {
+                is BatEntity -> GlowOptions(config.dungeonConfig.starMobESP.glow, config.dungeonConfig.starMobESP.color)
+                is ArmorStandEntity -> {
+                    if(entity.isMarker && entity.hasStackEquipped(EquipmentSlot.HEAD) && ItemUtils.getHeadTexture(entity.getEquippedStack(EquipmentSlot.HEAD)) == FEL_HEAD_TEXTURE) {
+                        GlowOptions(config.dungeonConfig.starMobESP.glow, config.dungeonConfig.starMobESP.color)
+                    } else {
+                        NO_GLOW
+                    }
+                }
+                else -> shouldStarMobGlow(entity)
+            }
+        }
+
+        return NO_GLOW
+    }
+
+    private fun shouldStarMobGlow(entity: Entity): GlowOptions {
+        val armorStands = entity.world.getEntitiesByClass(ArmorStandEntity::class.java, entity.boundingBox.expand(0.0, 2.0, 0.0), EntityPredicates.NOT_MOUNTED) ?: return NO_GLOW
+        return if(armorStands.isNotEmpty() && armorStands.first()?.name?.string?.contains("✯") == true) GlowOptions(config.dungeonConfig.starMobESP.glow, config.dungeonConfig.starMobESP.color) else NO_GLOW
     }
 }

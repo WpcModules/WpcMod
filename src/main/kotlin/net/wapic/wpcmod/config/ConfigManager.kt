@@ -20,7 +20,7 @@ object ConfigManager {
     val tempFile = File("config/wpcmod/config-temp.json")
     val backupFile = File("config/wpcmod/config-backup.json")
 
-    fun saveConfig(attempt: Int = 0){
+    fun saveConfig(attempt: Int = 0) {
         try {
             file.parentFile.mkdirs()
             tempFile.writeText(gson.toJson(config))
@@ -55,18 +55,17 @@ object ConfigManager {
                 WpcMod.logger.error(e.stackTraceToString())
             }
         }
-        WpcMod.logger.info("Loading Default Config")
         return null
     }
 
-    fun loadFile(): String = try {
+    private fun loadFile(): String = try {
        file.readText()
     } catch (e: Exception) {
         if(backupFile.exists()) backupFile.readText()
         else throw e
     }
 
-    fun createConfig(){
+    fun createConfig() {
         config = loadConfig() ?: WpcConfig()
         editor = null
         processor = MoulConfigProcessor(config)
@@ -77,5 +76,5 @@ object ConfigManager {
         driver.processConfig(config)
     }
 
-    fun getEditorInstance(): MoulConfigEditor<*> = editor ?: MoulConfigEditor(processor)
+    fun getEditorInstance(): MoulConfigEditor<WpcConfig> = editor ?: MoulConfigEditor(processor)
 }
