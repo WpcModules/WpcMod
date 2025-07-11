@@ -47,22 +47,16 @@ object MobGlow {
         if(Utils.getLocation() == Island.DUNGEON) {
             return when(entity) {
                 is BatEntity -> GlowOptions(config.dungeonConfig.starMobESP.glow, config.dungeonConfig.starMobESP.color)
-                is ArmorStandEntity -> {
-                    if(entity.isMarker && entity.hasStackEquipped(EquipmentSlot.HEAD) && ItemUtils.getHeadTexture(entity.getEquippedStack(EquipmentSlot.HEAD)) == FEL_HEAD_TEXTURE) {
-                        GlowOptions(config.dungeonConfig.starMobESP.glow, config.dungeonConfig.starMobESP.color)
-                    } else {
-                        NO_GLOW
-                    }
-                }
-                else -> shouldStarMobGlow(entity)
+                is ArmorStandEntity -> GlowOptions(config.dungeonConfig.starMobESP.glow && entity.isMarker && ItemUtils.getHeadTexture(entity.getEquippedStack(EquipmentSlot.HEAD)) == FEL_HEAD_TEXTURE, config.dungeonConfig.starMobESP.color)
+                else -> GlowOptions(isStarredMob(entity) && config.dungeonConfig.starMobESP.glow, config.dungeonConfig.starMobESP.color)
             }
         }
 
         return NO_GLOW
     }
 
-    private fun shouldStarMobGlow(entity: Entity): GlowOptions {
-        val armorStands = entity.world.getEntitiesByClass(ArmorStandEntity::class.java, entity.boundingBox.expand(0.0, 2.0, 0.0), EntityPredicates.NOT_MOUNTED) ?: return NO_GLOW
-        return if(armorStands.isNotEmpty() && armorStands.first()?.name?.string?.contains("✯") == true) GlowOptions(config.dungeonConfig.starMobESP.glow, config.dungeonConfig.starMobESP.color) else NO_GLOW
+    private fun isStarredMob(entity: Entity): Boolean {
+        val armorStands = entity.world.getEntitiesByClass(ArmorStandEntity::class.java, entity.boundingBox.expand(0.0, 2.0, 0.0), EntityPredicates.NOT_MOUNTED) ?: return false
+        return armorStands.isNotEmpty() && armorStands.first()?.name?.string?.contains("✯") ?: false
     }
 }

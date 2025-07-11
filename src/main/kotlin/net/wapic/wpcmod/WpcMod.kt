@@ -23,7 +23,8 @@ import net.minecraft.text.HoverEvent
 import net.minecraft.text.Style
 import net.minecraft.text.Text
 import net.wapic.wpcmod.config.ConfigManager
-import net.wapic.wpcmod.dungeons.AutoCloseChests
+import net.wapic.wpcmod.features.dungeons.AutoCloseChests
+import net.wapic.wpcmod.features.dungeons.DiscardHighlighter
 import net.wapic.wpcmod.features.galatea.GalateaESP
 import net.wapic.wpcmod.features.general.ArmorSwapper
 import net.wapic.wpcmod.features.general.AutoExperiments
@@ -115,6 +116,7 @@ object WpcMod : ModInitializer {
 
 		// Dungeons
 		AutoCloseChests()
+		DiscardHighlighter()
 
 		// Galatea
 		GalateaESP()

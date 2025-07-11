@@ -16,6 +16,10 @@ class DungeonConfig {
     @ConfigEditorBoolean
     var alertOnTreasureTalismans: Boolean = false
 
+    @ConfigOption(name = "Discard Highlighter", desc = "Highlight junk dungeon reward items while holding Left Control")
+    @ConfigEditorBoolean
+    var discardHighlighter: Boolean = false
+
     @Accordion
     @ConfigOption(name = "Starred Mob ESP", desc = "")
     var starMobESP: EspSettings = EspSettings()

@@ -1,4 +1,4 @@
-package net.wapic.wpcmod.dungeons
+package net.wapic.wpcmod.features.dungeons
 
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
 import net.minecraft.client.gui.screen.Screen

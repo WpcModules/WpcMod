@@ -9,7 +9,8 @@
   },
   "client": [
     "ClientPlayNetworkHandlerMixin",
-    "WorldRendererMixin",
-    "DimensionTypeMixin"
+    "DimensionTypeMixin",
+    "HandledScreenMixin",
+    "WorldRendererMixin"
   ]
 }
