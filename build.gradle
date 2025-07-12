@@ -38,7 +38,7 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	modImplementation "net.fabricmc:fabric-language-kotlin:${project.fabric_kotlin_version}"
 
-	modImplementation "net.hypixel:mod-api:1.0.1"
+	implementation "net.hypixel:mod-api:1.0.1"
 
 	modRuntimeOnly "me.djtheredstoner:DevAuth-fabric:${project.devauth_version}"
 
@@ -117,7 +117,6 @@ publishing {
 			name = "WapicMavenRepo"
 			def repoUrl = 'https://maven.wapic.net/'
 			url = "https://maven.wapic.net/${project.properties.get("sha") ? "snapshots": "releases"}"
-			print("url: " + url)
 			credentials(PasswordCredentials)
 			authentication {
 				basic(BasicAuthentication)

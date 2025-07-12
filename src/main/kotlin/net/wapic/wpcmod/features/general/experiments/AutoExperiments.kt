@@ -1,4 +1,4 @@
-package net.wapic.wpcmod.features.general
+package net.wapic.wpcmod.features.general.experiments
 
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
 import net.minecraft.block.Blocks
@@ -33,9 +33,9 @@ class AutoExperiments {
     private var handledScreen: GenericContainerScreenHandler? = null
 
     private val ultraSequenceItems = listOf<Item>(
-        Items.WHITE_DYE, Items.BROWN_DYE, Items.BLACK_DYE, Items.BLUE_DYE, Items.GRAY_DYE, Items.LIGHT_GRAY_DYE, //Unused dyes but we leave em here just in case
+        Items.WHITE_DYE, Items.BROWN_DYE, Items.BLACK_DYE, Items.BLUE_DYE, Items.GRAY_DYE, Items.LIGHT_GRAY_DYE, //Unused modern dyes, we leave them here just in case
         Items.BONE_MEAL, Items.LAPIS_LAZULI, Items.RED_DYE,
-        Items.GREEN_DYE,Items.CYAN_DYE, Items.LIGHT_BLUE_DYE,
+        Items.GREEN_DYE, Items.CYAN_DYE, Items.LIGHT_BLUE_DYE,
         Items.LIME_DYE, Items.MAGENTA_DYE, Items.ORANGE_DYE,
         Items.PINK_DYE, Items.PURPLE_DYE, Items.YELLOW_DYE
     )
@@ -65,7 +65,7 @@ class AutoExperiments {
         }
 
 
-        ScreenEvents.afterRender(screen).register { screen, drawContext, mouseX, mouseY, tickDelta -> onScreenRender(screen) }
+        ScreenEvents.afterRender(screen).register { screen, _, _, _, _ -> onScreenRender(screen) }
     }
 
     private fun onScreenRender(screen: Screen){

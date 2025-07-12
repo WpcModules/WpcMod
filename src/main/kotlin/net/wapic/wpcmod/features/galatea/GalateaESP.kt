@@ -23,7 +23,7 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec3d
 import net.wapic.wpcmod.config.ConfigManager
-import net.wapic.wpcmod.events.PacketEvents
+import net.wapic.wpcmod.events.ParticleEvents
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.render.RenderUtils
@@ -38,7 +38,7 @@ class GalateaESP {
         WorldRenderEvents.END.register(::renderWorld)
 
         // Forest Nodes
-        PacketEvents.PARTICLE.register(::onParticle)
+        ParticleEvents.SPAWN.register(::onParticle)
         AttackBlockCallback.EVENT.register { _, _, _, pos, _ -> onBlockInteract(pos) }
         UseBlockCallback.EVENT.register { _, _, _, hitResult -> onBlockInteract(hitResult.blockPos) }
         ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register { _, _ -> forestNodes.clear() }

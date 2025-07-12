@@ -7,6 +7,7 @@ import net.minecraft.screen.slot.Slot
 import net.wapic.wpcmod.config.ConfigManager
 import net.wapic.wpcmod.events.GuiEvents
 import net.wapic.wpcmod.util.ItemUtils
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 import java.awt.Color
 
 class DiscardHighlighter {
@@ -15,10 +16,10 @@ class DiscardHighlighter {
     private val junkMatcher = "(?<enchantmentName>Bank|No Pain No Gain|Combo|Feather Falling|Infinite Quiver|Ultimate Jerry) (?<level>I|II|III|IV|V)".toRegex()
 
     init {
-        GuiEvents.DRAW_SLOT_EVENT.register(::onDrawSlot)
+        GuiEvents.DRAW_SLOT_BACKGROUND.register(::onDrawSlot)
     }
 
-    fun onDrawSlot(drawContext: DrawContext, slot: Slot){
+    fun onDrawSlot(drawContext: DrawContext, slot: Slot, callbackInfo: CallbackInfo){
         if(!Screen.hasControlDown() && !config.discardHighlighter) return
         if(slot.stack.item == Items.ENCHANTED_BOOK) {
             val lore = ItemUtils.getLore(slot.stack)

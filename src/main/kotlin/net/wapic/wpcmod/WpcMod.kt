@@ -27,7 +27,7 @@ import net.wapic.wpcmod.features.dungeons.AutoCloseChests
 import net.wapic.wpcmod.features.dungeons.DiscardHighlighter
 import net.wapic.wpcmod.features.galatea.GalateaESP
 import net.wapic.wpcmod.features.general.ArmorSwapper
-import net.wapic.wpcmod.features.general.AutoExperiments
+import net.wapic.wpcmod.features.general.experiments.AutoExperiments
 import net.wapic.wpcmod.features.general.shortcut.ShortcutHandler
 import net.wapic.wpcmod.features.general.shortcut.ShortcutScreen
 import net.wapic.wpcmod.features.kuudra.KuudraAutoGFS
@@ -111,8 +111,10 @@ object WpcMod : ModInitializer {
 		/* Initialize features */
 		// General
 		ShortcutHandler()
-		AutoExperiments()
 		ArmorSwapper()
+
+		//Experiments
+		AutoExperiments()
 
 		// Dungeons
 		AutoCloseChests()
