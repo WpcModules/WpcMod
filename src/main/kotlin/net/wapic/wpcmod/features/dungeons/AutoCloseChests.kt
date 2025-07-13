@@ -19,11 +19,11 @@ class AutoCloseChests {
 
     fun onScreenInit(screen: Screen) {
         if (!config.autoCloseChests || Utils.getLocation() != Island.DUNGEON) return
-        if (screen !is GenericContainerScreen && !defaultTitles.contains(screen.title.string)) return
+        if (screen !is GenericContainerScreen || !defaultTitles.contains(screen.title.string)) return
 
         if (config.alertOnTreasureTalismans) {
             ScreenEvents.afterTick(screen).register { screen ->
-                (screen as? GenericContainerScreen)?.screenHandler?.inventory?.find { stack -> stack.name.string.contains("Treasure Talisman") }?.let { stack ->
+                (screen as GenericContainerScreen).screenHandler?.inventory?.find { stack -> stack.name.string.contains("Treasure Talisman") }?.let { stack ->
                     ChatUtils.sendAlert(stack.name.string, stack.name.style)
                 }
                 screen.close()
