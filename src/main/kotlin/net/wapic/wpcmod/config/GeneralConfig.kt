@@ -41,6 +41,11 @@ class GeneralConfig {
         var autoExperiments: Boolean = false
 
         @Expose
+        @ConfigOption(name = "Superpairs Solver", desc = "Highlight items in Superpairs similar to NEU")
+        @ConfigEditorBoolean
+        var superpairsSolver: Boolean = false
+
+        @Expose
         @ConfigOption(name = "Auto Close", desc = "Auto Close Experiment when done")
         @ConfigEditorBoolean
         var autoClose: Boolean = false
