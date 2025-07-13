@@ -20,7 +20,7 @@ class DiscardHighlighter {
     }
 
     fun onDrawSlot(drawContext: DrawContext, slot: Slot, callbackInfo: CallbackInfo){
-        if(!Screen.hasControlDown() && !config.discardHighlighter) return
+        if(!Screen.hasControlDown() || !config.discardHighlighter) return
         if(slot.stack.item == Items.ENCHANTED_BOOK) {
             val lore = ItemUtils.getLore(slot.stack)
             val enchantmentName = lore.first().string.trim()
