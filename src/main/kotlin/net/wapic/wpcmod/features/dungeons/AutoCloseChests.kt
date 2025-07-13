@@ -3,14 +3,14 @@ package net.wapic.wpcmod.features.dungeons
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen
-import net.wapic.wpcmod.config.ConfigManager
+import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.Utils
 
 class AutoCloseChests {
 
-    private val config get() = ConfigManager.config.dungeonConfig
+    private val config get() = WpcMod.config.dungeonConfig
     private val defaultTitles = listOf("Chest","Large Chest")
 
     init {

@@ -21,6 +21,6 @@ public class SimpleInventoryMixin {
     @Inject(method = "getStack", at = @At("HEAD"), cancellable = true)
     public void getStack(int slot, CallbackInfoReturnable<ItemStack> cir) {
         ItemStack[] stacks = this.heldStacks.toArray(new ItemStack[0]);
-        ReplaceItemEvent.EVENT.invoker().onItemReplaced(stacks[slot], slot, cir);
+        ReplaceItemEvent.EVENT.invoker().onItemReplaced(stacks, slot, cir);
     }
 }

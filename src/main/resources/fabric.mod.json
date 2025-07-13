@@ -3,7 +3,7 @@
 	"id": "wpcmod",
 	"version": "${version}",
 	"name": "WpcMod",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "Hypixel SkyBlock QOL Mod for Fabric",
 	"authors": [
 		"Wapic"
 	],

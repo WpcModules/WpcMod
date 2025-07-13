@@ -17,6 +17,6 @@ object ReplaceItemEvent {
     }
 
     fun interface ReplaceEvent {
-        fun onItemReplaced(originalItem: ItemStack, slot: Int, cir: CallbackInfoReturnable<ItemStack>)
+        fun onItemReplaced(originalItem: Array<ItemStack>, slot: Int, cir: CallbackInfoReturnable<ItemStack>)
     }
 }

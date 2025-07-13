@@ -23,6 +23,7 @@ import net.minecraft.text.HoverEvent
 import net.minecraft.text.Style
 import net.minecraft.text.Text
 import net.wapic.wpcmod.config.ConfigManager
+import net.wapic.wpcmod.config.WpcConfig
 import net.wapic.wpcmod.features.dungeons.AutoCloseChests
 import net.wapic.wpcmod.features.dungeons.DiscardHighlighter
 import net.wapic.wpcmod.features.galatea.GalateaESP
@@ -44,6 +45,9 @@ object WpcMod : ModInitializer {
 	}
 	private var updateNotified = false
 
+	@JvmField
+	var config: WpcConfig = WpcConfig()
+
 	val version: Version by lazy { metadata.version }
     val logger: Logger = LoggerFactory.getLogger("WpcMod")
 
@@ -51,7 +55,7 @@ object WpcMod : ModInitializer {
 	val coroutineScope = CoroutineScope(EmptyCoroutineContext + CoroutineName("WpcMod") + SupervisorJob(globalJob))
 
 	override fun onInitialize() {
-		ConfigManager.createConfig()
+		ConfigManager.firstLoad()
 
 		val updateContext = UpdateContext(
 			UpdateSource.mavenSource("https://maven.wapic.net/releases", "net.wapic.$MOD_ID", MOD_ID),
@@ -67,7 +71,7 @@ object WpcMod : ModInitializer {
 			dispatcher, registryAccess -> dispatcher.register (
 				ClientCommandManager.literal("wpcmod").executes { context ->
 					MinecraftClient.getInstance().send {
-						IMinecraft.instance.openWrappedScreen(ConfigManager.getEditorInstance())
+						IMinecraft.instance.openWrappedScreen(ConfigManager.getEditor())
 					}
 					0
 				}.then(ClientCommandManager.literal("binds").executes {

@@ -4,13 +4,13 @@ import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.client.MinecraftClient
 import net.minecraft.item.Items
 import net.minecraft.text.Text
-import net.wapic.wpcmod.config.ConfigManager
+import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.Utils
 
 class KuudraAutoGFS {
 
-    private val config get() = ConfigManager.config.kuudraConfig
+    private val config get() = WpcMod.config.kuudraConfig
     private val maxStackSize: Int get() = 16
 
     init {

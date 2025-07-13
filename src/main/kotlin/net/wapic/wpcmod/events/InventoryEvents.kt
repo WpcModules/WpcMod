@@ -8,13 +8,16 @@ object InventoryEvents {
 
     @JvmField
     val OPEN: Event<OpenedEvent> = EventFactory.createArrayBacked(OpenedEvent::class.java) { listeners ->
-        OpenedEvent { title, itemStacks ->
+        OpenedEvent { title ->
             for (listener in listeners) {
-                listener.onOpen(title, itemStacks)
+                listener.onOpen(title)
             }
         }
     }
 
+    /**
+     * Gets Called when a Screen with a new title is opened
+     */
     @JvmField
     val CLOSE: Event<ClosedEvent> = EventFactory.createArrayBacked(ClosedEvent::class.java) { listeners ->
         ClosedEvent {
@@ -35,7 +38,7 @@ object InventoryEvents {
 
 
     fun interface OpenedEvent {
-        fun onOpen(title: String, inventory: List<ItemStack>)
+        fun onOpen(title: String)
     }
 
     fun interface ClosedEvent {

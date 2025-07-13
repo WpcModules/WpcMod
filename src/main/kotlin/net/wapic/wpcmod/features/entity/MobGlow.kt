@@ -12,7 +12,7 @@ import net.minecraft.entity.passive.FrogEntity
 import net.minecraft.entity.passive.PandaEntity
 import net.minecraft.entity.passive.PufferfishEntity
 import net.minecraft.predicate.entity.EntityPredicates
-import net.wapic.wpcmod.config.ConfigManager
+import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.ItemUtils
 import net.wapic.wpcmod.util.Utils
@@ -23,7 +23,7 @@ object MobGlow {
     private val NO_GLOW = GlowOptions(false, ChromaColour(1f, 1f, 1f, 0, 0xff))
     private const val FEL_HEAD_TEXTURE: String = "ewogICJ0aW1lc3RhbXAiIDogMTcyMDAyNTQ4Njg2MywKICAicHJvZmlsZUlkIiA6ICIzZDIxZTYyMTk2NzQ0Y2QwYjM3NjNkNTU3MWNlNGJlZSIsCiAgInByb2ZpbGVOYW1lIiA6ICJTcl83MUJsYWNrYmlyZCIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9jMjg2ZGFjYjBmMjE0NGQ3YTQxODdiZTM2YmJhYmU4YTk4ODI4ZjdjNzlkZmY1Y2UwMTM2OGI2MzAwMTU1NjYzIiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0="
 
-    private val config get() = ConfigManager.config
+    private val config get() = WpcMod.config
 
     fun computeGlow(entity: Entity): GlowOptions {
         if(Utils.getLocation() == Island.GALATEA) {

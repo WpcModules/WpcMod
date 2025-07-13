@@ -4,7 +4,7 @@ import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.item.Items
 import net.minecraft.screen.slot.Slot
-import net.wapic.wpcmod.config.ConfigManager
+import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.GuiEvents
 import net.wapic.wpcmod.util.ItemUtils
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
@@ -12,7 +12,7 @@ import java.awt.Color
 
 class DiscardHighlighter {
 
-    private val config get() = ConfigManager.config.dungeonConfig
+    private val config get() = WpcMod.config.dungeonConfig
     private val junkMatcher = "(?<enchantmentName>Bank|No Pain No Gain|Combo|Feather Falling|Infinite Quiver|Ultimate Jerry) (?<level>I|II|III|IV|V)".toRegex()
 
     init {

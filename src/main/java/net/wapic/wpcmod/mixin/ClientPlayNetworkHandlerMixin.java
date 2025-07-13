@@ -42,6 +42,7 @@ public abstract class ClientPlayNetworkHandlerMixin {
 		if(currentScreen != null && !currentScreen.getTitle().getString().equals(title)) {
 			InventoryEvents.CLOSE.invoker().onClose();
 		}
+		InventoryEvents.OPEN.invoker().onOpen(title);
 	}
 
 	@Inject(at = @At("HEAD"), method = "onCloseScreen")

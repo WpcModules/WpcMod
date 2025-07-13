@@ -10,14 +10,14 @@ import net.minecraft.item.Item
 import net.minecraft.item.Items
 import net.minecraft.screen.GenericContainerScreenHandler
 import net.minecraft.screen.slot.SlotActionType
-import net.wapic.wpcmod.config.ConfigManager
+import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.Utils
 import org.lwjgl.glfw.GLFW
 
 class AutoExperiments {
 
-    private val config get() = ConfigManager.config.generalConfig.experimentSettings
+    private val config get() = WpcMod.config.generalConfig.experimentSettings
 
     private var currentExperiment = ExperimentType.NONE
 
@@ -55,7 +55,7 @@ class AutoExperiments {
     private fun onScreenInit(screen: Screen){
         reset()
 
-        if(Utils.getLocation() != Island.PRIVATE_ISLAND && !config.autoExperiments) return
+        if(Utils.getLocation() != Island.PRIVATE_ISLAND || !config.autoExperiments) return
         handledScreen = (screen as? GenericContainerScreen)?.screenHandler ?: return
 
         currentExperiment = when {
@@ -69,7 +69,7 @@ class AutoExperiments {
     }
 
     private fun onScreenRender(screen: Screen){
-       if(Utils.getLocation() != Island.PRIVATE_ISLAND && !config.autoExperiments) return
+       if(Utils.getLocation() != Island.PRIVATE_ISLAND || !config.autoExperiments) return
 
         (screen as? GenericContainerScreen)?.screenHandler?.inventory?.takeIf { it.size() >= 54 }?.let {
             when (currentExperiment) {

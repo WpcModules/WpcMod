@@ -22,7 +22,7 @@ import net.minecraft.util.ActionResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec3d
-import net.wapic.wpcmod.config.ConfigManager
+import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.ParticleEvents
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.Utils
@@ -31,7 +31,7 @@ import net.wapic.wpcmod.util.render.RenderUtils
 class GalateaESP {
 
     private val forestNodes: MutableSet<Box> = mutableSetOf()
-    private val config get() = ConfigManager.config.galateaConfig.espSettings
+    private val config get() = WpcMod.config.galateaConfig.espSettings
     data class ESPSettings(var box: Boolean, var tracer: Boolean, var color: ChromaColour)
 
     init {

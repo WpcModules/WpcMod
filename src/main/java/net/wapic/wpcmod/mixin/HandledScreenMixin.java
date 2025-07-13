@@ -24,7 +24,7 @@ public class HandledScreenMixin {
     }
 
     @Inject(at = @At("HEAD"), method = "onMouseClick(Lnet/minecraft/screen/slot/Slot;IILnet/minecraft/screen/slot/SlotActionType;)V")
-    private void mouseClicked$After(Slot slot, int slotId, int button, SlotActionType slotActionType, CallbackInfo ci) {
+    private void mouseClicked(Slot slot, int slotId, int button, SlotActionType slotActionType, CallbackInfo ci) {
         if(slot != null) {
             GuiEvents.SLOT_CLICKED.invoker().onSlotClick(slot, slotId, button, slotActionType, ci);
         }
