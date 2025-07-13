@@ -24,7 +24,7 @@ class ShortcutListWidget : ElementListWidget<Entry> {
         }
     }
 
-    fun addShortcutEntry(shortcut: Shortcut){
+    fun addShortcutEntry(shortcut: Shortcut) {
         this.addEntry(ShortcutEntry(shortcut))
     }
 

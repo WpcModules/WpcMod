@@ -28,7 +28,7 @@ class ShortcutHandler {
         }
     }
 
-    private fun onTick(client: MinecraftClient){
+    private fun onTick(client: MinecraftClient) {
         if(client.currentScreen != null) return
 
         allShortcuts.forEach { shortcut ->

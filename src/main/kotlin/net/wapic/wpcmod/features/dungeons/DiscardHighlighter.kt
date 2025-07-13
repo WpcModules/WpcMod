@@ -19,7 +19,7 @@ class DiscardHighlighter {
         GuiEvents.DRAW_SLOT_BACKGROUND.register(::onDrawSlot)
     }
 
-    fun onDrawSlot(drawContext: DrawContext, slot: Slot, callbackInfo: CallbackInfo){
+    fun onDrawSlot(drawContext: DrawContext, slot: Slot, callbackInfo: CallbackInfo) {
         if(!Screen.hasControlDown() || !config.discardHighlighter) return
         if(slot.stack.item == Items.ENCHANTED_BOOK) {
             val lore = ItemUtils.getLore(slot.stack)

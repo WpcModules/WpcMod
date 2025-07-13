@@ -17,10 +17,10 @@ class KuudraAutoGFS {
         ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
     }
 
-    private fun onMessageReceived(text: Text, actionBar: Boolean){
+    private fun onMessageReceived(text: Text, actionBar: Boolean) {
         if(actionBar) return
 
-        if(text.string == "[NPC] Elle: Okay adventurers, I will go and fish up Kuudra!" && config.autoGfs && Utils.getLocation() == Island.KUUDRA){
+        if(text.string == "[NPC] Elle: Okay adventurers, I will go and fish up Kuudra!" && config.autoGfs && Utils.getLocation() == Island.KUUDRA) {
             val player = MinecraftClient.getInstance().player ?: return
             val slotId = player.inventory.getSlotWithStack(Items.ENDER_PEARL.defaultStack).takeIf { it != -1 } ?: return
             val stackSize = player.inventory.getStack(slotId).count

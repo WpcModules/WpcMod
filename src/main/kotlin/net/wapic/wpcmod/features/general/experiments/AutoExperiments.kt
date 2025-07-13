@@ -44,7 +44,7 @@ class AutoExperiments {
         ScreenEvents.AFTER_INIT.register { _, screen, _, _ ->  onScreenInit(screen) }
     }
 
-    private fun reset(){
+    private fun reset() {
         currentExperiment = ExperimentType.NONE
         ultrasequencerOrder.clear()
         chronomatronOrder.clear()
@@ -52,7 +52,7 @@ class AutoExperiments {
         lastAdded = 0
     }
 
-    private fun onScreenInit(screen: Screen){
+    private fun onScreenInit(screen: Screen) {
         reset()
 
         if(Utils.getLocation() != Island.PRIVATE_ISLAND || !config.autoExperiments) return
@@ -68,7 +68,7 @@ class AutoExperiments {
         ScreenEvents.afterRender(screen).register { screen, _, _, _, _ -> onScreenRender(screen) }
     }
 
-    private fun onScreenRender(screen: Screen){
+    private fun onScreenRender(screen: Screen) {
        if(Utils.getLocation() != Island.PRIVATE_ISLAND || !config.autoExperiments) return
 
         (screen as? GenericContainerScreen)?.screenHandler?.inventory?.takeIf { it.size() >= 54 }?.let {
@@ -80,7 +80,7 @@ class AutoExperiments {
         }
     }
 
-    private fun solveChronomatron(inventory: Inventory){
+    private fun solveChronomatron(inventory: Inventory) {
         if(inventory.getStack(49).item == Blocks.GLOWSTONE.asItem() && !inventory.getStack(lastAdded).hasGlint()) {
             hasAdded = false
             if(config.autoClose && chronomatronOrder.size > 11 - config.serumCount) MinecraftClient.getInstance().currentScreen?.close()
@@ -104,7 +104,7 @@ class AutoExperiments {
         }
     }
 
-    private fun solveUltrasequencer(inventory: Inventory){
+    private fun solveUltrasequencer(inventory: Inventory) {
         if(inventory.getStack(49).item == Items.CLOCK) hasAdded = false
 
         if(!hasAdded && inventory.getStack(49).item == Blocks.GLOWSTONE.asItem()) {

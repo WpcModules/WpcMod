@@ -36,14 +36,14 @@ object Utils {
         lastCommand = Util.getMeasuringTimeMs()
     }
 
-    private fun onTick(){
+    private fun onTick() {
         if(Util.getMeasuringTimeMs() - lastCommand > MIN_DELAY && commandQueue.isNotEmpty()){
             runCommand(commandQueue.first())
             commandQueue.removeFirst()
         }
     }
 
-    private fun onHypixelLocationPacket(packet: ClientboundLocationPacket){
+    private fun onHypixelLocationPacket(packet: ClientboundLocationPacket) {
         if(packet.map.isPresent){
             location = Island.fromDisplayName(packet.map.get())
             WpcMod.logger.info("Map set to: $location")

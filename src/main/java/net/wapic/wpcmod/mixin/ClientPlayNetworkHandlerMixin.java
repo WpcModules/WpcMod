@@ -36,7 +36,7 @@ public abstract class ClientPlayNetworkHandlerMixin {
 	}
 
 	@Inject(at = @At("HEAD"), method = "onOpenScreen")
-	private void onOpenScreen(OpenScreenS2CPacket packet, CallbackInfo ci){
+	private void onOpenScreen(OpenScreenS2CPacket packet, CallbackInfo ci) {
 		Screen currentScreen = MinecraftClient.getInstance().currentScreen;
 		String title = packet.getName().getString();
 		if(currentScreen != null && !currentScreen.getTitle().getString().equals(title)) {

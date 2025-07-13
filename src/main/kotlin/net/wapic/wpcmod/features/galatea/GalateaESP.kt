@@ -64,7 +64,7 @@ class GalateaESP {
         return !entity.itemStack.isEmpty && entity.itemStack.item.equals(Items.STRING)
     }
 
-    private fun onBlockInteract(pos: BlockPos): ActionResult  {
+    private fun onBlockInteract(pos: BlockPos): ActionResult {
         if(Utils.getLocation() != Island.GALATEA) return ActionResult.PASS
         forestNodes.removeIf { it == Box.of(pos.toCenterPos(), 1.0, 1.0, 1.0) }
         return ActionResult.PASS

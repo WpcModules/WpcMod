@@ -28,7 +28,7 @@ class ArmorSwapper {
         ClientTickEvents.END_CLIENT_TICK.register(::onTick)
     }
 
-    private fun onTick(client: MinecraftClient){
+    private fun onTick(client: MinecraftClient) {
         if(armorSwapBind.wasPressed() && config.armorSwapper){
             Utils.addToCommandQueue("wardrobe")
             shouldSwap = true

@@ -57,7 +57,7 @@ class SuperpairsSolver {
         }
     }
 
-    fun onInventoryOpen(title: String){
+    fun onInventoryOpen(title: String) {
         if(!config.superpairsSolver) return
         inSuperpairs = title.matches(superpairsTitle)
     }
@@ -87,7 +87,7 @@ class SuperpairsSolver {
         }
     }
 
-    fun onDrawSlot(drawContext: DrawContext, slot: Slot, callbackInfo: CallbackInfo){
+    fun onDrawSlot(drawContext: DrawContext, slot: Slot, callbackInfo: CallbackInfo) {
         if(slot.inventory is PlayerInventory || !inSuperpairs || !config.superpairsSolver) return
 
         superpairsMap.forEach { (slotNumber, stackItem) ->

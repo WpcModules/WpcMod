@@ -24,14 +24,14 @@ object ConfigManager {
         .registerTypeAdapter(ChromaColour::class.java, LegacyStringChromaColourTypeAdapter(true).nullSafe())
         .create()
 
-    fun firstLoad(){
+    fun firstLoad() {
         setConfigHolder(firstLoadFile(WpcConfig::class.java.getDeclaredConstructor().newInstance()))
         recreateConfig()
     }
 
     private var jsonHolder: Any? = null
 
-    private fun setConfigHolder(value: Any){
+    private fun setConfigHolder(value: Any) {
         require(value.javaClass == WpcConfig::class.java)
         @Suppress("UNCHECKED_CAST")
         (WpcMod::config as KMutableProperty0<Any>).set(value)
@@ -59,7 +59,7 @@ object ConfigManager {
             }
         }
 
-        if(output == null){
+        if(output == null) {
             WpcMod.logger.info("Null file, falling back to default config")
             return defaultValue
         }
