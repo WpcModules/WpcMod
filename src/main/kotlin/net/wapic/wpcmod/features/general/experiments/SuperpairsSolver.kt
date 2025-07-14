@@ -89,9 +89,10 @@ class SuperpairsSolver {
 
     fun onDrawSlot(drawContext: DrawContext, slot: Slot, callbackInfo: CallbackInfo) {
         if(slot.inventory is PlayerInventory || !inSuperpairs || !config.superpairsSolver) return
+        val mapCopy = superpairsMap.toMap()
 
-        superpairsMap.forEach { (slotNumber, stackItem) ->
-            val count = superpairsMap.values.count { it.name == stackItem.name && it.item == stackItem.item }
+        mapCopy.forEach { (slotNumber, itemStack) ->
+            val count = superpairsMap.values.count { it.name == itemStack.name && it.item == itemStack.item }
             if(slotNumber == slot.index) {
                 if(count > 1) {
                     drawContext.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, Color(255, 69, 0, 150).rgb)
