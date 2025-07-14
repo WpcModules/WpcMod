@@ -71,7 +71,8 @@ class GalateaESP {
     }
 
     private fun onParticle(packet: ParticleS2CPacket, world: ClientWorld) {
-        if(Utils.getLocation() != Island.GALATEA || !config.forestNodeSettings.box || !config.forestNodeSettings.tracer) return
+        if(Utils.getLocation() != Island.GALATEA) return
+        if(!config.forestNodeSettings.tracer && !config.forestNodeSettings.box) return
 
         if(ParticleTypes.HAPPY_VILLAGER.type.equals(packet.parameters.type)) {
             val pos: BlockPos = BlockPos.ofFloored(packet.x, packet.y - 1, packet.z)
