@@ -9,9 +9,9 @@ import net.minecraft.text.Text
 
 object ItemUtils {
 
-    fun getHeadTexture(stack: ItemStack): String {
-        if(!stack.isOf(Items.PLAYER_HEAD) && !stack.contains(DataComponentTypes.PROFILE)) return ""
-        val profile = stack.get(DataComponentTypes.PROFILE) ?: return ""
+    fun ItemStack.getHeadTexture(): String {
+        if(!this.isOf(Items.PLAYER_HEAD) && !this.contains(DataComponentTypes.PROFILE)) return ""
+        val profile = this.get(DataComponentTypes.PROFILE) ?: return ""
         return profile.properties.get("textures").map(Property::value).first() ?: ""
     }
 
