@@ -97,7 +97,7 @@ class AutoExperiments {
 
         if(hasAdded && inventory.getStack(49).item  == Items.CLOCK && chronomatronOrder.size > clicks && System.currentTimeMillis() - lastClickTime > config.clickDelay) {
             handledScreen?.let {
-                MinecraftClient.getInstance().interactionManager?.clickSlot(it.syncId, chronomatronOrder[clicks], GLFW.GLFW_MOUSE_BUTTON_LEFT, SlotActionType.PICKUP, MinecraftClient.getInstance().player)
+                MinecraftClient.getInstance().interactionManager?.clickSlot(it.syncId, chronomatronOrder[clicks], GLFW.GLFW_MOUSE_BUTTON_MIDDLE, SlotActionType.CLONE, MinecraftClient.getInstance().player)
                 lastClickTime = System.currentTimeMillis()
                 clicks++
             }
@@ -121,7 +121,7 @@ class AutoExperiments {
         if(inventory.getStack(49).item  == Items.CLOCK && ultrasequencerOrder.contains(clicks) && System.currentTimeMillis() - lastClickTime > config.clickDelay) {
             handledScreen?.let { screenHandler ->
                 ultrasequencerOrder[clicks]?.let {
-                    MinecraftClient.getInstance().interactionManager?.clickSlot(screenHandler.syncId, it, GLFW.GLFW_MOUSE_BUTTON_LEFT, SlotActionType.PICKUP, MinecraftClient.getInstance().player)
+                    MinecraftClient.getInstance().interactionManager?.clickSlot(screenHandler.syncId, it, GLFW.GLFW_MOUSE_BUTTON_MIDDLE, SlotActionType.CLONE, MinecraftClient.getInstance().player)
                 }
                 lastClickTime = System.currentTimeMillis()
                 clicks++
