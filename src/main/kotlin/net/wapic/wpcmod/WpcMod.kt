@@ -25,7 +25,7 @@ import net.minecraft.text.Text
 import net.wapic.wpcmod.config.ConfigManager
 import net.wapic.wpcmod.config.WpcConfig
 import net.wapic.wpcmod.features.dungeons.AutoCloseChests
-import net.wapic.wpcmod.features.dungeons.DiscardHighlighter
+import net.wapic.wpcmod.features.general.DiscardHighlighter
 import net.wapic.wpcmod.features.galatea.GalateaESP
 import net.wapic.wpcmod.features.general.ArmorSwapper
 import net.wapic.wpcmod.features.general.experiments.AutoExperiments

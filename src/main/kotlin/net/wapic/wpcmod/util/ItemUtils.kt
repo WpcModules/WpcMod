@@ -15,7 +15,18 @@ object ItemUtils {
         return profile.properties.get("textures").map(Property::value).first() ?: ""
     }
 
-    fun getLore(itemStack: ItemStack): List<Text> {
-        return itemStack.getOrDefault(DataComponentTypes.LORE, LoreComponent.DEFAULT).lines
+    fun ItemStack.getLore(): List<Text> {
+        return this.getOrDefault(DataComponentTypes.LORE, LoreComponent.DEFAULT).lines
+    }
+
+    fun ItemStack.getSearchName(): String {
+        val name = this.name.string
+        if(name == "Enchanted Book") {
+            return this.getLore().first().string.trim()
+        }
+        if(name.startsWith("[Lvl ")) {
+            return name.substring("[Lvl ".length)
+        }
+        return name
     }
 }

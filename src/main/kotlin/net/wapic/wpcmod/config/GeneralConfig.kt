@@ -1,10 +1,12 @@
 package net.wapic.wpcmod.config
 
 import com.google.gson.annotations.Expose
+import io.github.notenoughupdates.moulconfig.annotations.Accordion
 import io.github.notenoughupdates.moulconfig.annotations.Category
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorBoolean
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorButton
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorSlider
+import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorText
 import io.github.notenoughupdates.moulconfig.annotations.ConfigOption
 import net.minecraft.client.MinecraftClient
 import net.wapic.wpcmod.features.general.shortcut.ShortcutScreen
@@ -27,6 +29,24 @@ class GeneralConfig {
     @ConfigEditorButton(buttonText = "Open")
     val shortcutEditor = Runnable {
         MinecraftClient.getInstance().setScreen(ShortcutScreen())
+    }
+
+    @Expose
+    @Accordion
+    @ConfigOption(name = "Discard Highlighter", desc = "")
+    var discardSettings = DiscardSettings()
+
+    class DiscardSettings {
+
+        @Expose
+        @ConfigOption(name = "Discard Highlighter", desc = "Highlights items based on the RegEx input")
+        @ConfigEditorBoolean
+        var discardHighlighter: Boolean = false
+
+        @Expose
+        @ConfigOption(name = "Search RegEx", desc = "The RegEx to use when searching for items")
+        @ConfigEditorText
+        var discardRegex: String = "(Bank|No Pain No Gain|Combo|Feather Falling|Infinite Quiver|Ultimate Jerry) (I*V*I)"
     }
 
     @Expose
