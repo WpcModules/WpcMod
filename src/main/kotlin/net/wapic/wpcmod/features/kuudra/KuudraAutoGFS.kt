@@ -11,21 +11,25 @@ import net.wapic.wpcmod.util.Utils
 class KuudraAutoGFS {
 
     private val config get() = WpcMod.config.kuudraConfig
-    private val maxStackSize: Int get() = 16
 
     init {
         ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
     }
 
     private fun onMessageReceived(text: Text, actionBar: Boolean) {
-        if(actionBar) return
+        if(actionBar || Utils.getLocation() == Island.KUUDRA) return
 
-        if(text.string == "[NPC] Elle: Okay adventurers, I will go and fish up Kuudra!" && config.autoGfs && Utils.getLocation() == Island.KUUDRA) {
+        if(config.autoGfs && text.string.equals(KUUDRA_START_MESSAGE)) {
             val player = MinecraftClient.getInstance().player ?: return
-            val slotId = player.inventory.getSlotWithStack(Items.ENDER_PEARL.defaultStack).takeIf { it != -1 } ?: return
-            val stackSize = player.inventory.getStack(slotId).count
+            val slotId = player.inventory.getSlotWithStack(Items.ENDER_PEARL.defaultStack)
+            val stackSize = if(slotId == -1) 0 else player.inventory.getStack(slotId).count
 
-            Utils.addToCommandQueue("gfs ENDER_PEARL ${maxStackSize - stackSize}")
+            Utils.addToCommandQueue("gfs ENDER_PEARL ${MAX_STACK_SIZE - stackSize}")
         }
+    }
+
+    companion object {
+        private const val MAX_STACK_SIZE: Int = 16
+        private const val KUUDRA_START_MESSAGE: String = "[NPC] Elle: Okay adventurers, I will go and fish up Kuudra!"
     }
 }
