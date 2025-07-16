@@ -32,7 +32,12 @@ public abstract class ClientPlayNetworkHandlerMixin {
 
 	@Inject(at = @At("TAIL"), method = "onScreenHandlerSlotUpdate")
 	private void onSlotUpdate(ScreenHandlerSlotUpdateS2CPacket packet, CallbackInfo ci) {
-		InventoryEvents.UPDATE.invoker().onUpdate(packet.getSyncId(), packet.getSlot(), packet.getStack());
+		InventoryEvents.SLOT_UPDATE.invoker().onSlotUpdate(packet.getSyncId(), packet.getSlot(), packet.getStack());
+	}
+
+	@Inject(at = @At("TAIL"), method = "onInventory")
+	private void onSlotUpdate(InventoryS2CPacket packet, CallbackInfo ci) {
+		InventoryEvents.UPDATE.invoker().onUpdate(packet.syncId(), packet.contents(), packet.cursorStack());
 	}
 
 	@Inject(at = @At("HEAD"), method = "onOpenScreen")
