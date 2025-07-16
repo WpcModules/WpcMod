@@ -82,17 +82,17 @@ class SuperpairsSolver {
         if(slotId !in superpairsMap.keys) {
             if (skyHanniRegex.matches(slot.stack.name.string)) {
                 slotsToRead.add(slotId)
-                println("adding slot to read: $slotId")
+                WpcMod.logger.debug("adding slot to read: $slotId")
             } else {
-                println("slotClick, mapping slot: $slotId to ${slot.stack.name.string}")
+                WpcMod.logger.debug("slotClick, mapping slot: $slotId to ${slot.stack.name.string}")
                 superpairsMap[slotId] = slot.stack
-                println("slotClick, checkForPairs: $slotId, ${slot.stack.name.string}")
+                WpcMod.logger.debug("slotClick, checkForPairs: $slotId, ${slot.stack.name.string}")
                 checkForPair(slotId, slot.stack)
             }
         } else {
             if(activeInstantFinds > 0) {
                itemToInstantFind = slot.stack
-                println("slotClick, activeInstantFinds: $activeInstantFinds, ${itemToInstantFind?.name?.string}")
+                WpcMod.logger.debug("slotClick, activeInstantFinds: $activeInstantFinds, ${itemToInstantFind?.name?.string}")
             }
         }
     }
@@ -100,7 +100,7 @@ class SuperpairsSolver {
     fun handleInstantFind(itemStack: ItemStack) {
         val screenHandler = MinecraftClient.getInstance().player?.currentScreenHandler ?: return
         val items = screenHandler.slots.filter { it.stack.name == itemStack.name && it.stack.item == itemStack.item }.map { it.index }
-        println("handledInstantFind result: ${items.joinToString { "$it" }}")
+        WpcMod.logger.debug("handledInstantFind result: ${items.joinToString { "$it" }}")
         foundPairs.addAll(items)
         itemToInstantFind = null
         activeInstantFinds--
@@ -110,25 +110,25 @@ class SuperpairsSolver {
         if(itemStack.item == Items.DIAMOND) {
             activeInstantFinds++
             potentialPair.clear()
-            println("found InstantFind: $activeInstantFinds")
+            WpcMod.logger.debug("found InstantFind: $activeInstantFinds")
         }
         if(itemStack.item in powerUps) return
 
         if(potentialPair.isEmpty()) {
             potentialPair.add(slotId)
-            println("added: $slotId")
+            WpcMod.logger.debug("added: $slotId")
             return
         }
 
         val screenHandler = MinecraftClient.getInstance().player?.currentScreenHandler ?: return
         val item = screenHandler.getSlot(potentialPair.first())
         if(item.stack.name == itemStack.name && item.stack.item == itemStack.item) {
-            println("found matching pair: $slotId with ${itemStack.name.string} -> ${potentialPair.first()} with ${item.stack.name.string}")
+            WpcMod.logger.debug("found matching pair: $slotId with ${itemStack.name.string} -> ${potentialPair.first()} with ${item.stack.name.string}")
             foundPairs.addAll(listOf(item.index, slotId))
         } else {
-            println("no matching pair found for $slotId")
+            WpcMod.logger.debug("no matching pair found for $slotId")
         }
-        println("resetting clicks")
+        WpcMod.logger.debug("resetting clicks")
         potentialPair.clear()
     }
 
@@ -137,18 +137,18 @@ class SuperpairsSolver {
         if(slotId > 53 || itemStack.isEmpty) return
         if(skyHanniRegex.matches(itemStack.name.string)) return
         itemToInstantFind?.let {
-            println("itemToInstantFind: ${itemToInstantFind?.name?.string}")
+            WpcMod.logger.debug("itemToInstantFind: ${itemToInstantFind?.name?.string}")
             if(itemStack.name == it.name && itemStack.item == it.item) handleInstantFind(itemStack)
         }
 
         if(slotsToRead.isNotEmpty() && slotId in slotsToRead) {
             superpairsMap[slotId] = itemStack
-            println("slotUpdate, mapping slot: $slotId to ${itemStack.name.string}")
+            WpcMod.logger.debug("slotUpdate, mapping slot: $slotId to ${itemStack.name.string}")
             if(activeInstantFinds > 0) {
-                println("slotUpdate, activeInstantFinds: $activeInstantFinds, ${itemStack.name.string}")
+                WpcMod.logger.debug("slotUpdate, activeInstantFinds: $activeInstantFinds, ${itemStack.name.string}")
                 handleInstantFind(itemStack)
             } else {
-                println("slotUpdate, checkForPairs: $slotId, ${itemStack.name.string}")
+                WpcMod.logger.debug("slotUpdate, checkForPairs: $slotId, ${itemStack.name.string}")
                 checkForPair(slotId, itemStack)
             }
             slotsToRead.removeIf { it == slotId }
