@@ -29,4 +29,8 @@ object ItemUtils {
         }
         return name
     }
+
+    fun ItemStack.isSimilar(otherItemStack: ItemStack): Boolean {
+        return this.isOf(otherItemStack.item) && this.getSearchName() == otherItemStack.getSearchName()
+    }
 }
