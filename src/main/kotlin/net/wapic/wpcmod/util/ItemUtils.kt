@@ -6,12 +6,13 @@ import net.minecraft.component.type.LoreComponent
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.text.Text
+import kotlin.jvm.optionals.getOrNull
 
 object ItemUtils {
 
     fun ItemStack.getHeadTexture(): String {
-        if(!this.isOf(Items.PLAYER_HEAD) && !this.contains(DataComponentTypes.PROFILE)) return ""
-        val profile = this.get(DataComponentTypes.PROFILE) ?: return ""
+        if(!this.isOf(Items.PLAYER_HEAD) && !contains(DataComponentTypes.PROFILE)) return ""
+        val profile = get(DataComponentTypes.PROFILE) ?: return ""
         return profile.properties.get("textures").map(Property::value).first() ?: ""
     }
 
@@ -20,9 +21,9 @@ object ItemUtils {
     }
 
     fun ItemStack.getSearchName(): String {
-        val name = this.name.string
+        val name = name.string
         if(name == "Enchanted Book") {
-            return this.getLore().first().string.trim()
+            return getLore().first().string.trim()
         }
         if(name.startsWith("[Lvl ")) {
             return name.substring("[Lvl ".length)
@@ -31,6 +32,11 @@ object ItemUtils {
     }
 
     fun ItemStack.isSimilar(otherItemStack: ItemStack): Boolean {
-        return this.isOf(otherItemStack.item) && this.getSearchName() == otherItemStack.getSearchName()
+        return isOf(otherItemStack.item) && getSearchName() == otherItemStack.getSearchName()
+    }
+
+    fun ItemStack.getSkyBlockID(): String? {
+        val nbt = get(DataComponentTypes.CUSTOM_DATA)?.copyNbt() ?: return null
+        return nbt.getCompoundOrEmpty("ExtraAttributes").getString("id").getOrNull()
     }
 }

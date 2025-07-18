@@ -12,6 +12,7 @@ import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.GuiEvents
 import net.wapic.wpcmod.events.InventoryEvents
 import net.wapic.wpcmod.events.ReplaceItemEvent
+import net.wapic.wpcmod.util.ItemUtils.isSimilar
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
 import java.awt.Color
@@ -24,15 +25,16 @@ class SuperpairsSolver {
     private var inSuperpairs: Boolean = false
 
     private val powerUps = listOf<Item>(Items.DIAMOND, Items.FEATHER, Items.LAPIS_BLOCK)
+    private val ignoredItems = listOf<Item>(Items.CLOCK, Items.BOOKSHELF, Items.BLACK_STAINED_GLASS_PANE)
 
     private val superpairsMap = mutableMapOf<Int, ItemStack>()
-    private val slotsToRead = mutableSetOf<Int>()
+    private val slotsToRead = mutableSetOf<Slot>()
 
     private val foundPairs = mutableSetOf<Int>()
-    private val potentialPair = mutableSetOf<Int>()
+    private var lastClickedSlot: Int? = null
 
+    private var itemToInstantFind: Slot? = null
     private var activeInstantFinds: Int = 0
-    private var itemToInstantFind: ItemStack? = null
 
     /**
      * REGEX-TEST: ?
@@ -62,10 +64,10 @@ class SuperpairsSolver {
         inSuperpairs = false
         superpairsMap.clear()
         slotsToRead.clear()
-        potentialPair.clear()
         foundPairs.clear()
         activeInstantFinds = 0
         itemToInstantFind = null
+        lastClickedSlot = null
     }
 
     fun onReplaceItem(inventoryContents: Array<ItemStack>, slot: Int, callbackInfoReturnable: CallbackInfoReturnable<ItemStack>) {
@@ -78,58 +80,64 @@ class SuperpairsSolver {
     fun onMouseClick(slot: Slot, slotId: Int, button: Int, slotActionType: SlotActionType, callbackInfo: CallbackInfo) {
         if(slot.inventory is PlayerInventory || !inSuperpairs || !config.superpairsSolver) return
 
-
         if(slotId !in superpairsMap.keys) {
             if (skyHanniRegex.matches(slot.stack.name.string)) {
-                slotsToRead.add(slotId)
-                WpcMod.logger.debug("adding slot to read: $slotId")
-            } else {
-                WpcMod.logger.debug("slotClick, mapping slot: $slotId to ${slot.stack.name.string}")
-                superpairsMap[slotId] = slot.stack
-                WpcMod.logger.debug("slotClick, checkForPairs: $slotId, ${slot.stack.name.string}")
-                checkForPair(slotId, slot.stack)
+                slotsToRead.add(slot)
+                return
             }
-        } else {
-            if(activeInstantFinds > 0) {
-               itemToInstantFind = slot.stack
-                WpcMod.logger.debug("slotClick, activeInstantFinds: $activeInstantFinds, ${itemToInstantFind?.name?.string}")
-            }
+            superpairsMap[slotId] = slot.stack
         }
+        checkForPair(slot)
     }
 
-    fun handleInstantFind(itemStack: ItemStack) {
-        val screenHandler = MinecraftClient.getInstance().player?.currentScreenHandler ?: return
-        val items = screenHandler.slots.filter { it.stack.name == itemStack.name && it.stack.item == itemStack.item }.map { it.index }
-        WpcMod.logger.debug("handledInstantFind result: ${items.joinToString { "$it" }}")
-        foundPairs.addAll(items)
-        itemToInstantFind = null
-        activeInstantFinds--
+    /**
+    * TEST CASES:
+    * InstantFind -> discoveredItem + undiscoveredItem before: success
+    * InstantFind -> discoveredItem + undiscoveredItem after: success
+    * InstantFind -> discoveredItem + discoveredItem: success
+    *
+    * InstantFind -> undiscoveredItem + undiscoveredItem before: success
+    * InstantFind -> undiscoveredItem + undiscoveredItem after: success
+    * InstantFind -> undiscoveredItem + discoveredItem: success
+    */
+    fun hasPair(itemStack: ItemStack): Boolean {
+        val screenHandler = MinecraftClient.getInstance().player?.currentScreenHandler ?: return false
+        val items = screenHandler.slots.filter { itemStack.isSimilar(it.stack) }.map { it.index }
+        if(items.size == 2) {
+            foundPairs.addAll(items)
+            activeInstantFinds--
+            return true
+        }
+        return false
     }
 
-    fun checkForPair(slotId: Int, itemStack: ItemStack) {
-        if(itemStack.item == Items.DIAMOND) {
-            activeInstantFinds++
-            potentialPair.clear()
-            WpcMod.logger.debug("found InstantFind: $activeInstantFinds")
-        }
-        if(itemStack.item in powerUps) return
-
-        if(potentialPair.isEmpty()) {
-            potentialPair.add(slotId)
-            WpcMod.logger.debug("added: $slotId")
+    fun checkForPair(slot: Slot) {
+        if(slot.stack.item !in powerUps && activeInstantFinds > 0) {
+            if(hasPair(slot.stack)) {
+                return
+            }
+            itemToInstantFind = slot
             return
         }
 
-        val screenHandler = MinecraftClient.getInstance().player?.currentScreenHandler ?: return
-        val item = screenHandler.getSlot(potentialPair.first())
-        if(item.stack.name == itemStack.name && item.stack.item == itemStack.item) {
-            WpcMod.logger.debug("found matching pair: $slotId with ${itemStack.name.string} -> ${potentialPair.first()} with ${item.stack.name.string}")
-            foundPairs.addAll(listOf(item.index, slotId))
-        } else {
-            WpcMod.logger.debug("no matching pair found for $slotId")
+        if(slot.stack.item == Items.DIAMOND) {
+            activeInstantFinds++
+            lastClickedSlot = null
+            return
         }
-        WpcMod.logger.debug("resetting clicks")
-        potentialPair.clear()
+
+        if(slot.stack.item in powerUps) return
+
+        lastClickedSlot?.let {
+            val item = MinecraftClient.getInstance().player?.currentScreenHandler?.getSlot(it) ?: return
+            if(item.stack.isSimilar(slot.stack)) {
+                foundPairs.addAll(listOf(item.index, slot.index))
+            }
+            lastClickedSlot = null
+            return
+        }
+
+        lastClickedSlot = slot.index
     }
 
     fun onSlotUpdate(syncId: Int, slotId: Int, itemStack: ItemStack) {
@@ -137,31 +145,24 @@ class SuperpairsSolver {
         if(slotId > 53 || itemStack.isEmpty) return
         if(skyHanniRegex.matches(itemStack.name.string)) return
         itemToInstantFind?.let {
-            WpcMod.logger.debug("itemToInstantFind: ${itemToInstantFind?.name?.string}")
-            if(itemStack.name == it.name && itemStack.item == it.item) handleInstantFind(itemStack)
+            if(it.stack.isSimilar(itemStack) && it.index != slotId) {
+                if(hasPair(itemStack)) itemToInstantFind = null
+            }
         }
 
-        if(slotsToRead.isNotEmpty() && slotId in slotsToRead) {
+        slotsToRead.find { it.index == slotId }?.let { slot ->
             superpairsMap[slotId] = itemStack
-            WpcMod.logger.debug("slotUpdate, mapping slot: $slotId to ${itemStack.name.string}")
-            if(activeInstantFinds > 0) {
-                WpcMod.logger.debug("slotUpdate, activeInstantFinds: $activeInstantFinds, ${itemStack.name.string}")
-                handleInstantFind(itemStack)
-            } else {
-                WpcMod.logger.debug("slotUpdate, checkForPairs: $slotId, ${itemStack.name.string}")
-                checkForPair(slotId, itemStack)
-            }
-            slotsToRead.removeIf { it == slotId }
+            checkForPair(slot)
+            slotsToRead.removeIf { it.index == slotId }
         }
     }
 
     fun onDrawSlot(drawContext: DrawContext, slot: Slot, callbackInfo: CallbackInfo) {
         if(slot.inventory is PlayerInventory || !inSuperpairs || !config.superpairsSolver) return
-        if(skyHanniRegex.matches(slot.stack.name.string)) return
-
+        if(slot.stack.item in ignoredItems || skyHanniRegex.matches(slot.stack.name.string)) return
 
         val inv = MinecraftClient.getInstance().player?.currentScreenHandler?.stacks
-        inv?.count { it.name == slot.stack.name && it.item == slot.stack.item }?.let {
+        inv?.count { it.isSimilar(slot.stack) }?.let {
             val color = if(it > 1) Color(255, 69, 0, 150) else Color(240,230,140)
             drawContext.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, color.rgb)
         }

@@ -16,7 +16,7 @@ object InventoryEvents {
         }
     }
 
-    /** Gets Called when a Screen with a new title is opened */
+    /** When a Screen with a new title is opened */
     @JvmField
     val CLOSE: Event<ClosedEvent> = EventFactory.createArrayBacked(ClosedEvent::class.java) { listeners ->
         ClosedEvent {
