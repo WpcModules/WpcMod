@@ -25,9 +25,10 @@ import net.minecraft.text.Text
 import net.wapic.wpcmod.config.ConfigManager
 import net.wapic.wpcmod.config.WpcConfig
 import net.wapic.wpcmod.features.dungeons.AutoCloseChests
-import net.wapic.wpcmod.features.general.DiscardHighlighter
 import net.wapic.wpcmod.features.galatea.GalateaESP
 import net.wapic.wpcmod.features.general.ArmorSwapper
+import net.wapic.wpcmod.features.general.DiscardHighlighter
+import net.wapic.wpcmod.features.general.PreventPlacingItems
 import net.wapic.wpcmod.features.general.experiments.AutoExperiments
 import net.wapic.wpcmod.features.general.experiments.SuperpairsSolver
 import net.wapic.wpcmod.features.general.shortcut.ShortcutHandler
@@ -117,6 +118,8 @@ object WpcMod : ModInitializer {
 		// General
 		ShortcutHandler()
 		ArmorSwapper()
+		PreventPlacingItems()
+		DiscardHighlighter()
 
 		//Experiments
 		AutoExperiments()

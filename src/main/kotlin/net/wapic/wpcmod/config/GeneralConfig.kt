@@ -1,13 +1,7 @@
 package net.wapic.wpcmod.config
 
 import com.google.gson.annotations.Expose
-import io.github.notenoughupdates.moulconfig.annotations.Accordion
-import io.github.notenoughupdates.moulconfig.annotations.Category
-import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorBoolean
-import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorButton
-import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorSlider
-import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorText
-import io.github.notenoughupdates.moulconfig.annotations.ConfigOption
+import io.github.notenoughupdates.moulconfig.annotations.*
 import net.minecraft.client.MinecraftClient
 import net.wapic.wpcmod.features.general.shortcut.ShortcutScreen
 
@@ -22,6 +16,11 @@ class GeneralConfig {
     @ConfigOption(name = "Armor Swapper", desc = "Instantly swap to Sorrow when Keybind is hit")
     @ConfigEditorBoolean
     var armorSwapper: Boolean = false
+
+    @Expose
+    @ConfigOption(name = "Prevent Placing Items", desc = "Prevent placing items such as Weird Tuba and Flower of Truth")
+    @ConfigEditorBoolean
+    var preventPlacing: Boolean = false
 
     @Expose
     @Transient
