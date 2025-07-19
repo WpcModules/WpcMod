@@ -25,13 +25,13 @@ class SuperpairsSolver {
     private var inSuperpairs: Boolean = false
 
     private val powerUps = listOf<Item>(Items.DIAMOND, Items.FEATHER, Items.LAPIS_BLOCK)
-    private val ignoredItems = listOf<Item>(Items.CLOCK, Items.BOOKSHELF, Items.BLACK_STAINED_GLASS_PANE)
+    private val ignoredItems = listOf<Item>(Items.CLOCK, Items.BOOKSHELF, Items.BLACK_STAINED_GLASS_PANE, Items.CAULDRON)
 
     private val superpairsMap = mutableMapOf<Int, ItemStack>()
     private val slotsToRead = mutableSetOf<Slot>()
 
     private val foundPairs = mutableSetOf<Int>()
-    private var lastClickedSlot: Int? = null
+    private var lastClickedSlot: Slot? = null
 
     private var itemToInstantFind: Slot? = null
     private var activeInstantFinds: Int = 0
@@ -90,16 +90,7 @@ class SuperpairsSolver {
         checkForPair(slot)
     }
 
-    /**
-    * TEST CASES:
-    * InstantFind -> discoveredItem + undiscoveredItem before: success
-    * InstantFind -> discoveredItem + undiscoveredItem after: success
-    * InstantFind -> discoveredItem + discoveredItem: success
-    *
-    * InstantFind -> undiscoveredItem + undiscoveredItem before: success
-    * InstantFind -> undiscoveredItem + undiscoveredItem after: success
-    * InstantFind -> undiscoveredItem + discoveredItem: success
-    */
+    //Titanic Experience Bottles??????
     fun hasPair(itemStack: ItemStack): Boolean {
         val screenHandler = MinecraftClient.getInstance().player?.currentScreenHandler ?: return false
         val items = screenHandler.slots.filter { itemStack.isSimilar(it.stack) }.map { it.index }
@@ -128,16 +119,18 @@ class SuperpairsSolver {
 
         if(slot.stack.item in powerUps) return
 
-        lastClickedSlot?.let {
-            val item = MinecraftClient.getInstance().player?.currentScreenHandler?.getSlot(it) ?: return
-            if(item.stack.isSimilar(slot.stack)) {
-                foundPairs.addAll(listOf(item.index, slot.index))
-            }
-            lastClickedSlot = null
+        if(lastClickedSlot == null) {
+            lastClickedSlot = slot
             return
         }
 
-        lastClickedSlot = slot.index
+        lastClickedSlot?.let {
+            if (it.stack.isSimilar(slot.stack)) {
+                foundPairs.addAll(listOf(it.index, slot.index))
+            }
+        }
+
+        lastClickedSlot = null
     }
 
     fun onSlotUpdate(syncId: Int, slotId: Int, itemStack: ItemStack) {
