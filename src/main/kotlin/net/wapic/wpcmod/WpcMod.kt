@@ -24,6 +24,7 @@ import net.minecraft.text.Style
 import net.minecraft.text.Text
 import net.wapic.wpcmod.config.ConfigManager
 import net.wapic.wpcmod.config.WpcConfig
+import net.wapic.wpcmod.features.dev.SkyBlockID
 import net.wapic.wpcmod.features.dungeons.AutoCloseChests
 import net.wapic.wpcmod.features.galatea.GalateaESP
 import net.wapic.wpcmod.features.general.ArmorSwapper
@@ -127,12 +128,14 @@ object WpcMod : ModInitializer {
 
 		// Dungeons
 		AutoCloseChests()
-		DiscardHighlighter()
 
 		// Galatea
 		GalateaESP()
 
 		// Kuudra
 		KuudraAutoGFS()
+
+		// Dev
+		SkyBlockID()
 	}
 }
