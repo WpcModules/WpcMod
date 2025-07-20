@@ -7,17 +7,14 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.minecraft.client.MinecraftClient
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.Utils
-import org.lwjgl.glfw.GLFW
 import java.io.File
 
 class ShortcutHandler {
 
-    var canTrigger = false
-
     init {
         ClientTickEvents.END_CLIENT_TICK.register(::onTick)
 
-        ClientLifecycleEvents.CLIENT_STARTED.register {
+        ClientLifecycleEvents.CLIENT_STARTED.register { client ->
             loadShortcuts()
         }
 
@@ -30,16 +27,11 @@ class ShortcutHandler {
         if(client.currentScreen != null) return
 
         allShortcuts.forEach { shortcut ->
-           if(shortcut.getKeyCode() == GLFW.GLFW_KEY_UNKNOWN || shortcut.getScanCode() == GLFW.GLFW_KEY_UNKNOWN) return@forEach
+            if(shortcut.isUnbound()) return@forEach
 
-           if(GLFW.glfwGetKey(client.window.handle, shortcut.getKeyCode()) == GLFW.GLFW_PRESS && canTrigger) {
-               Utils.addToCommandQueue(shortcut.getCommand())
-               canTrigger = false
-           }
-
-           if(GLFW.glfwGetKey(client.window.handle, shortcut.getKeyCode()) == GLFW.GLFW_RELEASE) {
-               canTrigger = true
-           }
+            while(shortcut.wasPressed()) {
+                Utils.addToCommandQueue(shortcut.getCommand())
+            }
         }
     }
 
@@ -53,6 +45,7 @@ class ShortcutHandler {
                 try {
                     WpcMod.logger.info("Loading shortcuts")
                     val loadedShortcuts: List<Shortcut> = gson.fromJson(saveFile.reader(), Array<Shortcut>::class.java).toList()
+                    loadedShortcuts.forEach(Shortcut::addToMap)
                     allShortcuts.addAll(loadedShortcuts)
                 } catch (e: Throwable) {
                     WpcMod.logger.error("Failed to read shotcuts file", e)

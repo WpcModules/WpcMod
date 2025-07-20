@@ -12,6 +12,7 @@
     "ClientPlayNetworkHandlerMixin",
     "DimensionTypeMixin",
     "HandledScreenMixin",
+    "KeyboardMixin",
     "SimpleInventoryMixin",
     "WorldRendererMixin"
   ]

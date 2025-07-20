@@ -13,10 +13,14 @@ class Shortcut {
     @Expose
     private var scanCode: Int
 
+    private var timesPressed: Int = 0
+    private var isPressed: Boolean = false
+
     constructor(command: String, keyCode: Int, scanCode: Int) {
         this.command = command
         this.keyCode = keyCode
         this.scanCode = scanCode
+        this.addToMap()
     }
 
     fun setBoundKey(keyCode: Int, scanCode: Int) {
@@ -24,12 +28,21 @@ class Shortcut {
         this.scanCode = scanCode
     }
 
+    fun wasPressed(): Boolean {
+        if (this.timesPressed == 0) {
+            return false
+        } else {
+            --this.timesPressed
+            return true
+        }
+    }
+
     fun getKeyCode(): Int {
         return this.keyCode
     }
 
     fun getScanCode(): Int {
-        return this.keyCode
+        return this.scanCode
     }
 
     fun getCommand(): String {
@@ -49,7 +62,12 @@ class Shortcut {
     }
 
     fun getBoundKeyText(): Text {
-        return Text.of(GLFW.glfwGetKeyName(keyCode, scanCode))
+        return Text.of(GLFW.glfwGetKeyName(this.keyCode, this.scanCode))
+    }
+
+    fun addToMap(){
+        KEYS_BY_ID.put(this.command, this)
+        KEY_TO_BINDINGS.put(this.keyCode, this)
     }
 
     companion object {
@@ -63,6 +81,17 @@ class Shortcut {
                 KEY_TO_BINDINGS.put(shortCuts.keyCode, shortCuts)
             }
         }
-    }
 
+        fun onKeyPressed(key: Int) {
+            KEY_TO_BINDINGS[key]?.let {
+                it.timesPressed++
+            }
+        }
+
+        fun setKeyPressed(key: Int, pressed: Boolean) {
+            KEY_TO_BINDINGS[key]?.let {
+                it.isPressed = pressed
+            }
+        }
+    }
 }

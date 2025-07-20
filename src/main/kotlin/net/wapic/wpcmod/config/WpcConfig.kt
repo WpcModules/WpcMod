@@ -32,6 +32,6 @@ class WpcConfig : Config() {
     var dungeonConfig: DungeonConfig = DungeonConfig()
 
     @Expose
-    @Category(name = "Dungeons", desc = "Configuration options for Dungeons")
+    @Category(name = "Dev", desc = "Development features")
     var devConfig: DevConfig = DevConfig()
 }

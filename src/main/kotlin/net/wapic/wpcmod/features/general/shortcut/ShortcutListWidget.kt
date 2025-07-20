@@ -19,6 +19,7 @@ class ShortcutListWidget : ElementListWidget<Entry> {
 
     constructor(parent: ShortcutScreen, client: MinecraftClient) : super(client, parent.width, parent.layout.contentHeight, parent.layout.headerHeight, 20) {
         this.parent = parent
+
         for (shortcut in ShortcutHandler.allShortcuts) {
             addShortcutEntry(shortcut)
         }

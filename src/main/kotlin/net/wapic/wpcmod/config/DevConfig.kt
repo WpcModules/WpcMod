@@ -1,4 +1,4 @@
-package net.wapic.wpcmod.config;
+package net.wapic.wpcmod.config
 
 import com.google.gson.annotations.Expose
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorBoolean
