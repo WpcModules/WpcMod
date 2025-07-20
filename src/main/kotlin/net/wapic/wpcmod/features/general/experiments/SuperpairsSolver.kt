@@ -78,7 +78,7 @@ class SuperpairsSolver {
     }
 
     fun onMouseClick(slot: Slot, slotId: Int, button: Int, slotActionType: SlotActionType, callbackInfo: CallbackInfo) {
-        if(slot.inventory is PlayerInventory || !inSuperpairs || !config.superpairsSolver) return
+        if(slot.inventory is PlayerInventory || !inSuperpairs || !config.superpairsSolver || slot.stack.item in ignoredItems) return
 
         if(slotId !in superpairsMap.keys) {
             if (skyHanniRegex.matches(slot.stack.name.string)) {
@@ -87,7 +87,7 @@ class SuperpairsSolver {
             }
             superpairsMap[slotId] = slot.stack
         }
-        checkForPair(slot)
+        if(lastClickedSlot?.index != slotId) checkForPair(slot)
     }
 
     //Titanic Experience Bottles??????
