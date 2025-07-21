@@ -24,6 +24,7 @@ import net.minecraft.text.Style
 import net.minecraft.text.Text
 import net.wapic.wpcmod.config.ConfigManager
 import net.wapic.wpcmod.config.WpcConfig
+import net.wapic.wpcmod.features.AutoGFS
 import net.wapic.wpcmod.features.dev.SkyBlockID
 import net.wapic.wpcmod.features.dungeons.AutoCloseChests
 import net.wapic.wpcmod.features.galatea.GalateaESP
@@ -34,8 +35,9 @@ import net.wapic.wpcmod.features.general.experiments.AutoExperiments
 import net.wapic.wpcmod.features.general.experiments.SuperpairsSolver
 import net.wapic.wpcmod.features.general.shortcut.ShortcutHandler
 import net.wapic.wpcmod.features.general.shortcut.ShortcutScreen
-import net.wapic.wpcmod.features.kuudra.KuudraAutoGFS
+import net.wapic.wpcmod.listeners.ChatListener
 import net.wapic.wpcmod.util.ChatUtils
+import net.wapic.wpcmod.util.SackUtils
 import net.wapic.wpcmod.util.Utils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -114,6 +116,8 @@ object WpcMod : ModInitializer {
 
 		/* Initialize Helpers */
 		Utils.init()
+		SackUtils.init()
+		ChatListener()
 
 		/* Initialize features */
 		// General
@@ -132,8 +136,8 @@ object WpcMod : ModInitializer {
 		// Galatea
 		GalateaESP()
 
-		// Kuudra
-		KuudraAutoGFS()
+		// Multi Category
+		AutoGFS()
 
 		// Dev
 		SkyBlockID()

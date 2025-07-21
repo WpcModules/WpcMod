@@ -20,10 +20,6 @@ object Utils {
         HypixelModAPI.getInstance().createHandler(ClientboundLocationPacket::class.java, ::onHypixelLocationPacket)
     }
 
-    fun getLocation(): Island? {
-        return location
-    }
-
     fun addToCommandQueue(command: String) {
         if(Util.getMeasuringTimeMs() - lastCommand < MIN_DELAY || commandQueue.isNotEmpty()){
             commandQueue.add(command)
@@ -31,16 +27,23 @@ object Utils {
         }
         runCommand(command)
     }
-    private fun runCommand(command: String) {
+
+    fun runCommand(command: String) {
         MinecraftClient.getInstance().networkHandler?.sendCommand(command.removePrefix("/"))
-        lastCommand = Util.getMeasuringTimeMs()
     }
 
     private fun onTick() {
-        if(Util.getMeasuringTimeMs() - lastCommand > MIN_DELAY && commandQueue.isNotEmpty()){
+        if(commandQueue.isEmpty()) return
+
+        if(Util.getMeasuringTimeMs() - lastCommand > MIN_DELAY){
             runCommand(commandQueue.first())
+            lastCommand = Util.getMeasuringTimeMs()
             commandQueue.removeFirst()
         }
+    }
+
+    fun getLocation(): Island? {
+        return location
     }
 
     private fun onHypixelLocationPacket(packet: ClientboundLocationPacket) {
