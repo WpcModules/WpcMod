@@ -41,27 +41,26 @@ class EndESP {
 
 		if(lock) return
 
-		val player = MinecraftClient.getInstance().player
-		val radius = config.endNodeSettings.radius.toInt()
+        val player = MinecraftClient.getInstance().player
+        val radius = config.endNodeSettings.radius.toDouble() * 2
 
-		val newEndNodes: MutableSet<Box> = mutableSetOf()
-		lock = true
-		player?.let {
-			for (x in -radius..radius) {
-				for (y in -radius..radius) {
-					for (z in -radius..radius) {
-						val pos = BlockPos.ofFloored(player.x + x, player.y + y, player.z + z)
-						if(world.getBlockState(pos).block == Blocks.PURPLE_TERRACOTTA) {
-							val box = Box.of(pos.toCenterPos(), 1.0, 1.0, 1.0)
-							newEndNodes.add(box)
-						}
-					}
-				}
-			}
-		}
-		lock = false
-		endNodes = newEndNodes
-	}
+        val newEndNodes: MutableSet<Box> = mutableSetOf()
+        lock = true
+
+        player?.let {
+            val pos = it.pos
+            val box = Box.from(pos.add(radius))
+
+            BlockPos.iterate(box).forEach { blockPos ->
+                if(world.getBlockState(blockPos).block == Blocks.PURPLE_TERRACOTTA) {
+                    newEndNodes.add(Box.of(blockPos.toCenterPos(), 1.0, 1.0, 1.0))
+                }
+            }
+        }
+
+        lock = false
+        endNodes = newEndNodes
+    }
 
 	private fun renderWorld(worldRenderContext: WorldRenderContext) {
 		if(Utils.getLocation() != Island.END) return
