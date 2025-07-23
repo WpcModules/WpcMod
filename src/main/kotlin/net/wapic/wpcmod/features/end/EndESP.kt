@@ -31,7 +31,7 @@ class EndESP {
 		when(entity) {
 			is EnderDragonEntity -> return ESPSettings(config.dragonSettings.box, config.dragonSettings.tracer, config.dragonSettings.color)
 		}
-		return ESPSettings(false, false, ChromaColour(1f,1f,1f,0,0xff))
+		return ESPSettings(box = false, tracer = false, color = ChromaColour(1f,1f,1f,0,0xff))
 	}
 
 	private var lock = false
@@ -67,7 +67,7 @@ class EndESP {
 
 		worldRenderContext.world().entities.forEach { entity ->
 			val settings = getSettings(entity)
-			if(settings.box) RenderUtils.drawBoundingBox(worldRenderContext, if(entity.boundingBox.averageSideLength == 0.0) entity.boundingBox.expand(0.5) else entity.boundingBox, color = settings.color.getEffectiveColour())
+			if(settings.box) RenderUtils.drawBoundingBox(worldRenderContext, entity.boundingBox, color = settings.color.getEffectiveColour())
 			if(settings.tracer) RenderUtils.drawTracer(worldRenderContext, entity.x, entity.y + entity.height / 2, entity.z, color = settings.color.getEffectiveColour())
 		}
 

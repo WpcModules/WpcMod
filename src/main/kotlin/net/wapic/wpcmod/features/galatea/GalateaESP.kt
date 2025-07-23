@@ -30,7 +30,7 @@ import net.wapic.wpcmod.util.render.RenderUtils
 
 class GalateaESP {
 
-    private val forestNodes: MutableSet<Box> = mutableSetOf()
+    private var forestNodes: MutableSet<Box> = mutableSetOf()
     private val config get() = WpcMod.config.galateaConfig.espSettings
     data class ESPSettings(var box: Boolean, var tracer: Boolean, var color: ChromaColour)
 
@@ -74,15 +74,16 @@ class GalateaESP {
         if(Utils.getLocation() != Island.GALATEA) return
         if(!config.forestNodeSettings.tracer && !config.forestNodeSettings.box) return
 
+        val newForestNodes = mutableSetOf<Box>()
         if(ParticleTypes.HAPPY_VILLAGER.type.equals(packet.parameters.type)) {
+
             val pos: BlockPos = BlockPos.ofFloored(packet.x, packet.y - 1, packet.z)
             val box = Box.of(pos.toCenterPos(), 1.0, 1.0, 1.0)
 
-            if(forestNodes.contains(box)) return
-
             val entities: List<DisplayEntity.ItemDisplayEntity> = world.getEntitiesByClass(DisplayEntity.ItemDisplayEntity::class.java, box) { true }
-            if(entities.count(::stringCount) == 3) forestNodes.add(box)
+            if(entities.count(::stringCount) == 3) newForestNodes.add(box)
         }
+        forestNodes = newForestNodes
     }
 
     private fun renderWorld(worldRenderContext: WorldRenderContext) {
