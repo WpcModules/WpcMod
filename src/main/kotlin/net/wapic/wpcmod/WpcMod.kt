@@ -55,7 +55,7 @@ object WpcMod : ModInitializer {
 	var config: WpcConfig = WpcConfig()
 
 	val version: Version by lazy { metadata.version }
-    val logger: Logger = LoggerFactory.getLogger("WpcMod")
+	val logger: Logger = LoggerFactory.getLogger("WpcMod")
 
 	val globalJob = Job()
 	val coroutineScope = CoroutineScope(EmptyCoroutineContext + CoroutineName("WpcMod") + SupervisorJob(globalJob))
@@ -137,8 +137,8 @@ object WpcMod : ModInitializer {
 		// Galatea
 		GalateaESP()
 
-        // End
-        EndESP()
+		// End
+		EndESP()
 
 		// Multi Category
 		AutoGFS()
