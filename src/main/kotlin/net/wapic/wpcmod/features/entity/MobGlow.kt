@@ -3,6 +3,7 @@ package net.wapic.wpcmod.features.entity
 import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EquipmentSlot
+import net.minecraft.entity.boss.dragon.EnderDragonEntity
 import net.minecraft.entity.decoration.ArmorStandEntity
 import net.minecraft.entity.mob.MagmaCubeEntity
 import net.minecraft.entity.mob.ShulkerEntity
@@ -36,6 +37,13 @@ object MobGlow {
                 is FrogEntity -> GlowOptions(config.galateaConfig.espSettings.frogSettings.glow, config.galateaConfig.espSettings.frogSettings.color)
                 is PandaEntity -> GlowOptions(config.galateaConfig.espSettings.pandaSettings.glow, config.galateaConfig.espSettings.pandaSettings.color)
                 is PufferfishEntity -> GlowOptions(config.galateaConfig.espSettings.pufferfishSettings.glow, config.galateaConfig.espSettings.pufferfishSettings.color)
+                else -> NO_GLOW
+            }
+        }
+
+        if(Utils.getLocation() == Island.END) {
+            return when(entity) {
+                is EnderDragonEntity -> GlowOptions(config.endConfig.espSettings.dragonSettings.glow, config.endConfig.espSettings.dragonSettings.color)
                 else -> NO_GLOW
             }
         }

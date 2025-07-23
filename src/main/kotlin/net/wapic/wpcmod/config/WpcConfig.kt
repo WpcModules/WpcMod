@@ -24,6 +24,10 @@ class WpcConfig : Config() {
     var galateaConfig: GalateaConfig = GalateaConfig()
 
     @Expose
+    @Category(name = "End", desc = "Configuration options for End")
+    var endConfig: EndConfig = EndConfig()
+
+    @Expose
     @Category(name = "Kuudra", desc = "Configuration options for Kuudra")
     var kuudraConfig: KuudraConfig = KuudraConfig()
 
