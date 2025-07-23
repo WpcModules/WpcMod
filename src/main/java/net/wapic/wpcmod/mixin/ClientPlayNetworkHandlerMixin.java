@@ -18,16 +18,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class ClientPlayNetworkHandlerMixin {
 
 	@Shadow
-    private ClientWorld world;
+	private ClientWorld world;
 
 	@Inject(at = @At("HEAD"), method = "onParticle")
 	private void onParticle(ParticleS2CPacket packet, CallbackInfo ci) {
-		ParticleEvents.SPAWN.invoker().onSpawn(packet, world);
+		if(world != null) {
+			ParticleEvents.SPAWN.invoker().onSpawn(packet, world);
+		}
 	}
 
 	@Inject(at = @At("HEAD"), method = "onPlaySound")
 	private void onPlaySound(PlaySoundS2CPacket packet, CallbackInfo ci) {
-		SoundEvents.PLAY.invoker().onPlaySound(packet, world);
+		if(world != null) {
+			SoundEvents.PLAY.invoker().onPlaySound(packet, world);
+		}
 	}
 
 	@Inject(at = @At("TAIL"), method = "onScreenHandlerSlotUpdate")
