@@ -20,8 +20,8 @@ class ShortcutListWidget : ElementListWidget<Entry> {
     constructor(parent: ShortcutScreen, client: MinecraftClient) : super(client, parent.width, parent.layout.contentHeight, parent.layout.headerHeight, 20) {
         this.parent = parent
 
-        for (shortcut in ShortcutHandler.allShortcuts) {
-            addShortcutEntry(shortcut)
+        ShortcutHandler.loadedShortcuts.forEach {
+            addShortcutEntry(it)
         }
     }
 
@@ -58,18 +58,18 @@ class ShortcutListWidget : ElementListWidget<Entry> {
             this.commandField.text = binding.getCommand()
             this.commandField.setChangedListener { command ->
                 binding.setCommand(command)
-                this.update()
+                this@ShortcutListWidget.update()
             }
 
             this.editButton = ButtonWidget.builder(Text.of("")) { button: ButtonWidget? ->
                 this@ShortcutListWidget.parent?.selectedShortcut = binding
-                this.update()
+                this@ShortcutListWidget.update()
             }.dimensions(0, 0, 75, 20).build()
 
             this.deleteButton = ButtonWidget.builder(Text.of("Delete")) { button: ButtonWidget? ->
                 this@ShortcutListWidget.removeEntry(this)
-                ShortcutHandler.allShortcuts.remove(binding)
-                this.update()
+                this@ShortcutListWidget.update()
+                ShortcutHandler.loadedShortcuts.removeIf { it == binding }
             }.dimensions(0, 0, 50, 20).build()
 
             this.update()
@@ -120,7 +120,7 @@ class ShortcutListWidget : ElementListWidget<Entry> {
 
             if (!this.binding.isUnbound()) {
 
-                for (shortcut in ShortcutHandler.allShortcuts) {
+                for (shortcut in ShortcutHandler.loadedShortcuts) {
                     if (shortcut !== this.binding && this.binding.equals(shortcut)) {
                         if (this.duplicate) {
                             mutableText.append(", ")

@@ -14,7 +14,7 @@ class ShortcutHandler {
     init {
         ClientTickEvents.END_CLIENT_TICK.register(::onTick)
 
-        ClientLifecycleEvents.CLIENT_STARTED.register { client ->
+        ClientLifecycleEvents.CLIENT_STARTED.register {
             loadShortcuts()
         }
 
@@ -26,29 +26,30 @@ class ShortcutHandler {
     private fun onTick(client: MinecraftClient) {
         if(client.currentScreen != null) return
 
-        allShortcuts.forEach { shortcut ->
+        loadedShortcuts.forEach { shortcut ->
             if(shortcut.isUnbound()) return@forEach
 
-            while(shortcut.wasPressed()) {
+            while(shortcut.wasPressed()){
                 Utils.addToCommandQueue(shortcut.getCommand())
             }
+
         }
     }
 
     companion object {
-        val allShortcuts: MutableList<Shortcut> = mutableListOf()
-        val saveFile = File("./config/wpcmod").resolve("shortcuts.json")
+        val saveFile = File(WpcMod.configDir, "shortcuts.json")
+        val loadedShortcuts = mutableListOf<Shortcut>()
         private val gson: Gson = GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().create()
 
         fun loadShortcuts() {
             if(saveFile.exists()) {
                 try {
                     WpcMod.logger.info("Loading shortcuts")
-                    val loadedShortcuts: List<Shortcut> = gson.fromJson(saveFile.reader(), Array<Shortcut>::class.java).toList()
+
+                    loadedShortcuts.addAll(gson.fromJson(saveFile.reader(), Array<Shortcut>::class.java).toList())
                     loadedShortcuts.forEach(Shortcut::addToMap)
-                    allShortcuts.addAll(loadedShortcuts)
                 } catch (e: Throwable) {
-                    WpcMod.logger.error("Failed to read shotcuts file", e)
+                    WpcMod.logger.error("Failed to read shortcuts file", e)
                     val backup = saveFile.resolveSibling("shortcuts-failed.json")
                     try {
                         WpcMod.logger.warn("Creating a backup of old file and loading default config", e)
@@ -63,8 +64,9 @@ class ShortcutHandler {
         fun saveShortcuts() {
             try {
                 WpcMod.logger.info("Saving shortcuts file")
-                saveFile.mkdirs()
-                saveFile.writeText(gson.toJson(allShortcuts))
+                saveFile.parentFile.mkdirs()
+                saveFile.createNewFile()
+                saveFile.writeText(gson.toJson(loadedShortcuts))
             } catch (e: Exception) {
                 WpcMod.logger.error("Failed to save shortcuts file", e)
                 throw e

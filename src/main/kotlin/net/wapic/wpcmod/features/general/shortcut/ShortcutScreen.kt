@@ -36,8 +36,8 @@ class ShortcutScreen : GameOptionsScreen(null, MinecraftClient.getInstance().opt
     override fun initFooter() {
         val newShortcut: ButtonWidget = ButtonWidget.builder(Text.of("New shortcut")) {
             val shortcut = Shortcut("", GLFW.GLFW_KEY_UNKNOWN, GLFW.GLFW_KEY_UNKNOWN)
-            ShortcutHandler.allShortcuts.add(shortcut)
             this.shortcutsList?.addShortcutEntry(shortcut)
+            ShortcutHandler.loadedShortcuts.add(shortcut)
         }.build()
         val close: ButtonWidget = ButtonWidget.builder(ScreenTexts.DONE) { close() }.build()
 
@@ -51,7 +51,7 @@ class ShortcutScreen : GameOptionsScreen(null, MinecraftClient.getInstance().opt
     }
 
     override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
-        this.selectedShortcut?.let {
+        if(this.selectedShortcut != null) {
             if (keyCode == 256) {
                 this.selectedShortcut?.setBoundKey(GLFW.GLFW_KEY_UNKNOWN, GLFW.GLFW_KEY_UNKNOWN)
             } else {
@@ -62,7 +62,8 @@ class ShortcutScreen : GameOptionsScreen(null, MinecraftClient.getInstance().opt
             this.lastKeyCodeUpdateTime = Util.getMeasuringTimeMs()
             this.shortcutsList?.update()
             return true
+        } else {
+            return super.keyPressed(keyCode, scanCode, modifiers)
         }
-        return super.keyPressed(keyCode, scanCode, modifiers)
     }
 }

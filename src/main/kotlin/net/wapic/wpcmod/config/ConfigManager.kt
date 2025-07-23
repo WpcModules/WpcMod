@@ -15,7 +15,7 @@ import java.nio.file.StandardCopyOption
 import kotlin.reflect.KMutableProperty0
 
 object ConfigManager {
-    private val file = File("config/wpcmod/config.json")
+    private val file = File(WpcMod.configDir, "config.json")
     private val backupFile = File(file.parentFile, "${file.name}.bak")
     private val tempFile = File(file.parentFile, "${file.name}.tmp")
     private var editor: MoulConfigEditor<WpcConfig>? = null

@@ -42,6 +42,7 @@ import net.wapic.wpcmod.util.SackUtils
 import net.wapic.wpcmod.util.Utils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.io.File
 import kotlin.coroutines.EmptyCoroutineContext
 
 object WpcMod : ModInitializer {
@@ -53,6 +54,7 @@ object WpcMod : ModInitializer {
 
 	@JvmField
 	var config: WpcConfig = WpcConfig()
+	val configDir = File("config/wpcmod")
 
 	val version: Version by lazy { metadata.version }
 	val logger: Logger = LoggerFactory.getLogger("WpcMod")

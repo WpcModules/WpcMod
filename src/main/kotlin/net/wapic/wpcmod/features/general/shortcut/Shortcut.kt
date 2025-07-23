@@ -21,7 +21,8 @@ class Shortcut {
         this.command = command
         this.keyCode = keyCode
         this.scanCode = scanCode
-        this.addToMap()
+        KEYS_BY_ID.add(this)
+        KEY_TO_BINDINGS.put(this.keyCode, this)
     }
 
     fun setBoundKey(keyCode: Int, scanCode: Int) {
@@ -36,14 +37,6 @@ class Shortcut {
             --this.timesPressed
             return true
         }
-    }
-
-    fun getKeyCode(): Int {
-        return this.keyCode
-    }
-
-    fun getScanCode(): Int {
-        return this.scanCode
     }
 
     fun getCommand(): String {
@@ -67,18 +60,18 @@ class Shortcut {
     }
 
     fun addToMap(){
-        KEYS_BY_ID.put(this.command, this)
+        KEYS_BY_ID.add(this)
         KEY_TO_BINDINGS.put(this.keyCode, this)
     }
 
     companion object {
-        private val KEYS_BY_ID: MutableMap<String, Shortcut> = Maps.newHashMap<String, Shortcut>()
+        private val KEYS_BY_ID: MutableList<Shortcut> = mutableListOf()
         private val KEY_TO_BINDINGS: MutableMap<Int, Shortcut> = Maps.newHashMap<Int, Shortcut>()
 
         fun updateKeysByCode() {
             KEY_TO_BINDINGS.clear()
 
-            for (shortCuts in KEYS_BY_ID.values) {
+            for (shortCuts in KEYS_BY_ID) {
                 KEY_TO_BINDINGS.put(shortCuts.keyCode, shortCuts)
             }
         }
