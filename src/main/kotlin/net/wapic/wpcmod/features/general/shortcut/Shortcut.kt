@@ -2,6 +2,7 @@ package net.wapic.wpcmod.features.general.shortcut
 
 import com.google.common.collect.Maps
 import com.google.gson.annotations.Expose
+import net.minecraft.client.util.InputUtil
 import net.minecraft.text.Text
 import org.lwjgl.glfw.GLFW
 
@@ -62,7 +63,7 @@ class Shortcut {
     }
 
     fun getBoundKeyText(): Text {
-        return Text.of(GLFW.glfwGetKeyName(this.keyCode, this.scanCode))
+        return InputUtil.fromKeyCode(this.keyCode, this.scanCode).localizedText
     }
 
     fun addToMap(){
