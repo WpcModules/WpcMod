@@ -4,30 +4,29 @@ import com.google.common.collect.Maps
 import com.google.gson.annotations.Expose
 import net.minecraft.client.util.InputUtil
 import net.minecraft.text.Text
-import org.lwjgl.glfw.GLFW
 
 class Shortcut {
     @Expose
     private var command: String
     @Expose
     private var keyCode: Int
-    @Expose
-    private var scanCode: Int
+    private var boundKey: InputUtil.Key
 
     private var timesPressed: Int = 0
     private var isPressed: Boolean = false
 
-    constructor(command: String, keyCode: Int, scanCode: Int) {
+    constructor(command: String, key: InputUtil.Key) {
         this.command = command
-        this.keyCode = keyCode
-        this.scanCode = scanCode
+        this.keyCode = key.code
+
+        this.boundKey = key
         KEYS_BY_ID.add(this)
-        KEY_TO_BINDINGS.put(this.keyCode, this)
+        KEY_TO_BINDINGS.put(key.code, this)
     }
 
-    fun setBoundKey(keyCode: Int, scanCode: Int) {
-        this.keyCode = keyCode
-        this.scanCode = scanCode
+    fun setBoundKey(key: InputUtil.Key) {
+        this.keyCode = key.code
+        this.boundKey = key
     }
 
     fun wasPressed(): Boolean {
@@ -52,14 +51,19 @@ class Shortcut {
     }
 
     fun isUnbound(): Boolean {
-        return this.keyCode == GLFW.GLFW_KEY_UNKNOWN
-    }
+        return this.boundKey == InputUtil.UNKNOWN_KEY
+	}
 
     fun getBoundKeyText(): Text {
-        return InputUtil.fromKeyCode(this.keyCode, this.scanCode).localizedText
+        return this.boundKey.localizedText
     }
 
     fun addToMap(){
+        if(this.keyCode in 0..7) {
+            this.boundKey = InputUtil.Type.MOUSE.createFromCode(this.keyCode)
+        } else {
+            this.boundKey = InputUtil.Type.KEYSYM.createFromCode(this.keyCode)
+        }
         KEYS_BY_ID.add(this)
         KEY_TO_BINDINGS.put(this.keyCode, this)
     }
@@ -71,19 +75,19 @@ class Shortcut {
         fun updateKeysByCode() {
             KEY_TO_BINDINGS.clear()
 
-            for (shortCuts in KEYS_BY_ID) {
-                KEY_TO_BINDINGS.put(shortCuts.keyCode, shortCuts)
+            for (shortCut in KEYS_BY_ID) {
+                KEY_TO_BINDINGS.put(shortCut.keyCode, shortCut)
             }
         }
 
-        fun onKeyPressed(key: Int) {
-            KEY_TO_BINDINGS[key]?.let {
+        fun onKeyPressed(key: InputUtil.Key) {
+            KEY_TO_BINDINGS[key.code]?.let {
                 it.timesPressed++
             }
         }
 
-        fun setKeyPressed(key: Int, pressed: Boolean) {
-            KEY_TO_BINDINGS[key]?.let {
+        fun setKeyPressed(key: InputUtil.Key, pressed: Boolean) {
+            KEY_TO_BINDINGS[key.code]?.let {
                 it.isPressed = pressed
             }
         }

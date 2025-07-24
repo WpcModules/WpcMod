@@ -4,10 +4,10 @@ import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.option.GameOptionsScreen
 import net.minecraft.client.gui.widget.ButtonWidget
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget
+import net.minecraft.client.util.InputUtil
 import net.minecraft.screen.ScreenTexts
 import net.minecraft.text.Text
 import net.minecraft.util.Util
-import org.lwjgl.glfw.GLFW
 
 class ShortcutScreen : GameOptionsScreen(null, MinecraftClient.getInstance().options, Text.of("Command Shortcuts")) {
 
@@ -35,7 +35,7 @@ class ShortcutScreen : GameOptionsScreen(null, MinecraftClient.getInstance().opt
 
     override fun initFooter() {
         val newShortcut: ButtonWidget = ButtonWidget.builder(Text.of("New shortcut")) {
-            val shortcut = Shortcut("", GLFW.GLFW_KEY_UNKNOWN, GLFW.GLFW_KEY_UNKNOWN)
+            val shortcut = Shortcut("", InputUtil.UNKNOWN_KEY)
             this.shortcutsList?.addShortcutEntry(shortcut)
             ShortcutHandler.loadedShortcuts.add(shortcut)
         }.build()
@@ -47,15 +47,23 @@ class ShortcutScreen : GameOptionsScreen(null, MinecraftClient.getInstance().opt
     }
 
     override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
-        return super.mouseClicked(mouseX, mouseY, button)
+        if (this.selectedShortcut != null) {
+            this.selectedShortcut?.setBoundKey(InputUtil.Type.MOUSE.createFromCode(button));
+            this.selectedShortcut = null;
+            this.shortcutsList?.update();
+            return true;
+        } else {
+            return super.mouseClicked(mouseX, mouseY, button);
+        }
+
     }
 
     override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
         if(this.selectedShortcut != null) {
             if (keyCode == 256) {
-                this.selectedShortcut?.setBoundKey(GLFW.GLFW_KEY_UNKNOWN, GLFW.GLFW_KEY_UNKNOWN)
+                this.selectedShortcut?.setBoundKey(InputUtil.UNKNOWN_KEY)
             } else {
-                this.selectedShortcut?.setBoundKey(keyCode, scanCode)
+                this.selectedShortcut?.setBoundKey(InputUtil.fromKeyCode(keyCode, scanCode))
             }
 
             this.selectedShortcut = null

@@ -13,6 +13,7 @@
     "DimensionTypeMixin",
     "HandledScreenMixin",
     "KeyboardMixin",
+    "MouseMixin",
     "SimpleInventoryMixin",
     "WorldRendererMixin"
   ]
