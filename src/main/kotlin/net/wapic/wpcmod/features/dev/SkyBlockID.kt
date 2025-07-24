@@ -10,15 +10,20 @@ import net.wapic.wpcmod.util.ItemUtils.getSkyBlockID
 
 class SkyBlockID {
 
-    private val config get() = WpcMod.config.devConfig
+	private val config get() = WpcMod.config.devConfig
 
-    init {
-        ItemTooltipCallback.EVENT.register(::onToolTipRender)
-    }
+	init {
+		ItemTooltipCallback.EVENT.register(::onToolTipRender)
+	}
 
-    fun onToolTipRender(stack: ItemStack, tooltipContext: Item.TooltipContext, type: TooltipType, lines: MutableList<Text>) {
-        if(!config.showSkyBlockID) return
-        val skyBlockID = stack.getSkyBlockID() ?: return
-        lines.add(Text.of(skyBlockID))
-    }
+	fun onToolTipRender(
+		stack: ItemStack,
+		tooltipContext: Item.TooltipContext,
+		type: TooltipType,
+		lines: MutableList<Text>
+	) {
+		if (!config.showSkyBlockID) return
+		val skyBlockID = stack.getSkyBlockID() ?: return
+		lines.add(Text.of(skyBlockID))
+	}
 }

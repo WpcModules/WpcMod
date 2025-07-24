@@ -20,6 +20,7 @@ class EndESP {
 
 	private var endNodes: MutableSet<Box> = mutableSetOf()
 	private val config get() = WpcMod.config.endConfig.espSettings
+
 	data class ESPSettings(var box: Boolean, var tracer: Boolean, var color: ChromaColour)
 
 	init {
@@ -28,18 +29,22 @@ class EndESP {
 	}
 
 	private fun getSettings(entity: Entity): ESPSettings {
-		when(entity) {
-			is EnderDragonEntity -> return ESPSettings(config.dragonSettings.box, config.dragonSettings.tracer, config.dragonSettings.color)
+		when (entity) {
+			is EnderDragonEntity -> return ESPSettings(
+				config.dragonSettings.box,
+				config.dragonSettings.tracer,
+				config.dragonSettings.color
+			)
 		}
-		return ESPSettings(box = false, tracer = false, color = ChromaColour(1f,1f,1f,0,0xff))
+		return ESPSettings(box = false, tracer = false, color = ChromaColour(1f, 1f, 1f, 0, 0xff))
 	}
 
 	private var lock = false
 	private fun worldTick(world: ClientWorld) {
-		if(Utils.getLocation() != Island.END) return
-		if(!config.endNodeSettings.tracer && !config.endNodeSettings.box) return
+		if (Utils.getLocation() != Island.END) return
+		if (!config.endNodeSettings.tracer && !config.endNodeSettings.box) return
 
-		if(lock) return
+		if (lock) return
 
 		val player = MinecraftClient.getInstance().player
 		val radius = config.endNodeSettings.radius.toDouble()
@@ -52,7 +57,7 @@ class EndESP {
 			val box = Box.from(pos).expand(radius)
 
 			BlockPos.iterate(box).forEach { blockPos ->
-				if(world.getBlockState(blockPos).block == Blocks.PURPLE_TERRACOTTA) {
+				if (world.getBlockState(blockPos).block == Blocks.PURPLE_TERRACOTTA) {
 					newEndNodes.add(Box.of(blockPos.toCenterPos(), 1.0, 1.0, 1.0))
 				}
 			}
@@ -63,17 +68,42 @@ class EndESP {
 	}
 
 	private fun renderWorld(worldRenderContext: WorldRenderContext) {
-		if(Utils.getLocation() != Island.END) return
+		if (Utils.getLocation() != Island.END) return
 
 		worldRenderContext.world().entities.forEach { entity ->
 			val settings = getSettings(entity)
-			if(settings.box) RenderUtils.drawBoundingBox(worldRenderContext, entity.boundingBox, color = settings.color.getEffectiveColour())
-			if(settings.tracer) RenderUtils.drawTracer(worldRenderContext, entity.x, entity.y + entity.height / 2, entity.z, color = settings.color.getEffectiveColour())
+			if (settings.box) RenderUtils.drawBoundingBox(
+				worldRenderContext,
+				entity.boundingBox,
+				color = settings.color.getEffectiveColour()
+			)
+			if (settings.tracer) RenderUtils.drawTracer(
+				worldRenderContext,
+				entity.x,
+				entity.y + entity.height / 2,
+				entity.z,
+				color = settings.color.getEffectiveColour()
+			)
 		}
 
 		endNodes.forEach { node ->
-			if(config.endNodeSettings.box) RenderUtils.drawBox(worldRenderContext, node.minX, node.minY, node.minZ, node.maxX, node.maxY, node.maxZ, color = config.endNodeSettings.color.getEffectiveColour())
-			if(config.endNodeSettings.tracer) RenderUtils.drawTracer(worldRenderContext, node.center.x, node.maxY, node.center.z, color = config.endNodeSettings.color.getEffectiveColour())
+			if (config.endNodeSettings.box) RenderUtils.drawBox(
+				worldRenderContext,
+				node.minX,
+				node.minY,
+				node.minZ,
+				node.maxX,
+				node.maxY,
+				node.maxZ,
+				color = config.endNodeSettings.color.getEffectiveColour()
+			)
+			if (config.endNodeSettings.tracer) RenderUtils.drawTracer(
+				worldRenderContext,
+				node.center.x,
+				node.maxY,
+				node.center.z,
+				color = config.endNodeSettings.color.getEffectiveColour()
+			)
 		}
 	}
 }

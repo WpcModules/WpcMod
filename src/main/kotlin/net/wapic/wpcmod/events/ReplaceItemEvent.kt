@@ -7,16 +7,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
 
 object ReplaceItemEvent {
 
-    @JvmField
-    val EVENT: Event<ReplaceEvent> = EventFactory.createArrayBacked(ReplaceEvent::class.java) { listeners ->
-        ReplaceEvent { originalItem, slot, cir ->
-            for (listener in listeners) {
-                listener.onItemReplaced(originalItem, slot, cir)
-            }
-        }
-    }
+	@JvmField
+	val EVENT: Event<ReplaceEvent> = EventFactory.createArrayBacked(ReplaceEvent::class.java) { listeners ->
+		ReplaceEvent { originalItem, slot, cir ->
+			for (listener in listeners) {
+				listener.onItemReplaced(originalItem, slot, cir)
+			}
+		}
+	}
 
-    fun interface ReplaceEvent {
-        fun onItemReplaced(originalItem: Array<ItemStack>, slot: Int, cir: CallbackInfoReturnable<ItemStack>)
-    }
+	fun interface ReplaceEvent {
+		fun onItemReplaced(originalItem: Array<ItemStack>, slot: Int, cir: CallbackInfoReturnable<ItemStack>)
+	}
 }

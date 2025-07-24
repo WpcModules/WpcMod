@@ -11,18 +11,18 @@ import java.awt.Color
 
 class DiscardHighlighter {
 
-    private val config get() = WpcMod.config.generalConfig.discardSettings
+	private val config get() = WpcMod.config.generalConfig.discardSettings
 
-    init {
-        GuiEvents.DRAW_SLOT_BACKGROUND.register(::onDrawSlot)
-    }
+	init {
+		GuiEvents.DRAW_SLOT_BACKGROUND.register(::onDrawSlot)
+	}
 
-    fun onDrawSlot(drawContext: DrawContext, slot: Slot, callbackInfo: CallbackInfo) {
-        if(!Screen.hasControlDown() || !config.discardHighlighter) return
-        val search = config.discardRegex.toRegex()
+	fun onDrawSlot(drawContext: DrawContext, slot: Slot, callbackInfo: CallbackInfo) {
+		if (!Screen.hasControlDown() || !config.discardHighlighter) return
+		val search = config.discardRegex.toRegex()
 
-        if(search.matches(slot.stack.getSearchName())) {
-            drawContext.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, Color(255, 0, 0).rgb)
-        }
-    }
+		if (search.matches(slot.stack.getSearchName())) {
+			drawContext.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, Color(255, 0, 0).rgb)
+		}
+	}
 }

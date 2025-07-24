@@ -13,14 +13,14 @@ import org.spongepowered.asm.mixin.injection.Slice;
 @Mixin(WorldRenderer.class)
 public class WorldRendererMixin {
 
-	@ModifyExpressionValue(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;hasOutline(Lnet/minecraft/entity/Entity;)Z"), method = {"getEntitiesToRender","renderEntities"}, require = 2)
+	@ModifyExpressionValue(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;hasOutline(Lnet/minecraft/entity/Entity;)Z"), method = {"getEntitiesToRender", "renderEntities"}, require = 2)
 	private boolean shouldMobGlow(boolean original, @Local Entity entity) {
 		MobGlow.GlowOptions glowOptions = MobGlow.INSTANCE.computeGlow(entity);
 		return glowOptions.getShouldGlow() || original;
 	}
 
-    @SuppressWarnings({"InvalidInjectorMethodSignature", "MixinAnnotationTarget"})
-    @ModifyVariable(method = "renderEntities",
+	@SuppressWarnings({"InvalidInjectorMethodSignature", "MixinAnnotationTarget"})
+	@ModifyVariable(method = "renderEntities",
 			slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;hasOutline(Lnet/minecraft/entity/Entity;)Z"),
 					to = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/OutlineVertexConsumerProvider;setColor(IIII)V")),
 			at = @At("STORE"), ordinal = 0

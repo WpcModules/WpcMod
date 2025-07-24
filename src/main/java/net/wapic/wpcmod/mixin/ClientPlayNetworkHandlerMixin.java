@@ -22,14 +22,14 @@ public abstract class ClientPlayNetworkHandlerMixin {
 
 	@Inject(at = @At("HEAD"), method = "onParticle")
 	private void onParticle(ParticleS2CPacket packet, CallbackInfo ci) {
-		if(world != null) {
+		if (world != null) {
 			ParticleEvents.SPAWN.invoker().onSpawn(packet, world);
 		}
 	}
 
 	@Inject(at = @At("HEAD"), method = "onPlaySound")
 	private void onPlaySound(PlaySoundS2CPacket packet, CallbackInfo ci) {
-		if(world != null) {
+		if (world != null) {
 			SoundEvents.PLAY.invoker().onPlaySound(packet, world);
 		}
 	}
@@ -48,7 +48,7 @@ public abstract class ClientPlayNetworkHandlerMixin {
 	private void onOpenScreen(OpenScreenS2CPacket packet, CallbackInfo ci) {
 		Screen currentScreen = MinecraftClient.getInstance().currentScreen;
 		String title = packet.getName().getString();
-		if(currentScreen != null && !currentScreen.getTitle().getString().equals(title)) {
+		if (currentScreen != null && !currentScreen.getTitle().getString().equals(title)) {
 			InventoryEvents.CLOSE.invoker().onClose();
 		}
 		InventoryEvents.OPEN.invoker().onOpen(title);

@@ -14,65 +14,78 @@ import org.lwjgl.glfw.GLFW
 
 class ArmorSwapper {
 
-    private val config get() = WpcMod.config.generalConfig
+	private val config get() = WpcMod.config.generalConfig
 
-    private val armorSwapBind: KeyBinding = KeyBindingHelper.registerKeyBinding(KeyBinding("Armor Swap", InputUtil.GLFW_KEY_V, "WpcMod"))
-    private val wardrobeTitle = "Wardrobe \\((?<page>[1-2])/2\\)".toRegex()
-    private var sorrowPiece = "(?:Ancient|Renowned) Sorrow Boots".toRegex()
-    private var shouldSwap = false
+	private val armorSwapBind: KeyBinding =
+		KeyBindingHelper.registerKeyBinding(KeyBinding("Armor Swap", InputUtil.GLFW_KEY_V, "WpcMod"))
+	private val wardrobeTitle = "Wardrobe \\((?<page>[1-2])/2\\)".toRegex()
+	private var sorrowPiece = "(?:Ancient|Renowned) Sorrow Boots".toRegex()
+	private var shouldSwap = false
 
-    private var sorrowSlot: Int? = null
-    private var lastArmorSlot: Int? = null
+	private var sorrowSlot: Int? = null
+	private var lastArmorSlot: Int? = null
 
-    init {
-        ClientTickEvents.END_CLIENT_TICK.register(::onTick)
-    }
+	init {
+		ClientTickEvents.END_CLIENT_TICK.register(::onTick)
+	}
 
-    private fun onTick(client: MinecraftClient) {
-        if(armorSwapBind.wasPressed() && config.armorSwapper){
-            Utils.addToCommandQueue("wardrobe")
-            shouldSwap = true
-        }
+	private fun onTick(client: MinecraftClient) {
+		if (armorSwapBind.wasPressed() && config.armorSwapper) {
+			Utils.addToCommandQueue("wardrobe")
+			shouldSwap = true
+		}
 
-        if(!shouldSwap) return
+		if (!shouldSwap) return
 
-        val screen = (client.currentScreen as? GenericContainerScreen) ?: return
-        if(!screen.title.string.contains(wardrobeTitle)) return
-        val inv = screen.screenHandler.inventory
+		val screen = (client.currentScreen as? GenericContainerScreen) ?: return
+		if (!screen.title.string.contains(wardrobeTitle)) return
+		val inv = screen.screenHandler.inventory
 
-        for (index in 27..inv.size() - 1) {
-            val stack = inv.getStack(index)
-            if(stack.item == Items.AIR) continue
+		for (index in 27..inv.size() - 1) {
+			val stack = inv.getStack(index)
+			if (stack.item == Items.AIR) continue
 
-            if(stack.name.string.matches(sorrowPiece)) {
-                sorrowSlot = index + 9
-            }
+			if (stack.name.string.matches(sorrowPiece)) {
+				sorrowSlot = index + 9
+			}
 
-            if(stack.name.string.contains("Equipped".toRegex())) {
-                if(sorrowSlot == index) {
-                    lastArmorSlot?.let {
-                        client.interactionManager?.clickSlot(screen.screenHandler.syncId, it, GLFW.GLFW_MOUSE_BUTTON_LEFT, SlotActionType.PICKUP, client.player)
-                    }
+			if (stack.name.string.contains("Equipped".toRegex())) {
+				if (sorrowSlot == index) {
+					lastArmorSlot?.let {
+						client.interactionManager?.clickSlot(
+							screen.screenHandler.syncId,
+							it,
+							GLFW.GLFW_MOUSE_BUTTON_LEFT,
+							SlotActionType.PICKUP,
+							client.player
+						)
+					}
 
-                    screen.close()
-                    shouldSwap = false
-                    sorrowSlot = null
-                    lastArmorSlot = null
-                } else {
-                    lastArmorSlot = index
-                    WpcMod.logger.info("set lastArmorSlot: $lastArmorSlot")
-                }
-            }
-        }
+					screen.close()
+					shouldSwap = false
+					sorrowSlot = null
+					lastArmorSlot = null
+				} else {
+					lastArmorSlot = index
+					WpcMod.logger.info("set lastArmorSlot: $lastArmorSlot")
+				}
+			}
+		}
 
-        sorrowSlot?.let {
-            if(inv.getStack(it) == null) return
-            if(!inv.getStack(it).name.string.contains("Ready")) return
+		sorrowSlot?.let {
+			if (inv.getStack(it) == null) return
+			if (!inv.getStack(it).name.string.contains("Ready")) return
 
-            client.interactionManager?.clickSlot(screen.screenHandler.syncId, it, GLFW.GLFW_MOUSE_BUTTON_LEFT, SlotActionType.PICKUP, client.player)
-            screen.close()
-            shouldSwap = false
-            sorrowSlot = null
-        }
-    }
+			client.interactionManager?.clickSlot(
+				screen.screenHandler.syncId,
+				it,
+				GLFW.GLFW_MOUSE_BUTTON_LEFT,
+				SlotActionType.PICKUP,
+				client.player
+			)
+			screen.close()
+			shouldSwap = false
+			sorrowSlot = null
+		}
+	}
 }
