@@ -25,6 +25,7 @@ import net.minecraft.text.Text
 import net.wapic.wpcmod.config.ConfigManager
 import net.wapic.wpcmod.config.WpcConfig
 import net.wapic.wpcmod.features.AutoGFS
+import net.wapic.wpcmod.features.SpamFilter
 import net.wapic.wpcmod.features.dev.SkyBlockID
 import net.wapic.wpcmod.features.dungeons.AutoCloseChests
 import net.wapic.wpcmod.features.end.EndESP
@@ -144,6 +145,9 @@ object WpcMod : ModInitializer {
 
 		// End
 		EndESP()
+
+		// Chat
+		SpamFilter()
 
 		// Multi Category
 		AutoGFS()

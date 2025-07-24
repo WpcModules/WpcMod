@@ -1,0 +1,90 @@
+package net.wapic.wpcmod.features
+
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
+import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
+import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback
+import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer
+import net.minecraft.client.MinecraftClient
+import net.minecraft.client.gui.DrawContext
+import net.minecraft.client.render.RenderTickCounter
+import net.minecraft.text.Text
+import net.minecraft.util.Identifier
+import net.minecraft.util.math.MathHelper
+import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.config.ChatConfig
+
+class SpamFilter {
+
+	private val config get() = WpcMod.config.chatConfig.spamConfig
+
+	private val notifyQueue = mutableListOf<Notification>()
+
+	private val abilityRegex =
+		"^Your (\\w+) hit (\\d+) enem(?:y|ies) for (\\d+(?:,\\d+)*(\\.\\d+)?) damage\\.$".toRegex()
+	private val tpFailRegex = "^There are blocks in the way!$".toRegex()
+	private val killComboRegex =
+		"\\+\\d+ Kill Combo(?: \\+\\d+[%☯]? (?:✯ Magic Find|coins per kill|Combat Wisdom))?".toRegex()
+	private val joinOrLeaveRegex = "^(?:Friend|Guild) > \\w+ (?:joined|left)\\.$".toRegex()
+
+	data class Notification(val text: Text, var delay: Int) {
+		var x = MinecraftClient.getInstance().textRenderer.getWidth(text.string)
+	}
+
+	init {
+		ClientReceiveMessageEvents.ALLOW_GAME.register(::onMessageReceived)
+		ClientTickEvents.END_CLIENT_TICK.register(::onTick)
+		HudLayerRegistrationCallback.EVENT.register { layeredDrawer ->
+			layeredDrawer.attachLayerAfter(
+				IdentifiedLayer.EXPERIENCE_LEVEL,
+				IdentifiedLayer.of(Identifier.of("wpcmod", "hud"), ::onRenderHud)
+			)
+		}
+	}
+
+	fun onTick(client: MinecraftClient) {
+		notifyQueue.toList().forEach { notification ->
+			if (notification.delay == 0) notifyQueue.removeIf { it == notification }
+			notification.delay--
+		}
+	}
+
+	fun addToNotifyQueue(text: Text) {
+		notifyQueue.add(Notification(text, 30))
+	}
+
+	fun handle(spamType: ChatConfig.SpamType, text: Text): Boolean {
+		when (spamType) {
+			ChatConfig.SpamType.SHOW -> return true
+			ChatConfig.SpamType.HIDE -> return false
+			ChatConfig.SpamType.NOTIFICATION -> {
+				addToNotifyQueue(text)
+				return false
+			}
+		}
+	}
+
+	fun onRenderHud(drawContext: DrawContext, tickCounter: RenderTickCounter) {
+		val mc = MinecraftClient.getInstance()
+		var y = drawContext.scaledWindowHeight - 48
+
+		for (notification in notifyQueue.toList()) {
+			val width = mc.textRenderer.getWidth(notification.text)
+			val x1 = (drawContext.scaledWindowWidth - width) + notification.x
+			drawContext.fill(x1, y - 2, x1 + width, y + 10, 0xaa121212.toInt())
+			drawContext.drawText(mc.textRenderer, notification.text, x1, y, 0xffffff, false)
+			y -= 12
+			notification.x = MathHelper.lerp(tickCounter.dynamicDeltaTicks, notification.x, -12)
+		}
+	}
+
+	fun onMessageReceived(text: Text, actionBar: Boolean): Boolean {
+		if (!actionBar) {
+			if (text.string.matches(abilityRegex)) return handle(config.abilityHit, text)
+			if (text.string.matches(tpFailRegex)) return handle(config.tpFail, text)
+			if (text.string.matches(killComboRegex)) return handle(config.killCombo, text)
+			if (text.string.matches(joinOrLeaveRegex)) return handle(config.joinOrLeave, text)
+			return true
+		}
+		return true
+	}
+}
