@@ -14,13 +14,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(SimpleInventory.class)
 public class SimpleInventoryMixin {
 
-    @Shadow
-    @Final
-    public DefaultedList<ItemStack> heldStacks;
+	@Shadow
+	@Final
+	public DefaultedList<ItemStack> heldStacks;
 
-    @Inject(method = "getStack", at = @At("HEAD"), cancellable = true)
-    public void getStack(int slot, CallbackInfoReturnable<ItemStack> cir) {
-        ItemStack[] stacks = this.heldStacks.toArray(new ItemStack[0]);
-        ReplaceItemEvent.EVENT.invoker().onItemReplaced(stacks, slot, cir);
-    }
+	@Inject(method = "getStack", at = @At("HEAD"), cancellable = true)
+	public void getStack(int slot, CallbackInfoReturnable<ItemStack> cir) {
+		ItemStack[] stacks = this.heldStacks.toArray(new ItemStack[0]);
+		ReplaceItemEvent.EVENT.invoker().onItemReplaced(stacks, slot, cir);
+	}
 }

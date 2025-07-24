@@ -6,8 +6,8 @@ import io.github.notenoughupdates.moulconfig.annotations.ConfigOption
 
 class DevConfig {
 
-    @Expose
-    @ConfigOption(name = "Show SkyBlock ID", desc = "Shows SkyBlock ID in lore")
-    @ConfigEditorBoolean
-    var showSkyBlockID: Boolean = false
+	@Expose
+	@ConfigOption(name = "Show SkyBlock ID", desc = "Shows SkyBlock ID in lore")
+	@ConfigEditorBoolean
+	var showSkyBlockID: Boolean = false
 }

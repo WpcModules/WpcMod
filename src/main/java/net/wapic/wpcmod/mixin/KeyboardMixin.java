@@ -14,17 +14,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Keyboard.class)
 public class KeyboardMixin {
 
-    @Shadow @Final private MinecraftClient client;
+	@Shadow
+	@Final
+	private MinecraftClient client;
 
-    @Inject(at = @At("TAIL"), method = "onKey")
-    private void onKey(long window, int key, int scancode, int action, int modifiers, CallbackInfo ci) {
-        if(this.client.currentScreen == null) {
-            if(action == 0) {
-                Shortcut.Companion.setKeyPressed(InputUtil.Type.KEYSYM.createFromCode(key), false);
-            } else {
-                Shortcut.Companion.setKeyPressed(InputUtil.Type.KEYSYM.createFromCode(key), true);
-                Shortcut.Companion.onKeyPressed(InputUtil.Type.KEYSYM.createFromCode(key));
-            }
-        }
-    }
+	@Inject(at = @At("TAIL"), method = "onKey")
+	private void onKey(long window, int key, int scancode, int action, int modifiers, CallbackInfo ci) {
+		if (this.client.currentScreen == null) {
+			if (action == 0) {
+				Shortcut.Companion.setKeyPressed(InputUtil.Type.KEYSYM.createFromCode(key), false);
+			} else {
+				Shortcut.Companion.setKeyPressed(InputUtil.Type.KEYSYM.createFromCode(key), true);
+				Shortcut.Companion.onKeyPressed(InputUtil.Type.KEYSYM.createFromCode(key));
+			}
+		}
+	}
 }

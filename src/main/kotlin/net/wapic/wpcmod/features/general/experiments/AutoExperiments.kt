@@ -17,121 +17,146 @@ import org.lwjgl.glfw.GLFW
 
 class AutoExperiments {
 
-    private val config get() = WpcMod.config.generalConfig.experimentSettings
+	private val config get() = WpcMod.config.generalConfig.experimentSettings
 
-    private var currentExperiment = ExperimentType.NONE
+	private var currentExperiment = ExperimentType.NONE
 
-    private var ultrasequencerOrder = HashMap<Int, Int>()
-    private val chronomatronOrder = ArrayList<Int>(28)
+	private var ultrasequencerOrder = HashMap<Int, Int>()
+	private val chronomatronOrder = ArrayList<Int>(28)
 
-    private var hasAdded = false
-    private var lastAdded = 0
+	private var hasAdded = false
+	private var lastAdded = 0
 
-    private var clicks = 0
-    private var lastClickTime = 0L
+	private var clicks = 0
+	private var lastClickTime = 0L
 
-    private var handledScreen: GenericContainerScreenHandler? = null
+	private var handledScreen: GenericContainerScreenHandler? = null
 
-    private val ultraSequenceItems = listOf<Item>(
-        Items.WHITE_DYE, Items.BROWN_DYE, Items.BLACK_DYE, Items.BLUE_DYE, Items.GRAY_DYE, Items.LIGHT_GRAY_DYE, //Unused modern dyes, we leave them here just in case
-        Items.BONE_MEAL, Items.LAPIS_LAZULI, Items.RED_DYE,
-        Items.GREEN_DYE, Items.CYAN_DYE, Items.LIGHT_BLUE_DYE,
-        Items.LIME_DYE, Items.MAGENTA_DYE, Items.ORANGE_DYE,
-        Items.PINK_DYE, Items.PURPLE_DYE, Items.YELLOW_DYE
-    )
+	private val ultraSequenceItems = listOf<Item>(
+		Items.WHITE_DYE,
+		Items.BROWN_DYE,
+		Items.BLACK_DYE,
+		Items.BLUE_DYE,
+		Items.GRAY_DYE,
+		Items.LIGHT_GRAY_DYE, //Unused modern dyes, we leave them here just in case
+		Items.BONE_MEAL,
+		Items.LAPIS_LAZULI,
+		Items.RED_DYE,
+		Items.GREEN_DYE,
+		Items.CYAN_DYE,
+		Items.LIGHT_BLUE_DYE,
+		Items.LIME_DYE,
+		Items.MAGENTA_DYE,
+		Items.ORANGE_DYE,
+		Items.PINK_DYE,
+		Items.PURPLE_DYE,
+		Items.YELLOW_DYE
+	)
 
-    init {
-        ScreenEvents.AFTER_INIT.register { _, screen, _, _ ->  onScreenInit(screen) }
-    }
+	init {
+		ScreenEvents.AFTER_INIT.register { _, screen, _, _ -> onScreenInit(screen) }
+	}
 
-    private fun reset() {
-        currentExperiment = ExperimentType.NONE
-        ultrasequencerOrder.clear()
-        chronomatronOrder.clear()
-        hasAdded = false
-        lastAdded = 0
-    }
+	private fun reset() {
+		currentExperiment = ExperimentType.NONE
+		ultrasequencerOrder.clear()
+		chronomatronOrder.clear()
+		hasAdded = false
+		lastAdded = 0
+	}
 
-    private fun onScreenInit(screen: Screen) {
-        reset()
+	private fun onScreenInit(screen: Screen) {
+		reset()
 
-        if(Utils.getLocation() != Island.PRIVATE_ISLAND || !config.autoExperiments) return
-        handledScreen = (screen as? GenericContainerScreen)?.screenHandler ?: return
+		if (Utils.getLocation() != Island.PRIVATE_ISLAND || !config.autoExperiments) return
+		handledScreen = (screen as? GenericContainerScreen)?.screenHandler ?: return
 
-        currentExperiment = when {
-            screen.title.string.startsWith("Chronomatron") -> ExperimentType.CHRONOMATRON
-            screen.title.string.startsWith("Ultrasequencer") -> ExperimentType.ULTRASEQUENCER
-            else -> ExperimentType.NONE
-        }
+		currentExperiment = when {
+			screen.title.string.startsWith("Chronomatron") -> ExperimentType.CHRONOMATRON
+			screen.title.string.startsWith("Ultrasequencer") -> ExperimentType.ULTRASEQUENCER
+			else -> ExperimentType.NONE
+		}
 
 
-        ScreenEvents.afterRender(screen).register { screen, _, _, _, _ -> onScreenRender(screen) }
-    }
+		ScreenEvents.afterRender(screen).register { screen, _, _, _, _ -> onScreenRender(screen) }
+	}
 
-    private fun onScreenRender(screen: Screen) {
-       if(Utils.getLocation() != Island.PRIVATE_ISLAND || !config.autoExperiments) return
+	private fun onScreenRender(screen: Screen) {
+		if (Utils.getLocation() != Island.PRIVATE_ISLAND || !config.autoExperiments) return
 
-        (screen as? GenericContainerScreen)?.screenHandler?.inventory?.takeIf { it.size() >= 54 }?.let {
-            when (currentExperiment) {
-                ExperimentType.CHRONOMATRON -> solveChronomatron(it)
-                ExperimentType.ULTRASEQUENCER -> solveUltrasequencer(it)
-                else -> return
-            }
-        }
-    }
+		(screen as? GenericContainerScreen)?.screenHandler?.inventory?.takeIf { it.size() >= 54 }?.let {
+			when (currentExperiment) {
+				ExperimentType.CHRONOMATRON -> solveChronomatron(it)
+				ExperimentType.ULTRASEQUENCER -> solveUltrasequencer(it)
+				else -> return
+			}
+		}
+	}
 
-    private fun solveChronomatron(inventory: Inventory) {
-        if(inventory.getStack(49).item == Blocks.GLOWSTONE.asItem() && !inventory.getStack(lastAdded).hasGlint()) {
-            hasAdded = false
-            if(config.autoClose && chronomatronOrder.size > 11 - config.serumCount) MinecraftClient.getInstance().currentScreen?.close()
-        }
+	private fun solveChronomatron(inventory: Inventory) {
+		if (inventory.getStack(49).item == Blocks.GLOWSTONE.asItem() && !inventory.getStack(lastAdded).hasGlint()) {
+			hasAdded = false
+			if (config.autoClose && chronomatronOrder.size > 11 - config.serumCount) MinecraftClient.getInstance().currentScreen?.close()
+		}
 
-        if(!hasAdded && inventory.getStack(49).item == Items.CLOCK) {
-            inventory.withIndex().find { (i, stack) -> i in 9..44 && stack.hasGlint() }?.let {
-                chronomatronOrder.add(it.index)
-                lastAdded = it.index
-                hasAdded = true
-                clicks = 0
-            }
-        }
+		if (!hasAdded && inventory.getStack(49).item == Items.CLOCK) {
+			inventory.withIndex().find { (i, stack) -> i in 9..44 && stack.hasGlint() }?.let {
+				chronomatronOrder.add(it.index)
+				lastAdded = it.index
+				hasAdded = true
+				clicks = 0
+			}
+		}
 
-        if(hasAdded && inventory.getStack(49).item  == Items.CLOCK && chronomatronOrder.size > clicks && System.currentTimeMillis() - lastClickTime > config.clickDelay) {
-            handledScreen?.let {
-                MinecraftClient.getInstance().interactionManager?.clickSlot(it.syncId, chronomatronOrder[clicks], GLFW.GLFW_MOUSE_BUTTON_MIDDLE, SlotActionType.CLONE, MinecraftClient.getInstance().player)
-                lastClickTime = System.currentTimeMillis()
-                clicks++
-            }
-        }
-    }
+		if (hasAdded && inventory.getStack(49).item == Items.CLOCK && chronomatronOrder.size > clicks && System.currentTimeMillis() - lastClickTime > config.clickDelay) {
+			handledScreen?.let {
+				MinecraftClient.getInstance().interactionManager?.clickSlot(
+					it.syncId,
+					chronomatronOrder[clicks],
+					GLFW.GLFW_MOUSE_BUTTON_MIDDLE,
+					SlotActionType.CLONE,
+					MinecraftClient.getInstance().player
+				)
+				lastClickTime = System.currentTimeMillis()
+				clicks++
+			}
+		}
+	}
 
-    private fun solveUltrasequencer(inventory: Inventory) {
-        if(inventory.getStack(49).item == Items.CLOCK) hasAdded = false
+	private fun solveUltrasequencer(inventory: Inventory) {
+		if (inventory.getStack(49).item == Items.CLOCK) hasAdded = false
 
-        if(!hasAdded && inventory.getStack(49).item == Blocks.GLOWSTONE.asItem()) {
-            if(inventory.getStack(44) == Items.AIR) return
-            ultrasequencerOrder.clear()
-            inventory.withIndex().forEach { (i, stack) ->
-                if(i in 9..44 && ultraSequenceItems.contains(stack.item)) ultrasequencerOrder[stack.count - 1] = i
-            }
-            hasAdded = true
-            clicks = 0
-            if(config.autoClose && ultrasequencerOrder.size > 9 - config.serumCount) MinecraftClient.getInstance().currentScreen?.close()
-        }
+		if (!hasAdded && inventory.getStack(49).item == Blocks.GLOWSTONE.asItem()) {
+			if (inventory.getStack(44) == Items.AIR) return
+			ultrasequencerOrder.clear()
+			inventory.withIndex().forEach { (i, stack) ->
+				if (i in 9..44 && ultraSequenceItems.contains(stack.item)) ultrasequencerOrder[stack.count - 1] = i
+			}
+			hasAdded = true
+			clicks = 0
+			if (config.autoClose && ultrasequencerOrder.size > 9 - config.serumCount) MinecraftClient.getInstance().currentScreen?.close()
+		}
 
-        if(inventory.getStack(49).item  == Items.CLOCK && ultrasequencerOrder.contains(clicks) && System.currentTimeMillis() - lastClickTime > config.clickDelay) {
-            handledScreen?.let { screenHandler ->
-                ultrasequencerOrder[clicks]?.let {
-                    MinecraftClient.getInstance().interactionManager?.clickSlot(screenHandler.syncId, it, GLFW.GLFW_MOUSE_BUTTON_MIDDLE, SlotActionType.CLONE, MinecraftClient.getInstance().player)
-                }
-                lastClickTime = System.currentTimeMillis()
-                clicks++
-            }
-        }
-    }
+		if (inventory.getStack(49).item == Items.CLOCK && ultrasequencerOrder.contains(clicks) && System.currentTimeMillis() - lastClickTime > config.clickDelay) {
+			handledScreen?.let { screenHandler ->
+				ultrasequencerOrder[clicks]?.let {
+					MinecraftClient.getInstance().interactionManager?.clickSlot(
+						screenHandler.syncId,
+						it,
+						GLFW.GLFW_MOUSE_BUTTON_MIDDLE,
+						SlotActionType.CLONE,
+						MinecraftClient.getInstance().player
+					)
+				}
+				lastClickTime = System.currentTimeMillis()
+				clicks++
+			}
+		}
+	}
 
-    private enum class ExperimentType {
-        CHRONOMATRON,
-        ULTRASEQUENCER,
-        NONE
-    }
+	private enum class ExperimentType {
+		CHRONOMATRON,
+		ULTRASEQUENCER,
+		NONE
+	}
 }

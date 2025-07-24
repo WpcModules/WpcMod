@@ -75,8 +75,8 @@ object WpcMod : ModInitializer {
 		val future = updateContext.checkUpdate("upstream")
 		val potentialUpdate = future.get()
 
-		ClientCommandRegistrationCallback.EVENT.register {
-			dispatcher, registryAccess -> dispatcher.register (
+		ClientCommandRegistrationCallback.EVENT.register { dispatcher, registryAccess ->
+			dispatcher.register(
 				ClientCommandManager.literal("wpcmod").executes { context ->
 					MinecraftClient.getInstance().send {
 						IMinecraft.instance.openWrappedScreen(ConfigManager.getEditor())
@@ -88,7 +88,7 @@ object WpcMod : ModInitializer {
 					}
 					0
 				}).then(ClientCommandManager.literal("update").executes {
-					if(potentialUpdate.isUpdateAvailable) {
+					if (potentialUpdate.isUpdateAvailable) {
 						ChatUtils.sendMessage("Launching update...")
 						potentialUpdate.launchUpdate().thenRun {
 							ChatUtils.sendMessage("Download complete! Update will apply after you restart")
@@ -102,13 +102,16 @@ object WpcMod : ModInitializer {
 		}
 
 		ClientPlayConnectionEvents.JOIN.register { handler, sender, client ->
-			if((potentialUpdate.isUpdateAvailable || FabricLoader.getInstance().isDevelopmentEnvironment) && !updateNotified) {
+			if ((potentialUpdate.isUpdateAvailable || FabricLoader.getInstance().isDevelopmentEnvironment) && !updateNotified) {
 				updateNotified = true
-				ChatUtils.sendMessage("Update found: §e${updateContext.currentVersion.display()}§r. -> §e${potentialUpdate.update.versionName}§r Click here to update", Style.EMPTY.withHoverEvent(
-					HoverEvent.ShowText(Text.of("Click to update"))
-				).withClickEvent(
-					ClickEvent.RunCommand("/wpcmod update")
-				))
+				ChatUtils.sendMessage(
+					"Update found: §e${updateContext.currentVersion.display()}§r. -> §e${potentialUpdate.update.versionName}§r Click here to update",
+					Style.EMPTY.withHoverEvent(
+						HoverEvent.ShowText(Text.of("Click to update"))
+					).withClickEvent(
+						ClickEvent.RunCommand("/wpcmod update")
+					)
+				)
 			}
 		}
 

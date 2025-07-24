@@ -6,29 +6,29 @@ import net.minecraft.util.Util
 import net.wapic.wpcmod.util.ItemUtils.getSkyBlockID
 
 object SackUtils {
-    private val gfsQueue: MutableList<String> = mutableListOf()
-    private var lastCommand: Long = 0
-    private const val COMMAND_DELAY: Long = 1500
+	private val gfsQueue: MutableList<String> = mutableListOf()
+	private var lastCommand: Long = 0
+	private const val COMMAND_DELAY: Long = 1500
 
-    fun init(){
-        ClientTickEvents.END_CLIENT_TICK.register(::onTick)
-    }
+	fun init() {
+		ClientTickEvents.END_CLIENT_TICK.register(::onTick)
+	}
 
-    private fun onTick(client: MinecraftClient){
-        if(gfsQueue.isEmpty()) return
+	private fun onTick(client: MinecraftClient) {
+		if (gfsQueue.isEmpty()) return
 
-        if(Util.getMeasuringTimeMs() - lastCommand >= COMMAND_DELAY) {
-            val command = gfsQueue.first()
-            Utils.runCommand(command)
-            gfsQueue.removeFirst()
-            lastCommand = Util.getMeasuringTimeMs()
-        }
-    }
+		if (Util.getMeasuringTimeMs() - lastCommand >= COMMAND_DELAY) {
+			val command = gfsQueue.first()
+			Utils.runCommand(command)
+			gfsQueue.removeFirst()
+			lastCommand = Util.getMeasuringTimeMs()
+		}
+	}
 
-    fun getFromSack(item: String, maxStackSize: Int) {
-        MinecraftClient.getInstance().player?.inventory?.let { inv ->
-            val stackSize = inv.find { it.getSkyBlockID() == item }?.count ?: 0
-            if(stackSize != maxStackSize) gfsQueue.add("gfs $item ${maxStackSize - stackSize}")
-        }
-    }
+	fun getFromSack(item: String, maxStackSize: Int) {
+		MinecraftClient.getInstance().player?.inventory?.let { inv ->
+			val stackSize = inv.find { it.getSkyBlockID() == item }?.count ?: 0
+			if (stackSize != maxStackSize) gfsQueue.add("gfs $item ${maxStackSize - stackSize}")
+		}
+	}
 }
