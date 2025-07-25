@@ -23,6 +23,11 @@ class GeneralConfig {
 	var preventPlacing: Boolean = false
 
 	@Expose
+	@ConfigOption(name = "No Front Camera", desc = "Disables the front facing camera from f5")
+	@ConfigEditorBoolean
+	var disableFrontCamera: Boolean = false
+
+	@Expose
 	@Transient
 	@ConfigOption(name = "Command Keybind Editor", desc = "Opens the screen to manage command keybinds")
 	@ConfigEditorButton(buttonText = "Open")
