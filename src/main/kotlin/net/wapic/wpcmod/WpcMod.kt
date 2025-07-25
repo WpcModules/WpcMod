@@ -31,6 +31,7 @@ import net.wapic.wpcmod.features.dungeons.AutoCloseChests
 import net.wapic.wpcmod.features.end.EndESP
 import net.wapic.wpcmod.features.galatea.GalateaESP
 import net.wapic.wpcmod.features.general.ArmorSwapper
+import net.wapic.wpcmod.features.general.DisableFrontCamera
 import net.wapic.wpcmod.features.general.DiscardHighlighter
 import net.wapic.wpcmod.features.general.PreventPlacingItems
 import net.wapic.wpcmod.features.general.experiments.AutoExperiments
@@ -132,6 +133,7 @@ object WpcMod : ModInitializer {
 		ArmorSwapper()
 		PreventPlacingItems()
 		DiscardHighlighter()
+		DisableFrontCamera()
 
 		//Experiments
 		AutoExperiments()
