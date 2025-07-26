@@ -1,6 +1,7 @@
 package net.wapic.wpcmod.config
 
 import com.google.gson.annotations.Expose
+import io.github.notenoughupdates.moulconfig.ChromaColour
 import io.github.notenoughupdates.moulconfig.annotations.*
 import net.minecraft.client.MinecraftClient
 import net.wapic.wpcmod.features.general.shortcut.ShortcutScreen
@@ -26,6 +27,11 @@ class GeneralConfig {
 	@ConfigOption(name = "No Front Camera", desc = "Disables the front facing camera from f5")
 	@ConfigEditorBoolean
 	var disableFrontCamera: Boolean = false
+
+	@Expose
+	@ConfigOption(name = "Tag Outline Color", desc = "Color to use when highlighting players with /wpcmod tag command")
+	@ConfigEditorColour
+	var tagColor = ChromaColour(1f, 1f, 1f, 0, 0xFF)
 
 	@Expose
 	@Transient

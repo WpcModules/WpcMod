@@ -7,14 +7,11 @@ import net.minecraft.entity.boss.dragon.EnderDragonEntity
 import net.minecraft.entity.decoration.ArmorStandEntity
 import net.minecraft.entity.mob.MagmaCubeEntity
 import net.minecraft.entity.mob.ShulkerEntity
-import net.minecraft.entity.passive.AxolotlEntity
-import net.minecraft.entity.passive.BatEntity
-import net.minecraft.entity.passive.FrogEntity
-import net.minecraft.entity.passive.PandaEntity
-import net.minecraft.entity.passive.PufferfishEntity
+import net.minecraft.entity.passive.*
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.predicate.entity.EntityPredicates
 import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.commands.TagCommand
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.ItemUtils.getHeadTexture
 import net.wapic.wpcmod.util.Utils
@@ -32,6 +29,11 @@ object MobGlow {
 	private val config get() = WpcMod.config
 
 	fun computeGlow(entity: Entity): GlowOptions {
+
+		if (TagCommand.players.contains(entity.name.string.lowercase()) || isTagged(entity)) {
+			return GlowOptions(shouldGlow = true, config.generalConfig.tagColor)
+		}
+
 		if (Utils.getLocation() == Island.GALATEA) {
 			return when (entity) {
 				is ShulkerEntity -> GlowOptions(
@@ -114,12 +116,23 @@ object MobGlow {
 		return NO_GLOW
 	}
 
-	private fun isStarredMob(entity: Entity): Boolean {
-		val armorStands = entity.world.getEntitiesByClass(
+	private fun getArmorStandsByEntity(entity: Entity): List<ArmorStandEntity> {
+		return entity.world.getEntitiesByClass(
 			ArmorStandEntity::class.java,
 			entity.boundingBox.expand(0.0, 2.0, 0.0),
 			EntityPredicates.NOT_MOUNTED
-		) ?: return false
-		return armorStands.isNotEmpty() && armorStands.first()?.name?.string?.contains("✯") ?: false
+		)
+	}
+
+	private fun isTagged(entity: Entity): Boolean {
+		val armorStands = getArmorStandsByEntity(entity)
+		return armorStands.isNotEmpty() && TagCommand.players.find {
+			armorStands.first().name?.string?.lowercase()?.contains(it) ?: false
+		}?.isNotEmpty() ?: false
+	}
+
+	private fun isStarredMob(entity: Entity): Boolean {
+		val armorStands = getArmorStandsByEntity(entity)
+		return armorStands.isNotEmpty() && armorStands.first().name?.string?.contains("✯") ?: false
 	}
 }

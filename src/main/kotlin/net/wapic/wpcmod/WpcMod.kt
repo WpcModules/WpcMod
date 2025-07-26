@@ -20,6 +20,7 @@ import net.minecraft.text.HoverEvent
 import net.minecraft.text.Style
 import net.minecraft.text.Text
 import net.wapic.wpcmod.commands.ShortcutsCommand
+import net.wapic.wpcmod.commands.TagCommand
 import net.wapic.wpcmod.commands.UpdateCommand
 import net.wapic.wpcmod.commands.WpcModCommand
 import net.wapic.wpcmod.config.ConfigManager
@@ -37,7 +38,6 @@ import net.wapic.wpcmod.features.general.PreventPlacingItems
 import net.wapic.wpcmod.features.general.experiments.AutoExperiments
 import net.wapic.wpcmod.features.general.experiments.SuperpairsSolver
 import net.wapic.wpcmod.features.general.shortcut.ShortcutHandler
-import net.wapic.wpcmod.features.general.shortcut.ShortcutScreen
 import net.wapic.wpcmod.listeners.ChatListener
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.SackUtils
