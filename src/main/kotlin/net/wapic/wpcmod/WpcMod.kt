@@ -1,6 +1,5 @@
 package net.wapic.wpcmod
 
-import io.github.notenoughupdates.moulconfig.common.IMinecraft
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -10,18 +9,20 @@ import moe.nea.libautoupdate.UpdateContext
 import moe.nea.libautoupdate.UpdateSource
 import moe.nea.libautoupdate.UpdateTarget
 import net.fabricmc.api.ModInitializer
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents
 import net.fabricmc.loader.api.FabricLoader
 import net.fabricmc.loader.api.Version
 import net.fabricmc.loader.api.metadata.ModMetadata
-import net.minecraft.client.MinecraftClient
 import net.minecraft.text.ClickEvent
 import net.minecraft.text.HoverEvent
 import net.minecraft.text.Style
 import net.minecraft.text.Text
+import net.wapic.wpcmod.commands.ShortcutsCommand
+import net.wapic.wpcmod.commands.TagCommand
+import net.wapic.wpcmod.commands.UpdateCommand
+import net.wapic.wpcmod.commands.WpcModCommand
 import net.wapic.wpcmod.config.ConfigManager
 import net.wapic.wpcmod.config.WpcConfig
 import net.wapic.wpcmod.features.AutoGFS
@@ -37,7 +38,6 @@ import net.wapic.wpcmod.features.general.PreventPlacingItems
 import net.wapic.wpcmod.features.general.experiments.AutoExperiments
 import net.wapic.wpcmod.features.general.experiments.SuperpairsSolver
 import net.wapic.wpcmod.features.general.shortcut.ShortcutHandler
-import net.wapic.wpcmod.features.general.shortcut.ShortcutScreen
 import net.wapic.wpcmod.listeners.ChatListener
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.SackUtils
@@ -48,7 +48,7 @@ import java.io.File
 import kotlin.coroutines.EmptyCoroutineContext
 
 object WpcMod : ModInitializer {
-	private const val MOD_ID = "wpcmod"
+	const val MOD_ID = "wpcmod"
 	private val metadata: ModMetadata by lazy {
 		FabricLoader.getInstance().getModContainer(MOD_ID).orElseThrow().metadata
 	}
@@ -64,42 +64,25 @@ object WpcMod : ModInitializer {
 	val globalJob = Job()
 	val coroutineScope = CoroutineScope(EmptyCoroutineContext + CoroutineName("WpcMod") + SupervisorJob(globalJob))
 
+	val updateContext = UpdateContext(
+		UpdateSource.mavenSource("https://maven.wapic.net/releases", "net.wapic.$MOD_ID", MOD_ID),
+		UpdateTarget.deleteAndSaveInTheSameFolder(WpcMod::class.java),
+		CurrentVersion.ofTag(version.friendlyString),
+		MOD_ID
+	)
+
 	override fun onInitialize() {
 		ConfigManager.firstLoad()
-
-		val updateContext = UpdateContext(
-			UpdateSource.mavenSource("https://maven.wapic.net/releases", "net.wapic.$MOD_ID", MOD_ID),
-			UpdateTarget.deleteAndSaveInTheSameFolder(WpcMod::class.java),
-			CurrentVersion.ofTag(version.friendlyString),
-			MOD_ID
-		)
 
 		val future = updateContext.checkUpdate("upstream")
 		val potentialUpdate = future.get()
 
 		ClientCommandRegistrationCallback.EVENT.register { dispatcher, registryAccess ->
 			dispatcher.register(
-				ClientCommandManager.literal("wpcmod").executes { context ->
-					MinecraftClient.getInstance().send {
-						IMinecraft.instance.openWrappedScreen(ConfigManager.getEditor())
-					}
-					0
-				}.then(ClientCommandManager.literal("binds").executes {
-					MinecraftClient.getInstance().send {
-						MinecraftClient.getInstance().setScreen(ShortcutScreen())
-					}
-					0
-				}).then(ClientCommandManager.literal("update").executes {
-					if (potentialUpdate.isUpdateAvailable) {
-						ChatUtils.sendMessage("Launching update...")
-						potentialUpdate.launchUpdate().thenRun {
-							ChatUtils.sendMessage("Download complete! Update will apply after you restart")
-						}
-					} else {
-						ChatUtils.sendMessage("No Updates Available")
-					}
-					0
-				})
+				WpcModCommand.getCommand()
+					.then(UpdateCommand.getCommand())
+					.then(ShortcutsCommand.getCommand())
+					.then(TagCommand.getCommand())
 			)
 		}
 
