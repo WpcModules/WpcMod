@@ -9,6 +9,7 @@ import moe.nea.libautoupdate.UpdateContext
 import moe.nea.libautoupdate.UpdateSource
 import moe.nea.libautoupdate.UpdateTarget
 import net.fabricmc.api.ModInitializer
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents
@@ -75,12 +76,14 @@ object WpcMod : ModInitializer {
 		val potentialUpdate = future.get()
 
 		ClientCommandRegistrationCallback.EVENT.register { dispatcher, registryAccess ->
-			dispatcher.register(
+			val mainCommand = dispatcher.register(
 				WpcModCommand.getCommand()
 					.then(UpdateCommand.getCommand())
 					.then(ShortcutsCommand.getCommand())
 					.then(TagCommand.getCommand())
 			)
+
+			dispatcher.register(ClientCommandManager.literal("wpcmod").redirect(mainCommand))
 		}
 
 		ClientPlayConnectionEvents.JOIN.register { handler, sender, client ->

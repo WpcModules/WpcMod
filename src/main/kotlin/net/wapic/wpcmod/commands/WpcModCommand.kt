@@ -5,7 +5,7 @@ import io.github.notenoughupdates.moulconfig.common.IMinecraft
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.wapic.wpcmod.config.ConfigManager
 
-object WpcModCommand : Command("wpcmod") {
+object WpcModCommand : Command("wpc") {
 
 	override fun executes(context: CommandContext<FabricClientCommandSource>): Int {
 		context.source.client.send {
