@@ -4,6 +4,13 @@ import com.google.gson.annotations.Expose
 import io.github.notenoughupdates.moulconfig.Config
 import io.github.notenoughupdates.moulconfig.annotations.Category
 import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.config.chat.ChatConfig
+import net.wapic.wpcmod.config.dev.DevConfig
+import net.wapic.wpcmod.config.dungeon.DungeonConfig
+import net.wapic.wpcmod.config.end.EndConfig
+import net.wapic.wpcmod.config.galatea.GalateaConfig
+import net.wapic.wpcmod.config.general.GeneralConfig
+import net.wapic.wpcmod.config.kuudra.KuudraConfig
 
 class WpcConfig : Config() {
 

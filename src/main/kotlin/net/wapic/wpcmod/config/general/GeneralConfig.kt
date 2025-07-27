@@ -1,4 +1,4 @@
-package net.wapic.wpcmod.config
+package net.wapic.wpcmod.config.general
 
 import com.google.gson.annotations.Expose
 import io.github.notenoughupdates.moulconfig.ChromaColour
@@ -61,50 +61,22 @@ class GeneralConfig {
 	@Expose
 	@Accordion
 	@ConfigOption(name = "Discard Highlighter", desc = "")
-	var discardSettings = DiscardSettings()
+	var discard = DiscardSettings()
 
 	class DiscardSettings {
 
 		@Expose
 		@ConfigOption(name = "Discard Highlighter", desc = "Highlights items based on the RegEx input")
 		@ConfigEditorBoolean
-		var discardHighlighter: Boolean = false
+		var highlighter: Boolean = false
 
 		@Expose
 		@ConfigOption(name = "Search RegEx", desc = "The RegEx to use when searching for items")
 		@ConfigEditorText
-		var discardRegex: String = "(Bank|No Pain No Gain|Combo|Feather Falling|Infinite Quiver|Ultimate Jerry) (I*V*I)"
+		var regex: String = "(Bank|No Pain No Gain|Combo|Feather Falling|Infinite Quiver|Ultimate Jerry) (I*V*I)"
 	}
 
 	@Expose
 	@Category(name = "Experiments", desc = "Experimentation Config")
-	var experimentSettings: ExperimentSettings = ExperimentSettings()
-
-	class ExperimentSettings {
-
-		@Expose
-		@ConfigOption(name = "Auto Solve Experiments", desc = "Completes Chronomatron and Ultrasequencer automatically")
-		@ConfigEditorBoolean
-		var autoExperiments: Boolean = false
-
-		@Expose
-		@ConfigOption(name = "Superpairs Solver", desc = "Highlight items in Superpairs similar to NEU")
-		@ConfigEditorBoolean
-		var superpairsSolver: Boolean = false
-
-		@Expose
-		@ConfigOption(name = "Auto Close", desc = "Auto Close Experiment when done")
-		@ConfigEditorBoolean
-		var autoClose: Boolean = false
-
-		@Expose
-		@ConfigOption(name = "Click delay", desc = "Delay between clicks on experiments")
-		@ConfigEditorSlider(minStep = 1.0f, minValue = 200.0f, maxValue = 500.0f)
-		var clickDelay: Float = 250.0f
-
-		@Expose
-		@ConfigOption(name = "Metaphysical Serum", desc = "Sets how many Metaphysical serums have been consumed")
-		@ConfigEditorSlider(minStep = 1.0f, minValue = 0.0f, maxValue = 3.0f)
-		var serumCount: Float = 0.0f
-	}
+	var experiments: ExperimentConfig = ExperimentConfig()
 }

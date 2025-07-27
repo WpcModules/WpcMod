@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
 import java.awt.Color
 
 class SuperpairsSolver {
-	private val config get() = WpcMod.config.generalConfig.experimentSettings
+	private val config get() = WpcMod.config.generalConfig.experiments
 
 	/** REGEX-TEST: Superpairs (Metaphysical) */
 	private val superpairsTitle = "Superpairs ?\\(.+\\)".toRegex()

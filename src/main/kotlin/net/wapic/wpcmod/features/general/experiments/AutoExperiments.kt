@@ -17,7 +17,7 @@ import org.lwjgl.glfw.GLFW
 
 class AutoExperiments {
 
-	private val config get() = WpcMod.config.generalConfig.experimentSettings
+	private val config get() = WpcMod.config.generalConfig.experiments
 
 	private var currentExperiment = ExperimentType.NONE
 

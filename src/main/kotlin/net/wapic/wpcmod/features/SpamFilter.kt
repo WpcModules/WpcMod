@@ -11,7 +11,7 @@ import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.MathHelper
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.config.ChatConfig
+import net.wapic.wpcmod.config.chat.SpamConfig
 
 class SpamFilter {
 
@@ -52,11 +52,11 @@ class SpamFilter {
 		notifyQueue.add(Notification(text, 30))
 	}
 
-	fun handle(spamType: ChatConfig.SpamType, text: Text): Boolean {
+	fun handle(spamType: SpamConfig.SpamType, text: Text): Boolean {
 		when (spamType) {
-			ChatConfig.SpamType.SHOW -> return true
-			ChatConfig.SpamType.HIDE -> return false
-			ChatConfig.SpamType.NOTIFICATION -> {
+			SpamConfig.SpamType.SHOW -> return true
+			SpamConfig.SpamType.HIDE -> return false
+			SpamConfig.SpamType.NOTIFICATION -> {
 				addToNotifyQueue(text)
 				return false
 			}

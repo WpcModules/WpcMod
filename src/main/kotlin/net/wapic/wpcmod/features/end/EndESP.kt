@@ -19,7 +19,7 @@ import net.wapic.wpcmod.util.render.RenderUtils
 class EndESP {
 
 	private var endNodes: MutableSet<Box> = mutableSetOf()
-	private val config get() = WpcMod.config.endConfig.espSettings
+	private val config get() = WpcMod.config.endConfig.esp
 
 	data class ESPSettings(var box: Boolean, var tracer: Boolean, var color: ChromaColour)
 
@@ -31,9 +31,9 @@ class EndESP {
 	private fun getSettings(entity: Entity): ESPSettings {
 		when (entity) {
 			is EnderDragonEntity -> return ESPSettings(
-				config.dragonSettings.box,
-				config.dragonSettings.tracer,
-				config.dragonSettings.color
+				config.dragon.box,
+				config.dragon.tracer,
+				config.dragon.color
 			)
 		}
 		return ESPSettings(box = false, tracer = false, color = ChromaColour(1f, 1f, 1f, 0, 0xff))
@@ -42,12 +42,12 @@ class EndESP {
 	private var lock = false
 	private fun worldTick(world: ClientWorld) {
 		if (Utils.getLocation() != Island.END) return
-		if (!config.endNodeSettings.tracer && !config.endNodeSettings.box) return
+		if (!config.endNode.tracer && !config.endNode.box) return
 
 		if (lock) return
 
 		val player = MinecraftClient.getInstance().player
-		val radius = config.endNodeSettings.radius.toDouble()
+		val radius = config.endNode.radius.toDouble()
 
 		val newEndNodes: MutableSet<Box> = mutableSetOf()
 		lock = true
@@ -87,7 +87,7 @@ class EndESP {
 		}
 
 		endNodes.forEach { node ->
-			if (config.endNodeSettings.box) RenderUtils.drawBox(
+			if (config.endNode.box) RenderUtils.drawBox(
 				worldRenderContext,
 				node.minX,
 				node.minY,
@@ -95,14 +95,14 @@ class EndESP {
 				node.maxX,
 				node.maxY,
 				node.maxZ,
-				color = config.endNodeSettings.color.getEffectiveColour()
+				color = config.endNode.color.getEffectiveColour()
 			)
-			if (config.endNodeSettings.tracer) RenderUtils.drawTracer(
+			if (config.endNode.tracer) RenderUtils.drawTracer(
 				worldRenderContext,
 				node.center.x,
 				node.maxY,
 				node.center.z,
-				color = config.endNodeSettings.color.getEffectiveColour()
+				color = config.endNode.color.getEffectiveColour()
 			)
 		}
 	}

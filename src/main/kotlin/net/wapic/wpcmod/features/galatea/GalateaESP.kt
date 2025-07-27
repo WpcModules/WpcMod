@@ -31,7 +31,7 @@ import net.wapic.wpcmod.util.render.RenderUtils
 class GalateaESP {
 
 	private var forestNodes: MutableSet<Box> = mutableSetOf()
-	private val config get() = WpcMod.config.galateaConfig.espSettings
+	private val config get() = WpcMod.config.galateaConfig.esp
 
 	data class ESPSettings(var box: Boolean, var tracer: Boolean, var color: ChromaColour)
 
@@ -48,34 +48,34 @@ class GalateaESP {
 	private fun getSettings(entity: Entity): ESPSettings {
 		return when (entity) {
 			is ShulkerEntity -> ESPSettings(
-				config.shulkerSettings.box,
-				config.shulkerSettings.tracer,
-				config.shulkerSettings.color
+				config.shulker.box,
+				config.shulker.tracer,
+				config.shulker.color
 			)
 
 			is AxolotlEntity -> ESPSettings(
-				config.axolotlSettings.box,
-				config.axolotlSettings.tracer,
-				config.axolotlSettings.color
+				config.axolotl.box,
+				config.axolotl.tracer,
+				config.axolotl.color
 			)
 
-			is FrogEntity -> ESPSettings(config.frogSettings.box, config.frogSettings.tracer, config.frogSettings.color)
+			is FrogEntity -> ESPSettings(config.frog.box, config.frog.tracer, config.frog.color)
 			is PandaEntity -> ESPSettings(
-				config.pandaSettings.box,
-				config.pandaSettings.tracer,
-				config.pandaSettings.color
+				config.panda.box,
+				config.panda.tracer,
+				config.panda.color
 			)
 
 			is PufferfishEntity -> ESPSettings(
-				config.pufferfishSettings.box,
-				config.pufferfishSettings.tracer,
-				config.pufferfishSettings.color
+				config.pufferfish.box,
+				config.pufferfish.tracer,
+				config.pufferfish.color
 			)
 
 			is ArmorStandEntity -> ESPSettings(
-				config.invisibugSettings.box && entity.velocity != Vec3d.ZERO && entity.y > 92 && entity.boundingBox.averageSideLength == 0.0,
-				config.invisibugSettings.tracer && entity.velocity != Vec3d.ZERO && entity.y > 92 && entity.boundingBox.averageSideLength == 0.0,
-				config.invisibugSettings.color
+				config.invisibug.box && entity.velocity != Vec3d.ZERO && entity.y > 92 && entity.boundingBox.averageSideLength == 0.0,
+				config.invisibug.tracer && entity.velocity != Vec3d.ZERO && entity.y > 92 && entity.boundingBox.averageSideLength == 0.0,
+				config.invisibug.color
 			)
 
 			else -> ESPSettings(box = false, tracer = false, color = ChromaColour(1f, 1f, 1f, 0, 0xff))
@@ -94,7 +94,7 @@ class GalateaESP {
 
 	private fun onParticle(packet: ParticleS2CPacket, world: ClientWorld) {
 		if (Utils.getLocation() != Island.GALATEA) return
-		if (!config.forestNodeSettings.tracer && !config.forestNodeSettings.box) return
+		if (!config.forestNode.tracer && !config.forestNode.box) return
 
 		val newForestNodes = mutableSetOf<Box>()
 		if (ParticleTypes.HAPPY_VILLAGER.type.equals(packet.parameters.type)) {
@@ -129,7 +129,7 @@ class GalateaESP {
 		}
 
 		forestNodes.forEach { node ->
-			if (config.forestNodeSettings.box) RenderUtils.drawBox(
+			if (config.forestNode.box) RenderUtils.drawBox(
 				worldRenderContext,
 				node.minX,
 				node.maxY,
@@ -137,14 +137,14 @@ class GalateaESP {
 				node.maxX,
 				node.maxY,
 				node.maxZ,
-				color = config.forestNodeSettings.color.getEffectiveColour()
+				color = config.forestNode.color.getEffectiveColour()
 			)
-			if (config.forestNodeSettings.tracer) RenderUtils.drawTracer(
+			if (config.forestNode.tracer) RenderUtils.drawTracer(
 				worldRenderContext,
 				node.center.x,
 				node.maxY,
 				node.center.z,
-				color = config.forestNodeSettings.color.getEffectiveColour()
+				color = config.forestNode.color.getEffectiveColour()
 			)
 		}
 	}
