@@ -43,6 +43,23 @@ class GeneralConfig {
 
 	@Expose
 	@Accordion
+	@ConfigOption(name = "Scrollable Tooltips", desc = "")
+	var scrollableTooltips = ScrollableTooltips()
+
+	class ScrollableTooltips {
+		@Expose
+		@ConfigOption(name = "Scroll Speed", desc = "Set the speed which the tooltip scrolls at")
+		@ConfigEditorSlider(minStep = 1.0f, minValue = 1.0f, maxValue = 20.0f)
+		var scrollSpeed: Float = 10f
+
+		@Expose
+		@ConfigOption(name = "Inverted Scroll", desc = "Invert the scroll direction")
+		@ConfigEditorBoolean
+		var invertedScroll: Boolean = false
+	}
+
+	@Expose
+	@Accordion
 	@ConfigOption(name = "Discard Highlighter", desc = "")
 	var discardSettings = DiscardSettings()
 
