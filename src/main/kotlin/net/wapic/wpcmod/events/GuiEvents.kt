@@ -19,6 +19,11 @@ object GuiEvents {
 			}
 		}
 
+	fun interface DrawSlotBefore {
+		fun onDrawSlot(drawContext: DrawContext, slot: Slot, ci: CallbackInfo)
+	}
+
+
 	@JvmField
 	val DRAW_SLOT_FOREGROUND: Event<DrawSlotAfter> =
 		EventFactory.createArrayBacked(DrawSlotAfter::class.java) { listeners ->
@@ -29,6 +34,10 @@ object GuiEvents {
 			}
 		}
 
+	fun interface DrawSlotAfter {
+		fun onDrawSlot(drawContext: DrawContext, slot: Slot)
+	}
+
 	@JvmField
 	val SLOT_CLICKED: Event<SlotClick> = EventFactory.createArrayBacked(SlotClick::class.java) { listeners ->
 		SlotClick { slot, slotId, button, slotActionType, callbackInfo ->
@@ -36,14 +45,6 @@ object GuiEvents {
 				listener.onSlotClick(slot, slotId, button, slotActionType, callbackInfo)
 			}
 		}
-	}
-
-	fun interface DrawSlotBefore {
-		fun onDrawSlot(drawContext: DrawContext, slot: Slot, ci: CallbackInfo)
-	}
-
-	fun interface DrawSlotAfter {
-		fun onDrawSlot(drawContext: DrawContext, slot: Slot)
 	}
 
 	fun interface SlotClick {
@@ -55,4 +56,24 @@ object GuiEvents {
 			callbackInfo: CallbackInfo
 		)
 	}
+
+	@JvmField
+	val MOUSE_SCROLL: Event<MouseScroll> = EventFactory.createArrayBacked(MouseScroll::class.java) { listeners ->
+		MouseScroll { mouseX, mouseY, verticalAmount, horizontalAmount, focusedSlot ->
+			for (listener in listeners) {
+				listener.onMouseScroll(mouseX, mouseY, verticalAmount, horizontalAmount, focusedSlot)
+			}
+		}
+	}
+
+	fun interface MouseScroll {
+		fun onMouseScroll(
+			mouseX: Double,
+			mouseY: Double,
+			verticalAmount: Double,
+			horizontalAmount: Double,
+			focusedSlot: Slot?
+		)
+	}
+
 }
