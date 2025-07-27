@@ -61,6 +61,11 @@ object MobGlow {
 					config.galateaConfig.esp.pufferfish.color
 				)
 
+				is TurtleEntity -> GlowOptions(
+					config.galateaConfig.esp.shellwise.glow,
+					config.galateaConfig.esp.shellwise.color
+				)
+
 				else -> NO_GLOW
 			}
 		}

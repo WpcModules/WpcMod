@@ -11,10 +11,7 @@ import net.minecraft.entity.Entity
 import net.minecraft.entity.decoration.ArmorStandEntity
 import net.minecraft.entity.decoration.DisplayEntity
 import net.minecraft.entity.mob.ShulkerEntity
-import net.minecraft.entity.passive.AxolotlEntity
-import net.minecraft.entity.passive.FrogEntity
-import net.minecraft.entity.passive.PandaEntity
-import net.minecraft.entity.passive.PufferfishEntity
+import net.minecraft.entity.passive.*
 import net.minecraft.item.Items
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket
 import net.minecraft.particle.ParticleTypes
@@ -47,30 +44,12 @@ class GalateaESP {
 
 	private fun getSettings(entity: Entity): ESPSettings {
 		return when (entity) {
-			is ShulkerEntity -> ESPSettings(
-				config.shulker.box,
-				config.shulker.tracer,
-				config.shulker.color
-			)
-
-			is AxolotlEntity -> ESPSettings(
-				config.axolotl.box,
-				config.axolotl.tracer,
-				config.axolotl.color
-			)
-
+			is ShulkerEntity -> ESPSettings(config.shulker.box, config.shulker.tracer, config.shulker.color)
+			is AxolotlEntity -> ESPSettings(config.axolotl.box, config.axolotl.tracer, config.axolotl.color)
 			is FrogEntity -> ESPSettings(config.frog.box, config.frog.tracer, config.frog.color)
-			is PandaEntity -> ESPSettings(
-				config.panda.box,
-				config.panda.tracer,
-				config.panda.color
-			)
-
-			is PufferfishEntity -> ESPSettings(
-				config.pufferfish.box,
-				config.pufferfish.tracer,
-				config.pufferfish.color
-			)
+			is PandaEntity -> ESPSettings(config.panda.box, config.panda.tracer, config.panda.color)
+			is PufferfishEntity -> ESPSettings(config.pufferfish.box, config.pufferfish.tracer, config.pufferfish.color)
+			is TurtleEntity -> ESPSettings(config.shellwise.box, config.shellwise.tracer, config.shellwise.color)
 
 			is ArmorStandEntity -> ESPSettings(
 				config.invisibug.box && entity.velocity != Vec3d.ZERO && entity.y > 92 && entity.boundingBox.averageSideLength == 0.0,
