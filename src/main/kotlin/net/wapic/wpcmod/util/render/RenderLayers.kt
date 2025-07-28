@@ -5,7 +5,7 @@ import it.unimi.dsi.fastutil.doubles.Double2ObjectMap
 import it.unimi.dsi.fastutil.doubles.Double2ObjectOpenHashMap
 import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.render.RenderPhase
-import java.util.OptionalDouble
+import java.util.*
 import java.util.function.DoubleFunction
 
 object RenderLayers {
@@ -17,10 +17,8 @@ object RenderLayers {
 			"wpcmod_lines",
 			RenderLayer.DEFAULT_BUFFER_SIZE,
 			WpcModRenderPipelines.LINES,
-			RenderLayer.MultiPhaseParameters.builder()
-				.lineWidth(RenderPhase.LineWidth(OptionalDouble.of(lineWidth)))
-				.layering(RenderPhase.VIEW_OFFSET_Z_LAYERING)
-				.build(false)
+			RenderLayer.MultiPhaseParameters.builder().lineWidth(RenderPhase.LineWidth(OptionalDouble.of(lineWidth)))
+				.layering(RenderPhase.VIEW_OFFSET_Z_LAYERING).build(false)
 		)
 	}
 

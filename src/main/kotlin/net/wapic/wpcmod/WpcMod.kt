@@ -46,6 +46,7 @@ import java.io.File
 import kotlin.coroutines.EmptyCoroutineContext
 
 object WpcMod : ModInitializer {
+
 	const val MOD_ID = "wpcmod"
 	private val metadata: ModMetadata by lazy {
 		FabricLoader.getInstance().getModContainer(MOD_ID).orElseThrow().metadata
@@ -77,9 +78,7 @@ object WpcMod : ModInitializer {
 
 		ClientCommandRegistrationCallback.EVENT.register { dispatcher, registryAccess ->
 			val mainCommand = dispatcher.register(
-				WpcModCommand.getCommand()
-					.then(UpdateCommand.getCommand())
-					.then(ShortcutsCommand.getCommand())
+				WpcModCommand.getCommand().then(UpdateCommand.getCommand()).then(ShortcutsCommand.getCommand())
 					.then(TagCommand.getCommand())
 			)
 
@@ -105,12 +104,11 @@ object WpcMod : ModInitializer {
 			globalJob.cancel()
 		}
 
-		/* Initialize Helpers */
+		/* Initialize */
 		Utils.init()
 		SackUtils.init()
 		ChatListener()
 
-		/* Initialize features */
 		// General
 		ShortcutHandler()
 		ArmorSwapper()

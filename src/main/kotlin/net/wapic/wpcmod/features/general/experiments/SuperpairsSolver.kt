@@ -18,6 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
 import java.awt.Color
 
 class SuperpairsSolver {
+
 	private val config get() = WpcMod.config.generalConfig.experiments
 
 	/** REGEX-TEST: Superpairs (Metaphysical) */
@@ -72,9 +73,7 @@ class SuperpairsSolver {
 	}
 
 	fun onReplaceItem(
-		inventoryContents: Array<ItemStack>,
-		slot: Int,
-		callbackInfoReturnable: CallbackInfoReturnable<ItemStack>
+		inventoryContents: Array<ItemStack>, slot: Int, callbackInfoReturnable: CallbackInfoReturnable<ItemStack>
 	) {
 		if (!config.superpairsSolver || !inSuperpairs) return
 		if (superpairsMap.isEmpty() || slot !in superpairsMap.keys) return
@@ -95,7 +94,6 @@ class SuperpairsSolver {
 		if (lastClickedSlot?.index != slotId) checkForPair(slot)
 	}
 
-	//Titanic Experience Bottles??????
 	fun hasPair(itemStack: ItemStack): Boolean {
 		val screenHandler = MinecraftClient.getInstance().player?.currentScreenHandler ?: return false
 		val items = screenHandler.slots.filter { itemStack.isSimilar(it.stack) }.map { it.index }
@@ -167,11 +165,7 @@ class SuperpairsSolver {
 
 		if (slot.index in foundPairs) drawContext.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, Color.GREEN.rgb)
 		if (slot.stack.item in powerUps) drawContext.fill(
-			slot.x,
-			slot.y,
-			slot.x + 16,
-			slot.y + 16,
-			Color(100, 30, 130).rgb
+			slot.x, slot.y, slot.x + 16, slot.y + 16, Color(100, 30, 130).rgb
 		)
 	}
 }

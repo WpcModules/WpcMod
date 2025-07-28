@@ -8,6 +8,7 @@ import net.wapic.wpcmod.events.skyblock.KuudraEvents
 class ChatListener {
 
 	companion object {
+
 		private const val DUNGEON_START_MESSAGE: String =
 			"§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon."
 		private const val KUUDRA_START_MESSAGE: String =

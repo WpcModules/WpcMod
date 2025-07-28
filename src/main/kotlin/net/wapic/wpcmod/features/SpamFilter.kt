@@ -27,6 +27,7 @@ class SpamFilter {
 	private val joinOrLeaveRegex = "^(?:Friend|Guild) > \\w+ (?:joined|left)\\.$".toRegex()
 
 	data class Notification(val text: Text, var delay: Int) {
+
 		var x = MinecraftClient.getInstance().textRenderer.getWidth(text.string)
 	}
 
@@ -35,8 +36,7 @@ class SpamFilter {
 		ClientTickEvents.END_CLIENT_TICK.register(::onTick)
 		HudLayerRegistrationCallback.EVENT.register { layeredDrawer ->
 			layeredDrawer.attachLayerAfter(
-				IdentifiedLayer.EXPERIENCE_LEVEL,
-				IdentifiedLayer.of(Identifier.of("wpcmod", "hud"), ::onRenderHud)
+				IdentifiedLayer.EXPERIENCE_LEVEL, IdentifiedLayer.of(Identifier.of("wpcmod", "hud"), ::onRenderHud)
 			)
 		}
 	}
@@ -56,6 +56,7 @@ class SpamFilter {
 		when (spamType) {
 			SpamConfig.SpamType.SHOW -> return true
 			SpamConfig.SpamType.HIDE -> return false
+
 			SpamConfig.SpamType.NOTIFICATION -> {
 				addToNotifyQueue(text)
 				return false

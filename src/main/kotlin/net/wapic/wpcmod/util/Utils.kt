@@ -8,6 +8,7 @@ import net.minecraft.util.Util
 import net.wapic.wpcmod.WpcMod
 
 object Utils {
+
 	private const val MIN_DELAY: Long = 500
 	private val commandQueue = mutableListOf<String>()
 	private var lastCommand: Long = 0

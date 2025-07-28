@@ -22,23 +22,14 @@ class ScrollableTooltips {
 	}
 
 	private fun onMouseScroll(
-		mouseX: Double,
-		mouseY: Double,
-		verticalAmount: Double,
-		horizontalAmount: Double,
-		focusedSlot: Slot?
+		mouseX: Double, mouseY: Double, verticalAmount: Double, horizontalAmount: Double, focusedSlot: Slot?
 	) {
 		val scrollAmount = verticalAmount * config.scrollSpeed
 		scrolledAmount += scrollAmount.toInt()
 	}
 
 	private fun onPositionTooltip(
-		screenWidth: Int,
-		screenHeight: Int,
-		pos: Vector2i,
-		width: Int,
-		height: Int,
-		callbackInfo: CallbackInfo
+		screenWidth: Int, screenHeight: Int, pos: Vector2i, width: Int, height: Int, callbackInfo: CallbackInfo
 	) {
 		if (height < screenHeight) return
 
@@ -62,6 +53,7 @@ class ScrollableTooltips {
 	}
 
 	companion object {
+
 		var scrolledAmount: Int = 0
 	}
 }

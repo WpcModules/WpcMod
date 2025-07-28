@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 
 open class Command {
+
 	@JvmField
 	var command: LiteralArgumentBuilder<FabricClientCommandSource>
 

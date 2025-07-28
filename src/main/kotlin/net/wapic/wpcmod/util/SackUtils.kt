@@ -6,6 +6,7 @@ import net.minecraft.util.Util
 import net.wapic.wpcmod.util.ItemUtils.getSkyBlockID
 
 object SackUtils {
+
 	private val gfsQueue: MutableList<String> = mutableListOf()
 	private var lastCommand: Long = 0
 	private const val COMMAND_DELAY: Long = 1500

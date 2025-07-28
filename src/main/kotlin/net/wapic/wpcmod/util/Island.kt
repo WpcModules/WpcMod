@@ -21,6 +21,7 @@ enum class Island(val displayName: String, val internalName: String) {
 	KUUDRA("Kuudra", "kuudra");
 
 	companion object {
+
 		fun fromDisplayName(displayName: String): Island? {
 			return entries.find { it.displayName == displayName }
 		}

@@ -6,6 +6,7 @@ import net.minecraft.client.util.InputUtil
 import net.minecraft.text.Text
 
 class Shortcut {
+
 	@Expose
 	private var command: String
 
@@ -70,6 +71,7 @@ class Shortcut {
 	}
 
 	companion object {
+
 		private val KEYS_BY_ID: MutableList<Shortcut> = mutableListOf()
 		private val KEY_TO_BINDINGS: MutableMap<Int, Shortcut> = Maps.newHashMap<Int, Shortcut>()
 

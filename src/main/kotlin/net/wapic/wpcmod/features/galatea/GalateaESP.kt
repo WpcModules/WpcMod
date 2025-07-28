@@ -24,10 +24,11 @@ import net.wapic.wpcmod.events.ParticleEvents
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.render.RenderUtils
+import java.util.concurrent.CopyOnWriteArraySet
 
 class GalateaESP {
 
-	private var forestNodes: MutableSet<Box> = mutableSetOf()
+	private var forestNodes = CopyOnWriteArraySet<Box>()
 	private val config get() = WpcMod.config.galateaConfig.esp
 
 	data class ESPSettings(var box: Boolean, var tracer: Boolean, var color: ChromaColour)
@@ -75,17 +76,17 @@ class GalateaESP {
 		if (Utils.getLocation() != Island.GALATEA) return
 		if (!config.forestNode.tracer && !config.forestNode.box) return
 
-		val newForestNodes = mutableSetOf<Box>()
 		if (ParticleTypes.HAPPY_VILLAGER.type.equals(packet.parameters.type)) {
 
 			val pos: BlockPos = BlockPos.ofFloored(packet.x, packet.y - 1, packet.z)
 			val box = Box.of(pos.toCenterPos(), 1.0, 1.0, 1.0)
 
+			if (forestNodes.contains(box)) return
+
 			val entities: List<DisplayEntity.ItemDisplayEntity> =
 				world.getEntitiesByClass(DisplayEntity.ItemDisplayEntity::class.java, box) { true }
-			if (entities.count(::stringCount) == 3) newForestNodes.add(box)
+			if (entities.count(::stringCount) == 3) forestNodes.add(box)
 		}
-		forestNodes = newForestNodes
 	}
 
 	private fun renderWorld(worldRenderContext: WorldRenderContext) {
@@ -93,30 +94,19 @@ class GalateaESP {
 
 		worldRenderContext.world().entities.forEach { entity ->
 			val settings = getSettings(entity)
+			val boundingBox =
+				if (entity.boundingBox.averageSideLength == 0.0) entity.boundingBox.expand(0.5) else entity.boundingBox
 			if (settings.box) RenderUtils.drawBoundingBox(
-				worldRenderContext,
-				if (entity.boundingBox.averageSideLength == 0.0) entity.boundingBox.expand(0.5) else entity.boundingBox,
-				color = settings.color.getEffectiveColour()
+				worldRenderContext, boundingBox, settings.color.getEffectiveColour()
 			)
 			if (settings.tracer) RenderUtils.drawTracer(
-				worldRenderContext,
-				entity.x,
-				entity.y + entity.height / 2,
-				entity.z,
-				color = settings.color.getEffectiveColour()
+				worldRenderContext, entity.x, entity.eyeY, entity.z, settings.color.getEffectiveColour()
 			)
 		}
 
-		forestNodes.forEach { node ->
-			if (config.forestNode.box) RenderUtils.drawBox(
-				worldRenderContext,
-				node.minX,
-				node.maxY,
-				node.minZ,
-				node.maxX,
-				node.maxY,
-				node.maxZ,
-				color = config.forestNode.color.getEffectiveColour()
+		for (node in forestNodes) {
+			if (config.forestNode.box) RenderUtils.drawBoundingBox(
+				worldRenderContext, node.withMinY(node.maxY), color = config.forestNode.color.getEffectiveColour()
 			)
 			if (config.forestNode.tracer) RenderUtils.drawTracer(
 				worldRenderContext,

@@ -77,11 +77,7 @@ class ArmorSwapper {
 			if (!inv.getStack(it).name.string.contains("Ready")) return
 
 			client.interactionManager?.clickSlot(
-				screen.screenHandler.syncId,
-				it,
-				GLFW.GLFW_MOUSE_BUTTON_LEFT,
-				SlotActionType.PICKUP,
-				client.player
+				screen.screenHandler.syncId, it, GLFW.GLFW_MOUSE_BUTTON_LEFT, SlotActionType.PICKUP, client.player
 			)
 			screen.close()
 			shouldSwap = false

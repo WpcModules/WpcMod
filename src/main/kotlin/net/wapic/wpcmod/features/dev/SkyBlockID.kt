@@ -17,10 +17,7 @@ class SkyBlockID {
 	}
 
 	fun onToolTipRender(
-		stack: ItemStack,
-		tooltipContext: Item.TooltipContext,
-		type: TooltipType,
-		lines: MutableList<Text>
+		stack: ItemStack, tooltipContext: Item.TooltipContext, type: TooltipType, lines: MutableList<Text>
 	) {
 		if (!config.showSkyBlockID) return
 		val skyBlockID = stack.getSkyBlockID() ?: return

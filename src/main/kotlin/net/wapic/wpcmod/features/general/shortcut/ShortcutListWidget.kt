@@ -18,11 +18,7 @@ class ShortcutListWidget : ElementListWidget<Entry> {
 	var parent: ShortcutScreen? = null
 
 	constructor(parent: ShortcutScreen, client: MinecraftClient) : super(
-		client,
-		parent.width,
-		parent.layout.contentHeight,
-		parent.layout.headerHeight,
-		20
+		client, parent.width, parent.layout.contentHeight, parent.layout.headerHeight, 20
 	) {
 		this.parent = parent
 
@@ -49,10 +45,12 @@ class ShortcutListWidget : ElementListWidget<Entry> {
 	}
 
 	abstract class Entry : ElementListWidget.Entry<Entry>() {
+
 		abstract fun update()
 	}
 
 	inner class ShortcutEntry internal constructor(private val binding: Shortcut) : Entry() {
+
 		private val commandField: TextFieldWidget
 		private val editButton: ButtonWidget
 		private val deleteButton: ButtonWidget

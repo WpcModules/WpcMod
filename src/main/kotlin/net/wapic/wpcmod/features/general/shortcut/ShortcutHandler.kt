@@ -37,6 +37,7 @@ class ShortcutHandler {
 	}
 
 	companion object {
+
 		val saveFile = File(WpcMod.configDir, "shortcuts.json")
 		val loadedShortcuts = mutableListOf<Shortcut>()
 		private val gson: Gson = GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().create()

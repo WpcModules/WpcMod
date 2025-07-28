@@ -15,14 +15,14 @@ import java.nio.file.StandardCopyOption
 import kotlin.reflect.KMutableProperty0
 
 object ConfigManager {
+
 	private val file = File(WpcMod.configDir, "config.json")
 	private val backupFile = File(file.parentFile, "${file.name}.bak")
 	private val tempFile = File(file.parentFile, "${file.name}.tmp")
 	private var editor: MoulConfigEditor<WpcConfig>? = null
 	private lateinit var processor: MoulConfigProcessor<WpcConfig>
 	private val gson: Gson = GsonBuilder().setPrettyPrinting()
-		.registerTypeAdapter(ChromaColour::class.java, LegacyStringChromaColourTypeAdapter(true).nullSafe())
-		.create()
+		.registerTypeAdapter(ChromaColour::class.java, LegacyStringChromaColourTypeAdapter(true).nullSafe()).create()
 
 	fun firstLoad() {
 		setConfigHolder(firstLoadFile(WpcConfig::class.java.getDeclaredConstructor().newInstance()))
@@ -33,8 +33,7 @@ object ConfigManager {
 
 	private fun setConfigHolder(value: Any) {
 		require(value.javaClass == WpcConfig::class.java)
-		@Suppress("UNCHECKED_CAST")
-		(WpcMod::config as KMutableProperty0<Any>).set(value)
+		@Suppress("UNCHECKED_CAST") (WpcMod::config as KMutableProperty0<Any>).set(value)
 		jsonHolder = value
 	}
 
@@ -74,10 +73,7 @@ object ConfigManager {
 			tempFile.writeText(gson.toJson(jsonHolder))
 			if (file.exists()) file.copyTo(backupFile, overwrite = true)
 			Files.move(
-				tempFile.toPath(),
-				file.toPath(),
-				StandardCopyOption.ATOMIC_MOVE,
-				StandardCopyOption.REPLACE_EXISTING
+				tempFile.toPath(), file.toPath(), StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING
 			)
 			backupFile.delete()
 		} catch (e: Exception) {

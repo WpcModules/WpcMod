@@ -47,6 +47,7 @@ class GeneralConfig {
 	var scrollableTooltips = ScrollableTooltips()
 
 	class ScrollableTooltips {
+
 		@Expose
 		@ConfigOption(name = "Scroll Speed", desc = "Set the speed which the tooltip scrolls at")
 		@ConfigEditorSlider(minStep = 1.0f, minValue = 1.0f, maxValue = 20.0f)

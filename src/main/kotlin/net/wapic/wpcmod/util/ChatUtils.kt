@@ -5,6 +5,7 @@ import net.minecraft.text.Style
 import net.minecraft.text.Text
 
 object ChatUtils {
+
 	const val PREFIX = "§b[WpcMod]§r: "
 
 	fun sendMessage(message: String, style: Style = Style.EMPTY) {

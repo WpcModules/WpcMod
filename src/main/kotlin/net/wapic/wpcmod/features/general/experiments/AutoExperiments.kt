@@ -37,8 +37,7 @@ class AutoExperiments {
 		Items.BROWN_DYE,
 		Items.BLACK_DYE,
 		Items.BLUE_DYE,
-		Items.GRAY_DYE,
-		Items.LIGHT_GRAY_DYE, //Unused modern dyes, we leave them here just in case
+		Items.GRAY_DYE, Items.LIGHT_GRAY_DYE,
 		Items.BONE_MEAL,
 		Items.LAPIS_LAZULI,
 		Items.RED_DYE,

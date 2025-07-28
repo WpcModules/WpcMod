@@ -31,9 +31,7 @@ class EndESP {
 	private fun getSettings(entity: Entity): ESPSettings {
 		when (entity) {
 			is EnderDragonEntity -> return ESPSettings(
-				config.dragon.box,
-				config.dragon.tracer,
-				config.dragon.color
+				config.dragon.box, config.dragon.tracer, config.dragon.color
 			)
 		}
 		return ESPSettings(box = false, tracer = false, color = ChromaColour(1f, 1f, 1f, 0, 0xff))
@@ -73,29 +71,16 @@ class EndESP {
 		worldRenderContext.world().entities.forEach { entity ->
 			val settings = getSettings(entity)
 			if (settings.box) RenderUtils.drawBoundingBox(
-				worldRenderContext,
-				entity.boundingBox,
-				color = settings.color.getEffectiveColour()
+				worldRenderContext, entity.boundingBox, color = settings.color.getEffectiveColour()
 			)
 			if (settings.tracer) RenderUtils.drawTracer(
-				worldRenderContext,
-				entity.x,
-				entity.y + entity.height / 2,
-				entity.z,
-				color = settings.color.getEffectiveColour()
+				worldRenderContext, entity.x, entity.eyeY, entity.z, color = settings.color.getEffectiveColour()
 			)
 		}
 
 		endNodes.forEach { node ->
-			if (config.endNode.box) RenderUtils.drawBox(
-				worldRenderContext,
-				node.minX,
-				node.minY,
-				node.minZ,
-				node.maxX,
-				node.maxY,
-				node.maxZ,
-				color = config.endNode.color.getEffectiveColour()
+			if (config.endNode.box) RenderUtils.drawBoundingBox(
+				worldRenderContext, node.withMinY(node.maxY), config.endNode.color.getEffectiveColour()
 			)
 			if (config.endNode.tracer) RenderUtils.drawTracer(
 				worldRenderContext,
@@ -103,6 +88,7 @@ class EndESP {
 				node.maxY,
 				node.center.z,
 				color = config.endNode.color.getEffectiveColour()
+
 			)
 		}
 	}

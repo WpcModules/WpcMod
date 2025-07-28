@@ -18,12 +18,7 @@ object TooltipEvents {
 
 	fun interface TooltipPosition {
 		fun onPositionTooltip(
-			screenWidth: Int,
-			screenHeight: Int,
-			position: Vector2i,
-			width: Int,
-			height: Int,
-			callback: CallbackInfo
+			screenWidth: Int, screenHeight: Int, position: Vector2i, width: Int, height: Int, callback: CallbackInfo
 		)
 	}
 

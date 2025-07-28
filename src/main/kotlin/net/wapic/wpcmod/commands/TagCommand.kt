@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.wapic.wpcmod.util.ChatUtils
 
 object TagCommand : Command("tag") {
+
 	val players = mutableSetOf<String>()
 
 	private val commandClearPlayers = literal("clear").executes { clearPlayers() }

@@ -23,7 +23,6 @@ object GuiEvents {
 		fun onDrawSlot(drawContext: DrawContext, slot: Slot, ci: CallbackInfo)
 	}
 
-
 	@JvmField
 	val DRAW_SLOT_FOREGROUND: Event<DrawSlotAfter> =
 		EventFactory.createArrayBacked(DrawSlotAfter::class.java) { listeners ->
@@ -49,11 +48,7 @@ object GuiEvents {
 
 	fun interface SlotClick {
 		fun onSlotClick(
-			slot: Slot,
-			slotId: Int,
-			button: Int,
-			slotActionType: SlotActionType,
-			callbackInfo: CallbackInfo
+			slot: Slot, slotId: Int, button: Int, slotActionType: SlotActionType, callbackInfo: CallbackInfo
 		)
 	}
 
@@ -68,11 +63,7 @@ object GuiEvents {
 
 	fun interface MouseScroll {
 		fun onMouseScroll(
-			mouseX: Double,
-			mouseY: Double,
-			verticalAmount: Double,
-			horizontalAmount: Double,
-			focusedSlot: Slot?
+			mouseX: Double, mouseY: Double, verticalAmount: Double, horizontalAmount: Double, focusedSlot: Slot?
 		)
 	}
 

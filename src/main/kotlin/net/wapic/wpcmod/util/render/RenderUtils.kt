@@ -2,21 +2,22 @@ package net.wapic.wpcmod.util.render
 
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
 import net.minecraft.client.MinecraftClient
-import net.minecraft.client.render.*
+import net.minecraft.client.render.RenderLayer
+import net.minecraft.client.render.VertexConsumer
+import net.minecraft.client.render.VertexConsumerProvider
+import net.minecraft.client.render.VertexRendering
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec3d
 import java.awt.Color
 
-
 object RenderUtils {
+
 	private val mc: MinecraftClient = MinecraftClient.getInstance()
 
 	fun drawBoundingBox(
 		worldRenderContext: WorldRenderContext,
-		boundingBox: Box,
-		lineWidth: Double = 2.0,
-		color: Color = Color(255, 255, 255)
+		boundingBox: Box, color: Color = Color(255, 255, 255), lineWidth: Double = 2.0
 	) {
 		drawBox(
 			worldRenderContext,
@@ -26,8 +27,8 @@ object RenderUtils {
 			boundingBox.maxX,
 			boundingBox.maxY,
 			boundingBox.maxZ,
+			color,
 			lineWidth,
-			color
 		)
 	}
 
@@ -38,9 +39,7 @@ object RenderUtils {
 		minZ: Double,
 		maxX: Double,
 		maxY: Double,
-		maxZ: Double,
-		lineWidth: Double = 2.0,
-		color: Color = Color(255, 255, 255)
+		maxZ: Double, color: Color = Color(255, 255, 255), lineWidth: Double = 2.0
 	) {
 		if (worldRenderContext.frustum()?.isVisible(Box(minX, minY, minZ, maxX, maxY, maxZ)) == false) return
 
@@ -79,16 +78,14 @@ object RenderUtils {
 		worldRenderContext: WorldRenderContext,
 		x: Double,
 		y: Double,
-		z: Double,
-		lineWidth: Double = 2.0,
-		color: Color = Color(255, 255, 255)
+		z: Double, color: Color = Color(255, 255, 255), lineWidth: Double = 2.0
 	) {
 		val viewBobbing = mc.options.bobView.value
 		mc.options.bobView.value = false
 
 		val camera = worldRenderContext.camera()
 		val cameraPoint: Vec3d = camera.pos.add(Vec3d.fromPolar(camera.pitch, camera.yaw))
-		drawLine(worldRenderContext, cameraPoint.x, cameraPoint.y, cameraPoint.z, x, y, z, lineWidth, color)
+		drawLine(worldRenderContext, cameraPoint.x, cameraPoint.y, cameraPoint.z, x, y, z, color, lineWidth)
 
 		mc.options.bobView.value = viewBobbing
 	}
@@ -100,9 +97,7 @@ object RenderUtils {
 		z1: Double,
 		x2: Double,
 		y2: Double,
-		z2: Double,
-		lineWidth: Double = 2.0,
-		color: Color = Color(255, 255, 255)
+		z2: Double, color: Color = Color(255, 255, 255), lineWidth: Double = 2.0
 	) {
 		val matrixStack = worldRenderContext.matrixStack() ?: return
 		val camera: Vec3d = worldRenderContext.camera().pos
@@ -120,15 +115,11 @@ object RenderUtils {
 
 		val normal = Vec3d(x2, y2, z2).toVector3f().sub(x1.toFloat(), y1.toFloat(), z1.toFloat()).normalize()
 
-		bufferBuilder
-			.vertex(entry, x1.toFloat(), y1.toFloat(), z1.toFloat())
-			.color(color.red, color.green, color.blue, color.alpha)
-			.normal(entry, normal)
+		bufferBuilder.vertex(entry, x1.toFloat(), y1.toFloat(), z1.toFloat())
+			.color(color.red, color.green, color.blue, color.alpha).normal(entry, normal)
 
-		bufferBuilder
-			.vertex(entry, x2.toFloat(), y2.toFloat(), z2.toFloat())
-			.color(color.red, color.green, color.blue, color.alpha)
-			.normal(entry, normal)
+		bufferBuilder.vertex(entry, x2.toFloat(), y2.toFloat(), z2.toFloat())
+			.color(color.red, color.green, color.blue, color.alpha).normal(entry, normal)
 
 		vertexConsumerProvider.draw(layer)
 		matrixStack.pop()

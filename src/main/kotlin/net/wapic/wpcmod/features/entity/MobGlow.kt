@@ -37,33 +37,27 @@ object MobGlow {
 		if (Utils.getLocation() == Island.GALATEA) {
 			return when (entity) {
 				is ShulkerEntity -> GlowOptions(
-					config.galateaConfig.esp.shulker.glow,
-					config.galateaConfig.esp.shulker.color
+					config.galateaConfig.esp.shulker.glow, config.galateaConfig.esp.shulker.color
 				)
 
 				is AxolotlEntity -> GlowOptions(
-					config.galateaConfig.esp.axolotl.glow,
-					config.galateaConfig.esp.axolotl.color
+					config.galateaConfig.esp.axolotl.glow, config.galateaConfig.esp.axolotl.color
 				)
 
 				is FrogEntity -> GlowOptions(
-					config.galateaConfig.esp.frog.glow,
-					config.galateaConfig.esp.frog.color
+					config.galateaConfig.esp.frog.glow, config.galateaConfig.esp.frog.color
 				)
 
 				is PandaEntity -> GlowOptions(
-					config.galateaConfig.esp.panda.glow,
-					config.galateaConfig.esp.panda.color
+					config.galateaConfig.esp.panda.glow, config.galateaConfig.esp.panda.color
 				)
 
 				is PufferfishEntity -> GlowOptions(
-					config.galateaConfig.esp.pufferfish.glow,
-					config.galateaConfig.esp.pufferfish.color
+					config.galateaConfig.esp.pufferfish.glow, config.galateaConfig.esp.pufferfish.color
 				)
 
 				is TurtleEntity -> GlowOptions(
-					config.galateaConfig.esp.shellwise.glow,
-					config.galateaConfig.esp.shellwise.color
+					config.galateaConfig.esp.shellwise.glow, config.galateaConfig.esp.shellwise.color
 				)
 
 				else -> NO_GLOW
@@ -73,8 +67,7 @@ object MobGlow {
 		if (Utils.getLocation() == Island.END) {
 			return when (entity) {
 				is EnderDragonEntity -> GlowOptions(
-					config.endConfig.esp.dragon.glow,
-					config.endConfig.esp.dragon.color
+					config.endConfig.esp.dragon.glow, config.endConfig.esp.dragon.color
 				)
 
 				else -> NO_GLOW
@@ -84,8 +77,7 @@ object MobGlow {
 		if (Utils.getLocation() == Island.KUUDRA) {
 			return when (entity) {
 				is MagmaCubeEntity -> GlowOptions(
-					config.kuudraConfig.esp.kuudra.glow && entity.size == 30,
-					config.kuudraConfig.esp.kuudra.color
+					config.kuudraConfig.esp.kuudra.glow && entity.size == 30, config.kuudraConfig.esp.kuudra.color
 				)
 
 				else -> NO_GLOW
@@ -95,8 +87,7 @@ object MobGlow {
 		if (Utils.getLocation() == Island.DUNGEON) {
 			return when (entity) {
 				is BatEntity -> GlowOptions(
-					config.dungeonConfig.esp.bat.glow,
-					config.dungeonConfig.esp.bat.color
+					config.dungeonConfig.esp.bat.glow, config.dungeonConfig.esp.bat.color
 				)
 
 				is PlayerEntity -> GlowOptions(
@@ -123,9 +114,7 @@ object MobGlow {
 
 	private fun getArmorStandsByEntity(entity: Entity): List<ArmorStandEntity> {
 		return entity.world.getEntitiesByClass(
-			ArmorStandEntity::class.java,
-			entity.boundingBox.expand(0.0, 2.0, 0.0),
-			EntityPredicates.NOT_MOUNTED
+			ArmorStandEntity::class.java, entity.boundingBox.expand(0.0, 2.0, 0.0), EntityPredicates.NOT_MOUNTED
 		)
 	}
 

@@ -46,7 +46,6 @@ object InventoryEvents {
 		}
 	}
 
-
 	fun interface OpenedEvent {
 		fun onOpen(title: String)
 	}
