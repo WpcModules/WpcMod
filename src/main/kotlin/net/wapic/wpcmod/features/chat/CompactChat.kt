@@ -54,24 +54,24 @@ object CompactChat {
 	class OccurrenceTextContent(var occurrences: Int) : PlainTextContent {
 
 		override fun string(): String? {
-			return " (" + this.occurrences + ")";
+			return " (" + this.occurrences + ")"
 		}
 
 		override fun <T : Any> visit(visitor: StringVisitable.Visitor<T>): Optional<T> {
-			return visitor.accept(this.string());
+			return visitor.accept(this.string())
 		}
 
 		override fun <T : Any> visit(visitor: StringVisitable.StyledVisitor<T>, style: Style): Optional<T> {
-			return visitor.accept(style, this.string());
+			return visitor.accept(style, this.string())
 		}
 
 		override fun toString(): String {
-			return "compactChatTextOccurrences{occurrences = " + this.occurrences + "}";
+			return "compactChatTextOccurrences{occurrences = " + this.occurrences + "}"
 		}
 
 		companion object {
 			fun create(occurrences: Int): MutableText {
-				return MutableText.of(OccurrenceTextContent(occurrences));
+				return MutableText.of(OccurrenceTextContent(occurrences))
 			}
 		}
 	}
