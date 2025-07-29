@@ -1,4 +1,4 @@
-package net.wapic.wpcmod.features
+package net.wapic.wpcmod.features.chat
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
