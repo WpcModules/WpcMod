@@ -14,6 +14,11 @@ class GeneralConfig {
 	var fullbright: Boolean = false
 
 	@Expose
+	@ConfigOption(name = "Disable Fluid Fog", desc = "Disables the fog in water")
+	@ConfigEditorBoolean
+	var disableFluidFog: Boolean = false
+
+	@Expose
 	@ConfigOption(name = "Armor Swapper", desc = "Instantly swap to Sorrow when Keybind is hit")
 	@ConfigEditorBoolean
 	var armorSwapper: Boolean = false
