@@ -3,6 +3,7 @@ package net.wapic.wpcmod.features.chat
 import net.minecraft.client.gui.hud.ChatHudLine
 import net.minecraft.text.*
 import net.minecraft.util.Formatting
+import net.minecraft.util.Util
 import net.wapic.wpcmod.WpcMod
 import java.util.*
 
@@ -10,22 +11,36 @@ object CompactChat {
 
 	private val config get() = WpcMod.config.chatConfig
 
-	data class CompactedMessage(val text: MutableText, var occurrences: Int = 1)
+	data class CompactedMessage(
+		val text: MutableText,
+		var occurrences: Int = 1,
+		var lastCompacted: Long = Util.getMeasuringTimeMs()
+	) {
+		fun setValues(reset: Boolean = false) {
+			occurrences = if (reset) 1 else occurrences + 1
+			lastCompacted = Util.getMeasuringTimeMs()
+		}
+	}
 
 	private val messages = mutableMapOf<String, CompactedMessage>()
 	private val separators = listOf("-----", "======", "▬▬▬▬▬▬")
 
-	private fun shouldIgnore(message: Text): Boolean {
-		return !config.compactChat || message.string.isBlank() || separators.any(message.string::contains)
+	private fun shouldIgnore(message: String): Boolean {
+		return !config.compactChat || message.isBlank() || separators.any(message::contains)
 	}
 
 	fun compactMessage(message: Text, chatHudLines: MutableList<ChatHudLine>): Text {
-		if (shouldIgnore(message)) return message
+		if (shouldIgnore(message.string)) return message
 
 		val previousValue = messages.putIfAbsent(message.string, CompactedMessage(message.copy()))
 
 		previousValue?.let { compactedMessage ->
-			compactedMessage.occurrences++
+			if (Util.getMeasuringTimeMs() - compactedMessage.lastCompacted >= config.compactTimeout * 1000) {
+				compactedMessage.setValues(reset = true)
+				return message
+			}
+
+			compactedMessage.setValues()
 
 			val iterator = chatHudLines.iterator()
 			while (iterator.hasNext()) {

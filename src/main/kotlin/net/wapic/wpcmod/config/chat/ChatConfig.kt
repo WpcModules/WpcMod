@@ -19,6 +19,11 @@ class ChatConfig {
 	var compactChat: Boolean = false
 
 	@Expose
+	@ConfigOption(name = "Compact Chat Timeout", desc = "Time in seconds until messages won't be counted as duplicate")
+	@ConfigEditorSlider(minStep = 1f, minValue = 30f, maxValue = 120f)
+	var compactTimeout: Float = 60f
+
+	@Expose
 	@Category(name = "Spam Filter Settings", desc = "")
 	var spamConfig: SpamConfig = SpamConfig()
 }
