@@ -69,6 +69,9 @@ object ConfigManager {
 
 	fun saveConfig() {
 		try {
+			if (!WpcMod.configDir.exists()) {
+				WpcMod.configDir.mkdirs()
+			}
 			WpcMod.logger.info("Saving config file")
 			tempFile.writeText(gson.toJson(jsonHolder))
 			if (file.exists()) file.copyTo(backupFile, overwrite = true)
