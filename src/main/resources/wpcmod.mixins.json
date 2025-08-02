@@ -3,7 +3,6 @@
   "package": "net.wapic.wpcmod.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "devenv.YggdrasilIgnoreSignature"
   ],
   "injectors": {
     "defaultRequire": 1
@@ -20,6 +19,8 @@
     "MouseMixin",
     "SimpleInventoryMixin",
     "WorldRendererMixin",
-    "devenv.DisableCommonPacketWarnings"
+    "devenv.DisableCommonPacketWarnings",
+    "devenv.ScoreboardIgnoreExistingTeam",
+    "devenv.YggdrasilIgnoreSignature"
   ]
 }
