@@ -2,7 +2,9 @@ package net.wapic.wpcmod.config
 
 import com.google.gson.annotations.Expose
 import io.github.notenoughupdates.moulconfig.Config
+import io.github.notenoughupdates.moulconfig.Social
 import io.github.notenoughupdates.moulconfig.annotations.Category
+import io.github.notenoughupdates.moulconfig.common.MyResourceLocation
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.chat.ChatConfig
 import net.wapic.wpcmod.config.dev.DevConfig
@@ -16,6 +18,15 @@ class WpcConfig : Config() {
 
 	override fun getTitle(): String {
 		return "§bWpcMod ${WpcMod.version}§r"
+	}
+
+	override fun getSocials(): List<Social> {
+		val github = Social.forLink(
+			"WpcMod GitHub Page",
+			MyResourceLocation.parse("wpcmod:github-mark-white.png"),
+			"https://github.com/WpcModules/WpcMod"
+		)
+		return listOf(github)
 	}
 
 	override fun saveNow() {

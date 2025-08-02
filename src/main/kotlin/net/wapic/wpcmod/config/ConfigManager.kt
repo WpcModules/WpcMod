@@ -4,11 +4,13 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import io.github.notenoughupdates.moulconfig.ChromaColour
 import io.github.notenoughupdates.moulconfig.LegacyStringChromaColourTypeAdapter
+import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorSlider
 import io.github.notenoughupdates.moulconfig.gui.MoulConfigEditor
 import io.github.notenoughupdates.moulconfig.processor.BuiltinMoulConfigGuis
 import io.github.notenoughupdates.moulconfig.processor.ConfigProcessorDriver
 import io.github.notenoughupdates.moulconfig.processor.MoulConfigProcessor
 import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.config.components.slider.GuiOptionSlider
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
@@ -98,6 +100,9 @@ object ConfigManager {
 		editor = null
 		processor = MoulConfigProcessor(WpcMod.config)
 		BuiltinMoulConfigGuis.addProcessors(processor)
+		processor.registerConfigEditor(ConfigEditorSlider::class.java) { option, a ->
+			GuiOptionSlider(option, a.minValue, a.maxValue, a.minStep)
+		}
 		val driver = ConfigProcessorDriver(processor)
 		driver.warnForPrivateFields = false
 		driver.processConfig(WpcMod.config)
