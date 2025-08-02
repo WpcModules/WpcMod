@@ -14,6 +14,11 @@ class GeneralConfig {
 	var fullbright: Boolean = false
 
 	@Expose
+	@ConfigOption(name = "No Blindness", desc = "Make things not dark when its really dark")
+	@ConfigEditorBoolean
+	var noBlindness: Boolean = false
+
+	@Expose
 	@ConfigOption(name = "Disable Fluid Fog", desc = "Disables the fog in water")
 	@ConfigEditorBoolean
 	var disableFluidFog: Boolean = false
