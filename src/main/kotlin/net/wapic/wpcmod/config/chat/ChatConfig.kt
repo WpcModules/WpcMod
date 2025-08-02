@@ -20,7 +20,7 @@ class ChatConfig {
 
 	@Expose
 	@ConfigOption(name = "Compact Chat Timeout", desc = "Time in seconds until messages won't be counted as duplicate")
-	@ConfigEditorSlider(minStep = 1f, minValue = 30f, maxValue = 120f)
+	@ConfigEditorSlider(minStep = 1f, minValue = 30f, maxValue = 300f)
 	var compactTimeout: Float = 60f
 
 	@Expose

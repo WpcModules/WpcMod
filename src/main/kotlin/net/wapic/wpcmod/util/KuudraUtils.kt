@@ -32,7 +32,7 @@ object KuudraUtils {
 		if (kuudraEntity == null) {
 			world.entities.find { it is MagmaCubeEntity && it.size == 30 && it.skyBlockMaxHealth == 100000.0f }?.let {
 				kuudraEntity = it as MagmaCubeEntity
-				WpcMod.logger.debug("set KuudraEntity to {}", it);
+				WpcMod.logger.debug("set KuudraEntity to {}", it)
 			}
 		}
 	}

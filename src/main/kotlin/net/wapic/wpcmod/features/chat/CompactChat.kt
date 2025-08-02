@@ -12,7 +12,6 @@ object CompactChat {
 	private val config get() = WpcMod.config.chatConfig
 
 	data class CompactedMessage(
-		val text: MutableText,
 		var occurrences: Int = 1,
 		var lastCompacted: Long = Util.getMeasuringTimeMs()
 	) {
@@ -32,7 +31,7 @@ object CompactChat {
 	fun compactMessage(message: Text, chatHudLines: MutableList<ChatHudLine>): Text {
 		if (shouldIgnore(message.string)) return message
 
-		val previousValue = messages.putIfAbsent(message.string, CompactedMessage(message.copy()))
+		val previousValue = messages.putIfAbsent(message.string, CompactedMessage())
 
 		previousValue?.let { compactedMessage ->
 			if (Util.getMeasuringTimeMs() - compactedMessage.lastCompacted >= config.compactTimeout * 1000) {
