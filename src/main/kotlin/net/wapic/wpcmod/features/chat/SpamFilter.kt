@@ -36,7 +36,8 @@ class SpamFilter {
 		ClientTickEvents.END_CLIENT_TICK.register(::onTick)
 		HudLayerRegistrationCallback.EVENT.register { layeredDrawer ->
 			layeredDrawer.attachLayerAfter(
-				IdentifiedLayer.EXPERIENCE_LEVEL, IdentifiedLayer.of(Identifier.of("wpcmod", "hud"), ::onRenderHud)
+				IdentifiedLayer.EXPERIENCE_LEVEL,
+				IdentifiedLayer.of(Identifier.of("wpcmod", "spam_filter"), ::onRenderHud)
 			)
 		}
 	}

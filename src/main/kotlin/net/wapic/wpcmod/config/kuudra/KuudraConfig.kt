@@ -13,6 +13,11 @@ class KuudraConfig {
 	var autoGfs: Boolean = false
 
 	@Expose
+	@ConfigOption(name = "Health Display", desc = "Show the health of kuudra in the middle of the screen in P5")
+	@ConfigEditorBoolean
+	var healthDisplay: Boolean = false
+
+	@Expose
 	@Category(name = "ESP", desc = "")
 	var esp: ESPConfig = ESPConfig()
 }

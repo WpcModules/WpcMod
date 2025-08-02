@@ -14,6 +14,7 @@ import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.commands.TagCommand
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.ItemUtils.getHeadTexture
+import net.wapic.wpcmod.util.KuudraUtils
 import net.wapic.wpcmod.util.Utils
 
 object MobGlow {
@@ -77,7 +78,8 @@ object MobGlow {
 		if (Utils.getLocation() == Island.KUUDRA) {
 			return when (entity) {
 				is MagmaCubeEntity -> GlowOptions(
-					config.kuudraConfig.esp.kuudra.glow && entity.size == 30, config.kuudraConfig.esp.kuudra.color
+					config.kuudraConfig.esp.kuudra.glow && entity == KuudraUtils.kuudraEntity,
+					config.kuudraConfig.esp.kuudra.color
 				)
 
 				else -> NO_GLOW
