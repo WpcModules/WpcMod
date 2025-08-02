@@ -1,13 +1,11 @@
 package net.wapic.wpcmod.config.dev
 
-import com.google.gson.annotations.Expose
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorBoolean
 import io.github.notenoughupdates.moulconfig.annotations.ConfigOption
 
 class DevConfig {
 
-	@Expose
-	@ConfigOption(name = "Show SkyBlock ID", desc = "Shows SkyBlock ID in lore")
+	@ConfigOption(name = "Show SkyBlock ID", desc = "Show SkyBlock ID in item lore")
 	@ConfigEditorBoolean
 	var showSkyBlockID: Boolean = false
 }

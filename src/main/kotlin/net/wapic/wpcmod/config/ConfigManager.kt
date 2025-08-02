@@ -100,11 +100,17 @@ object ConfigManager {
 		editor = null
 		processor = MoulConfigProcessor(WpcMod.config)
 		BuiltinMoulConfigGuis.addProcessors(processor)
-		processor.registerConfigEditor(ConfigEditorSlider::class.java) { option, a ->
-			GuiOptionSlider(option, a.minValue, a.maxValue, a.minStep)
+		processor.registerConfigEditor(ConfigEditorSlider::class.java) { option, configEditorSlider ->
+			GuiOptionSlider(
+				option,
+				configEditorSlider.minValue,
+				configEditorSlider.maxValue,
+				configEditorSlider.minStep
+			)
 		}
 		val driver = ConfigProcessorDriver(processor)
 		driver.warnForPrivateFields = false
+		driver.checkExpose = false
 		driver.processConfig(WpcMod.config)
 	}
 

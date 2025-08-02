@@ -1,11 +1,9 @@
 package net.wapic.wpcmod.config.galatea
 
-import com.google.gson.annotations.Expose
 import io.github.notenoughupdates.moulconfig.annotations.Category
 
 class GalateaConfig {
 
-	@Expose
-	@Category(name = "ESP", desc = "")
+	@Category(name = "ESP", desc = "Configure ESP features in Galatea")
 	var esp: ESPConfig = ESPConfig()
 }

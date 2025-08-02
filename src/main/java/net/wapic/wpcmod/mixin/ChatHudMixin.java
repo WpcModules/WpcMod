@@ -26,7 +26,7 @@ public abstract class ChatHudMixin {
 
 	@ModifyConstant(method = {"addMessage(Lnet/minecraft/client/gui/hud/ChatHudLine;)V", "addVisibleMessage"}, constant = @Constant(intValue = 100))
 	private int injected(int value) {
-		return (int) Math.max(WpcMod.config.getChat().getChatHistoryLength(), value);
+		return WpcMod.config.getChat().getLongerChatHistory() ? 10000 : value;
 	}
 
 	@ModifyVariable(

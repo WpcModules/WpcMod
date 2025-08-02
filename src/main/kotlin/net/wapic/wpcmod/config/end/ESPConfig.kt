@@ -1,63 +1,52 @@
 package net.wapic.wpcmod.config.end
 
-import com.google.gson.annotations.Expose
 import io.github.notenoughupdates.moulconfig.ChromaColour
 import io.github.notenoughupdates.moulconfig.annotations.*
 
 class ESPConfig {
 
-	@Expose
 	@Accordion
-	@ConfigOption(name = "Dragon ESP", desc = "Dragon ESP Settings")
+	@ConfigOption(name = "Ender Dragon", desc = "Ender Dragons")
 	var dragon = DragonConfig()
 
 	class DragonConfig() {
 
-		@Expose
-		@ConfigOption(name = "Glow ESP", desc = "render a glow around the entity")
+		@ConfigOption(name = "Glow", desc = "Render a glow around the entity")
 		@ConfigEditorBoolean
 		var glow: Boolean = false
 
-		@Expose
-		@ConfigOption(name = "ESP Color", desc = "sets the colour for all ESP on this entity")
+		@ConfigOption(name = "Color", desc = "Color for boxes and tracers")
 		@ConfigEditorColour
 		var color = ChromaColour(1f, 0f, 1f, 0, 0xFF)
 
-		@Expose
-		@ConfigOption(name = "Box ESP", desc = "draw an ESP Box around the entity")
+		@ConfigOption(name = "Box", desc = "Draw a box around the entity")
 		@ConfigEditorBoolean
 		var box: Boolean = false
 
-		@Expose
-		@ConfigOption(name = "Tracer", desc = "draw a line from your crosshair to the entity")
+		@ConfigOption(name = "Tracer", desc = "Draw a line from your crosshair to the entity")
 		@ConfigEditorBoolean
 		var tracer: Boolean = false
 	}
 
-	@Expose
 	@Accordion
-	@ConfigOption(name = "End Node ESP", desc = "End Node ESP Settings")
+	@ConfigOption(name = "End Nodes", desc = "End Nodes")
 	var endNode = EndNodeConfig()
 
 	class EndNodeConfig() {
 
-		@Expose
-		@ConfigOption(name = "ESP Search Radius", desc = "sets the radius to search blocks around the player")
+		@ConfigOption(name = "Search Radius", desc = "Sets the radius to search for End Nodes")
 		@ConfigEditorSlider(minStep = 1.0f, minValue = 0.0f, maxValue = 50.0f)
 		var radius: Float = 25.0f
 
-		@Expose
-		@ConfigOption(name = "ESP Color", desc = "sets the colour for all ESP on the node")
+		@ConfigOption(name = "Color", desc = "Color for boxes and tracers")
 		@ConfigEditorColour
 		var color = ChromaColour(1f, 1f, 1f, 0, 0xFF)
 
-		@Expose
-		@ConfigOption(name = "Box ESP", desc = "draw an ESP Box around the node")
+		@ConfigOption(name = "Box", desc = "Draw a box around the node")
 		@ConfigEditorBoolean
 		var box: Boolean = false
 
-		@Expose
-		@ConfigOption(name = "Tracer", desc = "draw a line from your crosshair to the node")
+		@ConfigOption(name = "Tracer", desc = "Draw a line from your crosshair to the End Node")
 		@ConfigEditorBoolean
 		var tracer: Boolean = false
 	}

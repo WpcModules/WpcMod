@@ -1,6 +1,5 @@
 package net.wapic.wpcmod.config
 
-import com.google.gson.annotations.Expose
 import io.github.notenoughupdates.moulconfig.Config
 import io.github.notenoughupdates.moulconfig.Social
 import io.github.notenoughupdates.moulconfig.annotations.Category
@@ -33,31 +32,24 @@ class WpcConfig : Config() {
 		ConfigManager.saveConfig()
 	}
 
-	@Expose
 	@Category(name = "General", desc = "General configurations that don't fit into other categories")
 	var general: GeneralConfig = GeneralConfig()
 
-	@Expose
 	@Category(name = "Galatea", desc = "Configuration options for Galatea")
 	var galatea: GalateaConfig = GalateaConfig()
 
-	@Expose
 	@Category(name = "End", desc = "Configuration options for End")
 	var end: EndConfig = EndConfig()
 
-	@Expose
 	@Category(name = "Kuudra", desc = "Configuration options for Kuudra")
 	var kuudra: KuudraConfig = KuudraConfig()
 
-	@Expose
 	@Category(name = "Dungeons", desc = "Configuration options for Dungeons")
 	var dungeon: DungeonConfig = DungeonConfig()
 
-	@Expose
 	@Category(name = "Chat", desc = "Configuration options for Chat")
 	var chat: ChatConfig = ChatConfig()
 
-	@Expose
 	@Category(name = "Dev", desc = "Development features")
 	var dev: DevConfig = DevConfig()
 }
