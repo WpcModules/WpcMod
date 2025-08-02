@@ -10,7 +10,7 @@ import net.wapic.wpcmod.util.ItemUtils.getSkyBlockID
 
 class SkyBlockID {
 
-	private val config get() = WpcMod.config.devConfig
+	private val config get() = WpcMod.config.dev
 
 	init {
 		ItemTooltipCallback.EVENT.register(::onToolTipRender)

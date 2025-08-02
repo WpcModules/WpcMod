@@ -13,7 +13,7 @@ public class CameraMixin {
 
 	@Inject(method = "getSubmersionType", at = @At("HEAD"), cancellable = true)
 	private void disableFluidFog(CallbackInfoReturnable<CameraSubmersionType> cir) {
-		if (WpcMod.config.getGeneralConfig().getDisableFluidFog()) {
+		if (WpcMod.config.getGeneral().getDisableFluidFog()) {
 			cir.setReturnValue(CameraSubmersionType.NONE);
 		}
 	}

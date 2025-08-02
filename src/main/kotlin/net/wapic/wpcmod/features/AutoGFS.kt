@@ -17,14 +17,14 @@ class AutoGFS {
 	}
 
 	private fun onKuudraStart() {
-		if (Utils.getLocation() != Island.KUUDRA || !config.kuudraConfig.autoGfs) return
+		if (Utils.getLocation() != Island.KUUDRA || !config.kuudra.autoGfs) return
 		SackUtils.getFromSack("ENDER_PEARL", 16)
 	}
 
 	private fun onDungeonStart() {
 		if (Utils.getLocation() != Island.DUNGEON) return
-		if (config.dungeonConfig.autoGFS.enderPearl) SackUtils.getFromSack("ENDER_PEARL", 16)
-		if (config.dungeonConfig.autoGFS.spiritLeap) SackUtils.getFromSack("SPIRIT_LEAP", 16)
-		if (config.dungeonConfig.autoGFS.superboomTNT) SackUtils.getFromSack("SUPERBOOM_TNT", 64)
+		if (config.dungeon.autoGFS.enderPearl) SackUtils.getFromSack("ENDER_PEARL", 16)
+		if (config.dungeon.autoGFS.spiritLeap) SackUtils.getFromSack("SPIRIT_LEAP", 16)
+		if (config.dungeon.autoGFS.superboomTNT) SackUtils.getFromSack("SUPERBOOM_TNT", 64)
 	}
 }

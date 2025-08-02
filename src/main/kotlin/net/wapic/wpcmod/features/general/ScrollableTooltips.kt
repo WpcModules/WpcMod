@@ -12,7 +12,7 @@ import kotlin.math.max
 
 class ScrollableTooltips {
 
-	private val config get() = WpcMod.config.generalConfig.scrollableTooltips
+	private val config get() = WpcMod.config.general.scrollableTooltips
 
 	init {
 		GuiEvents.MOUSE_SCROLL.register(::onMouseScroll)

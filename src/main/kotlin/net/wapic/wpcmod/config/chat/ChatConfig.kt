@@ -25,5 +25,5 @@ class ChatConfig {
 
 	@Expose
 	@Category(name = "Spam Filter Settings", desc = "")
-	var spamConfig: SpamConfig = SpamConfig()
+	var spam: SpamConfig = SpamConfig()
 }

@@ -15,7 +15,7 @@ import net.wapic.wpcmod.util.Utils
 
 class PreventPlacingItems {
 
-	private val config get() = WpcMod.config.generalConfig
+	private val config get() = WpcMod.config.general
 
 	private val placeableItems = listOf(
 		"FLOWER_OF_TRUTH",

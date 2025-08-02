@@ -7,7 +7,7 @@ import net.wapic.wpcmod.WpcMod
 
 class DisableFrontCamera {
 
-	private val config get() = WpcMod.config.generalConfig
+	private val config get() = WpcMod.config.general
 
 	init {
 		ClientTickEvents.END_CLIENT_TICK.register(::onTick)

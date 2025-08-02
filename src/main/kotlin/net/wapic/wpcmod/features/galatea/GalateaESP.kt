@@ -29,7 +29,7 @@ import java.util.concurrent.CopyOnWriteArraySet
 class GalateaESP {
 
 	private var forestNodes = CopyOnWriteArraySet<Box>()
-	private val config get() = WpcMod.config.galateaConfig.esp
+	private val config get() = WpcMod.config.galatea.esp
 
 	data class ESPSettings(var box: Boolean, var tracer: Boolean, var color: ChromaColour)
 

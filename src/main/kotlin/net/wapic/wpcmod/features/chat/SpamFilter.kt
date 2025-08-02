@@ -15,7 +15,7 @@ import net.wapic.wpcmod.config.chat.SpamConfig
 
 class SpamFilter {
 
-	private val config get() = WpcMod.config.chatConfig.spamConfig
+	private val config get() = WpcMod.config.chat.spam
 
 	private val notifyQueue = mutableListOf<Notification>()
 

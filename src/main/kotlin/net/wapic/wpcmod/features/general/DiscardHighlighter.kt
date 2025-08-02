@@ -11,7 +11,7 @@ import java.awt.Color
 
 class DiscardHighlighter {
 
-	private val config get() = WpcMod.config.generalConfig.discard
+	private val config get() = WpcMod.config.general.discard
 
 	init {
 		GuiEvents.DRAW_SLOT_BACKGROUND.register(::onDrawSlot)

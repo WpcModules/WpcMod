@@ -10,7 +10,7 @@ import net.wapic.wpcmod.util.Utils
 
 class AutoCloseChests {
 
-	private val config get() = WpcMod.config.dungeonConfig
+	private val config get() = WpcMod.config.dungeon
 	private val defaultTitles = listOf("Chest", "Large Chest")
 
 	init {

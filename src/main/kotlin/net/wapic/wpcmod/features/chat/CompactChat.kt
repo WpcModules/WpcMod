@@ -9,7 +9,7 @@ import java.util.*
 
 object CompactChat {
 
-	private val config get() = WpcMod.config.chatConfig
+	private val config get() = WpcMod.config.chat
 
 	data class CompactedMessage(
 		var occurrences: Int = 1,

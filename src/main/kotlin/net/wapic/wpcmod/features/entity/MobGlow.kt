@@ -32,33 +32,33 @@ object MobGlow {
 	fun computeGlow(entity: Entity): GlowOptions {
 
 		if (TagCommand.players.contains(entity.name.string.lowercase()) || isTagged(entity)) {
-			return GlowOptions(shouldGlow = true, config.generalConfig.tagColor)
+			return GlowOptions(shouldGlow = true, config.general.tagColor)
 		}
 
 		if (Utils.getLocation() == Island.GALATEA) {
 			return when (entity) {
 				is ShulkerEntity -> GlowOptions(
-					config.galateaConfig.esp.shulker.glow, config.galateaConfig.esp.shulker.color
+					config.galatea.esp.shulker.glow, config.galatea.esp.shulker.color
 				)
 
 				is AxolotlEntity -> GlowOptions(
-					config.galateaConfig.esp.axolotl.glow, config.galateaConfig.esp.axolotl.color
+					config.galatea.esp.axolotl.glow, config.galatea.esp.axolotl.color
 				)
 
 				is FrogEntity -> GlowOptions(
-					config.galateaConfig.esp.frog.glow, config.galateaConfig.esp.frog.color
+					config.galatea.esp.frog.glow, config.galatea.esp.frog.color
 				)
 
 				is PandaEntity -> GlowOptions(
-					config.galateaConfig.esp.panda.glow, config.galateaConfig.esp.panda.color
+					config.galatea.esp.panda.glow, config.galatea.esp.panda.color
 				)
 
 				is PufferfishEntity -> GlowOptions(
-					config.galateaConfig.esp.pufferfish.glow, config.galateaConfig.esp.pufferfish.color
+					config.galatea.esp.pufferfish.glow, config.galatea.esp.pufferfish.color
 				)
 
 				is TurtleEntity -> GlowOptions(
-					config.galateaConfig.esp.shellwise.glow, config.galateaConfig.esp.shellwise.color
+					config.galatea.esp.shellwise.glow, config.galatea.esp.shellwise.color
 				)
 
 				else -> NO_GLOW
@@ -68,7 +68,7 @@ object MobGlow {
 		if (Utils.getLocation() == Island.END) {
 			return when (entity) {
 				is EnderDragonEntity -> GlowOptions(
-					config.endConfig.esp.dragon.glow, config.endConfig.esp.dragon.color
+					config.end.esp.dragon.glow, config.end.esp.dragon.color
 				)
 
 				else -> NO_GLOW
@@ -78,8 +78,8 @@ object MobGlow {
 		if (Utils.getLocation() == Island.KUUDRA) {
 			return when (entity) {
 				is MagmaCubeEntity -> GlowOptions(
-					config.kuudraConfig.esp.kuudra.glow && entity == KuudraUtils.kuudraEntity,
-					config.kuudraConfig.esp.kuudra.color
+					config.kuudra.esp.kuudra.glow && entity == KuudraUtils.kuudraEntity,
+					config.kuudra.esp.kuudra.color
 				)
 
 				else -> NO_GLOW
@@ -89,24 +89,24 @@ object MobGlow {
 		if (Utils.getLocation() == Island.DUNGEON) {
 			return when (entity) {
 				is BatEntity -> GlowOptions(
-					config.dungeonConfig.esp.bat.glow, config.dungeonConfig.esp.bat.color
+					config.dungeon.esp.bat.glow, config.dungeon.esp.bat.color
 				)
 
 				is PlayerEntity -> GlowOptions(
-					config.dungeonConfig.esp.miniboss.glow && miniBosses.contains(
+					config.dungeon.esp.miniboss.glow && miniBosses.contains(
 						entity.name.string
-					), config.dungeonConfig.esp.miniboss.color
+					), config.dungeon.esp.miniboss.color
 				)
 
 				is ArmorStandEntity -> GlowOptions(
-					config.dungeonConfig.esp.starMob.glow && entity.isMarker && entity.getEquippedStack(
+					config.dungeon.esp.starMob.glow && entity.isMarker && entity.getEquippedStack(
 						EquipmentSlot.HEAD
-					).getHeadTexture() == FEL_HEAD_TEXTURE, config.dungeonConfig.esp.starMob.color
+					).getHeadTexture() == FEL_HEAD_TEXTURE, config.dungeon.esp.starMob.color
 				)
 
 				else -> GlowOptions(
-					isStarredMob(entity) && config.dungeonConfig.esp.starMob.glow,
-					config.dungeonConfig.esp.starMob.color
+					isStarredMob(entity) && config.dungeon.esp.starMob.glow,
+					config.dungeon.esp.starMob.color
 				)
 			}
 		}

@@ -7,7 +7,7 @@ import net.wapic.wpcmod.util.KuudraUtils
 import net.wapic.wpcmod.util.render.RenderUtils
 
 class KuudraESP {
-	private val config get() = WpcMod.config.kuudraConfig.esp
+	private val config get() = WpcMod.config.kuudra.esp
 
 	init {
 		WorldRenderEvents.LAST.register(::onRenderWorld)

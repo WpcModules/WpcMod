@@ -19,7 +19,7 @@ import net.wapic.wpcmod.util.render.RenderUtils
 class EndESP {
 
 	private var endNodes: MutableSet<Box> = mutableSetOf()
-	private val config get() = WpcMod.config.endConfig.esp
+	private val config get() = WpcMod.config.end.esp
 
 	data class ESPSettings(var box: Boolean, var tracer: Boolean, var color: ChromaColour)
 

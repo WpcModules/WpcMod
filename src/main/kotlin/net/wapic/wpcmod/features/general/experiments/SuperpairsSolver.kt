@@ -19,7 +19,7 @@ import java.awt.Color
 
 class SuperpairsSolver {
 
-	private val config get() = WpcMod.config.generalConfig.experiments
+	private val config get() = WpcMod.config.general.experiments
 
 	/** REGEX-TEST: Superpairs (Metaphysical) */
 	private val superpairsTitle = "Superpairs ?\\(.+\\)".toRegex()

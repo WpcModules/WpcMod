@@ -14,7 +14,7 @@ import org.lwjgl.glfw.GLFW
 
 class ArmorSwapper {
 
-	private val config get() = WpcMod.config.generalConfig
+	private val config get() = WpcMod.config.general
 
 	private val armorSwapBind: KeyBinding =
 		KeyBindingHelper.registerKeyBinding(KeyBinding("Armor Swap", InputUtil.GLFW_KEY_V, "WpcMod"))

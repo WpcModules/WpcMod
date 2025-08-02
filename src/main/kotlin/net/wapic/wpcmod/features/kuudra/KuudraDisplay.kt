@@ -16,7 +16,7 @@ import net.wapic.wpcmod.util.Utils
 
 class KuudraDisplay {
 
-	private val config get() = WpcMod.config.kuudraConfig
+	private val config get() = WpcMod.config.kuudra
 
 	private val mc = MinecraftClient.getInstance()
 

@@ -35,29 +35,29 @@ class WpcConfig : Config() {
 
 	@Expose
 	@Category(name = "General", desc = "General configurations that don't fit into other categories")
-	var generalConfig: GeneralConfig = GeneralConfig()
+	var general: GeneralConfig = GeneralConfig()
 
 	@Expose
 	@Category(name = "Galatea", desc = "Configuration options for Galatea")
-	var galateaConfig: GalateaConfig = GalateaConfig()
+	var galatea: GalateaConfig = GalateaConfig()
 
 	@Expose
 	@Category(name = "End", desc = "Configuration options for End")
-	var endConfig: EndConfig = EndConfig()
+	var end: EndConfig = EndConfig()
 
 	@Expose
 	@Category(name = "Kuudra", desc = "Configuration options for Kuudra")
-	var kuudraConfig: KuudraConfig = KuudraConfig()
+	var kuudra: KuudraConfig = KuudraConfig()
 
 	@Expose
 	@Category(name = "Dungeons", desc = "Configuration options for Dungeons")
-	var dungeonConfig: DungeonConfig = DungeonConfig()
+	var dungeon: DungeonConfig = DungeonConfig()
 
 	@Expose
 	@Category(name = "Chat", desc = "Configuration options for Chat")
-	var chatConfig: ChatConfig = ChatConfig()
+	var chat: ChatConfig = ChatConfig()
 
 	@Expose
 	@Category(name = "Dev", desc = "Development features")
-	var devConfig: DevConfig = DevConfig()
+	var dev: DevConfig = DevConfig()
 }
