@@ -82,6 +82,7 @@ object WpcMod : ModInitializer {
 					.then(UpdateCommand.getCommand())
 					.then(ShortcutsCommand.getCommand())
 					.then(TagCommand.getCommand())
+					.then(FreecamCommand.getCommand())
 			)
 
 			dispatcher.register(ClientCommandManager.literal("wpcmod").redirect(mainCommand))
@@ -119,6 +120,7 @@ object WpcMod : ModInitializer {
 		DiscardHighlighter()
 		DisableFrontCamera()
 		ScrollableTooltips()
+		Freecam()
 
 		//Experiments
 		AutoExperiments()

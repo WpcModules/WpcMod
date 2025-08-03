@@ -2,12 +2,16 @@ package net.wapic.wpcmod.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.entity.Entity;
 import net.wapic.wpcmod.features.entity.MobGlow;
+import net.wapic.wpcmod.features.general.Freecam;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.Slice;
 
 @Mixin(WorldRenderer.class)
@@ -17,6 +21,14 @@ public class WorldRendererMixin {
 	private boolean shouldMobGlow(boolean original, @Local Entity entity) {
 		MobGlow.GlowOptions glowOptions = MobGlow.INSTANCE.computeGlow(entity);
 		return glowOptions.getShouldGlow() || original;
+	}
+
+	@Redirect(method = "getEntitiesToRender", require = 0, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/Camera;getFocusedEntity()Lnet/minecraft/entity/Entity;", ordinal = 3))
+	private Entity freecam_RenderPlayer(Camera camera) {
+		if (Freecam.Companion.isEnabled()) {
+			return MinecraftClient.getInstance().player;
+		}
+		return camera.getFocusedEntity();
 	}
 
 	@SuppressWarnings({"InvalidInjectorMethodSignature", "MixinAnnotationTarget"})
