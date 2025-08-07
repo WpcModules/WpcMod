@@ -38,7 +38,6 @@ import net.wapic.wpcmod.features.inventory.DiscardHighlighter
 import net.wapic.wpcmod.features.inventory.ScrollableTooltips
 import net.wapic.wpcmod.features.kuudra.KuudraDisplay
 import net.wapic.wpcmod.features.kuudra.KuudraESP
-import net.wapic.wpcmod.features.render.DisableFrontCamera
 import net.wapic.wpcmod.listeners.ChatListener
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.KuudraUtils
@@ -122,7 +121,6 @@ object WpcMod : ModInitializer {
         ArmorSwapper()
 		PreventPlacingItems()
 		DiscardHighlighter()
-		DisableFrontCamera()
 		ScrollableTooltips()
 		Freecam()
 
