@@ -1,4 +1,4 @@
-package net.wapic.wpcmod.config.general
+package net.wapic.wpcmod.config.inventory
 
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorBoolean
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorSlider

@@ -1,4 +1,4 @@
-package net.wapic.wpcmod.features.general
+package net.wapic.wpcmod.features.inventory
 
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
@@ -11,7 +11,7 @@ import java.awt.Color
 
 class DiscardHighlighter {
 
-	private val config get() = WpcMod.config.general.discard
+	private val config get() = WpcMod.config.inventory.discard
 
 	init {
 		GuiEvents.DRAW_SLOT_BACKGROUND.register(::onDrawSlot)

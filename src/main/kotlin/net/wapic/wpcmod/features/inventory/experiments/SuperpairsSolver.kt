@@ -1,4 +1,4 @@
-package net.wapic.wpcmod.features.general.experiments
+package net.wapic.wpcmod.features.inventory.experiments
 
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
@@ -19,7 +19,7 @@ import java.awt.Color
 
 class SuperpairsSolver {
 
-	private val config get() = WpcMod.config.general.experiments
+	private val config get() = WpcMod.config.inventory.experiments
 
 	/** REGEX-TEST: Superpairs (Metaphysical) */
 	private val superpairsTitle = "Superpairs ?\\(.+\\)".toRegex()

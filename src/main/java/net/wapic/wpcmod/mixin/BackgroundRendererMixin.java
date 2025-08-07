@@ -21,7 +21,7 @@ public class BackgroundRendererMixin {
 		MinecraftClient client = MinecraftClient.getInstance();
 		if (client.player != null) {
 			boolean isBlind = client.player.hasStatusEffect(StatusEffects.BLINDNESS);
-			if (WpcMod.config.getGeneral().getNoBlindness() && isBlind) {
+			if (WpcMod.config.getRender().getNoBlindness() && isBlind) {
 				cir.setReturnValue(Fog.DUMMY);
 			}
 		}

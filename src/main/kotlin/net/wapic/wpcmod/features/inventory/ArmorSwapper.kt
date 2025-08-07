@@ -1,4 +1,4 @@
-package net.wapic.wpcmod.features.general
+package net.wapic.wpcmod.features.inventory
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
@@ -14,7 +14,7 @@ import org.lwjgl.glfw.GLFW
 
 class ArmorSwapper {
 
-	private val config get() = WpcMod.config.general
+	private val config get() = WpcMod.config.inventory
 
 	private val armorSwapBind: KeyBinding =
 		KeyBindingHelper.registerKeyBinding(KeyBinding("Armor Swap", InputUtil.GLFW_KEY_V, "WpcMod"))

@@ -11,7 +11,9 @@ import net.wapic.wpcmod.config.dungeon.DungeonConfig
 import net.wapic.wpcmod.config.end.EndConfig
 import net.wapic.wpcmod.config.galatea.GalateaConfig
 import net.wapic.wpcmod.config.general.GeneralConfig
+import net.wapic.wpcmod.config.inventory.InventoryConfig
 import net.wapic.wpcmod.config.kuudra.KuudraConfig
+import net.wapic.wpcmod.config.render.RenderConfig
 
 class WpcConfig : Config() {
 
@@ -49,6 +51,12 @@ class WpcConfig : Config() {
 
 	@Category(name = "Chat", desc = "Configuration options for Chat")
 	var chat: ChatConfig = ChatConfig()
+
+	@Category(name = "Inventory", desc = "Features that interact mainly with the inventory")
+	var inventory: InventoryConfig = InventoryConfig()
+
+	@Category(name = "Render", desc = "Features that handle any rendering options")
+	var render: RenderConfig = RenderConfig()
 
 	@Category(name = "Dev", desc = "Development features")
 	var dev: DevConfig = DevConfig()
