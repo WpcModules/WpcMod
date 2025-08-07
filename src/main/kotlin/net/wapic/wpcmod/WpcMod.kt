@@ -23,10 +23,10 @@ import net.minecraft.text.Text
 import net.wapic.wpcmod.commands.*
 import net.wapic.wpcmod.config.ConfigManager
 import net.wapic.wpcmod.config.WpcConfig
-import net.wapic.wpcmod.features.AutoGFS
 import net.wapic.wpcmod.features.chat.SpamFilter
 import net.wapic.wpcmod.features.dev.SkyBlockID
 import net.wapic.wpcmod.features.dungeons.AutoCloseChests
+import net.wapic.wpcmod.features.dungeons.DungeonAutoGFS
 import net.wapic.wpcmod.features.end.EndESP
 import net.wapic.wpcmod.features.galatea.GalateaESP
 import net.wapic.wpcmod.features.general.*
@@ -36,6 +36,7 @@ import net.wapic.wpcmod.features.general.shortcut.ShortcutHandler
 import net.wapic.wpcmod.features.inventory.ArmorSwapper
 import net.wapic.wpcmod.features.inventory.DiscardHighlighter
 import net.wapic.wpcmod.features.inventory.ScrollableTooltips
+import net.wapic.wpcmod.features.kuudra.KuudraAutoGFS
 import net.wapic.wpcmod.features.kuudra.KuudraDisplay
 import net.wapic.wpcmod.features.kuudra.KuudraESP
 import net.wapic.wpcmod.listeners.ChatListener
@@ -118,10 +119,7 @@ object WpcMod : ModInitializer {
 
 		// General
 		ShortcutHandler()
-        ArmorSwapper()
 		PreventPlacingItems()
-		DiscardHighlighter()
-		ScrollableTooltips()
 		Freecam()
 
 		//Experiments
@@ -130,10 +128,12 @@ object WpcMod : ModInitializer {
 
 		// Dungeons
 		AutoCloseChests()
+		DungeonAutoGFS()
 
 		// Kuudra
 		KuudraDisplay()
 		KuudraESP()
+		KuudraAutoGFS()
 
 		// Galatea
 		GalateaESP()
@@ -144,8 +144,10 @@ object WpcMod : ModInitializer {
 		// Chat
 		SpamFilter()
 
-		// Multi Category
-		AutoGFS()
+		// Inventory
+		ArmorSwapper()
+		DiscardHighlighter()
+		ScrollableTooltips()
 
 		// Dev
 		SkyBlockID()

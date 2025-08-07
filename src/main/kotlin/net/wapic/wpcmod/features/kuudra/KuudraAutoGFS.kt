@@ -1,0 +1,15 @@
+package net.wapic.wpcmod.features.kuudra
+
+import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.events.skyblock.KuudraEvents
+import net.wapic.wpcmod.util.SackUtils
+
+class KuudraAutoGFS {
+	private val config get() = WpcMod.config.kuudra
+
+	init {
+		KuudraEvents.START.register {
+			if(config.autoGfs) SackUtils.getFromSack("ENDER_PEARL", 16)
+		}
+	}
+}

@@ -4,6 +4,8 @@ import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.text.Text
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.events.skyblock.KuudraEvents
+import net.wapic.wpcmod.util.Island
+import net.wapic.wpcmod.util.Utils
 
 class ChatListener {
 
@@ -24,11 +26,13 @@ class ChatListener {
 	fun onMessageReceived(text: Text, actionBar: Boolean) {
 		if (actionBar) return
 
-		// Dungeons
-		if (text.string.equals(DUNGEON_START_MESSAGE)) DungeonEvents.START.invoker().onStart()
+		if(Utils.getLocation() == Island.DUNGEON) {
+			if (text.string.equals(DUNGEON_START_MESSAGE)) DungeonEvents.START.invoker().onStart()
+		}
 
-		// Kuudra
-		if (text.string.equals(KUUDRA_START_MESSAGE)) KuudraEvents.START.invoker().onStart()
-		if (text.string.equals(KUUDRA_END_MESSAGE)) KuudraEvents.END.invoker().onEnd()
+		if(Utils.getLocation() == Island.KUUDRA) {
+			if (text.string.equals(KUUDRA_START_MESSAGE)) KuudraEvents.START.invoker().onStart()
+			if (text.string.equals(KUUDRA_END_MESSAGE)) KuudraEvents.END.invoker().onEnd()
+		}
 	}
 }
