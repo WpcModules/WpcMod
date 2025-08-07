@@ -1,4 +1,4 @@
-package net.wapic.wpcmod.features.general
+package net.wapic.wpcmod.features.inventory
 
 import net.minecraft.screen.slot.Slot
 import net.minecraft.util.math.MathHelper
@@ -12,7 +12,7 @@ import kotlin.math.max
 
 class ScrollableTooltips {
 
-	private val config get() = WpcMod.config.general.scrollableTooltips
+	private val config get() = WpcMod.config.inventory.scrollableTooltips
 
 	init {
 		GuiEvents.MOUSE_SCROLL.register(::onMouseScroll)

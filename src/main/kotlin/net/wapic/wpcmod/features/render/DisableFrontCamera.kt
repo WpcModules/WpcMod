@@ -1,4 +1,4 @@
-package net.wapic.wpcmod.features.general
+package net.wapic.wpcmod.features.render
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.minecraft.client.MinecraftClient
@@ -7,7 +7,7 @@ import net.wapic.wpcmod.WpcMod
 
 class DisableFrontCamera {
 
-	private val config get() = WpcMod.config.general
+	private val config get() = WpcMod.config.render
 
 	init {
 		ClientTickEvents.END_CLIENT_TICK.register(::onTick)

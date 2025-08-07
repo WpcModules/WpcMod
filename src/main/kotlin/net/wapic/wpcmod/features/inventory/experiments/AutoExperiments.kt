@@ -1,4 +1,4 @@
-package net.wapic.wpcmod.features.general.experiments
+package net.wapic.wpcmod.features.inventory.experiments
 
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
 import net.minecraft.block.Blocks
@@ -17,7 +17,7 @@ import org.lwjgl.glfw.GLFW
 
 class AutoExperiments {
 
-	private val config get() = WpcMod.config.general.experiments
+	private val config get() = WpcMod.config.inventory.experiments
 
 	private var currentExperiment = ExperimentType.NONE
 
