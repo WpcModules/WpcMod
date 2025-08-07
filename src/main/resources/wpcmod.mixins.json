@@ -15,6 +15,7 @@
     "ClientPlayNetworkHandlerMixin",
     "DimensionTypeMixin",
     "EntityMixin",
+    "GameOptionsMixin",
     "HandledScreenMixin",
     "HoveredTooltipPositionerMixin",
     "KeyboardMixin",
