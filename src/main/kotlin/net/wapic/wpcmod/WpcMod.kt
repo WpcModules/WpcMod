@@ -29,21 +29,18 @@ import net.wapic.wpcmod.features.dungeons.AutoCloseChests
 import net.wapic.wpcmod.features.dungeons.DungeonAutoGFS
 import net.wapic.wpcmod.features.end.EndESP
 import net.wapic.wpcmod.features.galatea.GalateaESP
-import net.wapic.wpcmod.features.general.*
-import net.wapic.wpcmod.features.inventory.experiments.AutoExperiments
-import net.wapic.wpcmod.features.inventory.experiments.SuperpairsSolver
+import net.wapic.wpcmod.features.general.Freecam
+import net.wapic.wpcmod.features.general.PreventPlacingItems
 import net.wapic.wpcmod.features.general.shortcut.ShortcutHandler
 import net.wapic.wpcmod.features.inventory.ArmorSwapper
 import net.wapic.wpcmod.features.inventory.DiscardHighlighter
 import net.wapic.wpcmod.features.inventory.ScrollableTooltips
+import net.wapic.wpcmod.features.inventory.experiments.AutoExperiments
+import net.wapic.wpcmod.features.inventory.experiments.SuperpairsSolver
 import net.wapic.wpcmod.features.kuudra.KuudraAutoGFS
 import net.wapic.wpcmod.features.kuudra.KuudraDisplay
 import net.wapic.wpcmod.features.kuudra.KuudraESP
-import net.wapic.wpcmod.listeners.ChatListener
-import net.wapic.wpcmod.util.ChatUtils
-import net.wapic.wpcmod.util.KuudraUtils
-import net.wapic.wpcmod.util.SackUtils
-import net.wapic.wpcmod.util.Utils
+import net.wapic.wpcmod.util.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -115,7 +112,7 @@ object WpcMod : ModInitializer {
 		Utils.init()
 		SackUtils.init()
 		KuudraUtils.init()
-		ChatListener()
+		DungeonUtils.init()
 
 		// General
 		ShortcutHandler()

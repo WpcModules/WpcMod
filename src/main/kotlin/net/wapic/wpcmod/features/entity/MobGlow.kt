@@ -13,7 +13,7 @@ import net.minecraft.predicate.entity.EntityPredicates
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.commands.TagCommand
 import net.wapic.wpcmod.util.Island
-import net.wapic.wpcmod.util.ItemUtils.getHeadTexture
+import net.wapic.wpcmod.util.ItemUtils.headTexture
 import net.wapic.wpcmod.util.KuudraUtils
 import net.wapic.wpcmod.util.Utils
 
@@ -101,7 +101,7 @@ object MobGlow {
 				is ArmorStandEntity -> GlowOptions(
 					config.dungeon.esp.starMob.glow && entity.isMarker && entity.getEquippedStack(
 						EquipmentSlot.HEAD
-					).getHeadTexture() == FEL_HEAD_TEXTURE, config.dungeon.esp.starMob.color
+					).headTexture == FEL_HEAD_TEXTURE, config.dungeon.esp.starMob.color
 				)
 
 				else -> GlowOptions(

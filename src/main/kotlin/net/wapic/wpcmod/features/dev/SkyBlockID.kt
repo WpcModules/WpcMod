@@ -6,7 +6,7 @@ import net.minecraft.item.ItemStack
 import net.minecraft.item.tooltip.TooltipType
 import net.minecraft.text.Text
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.util.ItemUtils.getSkyBlockID
+import net.wapic.wpcmod.util.ItemUtils.skyBlockID
 
 class SkyBlockID {
 
@@ -20,7 +20,7 @@ class SkyBlockID {
 		stack: ItemStack, tooltipContext: Item.TooltipContext, type: TooltipType, lines: MutableList<Text>
 	) {
 		if (!config.showSkyBlockID) return
-		val skyBlockID = stack.getSkyBlockID() ?: return
+		val skyBlockID = stack.skyBlockID ?: return
 		lines.add(Text.of(skyBlockID))
 	}
 }
