@@ -90,7 +90,8 @@ class Freecam {
 		camera?.let {
 			it.updateLastTickPosition()
 			val cameraMotion = calculateMotionWithDeceleration(cameraMotion, 0.15, 0.4)
-			it.handleMotion(cameraMotion.x, cameraMotion.y, cameraMotion.z)
+			val forward = if (client.options.sprintKey.isPressed) cameraMotion.x * 2 else cameraMotion.x
+			it.handleMotion(forward, cameraMotion.y, cameraMotion.z)
 		}
 	}
 
