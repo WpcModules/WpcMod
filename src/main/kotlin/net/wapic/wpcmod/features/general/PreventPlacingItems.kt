@@ -10,7 +10,7 @@ import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.world.World
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.Island
-import net.wapic.wpcmod.util.ItemUtils.getSkyBlockID
+import net.wapic.wpcmod.util.ItemUtils.skyBlockID
 import net.wapic.wpcmod.util.Utils
 
 class PreventPlacingItems {
@@ -76,7 +76,7 @@ class PreventPlacingItems {
 
 	fun onUseBlock(player: PlayerEntity, world: World, hand: Hand, hitResult: BlockHitResult): ActionResult {
 		if (!config.preventPlacing || player.mainHandStack.isEmpty) return ActionResult.PASS
-		val item = player.mainHandStack.getSkyBlockID() ?: return ActionResult.PASS
+		val item = player.mainHandStack.skyBlockID ?: return ActionResult.PASS
 
 		if (item.contains("ABIPHONE".toRegex()) || item in placeableItems) {
 
