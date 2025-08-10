@@ -61,6 +61,12 @@ public class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
 		}
 	}
 
+	@Inject(method = "swingHand", at = @At("HEAD"), cancellable = true)
+	private void freecam_disableSwing(CallbackInfo ci) {
+		if (Freecam.Companion.isEnabled()) {
+			ci.cancel();
+		}
+	}
 
 	@Inject(at = @At("HEAD"), method = "closeScreen")
 	public void onCloseScreen(CallbackInfo ci) {
