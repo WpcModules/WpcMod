@@ -20,7 +20,7 @@ class SpamFilter {
 	private val notifyQueue = mutableListOf<Notification>()
 
 	private val abilityRegex =
-		"^Your (\\w+) hit (\\d+) enem(?:y|ies) for (\\d+(?:,\\d+)*(\\.\\d+)?) damage\\.$".toRegex()
+		"^Your (\\w+(?:\\s\\w+)*) hit (\\d+) enem(?:y|ies) for (\\d+(?:,\\d+)*(\\.\\d+)?) damage\\.$".toRegex()
 	private val tpFailRegex = "^There are blocks in the way!$".toRegex()
 	private val killComboRegex =
 		"\\+\\d+ Kill Combo(?: \\+\\d+[%☯]? (?:✯ Magic Find|coins per kill|Combat Wisdom))?".toRegex()
