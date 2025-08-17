@@ -24,6 +24,9 @@ public abstract class ChatHudMixin {
 	@Shadow
 	protected abstract void refresh();
 
+	@Shadow
+	private int scrolledLines;
+
 	@ModifyConstant(method = {"addMessage(Lnet/minecraft/client/gui/hud/ChatHudLine;)V", "addVisibleMessage"}, constant = @Constant(intValue = 100))
 	private int injected(int value) {
 		return WpcMod.config.getChat().getLongerChatHistory() ? 10000 : value;
@@ -37,7 +40,9 @@ public abstract class ChatHudMixin {
 	public Text addMessage(final Text message) {
 		Text text = CompactChat.INSTANCE.compactMessage(message, messages);
 		if (!text.getString().equals(message.getString())) {
+			int i = this.scrolledLines;
 			this.refresh();
+			this.scrolledLines = i;
 		}
 		return text;
 	}

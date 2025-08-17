@@ -67,7 +67,7 @@ object CompactChat {
 
 	class OccurrenceTextContent(var occurrences: Int) : PlainTextContent {
 
-		override fun string(): String? {
+		override fun string(): String {
 			return " (" + this.occurrences + ")"
 		}
 
