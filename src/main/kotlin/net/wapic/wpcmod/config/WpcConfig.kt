@@ -13,6 +13,7 @@ import net.wapic.wpcmod.config.galatea.GalateaConfig
 import net.wapic.wpcmod.config.general.GeneralConfig
 import net.wapic.wpcmod.config.inventory.InventoryConfig
 import net.wapic.wpcmod.config.kuudra.KuudraConfig
+import net.wapic.wpcmod.config.mining.MiningConfig
 import net.wapic.wpcmod.config.render.RenderConfig
 
 class WpcConfig : Config() {
@@ -48,6 +49,9 @@ class WpcConfig : Config() {
 
 	@Category(name = "Dungeons", desc = "Configuration options for Dungeons")
 	var dungeon: DungeonConfig = DungeonConfig()
+
+	@Category(name = "Mining", desc = "Features that involve dwarven mines/hollows/glacite tunnels")
+	var mining: MiningConfig = MiningConfig()
 
 	@Category(name = "Chat", desc = "Configuration options for Chat")
 	var chat: ChatConfig = ChatConfig()
