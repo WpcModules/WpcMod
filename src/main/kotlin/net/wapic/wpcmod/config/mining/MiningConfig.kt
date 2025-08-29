@@ -1,11 +1,17 @@
 package net.wapic.wpcmod.config.mining;
 
+import io.github.notenoughupdates.moulconfig.annotations.Category
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorBoolean;
 import io.github.notenoughupdates.moulconfig.annotations.ConfigOption;
+import net.wapic.wpcmod.config.mining.ESPConfig
 
 class MiningConfig {
+
+	@Category(name = "ESP", desc = "Configure ESP features for mining")
+	var esp: ESPConfig = ESPConfig()
 
 	@ConfigOption(name = "Pigeon Swapper", desc = "Auto-swap to pigeon")
 	@ConfigEditorBoolean
 	var pigeonSwapper: Boolean = false
+
 }

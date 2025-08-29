@@ -7,4 +7,6 @@ object EntityUtils {
 
 	val LivingEntity?.skyBlockMaxHealth: Float
 		get() = this?.getAttributeBaseValue(EntityAttributes.MAX_HEALTH)?.toFloat() ?: 0f
+
+
 }
