@@ -20,8 +20,9 @@ class ChestESP {
 
 	private fun renderWorld(worldRenderContext: WorldRenderContext) {
 		if (Utils.getLocation() != Island.CRYSTAL_HOLLOWS) return
-		Utils.getLoadedBlockEntities().filterIsInstance<ChestBlockEntity>().forEach { entity ->
+		if (!config.chest.tracer && !config.chest.box) return
 
+		Utils.getLoadedBlockEntities().filterIsInstance<ChestBlockEntity>().forEach { entity ->
 			val blockPos = entity.pos
 			val chest = Box.of(blockPos.toCenterPos(), 1.0, 1.0, 1.0)
 
