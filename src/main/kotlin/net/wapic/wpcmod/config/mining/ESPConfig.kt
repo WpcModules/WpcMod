@@ -10,6 +10,10 @@ class ESPConfig {
 	var chest = chestConfig()
 
 	class chestConfig() {
+		@ConfigOption(name = "Radius limit", desc = "Sets the limit of blocks around the player to search for chests")
+		@ConfigEditorSlider(minStep = 1.0f, minValue = 0.0f, maxValue = 200.0f)
+		var radius: Float = 30.0f
+
 		@ConfigOption(name = "Color", desc = "Color for boxes and tracers")
 		@ConfigEditorColour
 		var color = ChromaColour(1f, 1f, 1f, 0, 0xFF)
