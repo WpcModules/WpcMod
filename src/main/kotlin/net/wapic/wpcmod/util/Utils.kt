@@ -6,9 +6,7 @@ import net.hypixel.modapi.packet.impl.clientbound.event.ClientboundLocationPacke
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.client.MinecraftClient
 import net.minecraft.util.Util
-import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.ChunkPos
-import net.minecraft.world.chunk.EmptyChunk
 import net.minecraft.world.chunk.WorldChunk
 import net.wapic.wpcmod.WpcMod
 import kotlin.math.max

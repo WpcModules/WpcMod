@@ -13,34 +13,26 @@ import net.wapic.wpcmod.util.ItemUtils.skyBlockID
 import net.wapic.wpcmod.util.Utils
 import kotlin.collections.find
 
+
 class PigeonSwapper {
 
 	private val config get() = WpcMod.config.mining
+	private val allowedAreas: List<Island> = listOf(Island.DWARVEN_MINES, Island.CRYSTAL_HOLLOWS)
 
 	init {
-		UseItemCallback.EVENT.register(::onUseItem)
-		UseBlockCallback.EVENT.register(::onUseBlock)
+		UseItemCallback.EVENT.register { player, world, hand -> onUse(player, world, hand) }
+		UseBlockCallback.EVENT.register { player, world, hand, _ -> onUse(player, world, hand)}
 	}
 
-	fun onUseItem(player: PlayerEntity, world: World, hand: Hand): ActionResult {
-		return useItem(player, world, hand)
-	}
+	private fun onUse(player: PlayerEntity, world: World, hand: Hand): ActionResult {
+		if (!config.pigeonSwapper || Utils.getLocation() !in allowedAreas) return ActionResult.PASS
 
-	fun onUseBlock(player: PlayerEntity, world: World, hand: Hand, hitResult: BlockHitResult): ActionResult {
-		return useItem(player, world, hand)
-	}
+		if (player.mainHandStack?.skyBlockID == "ROYAL_PIGEON") {
+			val inventory = player.inventory ?: return ActionResult.PASS
+			val drillItem = inventory.find { it.name.string.contains("Drill") } ?: return ActionResult.PASS
 
-	fun useItem(player: PlayerEntity, world: World, hand: Hand): ActionResult {
-		if (!config.pigeonSwapper || player.mainHandStack.isEmpty) return ActionResult.PASS
-		if(!(Utils.getLocation() == Island.DWARVEN_MINES || Utils.getLocation() == Island.CRYSTAL_HOLLOWS)) return ActionResult.PASS
-
-		val item = player.mainHandStack.skyBlockID ?: return ActionResult.PASS
-
-		if (item.contains("ROYAL_PIGEON".toRegex())) {
-			player.inventory?.find { stack ->
-				stack.name.string.contains("Drill")
-			}?.let { stack ->
-				player.inventory.setSelectedSlot(player.inventory.getSlotWithStack(stack))
+			drillItem?.let {
+				inventory.setSelectedSlot(inventory.getSlotWithStack(it))
 				return ActionResult.SUCCESS
 			}
 		}
