@@ -12,6 +12,7 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.predicate.entity.EntityPredicates
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.commands.TagCommand
+import net.wapic.wpcmod.util.EntityUtils
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.ItemUtils.headTexture
 import net.wapic.wpcmod.util.KuudraUtils
