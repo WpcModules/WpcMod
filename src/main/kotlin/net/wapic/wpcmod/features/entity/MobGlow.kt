@@ -114,21 +114,15 @@ object MobGlow {
 		return NO_GLOW
 	}
 
-	private fun getArmorStandsByEntity(entity: Entity): List<ArmorStandEntity> {
-		return entity.world.getEntitiesByClass(
-			ArmorStandEntity::class.java, entity.boundingBox.expand(0.0, 2.0, 0.0), EntityPredicates.NOT_MOUNTED
-		)
-	}
-
 	private fun isTagged(entity: Entity): Boolean {
-		val armorStands = getArmorStandsByEntity(entity)
+		val armorStands = EntityUtils.getArmorStandsByEntity(entity)
 		return armorStands.isNotEmpty() && TagCommand.players.find {
 			armorStands.first().name?.string?.lowercase()?.contains(it) ?: false
 		}?.isNotEmpty() ?: false
 	}
 
 	private fun isStarredMob(entity: Entity): Boolean {
-		val armorStands = getArmorStandsByEntity(entity)
+		val armorStands = EntityUtils.getArmorStandsByEntity(entity)
 		return armorStands.isNotEmpty() && armorStands.first().name?.string?.contains("✯") ?: false
 	}
 }

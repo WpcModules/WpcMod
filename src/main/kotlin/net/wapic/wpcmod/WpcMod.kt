@@ -28,6 +28,7 @@ import net.wapic.wpcmod.features.dev.SkyBlockID
 import net.wapic.wpcmod.features.dungeons.AutoCloseChests
 import net.wapic.wpcmod.features.dungeons.DungeonAutoGFS
 import net.wapic.wpcmod.features.end.EndESP
+import net.wapic.wpcmod.features.fishing.AutoFish
 import net.wapic.wpcmod.features.galatea.GalateaESP
 import net.wapic.wpcmod.features.general.Freecam
 import net.wapic.wpcmod.features.general.PreventPlacingItems
@@ -137,6 +138,9 @@ object WpcMod : ModInitializer {
 
 		// End
 		EndESP()
+
+		// Fishing
+		AutoFish()
 
 		// Chat
 		SpamFilter()

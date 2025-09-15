@@ -9,6 +9,7 @@ import net.wapic.wpcmod.config.chat.ChatConfig
 import net.wapic.wpcmod.config.dev.DevConfig
 import net.wapic.wpcmod.config.dungeon.DungeonConfig
 import net.wapic.wpcmod.config.end.EndConfig
+import net.wapic.wpcmod.config.fishing.FishingConfig
 import net.wapic.wpcmod.config.galatea.GalateaConfig
 import net.wapic.wpcmod.config.general.GeneralConfig
 import net.wapic.wpcmod.config.inventory.InventoryConfig
@@ -42,6 +43,9 @@ class WpcConfig : Config() {
 
 	@Category(name = "End", desc = "Configuration options for End")
 	var end: EndConfig = EndConfig()
+
+	@Category(name = "Fishing", desc = "Configuration options for fishing")
+	var fishing: FishingConfig = FishingConfig()
 
 	@Category(name = "Kuudra", desc = "Configuration options for Kuudra")
 	var kuudra: KuudraConfig = KuudraConfig()
