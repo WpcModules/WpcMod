@@ -27,6 +27,7 @@ import net.wapic.wpcmod.features.chat.SpamFilter
 import net.wapic.wpcmod.features.dev.SkyBlockID
 import net.wapic.wpcmod.features.dungeons.AutoCloseChests
 import net.wapic.wpcmod.features.dungeons.DungeonAutoGFS
+import net.wapic.wpcmod.features.dungeons.ScoreCalculation
 import net.wapic.wpcmod.features.end.EndESP
 import net.wapic.wpcmod.features.galatea.GalateaESP
 import net.wapic.wpcmod.features.general.Freecam
@@ -128,6 +129,7 @@ object WpcMod : ModInitializer {
 		// Dungeons
 		AutoCloseChests()
 		DungeonAutoGFS()
+		ScoreCalculation()
 
 		// Kuudra
 		KuudraDisplay()
