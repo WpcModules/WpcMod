@@ -71,18 +71,15 @@ public abstract class ClientPlayNetworkHandlerMixin {
 
 	@Inject(at = @At("HEAD"), method = "onTeam")
 	private void onScoreboardUpdate(TeamS2CPacket packet, CallbackInfo ci) {
-		ScoreboardChangeEvent.GENERAL_EVENT.invoker().onScoreboardChange(packet);
 		if (packet.getTeamOperation() != null || packet.getPlayerListOperation() != null) return;
 
-		String prefix = packet.getTeam().isPresent() ? packet.getTeam().get().getPrefix().getLiteralString() : "";
-		String suffix = packet.getTeam().isPresent() ? packet.getTeam().get().getSuffix().getLiteralString() : "";
+		TeamS2CPacket.SerializableTeam team = packet.getTeam().orElse(null);
 
-		StringBuilder s = new StringBuilder();
-		for (String name : packet.getPlayerNames()) {
-			s.append(prefix).append(name).append(suffix).append(" ");
-		}
+		String prefix = team == null ? "" : team.getPrefix().getString();
+		String suffix = team == null ? "" : team.getSuffix().getString();
 
-		String line = s.toString();
+		String line = prefix + String.join(" ", packet.getPlayerNames()) + suffix;
+
 		ScoreboardChangeEvent.EVENT.invoker().onScoreboardChange(line);
 	}
 }
