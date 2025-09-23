@@ -7,12 +7,16 @@ import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.render.RenderTickCounter
 import net.minecraft.client.world.ClientWorld
+import net.minecraft.entity.Entity
+import net.minecraft.entity.mob.ZombieEntity
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
+import net.wapic.wpcmod.events.EntityEvents
 import net.wapic.wpcmod.events.PlayerListChangeEvent
 import net.wapic.wpcmod.events.ScoreboardChangeEvent
 import net.wapic.wpcmod.events.WorldChangeEvent
+import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.DungeonUtils.DungeonFloor
 import net.wapic.wpcmod.util.Island
@@ -39,7 +43,7 @@ class ScoreCalculation {
 
 	data class FloorRequirement(val secretPercentage: Double = 1.0, val speed: Int = 10 * 60)
 
-	val floorRequirements = hashMapOf(
+	private val floorRequirements = hashMapOf(
 		DungeonFloor.ENTRANCE to FloorRequirement(.3, 20 * 60),
 		DungeonFloor.FLOOR_1 to FloorRequirement(.3),
 		DungeonFloor.FLOOR_2 to FloorRequirement(.4),
@@ -58,15 +62,15 @@ class ScoreCalculation {
 		DungeonFloor.NONE to FloorRequirement()
 	)
 
-	val floorRequirement get() = floorRequirements[DungeonUtils.currentFloor]!!
-	val isEntrance get() = DungeonUtils.currentFloor == DungeonFloor.ENTRANCE
+	private val floorRequirement get() = floorRequirements[DungeonUtils.currentFloor]!!
+	private val isEntrance get() = DungeonUtils.currentFloor == DungeonFloor.ENTRANCE
 
 	// Room Clear
 	private var completedRooms = 0
 	private var clearedPercentage = 0
 
-	val totalRoomMap = mutableMapOf<Int, Int>()
-	val totalRooms: Int
+	private val totalRoomMap = mutableMapOf<Int, Int>()
+	private val totalRooms: Int
 		get() {
 			val a = if (clearedPercentage > 0 && completedRooms > 0) {
 				(100 * (completedRooms / clearedPercentage.toDouble())).roundToInt()
@@ -76,20 +80,23 @@ class ScoreCalculation {
 			return totalRoomMap.toList().maxByOrNull { it.second }!!.first
 		}
 
-	val roomClearPercentage get() = if (totalRooms > 0) (completedRooms / totalRooms.toDouble()).coerceAtMost(1.0) else 0.0
+	private val roomClearPercentage
+		get() = if (totalRooms > 0) (completedRooms / totalRooms.toDouble()).coerceAtMost(
+			1.0
+		) else 0.0
 	val roomClearScore get() = applyEntranceModifier((60.0 * roomClearPercentage).coerceIn(0.0, 60.0))
 
 	// Secrets
 	private var foundSecrets = 0
 	private var totalSecrets = 0
 
-	val secretsNeeded: Int
+	private val secretsNeeded: Int
 		get() {
 			if (totalSecrets == 0) return 1
 			return ceil(totalSecrets * floorRequirement.secretPercentage).toInt()
 		}
-	val secretsClearedPercentage get() = foundSecrets / secretsNeeded.toDouble()
-	val secretScore
+	private val secretsClearedPercentage get() = foundSecrets / secretsNeeded.toDouble()
+	private val secretScore
 		get() = if (totalSecrets <= 0) 0 else applyEntranceModifier(
 			(40f * secretsClearedPercentage).coerceIn(
 				0.0,
@@ -97,20 +104,20 @@ class ScoreCalculation {
 			)
 		)
 
-	val exploreScore get() = roomClearScore + secretScore
+	private val exploreScore get() = roomClearScore + secretScore
 
 	// Death
 	private var deaths = 0
-	var firstDeathHadSpirit = false
-	val deathPenalty = (2 * deaths) - if (firstDeathHadSpirit) 1 else 0
+	private var firstDeathHadSpirit = false
+	private val deathPenalty get() = (2 * deaths) - if (firstDeathHadSpirit) 1 else 0
 
 	// Puzzle
 
 	private var missingPuzzles = 0
 	private var failedPuzzles = 0
-	val puzzlePenalty = 10 * (missingPuzzles + failedPuzzles)
+	private val puzzlePenalty get() = 10 * (missingPuzzles + failedPuzzles)
 
-	val skillScore
+	private val skillScore
 		get() = applyEntranceModifier(20 + (80.0 * roomClearPercentage) - puzzlePenalty - deathPenalty).coerceIn(
 			20,
 			100
@@ -118,9 +125,9 @@ class ScoreCalculation {
 
 	// Speed
 	private var secondsElapsed = 0.0
-	val totalElapsed get() = secondsElapsed + 480 - (floorRequirement.speed)
+	private val totalElapsed get() = secondsElapsed + 480 - (floorRequirement.speed)
 
-	val speedScore
+	private val speedScore
 		get() = when {
 			totalElapsed < 492.0 -> 100.0
 			totalElapsed < 600.0 -> 140 - totalElapsed / 12.0
@@ -133,14 +140,19 @@ class ScoreCalculation {
 	// Bonus
 	private var mimicFound = false
 	private var isPaul = false
+	private var princeKilled = false
 	private var crypts = 0
 
-	val calcBonusScore get() = crypts.coerceIn(0, 5) + isPaul.ifTrue(10) + mimicFound.ifTrue(2)
-	val bonusScore get() = if (isEntrance) ceil(calcBonusScore * 0.7).toInt() else calcBonusScore
+	private val calcBonusScore
+		get() = crypts.coerceIn(
+			0,
+			5
+		) + isPaul.ifTrue(10) + mimicFound.ifTrue(2) + princeKilled.ifTrue(1)
+	private val bonusScore get() = if (isEntrance) ceil(calcBonusScore * 0.7).toInt() else calcBonusScore
 
-	val totalScore get() = skillScore + exploreScore + speedScore + bonusScore
+	private val totalScore get() = skillScore + exploreScore + speedScore + bonusScore
 
-	val rank
+	private val rank
 		get() = when {
 			totalScore < 100 -> "§cD"
 			totalScore < 160 -> "§9C"
@@ -155,6 +167,8 @@ class ScoreCalculation {
 		WorldChangeEvent.EVENT.register(::onWorldChange)
 		PlayerListChangeEvent.EVENT.register(::onPlayerListChange)
 		ScoreboardChangeEvent.EVENT.register(::onScoreboardChange)
+		EntityEvents.DESPAWN.register(::onEntityDespawn)
+		DungeonEvents.PUZZLE_RESET.register(::onPuzzleReset)
 
 		HudLayerRegistrationCallback.EVENT.register { layeredDrawer ->
 			layeredDrawer.attachLayerBefore(
@@ -168,22 +182,37 @@ class ScoreCalculation {
 	private fun applyEntranceModifier(value: Double) = if (isEntrance) (value * 0.7).toInt() else value.toInt()
 
 	private fun onWorldChange(client: MinecraftClient, world: ClientWorld) {
-		mimicFound = false
-		isPaul = false
-
-		crypts = 0
-		deaths = 0
-
-		missingPuzzles = 0
-		failedPuzzles = 0
-
 		completedRooms = 0
 		clearedPercentage = 0
+		totalRoomMap.clear()
 
 		foundSecrets = 0
 		totalSecrets = 0
 
+		deaths = 0
+		firstDeathHadSpirit = false
+
+		missingPuzzles = 0
+		failedPuzzles = 0
+
 		secondsElapsed = 0.0
+
+		mimicFound = false
+		isPaul = false
+		princeKilled = false
+		crypts = 0
+	}
+
+	private fun onPuzzleReset() {
+		missingPuzzles = (missingPuzzles + 1)
+		failedPuzzles = (failedPuzzles - 1).coerceAtLeast(0)
+	}
+
+	private fun onEntityDespawn(entity: Entity) {
+		if (entity is ZombieEntity && entity.isBaby) {
+			mimicFound = true
+			Utils.runCommand("/pc Mimic Killed!")
+		}
 	}
 
 	private fun onScoreboardChange(line: String) {
@@ -192,7 +221,6 @@ class ScoreCalculation {
 		if (line.startsWith("Cleared: ")) {
 			val matcher = dungeonClearedPattern.find(line)
 			if (matcher != null) {
-				//start dungeonTimer?
 				clearedPercentage = matcher.groups["percentage"]?.value?.toIntOrNull() ?: 0
 				return
 			}
@@ -252,7 +280,6 @@ class ScoreCalculation {
 				}
 
 				name.contains("Time:") -> {
-					//start dungeonTimer ?
 					val matcher = timeElapsedPattern.find(name) ?: return@forEach
 
 					val hours = matcher.groups["hrs"]?.value?.toIntOrNull() ?: 0
@@ -268,8 +295,11 @@ class ScoreCalculation {
 		if (actionBar || Utils.getLocation() != Island.DUNGEON) return
 		val message = text.string
 
-		if (message.startsWith("Party >")) {
+		if (message == "A Prince falls. +1 Bonus Score") {
+			princeKilled = true
+		}
 
+		if (message.startsWith("Party >")) {
 			if (message.contains(skytilsMimicMessage) || message.contains(mimicMessage)) {
 				mimicFound = true
 			}
@@ -294,20 +324,21 @@ class ScoreCalculation {
 		)
 		drawContext.drawText(tr, "§f* §eCrypts: §a$crypts", 2, 98, 0xffffff, true)
 		drawContext.drawText(tr, "§f* §eMimic: ${if (mimicFound) "§a✔" else "§c✖"}", 2, 108, 0xffffff, true)
+		drawContext.drawText(tr, "§f* §ePrince: ${if (princeKilled) "§a✔" else "§c✖"}", 2, 118, 0xffffff, true)
 
-		drawContext.drawText(tr, "§9Score", 2, 118, 0xffffff, true)
-		drawContext.drawText(tr, "§f* §eSkill Score:§a $skillScore", 2, 128, 0xffffff, true)
+		drawContext.drawText(tr, "§9Score", 2, 128, 0xffffff, true)
+		drawContext.drawText(tr, "§f* §eSkill Score:§a $skillScore", 2, 138, 0xffffff, true)
 		drawContext.drawText(
 			tr,
 			"§f* §eExplore Score:§a $exploreScore §7(§e$roomClearScore §7+ §6$secretScore§7)",
 			2,
-			138,
+			148,
 			0xffffff,
 			true
 		)
-		drawContext.drawText(tr, "§f* §eSpeed Score:§a $speedScore", 2, 148, 0xffffff, true)
-		drawContext.drawText(tr, "§f* §eBonus Score:§a $bonusScore", 2, 158, 0xffffff, true)
-		drawContext.drawText(tr, "§f* §eTotal Score:§a $totalScore", 2, 168, 0xffffff, true)
-		drawContext.drawText(tr, "§f* §eRank: $rank", 2, 178, 0xffffff, true)
+		drawContext.drawText(tr, "§f* §eSpeed Score:§a $speedScore", 2, 158, 0xffffff, true)
+		drawContext.drawText(tr, "§f* §eBonus Score:§a $bonusScore", 2, 168, 0xffffff, true)
+		drawContext.drawText(tr, "§f* §eTotal Score:§a $totalScore", 2, 178, 0xffffff, true)
+		drawContext.drawText(tr, "§f* §eRank: $rank", 2, 188, 0xffffff, true)
 	}
 }

@@ -5,14 +5,15 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.packet.s2c.play.*;
-import net.wapic.wpcmod.events.*;
+import net.wapic.wpcmod.events.InventoryEvents;
+import net.wapic.wpcmod.events.ParticleEvents;
+import net.wapic.wpcmod.events.ScoreboardChangeEvent;
+import net.wapic.wpcmod.events.SoundEvents;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.EnumSet;
 
 @Mixin(ClientPlayNetworkHandler.class)
 public abstract class ClientPlayNetworkHandlerMixin {
@@ -57,16 +58,6 @@ public abstract class ClientPlayNetworkHandlerMixin {
 	@Inject(at = @At("HEAD"), method = "onCloseScreen")
 	private void onCloseScreen(CallbackInfo ci) {
 		InventoryEvents.CLOSE.invoker().onClose();
-	}
-
-	@Inject(at = @At("HEAD"), method = "onPlayerList")
-	private void onPlayerList(PlayerListS2CPacket packet, CallbackInfo ci) {
-		EnumSet<PlayerListS2CPacket.Action> wantedActions = EnumSet.of(PlayerListS2CPacket.Action.ADD_PLAYER, PlayerListS2CPacket.Action.UPDATE_DISPLAY_NAME);
-		EnumSet<PlayerListS2CPacket.Action> actions = packet.getActions().clone();
-		actions.retainAll(wantedActions);
-		if (actions.isEmpty()) return;
-
-		PlayerListChangeEvent.EVENT.invoker().onPlayerListChange(packet.getEntries());
 	}
 
 	@Inject(at = @At("HEAD"), method = "onTeam")

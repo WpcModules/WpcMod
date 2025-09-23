@@ -43,6 +43,7 @@ import net.wapic.wpcmod.features.kuudra.KuudraDisplay
 import net.wapic.wpcmod.features.kuudra.KuudraESP
 import net.wapic.wpcmod.features.mining.ChestESP
 import net.wapic.wpcmod.features.mining.PigeonSwapper
+import net.wapic.wpcmod.listeners.NetworkListener
 import net.wapic.wpcmod.util.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -116,6 +117,7 @@ object WpcMod : ModInitializer {
 		SackUtils.init()
 		KuudraUtils.init()
 		DungeonUtils.init()
+		NetworkListener.init()
 
 		// General
 		ShortcutHandler()
