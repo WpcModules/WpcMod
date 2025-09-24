@@ -12,6 +12,7 @@ import net.minecraft.entity.mob.ZombieEntity
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
+import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.EntityEvents
 import net.wapic.wpcmod.events.PlayerListChangeEvent
 import net.wapic.wpcmod.events.ScoreboardChangeEvent
@@ -26,6 +27,8 @@ import kotlin.math.floor
 import kotlin.math.roundToInt
 
 class ScoreCalculation {
+
+	private val config get() = WpcMod.config.dungeon
 
 	private val deathsTabPattern = Regex("Team Deaths: (?<deaths>\\d+)")
 	private val missingPuzzlePattern = Regex("Puzzles: \\((?<count>\\d)\\)")
@@ -68,41 +71,25 @@ class ScoreCalculation {
 	// Room Clear
 	private var completedRooms = 0
 	private var clearedPercentage = 0
-
 	private val totalRoomMap = mutableMapOf<Int, Int>()
-	private val totalRooms: Int
-		get() {
-			val a = if (clearedPercentage > 0 && completedRooms > 0) {
-				(100 * (completedRooms / clearedPercentage.toDouble())).roundToInt()
-			} else 0
-			if (a == 0) return 0
-			totalRoomMap[a] = (totalRoomMap[a] ?: 0) + 1
-			return totalRoomMap.toList().maxByOrNull { it.second }!!.first
-		}
 
 	private val roomClearPercentage
-		get() = if (totalRooms > 0) (completedRooms / totalRooms.toDouble()).coerceAtMost(
-			1.0
-		) else 0.0
-	val roomClearScore get() = applyEntranceModifier((60.0 * roomClearPercentage).coerceIn(0.0, 60.0))
+		get() = if (getTotalRooms() > 0) (completedRooms / getTotalRooms().toDouble()).coerceAtMost(1.0) else 0.0
+
+	private val roomClearScore get() = applyEntranceModifier((60.0 * roomClearPercentage).coerceIn(0.0, 60.0))
 
 	// Secrets
 	private var foundSecrets = 0
 	private var totalSecrets = 0
 
-	private val secretsNeeded: Int
-		get() {
-			if (totalSecrets == 0) return 1
-			return ceil(totalSecrets * floorRequirement.secretPercentage).toInt()
-		}
+	private val secretsNeeded: Int get() = if (totalSecrets == 0) 1 else ceil(totalSecrets * floorRequirement.secretPercentage).toInt()
 	private val secretsClearedPercentage get() = foundSecrets / secretsNeeded.toDouble()
-	private val secretScore
-		get() = if (totalSecrets <= 0) 0 else applyEntranceModifier(
-			(40f * secretsClearedPercentage).coerceIn(
-				0.0,
-				40.0
-			)
-		)
+	private val secretScore: Int
+		get() {
+			if (totalSecrets <= 0) return 0
+			val score = (40f * secretsClearedPercentage).coerceIn(0.0, 40.0)
+			return applyEntranceModifier(score)
+		}
 
 	private val exploreScore get() = roomClearScore + secretScore
 
@@ -117,25 +104,28 @@ class ScoreCalculation {
 	private var failedPuzzles = 0
 	private val puzzlePenalty get() = 10 * (missingPuzzles + failedPuzzles)
 
-	private val skillScore
-		get() = applyEntranceModifier(20 + (80.0 * roomClearPercentage) - puzzlePenalty - deathPenalty).coerceIn(
-			20,
-			100
-		)
+	private val skillScore: Int
+		get() {
+			val score = (20 + (80.0 * roomClearPercentage) - puzzlePenalty - deathPenalty).coerceIn(20.0, 100.0)
+			return applyEntranceModifier(score)
+		}
 
 	// Speed
 	private var secondsElapsed = 0.0
 	private val totalElapsed get() = secondsElapsed + 480 - (floorRequirement.speed)
 
-	private val speedScore
-		get() = when {
-			totalElapsed < 492.0 -> 100.0
-			totalElapsed < 600.0 -> 140 - totalElapsed / 12.0
-			totalElapsed < 840.0 -> 115 - totalElapsed / 24.0
-			totalElapsed < 1140.0 -> 108 - totalElapsed / 30.0
-			totalElapsed < 3570.0 -> 98.5 - totalElapsed / 40.0
-			else -> 0.0
-		}.let { applyEntranceModifier(it) }
+	private val speedScore: Int
+		get() {
+			val score = when {
+				totalElapsed < 492.0 -> 100.0
+				totalElapsed < 600.0 -> 140 - totalElapsed / 12.0
+				totalElapsed < 840.0 -> 115 - totalElapsed / 24.0
+				totalElapsed < 1140.0 -> 108 - totalElapsed / 30.0
+				totalElapsed < 3570.0 -> 98.5 - totalElapsed / 40.0
+				else -> 0.0
+			}
+			return applyEntranceModifier(score)
+		}
 
 	// Bonus
 	private var mimicFound = false
@@ -144,10 +134,7 @@ class ScoreCalculation {
 	private var crypts = 0
 
 	private val calcBonusScore
-		get() = crypts.coerceIn(
-			0,
-			5
-		) + isPaul.ifTrue(10) + mimicFound.ifTrue(2) + princeKilled.ifTrue(1)
+		get() = crypts.coerceIn(0, 5) + isPaul.ifTrue(10) + mimicFound.ifTrue(2) + princeKilled.ifTrue(1)
 	private val bonusScore get() = if (isEntrance) ceil(calcBonusScore * 0.7).toInt() else calcBonusScore
 
 	private val totalScore get() = skillScore + exploreScore + speedScore + bonusScore
@@ -164,7 +151,7 @@ class ScoreCalculation {
 
 	init {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
-		WorldChangeEvent.EVENT.register(::onWorldChange)
+		WorldChangeEvent.BEFORE.register(::onWorldChange)
 		PlayerListChangeEvent.EVENT.register(::onPlayerListChange)
 		ScoreboardChangeEvent.EVENT.register(::onScoreboardChange)
 		EntityEvents.DESPAWN.register(::onEntityDespawn)
@@ -180,8 +167,16 @@ class ScoreCalculation {
 
 	private fun Boolean.ifTrue(num: Int) = if (this) num else 0
 	private fun applyEntranceModifier(value: Double) = if (isEntrance) (value * 0.7).toInt() else value.toInt()
+	private fun getTotalRooms(): Int {
+		if (clearedPercentage > 0 && completedRooms > 0) {
+			val key = (100 * (completedRooms / clearedPercentage.toDouble())).roundToInt()
+			totalRoomMap[key] = (totalRoomMap[key] ?: 0) + 1
+			return totalRoomMap.toList().maxByOrNull { it.second }!!.first
+		}
+		return 0
+	}
 
-	private fun onWorldChange(client: MinecraftClient, world: ClientWorld) {
+	private fun onWorldChange(world: ClientWorld) {
 		completedRooms = 0
 		clearedPercentage = 0
 		totalRoomMap.clear()
@@ -204,19 +199,23 @@ class ScoreCalculation {
 	}
 
 	private fun onPuzzleReset() {
+		if (!config.scoreCalculation) return
 		missingPuzzles = (missingPuzzles + 1)
 		failedPuzzles = (failedPuzzles - 1).coerceAtLeast(0)
 	}
 
 	private fun onEntityDespawn(entity: Entity) {
+		if (Utils.getLocation() != Island.DUNGEON) return
+
 		if (entity is ZombieEntity && entity.isBaby) {
 			mimicFound = true
-			Utils.runCommand("/pc Mimic Killed!")
+			if (config.mimicMessage) Utils.runCommand("/pc Mimic Killed!")
 		}
 	}
 
 	private fun onScoreboardChange(line: String) {
 		if (Utils.getLocation() != Island.DUNGEON) return
+		if (!config.scoreCalculation) return
 
 		if (line.startsWith("Cleared: ")) {
 			val matcher = dungeonClearedPattern.find(line)
@@ -229,6 +228,7 @@ class ScoreCalculation {
 
 	private fun onPlayerListChange(entries: List<PlayerListS2CPacket.Entry>) {
 		if (Utils.getLocation() != Island.DUNGEON) return
+		if (!config.scoreCalculation) return
 
 		entries.forEach { playerData ->
 			val name = playerData.displayName?.string ?: playerData.profile?.name ?: return@forEach
@@ -292,7 +292,7 @@ class ScoreCalculation {
 	}
 
 	private fun onMessageReceived(text: Text, actionBar: Boolean) {
-		if (actionBar || Utils.getLocation() != Island.DUNGEON) return
+		if (actionBar || Utils.getLocation() != Island.DUNGEON || !config.scoreCalculation) return
 		val message = text.string
 
 		if (message == "A Prince falls. +1 Bonus Score") {
@@ -308,6 +308,8 @@ class ScoreCalculation {
 
 	private fun onRenderHud(drawContext: DrawContext, tickCounter: RenderTickCounter) {
 		if (Utils.getLocation() != Island.DUNGEON) return
+		if (!config.scoreCalculation) return
+
 		val tr = MinecraftClient.getInstance().textRenderer
 
 		drawContext.drawText(tr, "§9Dungeon Status", 2, 48, 0xffffff, true)

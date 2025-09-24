@@ -27,7 +27,7 @@ object DungeonUtils {
 	fun init() {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 		PlayerListChangeEvent.EVENT.register(::onPlayerListChange)
-		WorldChangeEvent.EVENT.register { client, world ->
+		WorldChangeEvent.BEFORE.register { world ->
 			incompletePuzzles.clear()
 			failedPuzzles.clear()
 		}

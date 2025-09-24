@@ -7,6 +7,14 @@ import io.github.notenoughupdates.moulconfig.annotations.ConfigOption
 
 class DungeonConfig {
 
+	@ConfigOption(name = "Score Calculator", desc = "Show dungeon score in a HUD")
+	@ConfigEditorBoolean
+	var scoreCalculation: Boolean = false
+
+	@ConfigOption(name = "Mimic Message", desc = "Alert in chat when mimic has been killed")
+	@ConfigEditorBoolean
+	var mimicMessage: Boolean = false
+
 	@ConfigOption(name = "Auto Close Chests", desc = "Automatically close secret chests")
 	@ConfigEditorBoolean
 	var autoCloseChests: Boolean = false
