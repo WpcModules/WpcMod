@@ -72,11 +72,17 @@ class ScoreCalculation {
 	private var completedRooms = 0
 	private var clearedPercentage = 0
 	private val totalRoomMap = mutableMapOf<Int, Int>()
+	private var bloodCleared = false
+	private var bossSpawned = false
 
-	private val roomClearPercentage
-		get() = if (getTotalRooms() > 0) (completedRooms / getTotalRooms().toDouble()).coerceAtMost(1.0) else 0.0
+	private val roomClearPercentage: Double
+		get() {
+			val total = getTotalRooms()
+			val complete = completedRooms + (!bossSpawned).ifTrue(1) + (!bloodCleared).ifTrue(1)
+			return if (total > 0) (complete / total.toDouble()).coerceAtMost(1.0) else 0.0
+		}
 
-	private val roomClearScore get() = applyEntranceModifier((60.0 * roomClearPercentage).coerceIn(0.0, 60.0))
+	private val roomClearScore get() = (60 * roomClearPercentage).coerceIn(0.0, 60.0).applyEntranceModifier()
 
 	// Secrets
 	private var foundSecrets = 0
@@ -88,7 +94,7 @@ class ScoreCalculation {
 		get() {
 			if (totalSecrets <= 0) return 0
 			val score = (40f * secretsClearedPercentage).coerceIn(0.0, 40.0)
-			return applyEntranceModifier(score)
+			return score.applyEntranceModifier()
 		}
 
 	private val exploreScore get() = roomClearScore + secretScore
@@ -107,7 +113,7 @@ class ScoreCalculation {
 	private val skillScore: Int
 		get() {
 			val score = (20 + (80.0 * roomClearPercentage) - puzzlePenalty - deathPenalty).coerceIn(20.0, 100.0)
-			return applyEntranceModifier(score)
+			return score.applyEntranceModifier()
 		}
 
 	// Speed
@@ -124,7 +130,7 @@ class ScoreCalculation {
 				totalElapsed < 3570.0 -> 98.5 - totalElapsed / 40.0
 				else -> 0.0
 			}
-			return applyEntranceModifier(score)
+			return score.applyEntranceModifier()
 		}
 
 	// Bonus
@@ -166,7 +172,7 @@ class ScoreCalculation {
 	}
 
 	private fun Boolean.ifTrue(num: Int) = if (this) num else 0
-	private fun applyEntranceModifier(value: Double) = if (isEntrance) (value * 0.7).toInt() else value.toInt()
+	private fun Double.applyEntranceModifier() = if (isEntrance) (this * 0.7).toInt() else this.toInt()
 	private fun getTotalRooms(): Int {
 		if (clearedPercentage > 0 && completedRooms > 0) {
 			val key = (100 * (completedRooms / clearedPercentage.toDouble())).roundToInt()
@@ -177,6 +183,8 @@ class ScoreCalculation {
 	}
 
 	private fun onWorldChange(world: ClientWorld) {
+		bloodCleared = false
+		bossSpawned = false
 		completedRooms = 0
 		clearedPercentage = 0
 		totalRoomMap.clear()
@@ -299,11 +307,41 @@ class ScoreCalculation {
 			princeKilled = true
 		}
 
+		if (message == "[BOSS] The Watcher: You have proven yourself. You may pass.") {
+			bloodCleared = true
+		}
+
+		if (message.startsWith("[BOSS]") && message.contains(":")) {
+			val bossName = message.substringAfter("[BOSS] ").substringBefore(":").trim()
+			if (!bossSpawned && bossName != "The Watcher" && DungeonUtils.currentFloor != DungeonFloor.NONE && checkBossName(
+					DungeonUtils.currentFloor,
+					bossName
+				)
+			) {
+				bossSpawned = true
+			}
+		}
+
 		if (message.startsWith("Party >")) {
 			if (message.contains(skytilsMimicMessage) || message.contains(mimicMessage)) {
 				mimicFound = true
 			}
 		}
+	}
+
+	fun checkBossName(floor: DungeonFloor, bossName: String): Boolean {
+		val correctBoss = when (floor) {
+			DungeonFloor.ENTRANCE -> "The Watcher"
+			DungeonFloor.FLOOR_1, DungeonFloor.MASTER_MODE_FLOOR_1 -> "Bonzo"
+			DungeonFloor.FLOOR_2, DungeonFloor.MASTER_MODE_FLOOR_2 -> "Scarf"
+			DungeonFloor.FLOOR_3, DungeonFloor.MASTER_MODE_FLOOR_3 -> "The Professor"
+			DungeonFloor.FLOOR_4, DungeonFloor.MASTER_MODE_FLOOR_4 -> "Thorn"
+			DungeonFloor.FLOOR_5, DungeonFloor.MASTER_MODE_FLOOR_5 -> "Livid"
+			DungeonFloor.FLOOR_6, DungeonFloor.MASTER_MODE_FLOOR_6 -> "Sadan"
+			DungeonFloor.FLOOR_7, DungeonFloor.MASTER_MODE_FLOOR_7 -> "Maxor"
+			else -> null
+		} ?: return false
+		return bossName.endsWith(correctBoss)
 	}
 
 	private fun onRenderHud(drawContext: DrawContext, tickCounter: RenderTickCounter) {
