@@ -28,6 +28,7 @@ import net.wapic.wpcmod.features.dev.SkyBlockID
 import net.wapic.wpcmod.features.dungeons.AutoCloseChests
 import net.wapic.wpcmod.features.dungeons.DungeonAutoGFS
 import net.wapic.wpcmod.features.end.EndESP
+import net.wapic.wpcmod.features.entity.RatESP
 import net.wapic.wpcmod.features.galatea.GalateaESP
 import net.wapic.wpcmod.features.general.Freecam
 import net.wapic.wpcmod.features.general.PreventPlacingItems
@@ -118,6 +119,7 @@ object WpcMod : ModInitializer {
 		ShortcutHandler()
 		PreventPlacingItems()
 		Freecam()
+		RatESP()
 
 		//Experiments
 		AutoExperiments()
