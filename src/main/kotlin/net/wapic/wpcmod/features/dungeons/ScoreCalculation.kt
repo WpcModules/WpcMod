@@ -12,7 +12,9 @@ import net.minecraft.entity.mob.ZombieEntity
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
+import net.wapic.wpcmod.jarvis.SimpleHudElement
 import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.config.dungeon.DungeonConfig.ScoreCalculationConfig.ScoreHudType
 import net.wapic.wpcmod.events.EntityEvents
 import net.wapic.wpcmod.events.PlayerListChangeEvent
 import net.wapic.wpcmod.events.ScoreboardChangeEvent
@@ -26,9 +28,9 @@ import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.roundToInt
 
-class ScoreCalculation {
+object ScoreCalculation : SimpleHudElement(w = 120, h = 180) {
 
-	private val config get() = WpcMod.config.dungeon
+	private val config get() = WpcMod.config.dungeon.scoreCalculation
 
 	private val deathsTabPattern = Regex("Team Deaths: (?<deaths>\\d+)")
 	private val missingPuzzlePattern = Regex("Puzzles: \\((?<count>\\d)\\)")
@@ -136,6 +138,7 @@ class ScoreCalculation {
 	// Bonus
 	private var mimicFound = false
 	private var isPaul = false
+		get() = if(config.assumePaul) true else field
 	private var princeKilled = false
 	private var crypts = 0
 
@@ -155,7 +158,14 @@ class ScoreCalculation {
 			else -> "§6§lS+"
 		}
 
-	init {
+	private val mimicFloors = listOf(
+		DungeonFloor.FLOOR_6,
+		DungeonFloor.FLOOR_7,
+		DungeonFloor.MASTER_MODE_FLOOR_6,
+		DungeonFloor.MASTER_MODE_FLOOR_7
+	)
+
+	fun init() {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 		WorldChangeEvent.BEFORE.register(::onWorldChange)
 		PlayerListChangeEvent.EVENT.register(::onPlayerListChange)
@@ -207,14 +217,13 @@ class ScoreCalculation {
 	}
 
 	private fun onPuzzleReset() {
-		if (!config.scoreCalculation) return
+		if(!isActive) return
 		missingPuzzles = (missingPuzzles + 1)
 		failedPuzzles = (failedPuzzles - 1).coerceAtLeast(0)
 	}
 
 	private fun onEntityDespawn(entity: Entity) {
-		if (Utils.getLocation() != Island.DUNGEON) return
-
+		if (!isActive) return
 		if (entity is ZombieEntity && entity.isBaby) {
 			mimicFound = true
 			if (config.mimicMessage) Utils.runCommand("/pc Mimic Killed!")
@@ -222,8 +231,7 @@ class ScoreCalculation {
 	}
 
 	private fun onScoreboardChange(line: String) {
-		if (Utils.getLocation() != Island.DUNGEON) return
-		if (!config.scoreCalculation) return
+		if(!isActive) return
 
 		if (line.startsWith("Cleared: ")) {
 			val matcher = dungeonClearedPattern.find(line)
@@ -235,8 +243,7 @@ class ScoreCalculation {
 	}
 
 	private fun onPlayerListChange(entries: List<PlayerListS2CPacket.Entry>) {
-		if (Utils.getLocation() != Island.DUNGEON) return
-		if (!config.scoreCalculation) return
+		if(!isActive) return
 
 		entries.forEach { playerData ->
 			val name = playerData.displayName?.string ?: playerData.profile?.name ?: return@forEach
@@ -300,7 +307,7 @@ class ScoreCalculation {
 	}
 
 	private fun onMessageReceived(text: Text, actionBar: Boolean) {
-		if (actionBar || Utils.getLocation() != Island.DUNGEON || !config.scoreCalculation) return
+		if (!isActive || actionBar) return
 		val message = text.string
 
 		if (message == "A Prince falls. +1 Bonus Score") {
@@ -329,7 +336,7 @@ class ScoreCalculation {
 		}
 	}
 
-	fun checkBossName(floor: DungeonFloor, bossName: String): Boolean {
+	private fun checkBossName(floor: DungeonFloor, bossName: String): Boolean {
 		val correctBoss = when (floor) {
 			DungeonFloor.ENTRANCE -> "The Watcher"
 			DungeonFloor.FLOOR_1, DungeonFloor.MASTER_MODE_FLOOR_1 -> "Bonzo"
@@ -345,40 +352,49 @@ class ScoreCalculation {
 	}
 
 	private fun onRenderHud(drawContext: DrawContext, tickCounter: RenderTickCounter) {
-		if (Utils.getLocation() != Island.DUNGEON) return
-		if (!config.scoreCalculation) return
+		if (!isActive) return
+
+		if(config.scoreEstimate == ScoreHudType.MINIMIZED) {
+			text = Text.literal("§eScore: §a$totalScore §7($rank§7)")
+			return
+		}
+
+		val lines = listOf<Text>(
+			Text.literal("§9Dungeon Status"),
+			Text.literal("§f* §eDeaths: §c$deaths"),
+			Text.literal("§f* §eMissing Puzzles: §c$missingPuzzles"),
+			Text.literal("§f* §eFailed Puzzles: §c$failedPuzzles"),
+			Text.literal("§f* §eSecrets: §a$foundSecrets§7/§a$secretsNeeded §7(§6Total: $totalSecrets§7)"),
+			Text.literal("§f* §eCrypts: §a$crypts"),
+			Text.literal("§f* §ePrince: ${if(princeKilled) "§a✔" else "§c✖"}"),
+			if(DungeonUtils.currentFloor in mimicFloors)
+				Text.literal("§f* §eMimic: ${if(mimicFound) "§a✔" else "§c✖"}") else Text.literal(""),
+			Text.literal(""),
+			Text.literal("§9Score"),
+			Text.literal("§f* §eSkill Score: §a$skillScore"),
+			Text.literal("§f* §eExplore Score: §a$exploreScore §7(§e$roomClearScore §7+ §6$secretScore§7)"),
+			Text.literal("§f* §eSpeed Score: §a$speedScore"),
+			Text.literal("§f* §eBonus Score: §a$bonusScore"),
+			Text.literal("§f* §eTotal Score: §a$totalScore"),
+			Text.literal("§f* §eRank: $rank")
+		)
 
 		val tr = MinecraftClient.getInstance().textRenderer
+		drawContext.matrices.push()
+		applyTransformations(drawContext.matrices)
 
-		drawContext.drawText(tr, "§9Dungeon Status", 2, 48, 0xffffff, true)
-		drawContext.drawText(tr, "§f* §eDeaths: §c$deaths", 2, 58, 0xffffff, true)
-		drawContext.drawText(tr, "§f* §eMissing Puzzles: §c$missingPuzzles", 2, 68, 0xffffff, true)
-		drawContext.drawText(tr, "§f* §eFailed Puzzles: §c$failedPuzzles", 2, 78, 0xffffff, true)
-		drawContext.drawText(
-			tr,
-			"§f* §eSecrets: §a$foundSecrets§7/§a$secretsNeeded §7(§6Total: $totalSecrets§7)",
-			2,
-			88,
-			0xffffff,
-			true
-		)
-		drawContext.drawText(tr, "§f* §eCrypts: §a$crypts", 2, 98, 0xffffff, true)
-		drawContext.drawText(tr, "§f* §eMimic: ${if (mimicFound) "§a✔" else "§c✖"}", 2, 108, 0xffffff, true)
-		drawContext.drawText(tr, "§f* §ePrince: ${if (princeKilled) "§a✔" else "§c✖"}", 2, 118, 0xffffff, true)
+		for ((index, line) in lines.withIndex()) {
+			drawContext.drawText(tr, line, x.toInt(), y.toInt() + (index * 10), 0xffffff, true)
+		}
 
-		drawContext.drawText(tr, "§9Score", 2, 128, 0xffffff, true)
-		drawContext.drawText(tr, "§f* §eSkill Score:§a $skillScore", 2, 138, 0xffffff, true)
-		drawContext.drawText(
-			tr,
-			"§f* §eExplore Score:§a $exploreScore §7(§e$roomClearScore §7+ §6$secretScore§7)",
-			2,
-			148,
-			0xffffff,
-			true
-		)
-		drawContext.drawText(tr, "§f* §eSpeed Score:§a $speedScore", 2, 158, 0xffffff, true)
-		drawContext.drawText(tr, "§f* §eBonus Score:§a $bonusScore", 2, 168, 0xffffff, true)
-		drawContext.drawText(tr, "§f* §eTotal Score:§a $totalScore", 2, 178, 0xffffff, true)
-		drawContext.drawText(tr, "§f* §eRank: $rank", 2, 188, 0xffffff, true)
+		drawContext.matrices.pop()
+	}
+
+	override fun isEnabled(): Boolean {
+		return config.scoreEstimate != ScoreHudType.DISABLED
+	}
+
+	override fun isActive(): Boolean {
+		return config.scoreEstimate != ScoreHudType.DISABLED && Utils.getLocation() == Island.DUNGEON
 	}
 }

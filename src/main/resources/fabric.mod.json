@@ -20,7 +20,10 @@
 				"value": "net.wapic.wpcmod.WpcMod",
 				"adapter": "kotlin"
 			}
-		]
+		],
+        "jarvis": [
+          "net.wapic.wpcmod.jarvis.Jarvis"
+        ]
 	},
 	"mixins": [
 		"wpcmod.mixins.json"

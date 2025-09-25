@@ -3,17 +3,10 @@ package net.wapic.wpcmod.config.dungeon
 import io.github.notenoughupdates.moulconfig.annotations.Accordion
 import io.github.notenoughupdates.moulconfig.annotations.Category
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorBoolean
+import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorDropdown
 import io.github.notenoughupdates.moulconfig.annotations.ConfigOption
 
 class DungeonConfig {
-
-	@ConfigOption(name = "Score Calculator", desc = "Show dungeon score in a HUD")
-	@ConfigEditorBoolean
-	var scoreCalculation: Boolean = false
-
-	@ConfigOption(name = "Mimic Message", desc = "Alert in chat when mimic has been killed")
-	@ConfigEditorBoolean
-	var mimicMessage: Boolean = false
 
 	@ConfigOption(name = "Auto Close Chests", desc = "Automatically close secret chests")
 	@ConfigEditorBoolean
@@ -40,6 +33,31 @@ class DungeonConfig {
 		@ConfigOption(name = "Spirit Leaps", desc = "")
 		@ConfigEditorBoolean
 		var spiritLeap = false
+	}
+
+	@Accordion
+	@ConfigOption(name = "Score Calculation", desc = "")
+	var scoreCalculation: ScoreCalculationConfig = ScoreCalculationConfig()
+
+	class ScoreCalculationConfig {
+
+		@ConfigOption(name = "Score Estimate", desc = "Show dungeon score in a HUD element")
+		@ConfigEditorDropdown
+		var scoreEstimate: ScoreHudType = ScoreHudType.DISABLED
+
+		@ConfigOption(name = "Mimic Message", desc = "Alert in chat when mimic has been killed\nRequires Score Calculation to be active")
+		@ConfigEditorBoolean
+		var mimicMessage: Boolean = false
+
+		@ConfigOption(name = "Assume Paul", desc = "Assume Paul is active Mayor with +10 bonus score")
+		@ConfigEditorBoolean
+		var assumePaul: Boolean = false
+
+		enum class ScoreHudType {
+			DISABLED,
+			MINIMIZED,
+			FULL,
+		}
 	}
 
 	@Category(name = "ESP", desc = "Configure ESP on Dungeon mobs")

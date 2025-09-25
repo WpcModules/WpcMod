@@ -131,7 +131,7 @@ object WpcMod : ModInitializer {
 		// Dungeons
 		AutoCloseChests()
 		DungeonAutoGFS()
-		ScoreCalculation()
+		ScoreCalculation.init()
 
 		// Kuudra
 		KuudraDisplay()
