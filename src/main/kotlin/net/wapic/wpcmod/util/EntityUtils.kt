@@ -22,8 +22,4 @@ object EntityUtils {
 			EntityPredicates.NOT_MOUNTED
 		)
 	}
-
-	fun getHeadTexture(entity: ArmorStandEntity): String? {
-		return entity.getEquippedStack(EquipmentSlot.HEAD).headTexture
-	}
 }
