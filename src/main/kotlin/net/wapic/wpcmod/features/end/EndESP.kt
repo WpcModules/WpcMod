@@ -80,7 +80,7 @@ class EndESP {
 
 		endNodes.forEach { node ->
 			if (config.endNode.box) RenderUtils.drawBoundingBox(
-				worldRenderContext, node.withMinY(node.maxY), config.endNode.color.getEffectiveColour()
+				worldRenderContext, node.withMinY(node.minY), config.endNode.color.getEffectiveColour()
 			)
 			if (config.endNode.tracer) RenderUtils.drawTracer(
 				worldRenderContext,
