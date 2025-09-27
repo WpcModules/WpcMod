@@ -27,8 +27,8 @@ class Freecam {
 		AttackEntityCallback.EVENT.register { _, _, _, _, _ -> onInteract() }
 		AttackBlockCallback.EVENT.register { _, _, _, _, _ -> onInteract() }
 		ClientTickEvents.END_CLIENT_TICK.register(::onTick)
-		WorldChangeEvent.EVENT.register { client, _ ->
-			removeCamera(client)
+		WorldChangeEvent.BEFORE.register { _ ->
+			removeCamera(MinecraftClient.getInstance())
 			isEnabled = false
 		}
 	}

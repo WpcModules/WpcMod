@@ -21,6 +21,7 @@
     "KeyboardMixin",
     "MinecraftClientMixin",
     "MouseMixin",
+    "NetworkThreadUtilsMixin",
     "PlayerEntityMixin",
     "SimpleInventoryMixin",
     "WorldRendererMixin",

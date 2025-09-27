@@ -21,4 +21,11 @@ object ChatUtils {
 			Text.literal(PREFIX).append(Text.literal(message).setStyle(style))
 		)
 	}
+
+	fun sendChatMessage(message: String) {
+		val networkHandler = MinecraftClient.getInstance().networkHandler ?: return
+		networkHandler.sendChatMessage(message)
+	}
+
+	fun String.removeFormatting() = this.replace(Regex("§[0-9a-f]"), "")
 }

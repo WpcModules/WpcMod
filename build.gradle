@@ -44,6 +44,10 @@ dependencies {
 	modImplementation "net.hypixel:mod-api:1.0.1"
 	include "net.hypixel:mod-api:1.0.1"
 
+    modImplementation "moe.nea.jarvis:jarvis-api:1.1.4"
+    include "moe.nea.jarvis:jarvis-fabric:1.1.4"
+    modLocalRuntime "moe.nea.jarvis:jarvis-fabric:1.1.4"
+
 	configurations.shadowModImpl.dependencies.each {
 		modImplementation(it)
 	}

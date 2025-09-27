@@ -27,6 +27,7 @@ import net.wapic.wpcmod.features.chat.SpamFilter
 import net.wapic.wpcmod.features.dev.SkyBlockID
 import net.wapic.wpcmod.features.dungeons.AutoCloseChests
 import net.wapic.wpcmod.features.dungeons.DungeonAutoGFS
+import net.wapic.wpcmod.features.dungeons.ScoreCalculation
 import net.wapic.wpcmod.features.end.EndESP
 import net.wapic.wpcmod.features.galatea.GalateaESP
 import net.wapic.wpcmod.features.general.Freecam
@@ -42,6 +43,7 @@ import net.wapic.wpcmod.features.kuudra.KuudraDisplay
 import net.wapic.wpcmod.features.kuudra.KuudraESP
 import net.wapic.wpcmod.features.mining.ChestESP
 import net.wapic.wpcmod.features.mining.PigeonSwapper
+import net.wapic.wpcmod.listeners.NetworkListener
 import net.wapic.wpcmod.util.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -115,6 +117,7 @@ object WpcMod : ModInitializer {
 		SackUtils.init()
 		KuudraUtils.init()
 		DungeonUtils.init()
+		NetworkListener.init()
 
 		// General
 		ShortcutHandler()
@@ -128,6 +131,7 @@ object WpcMod : ModInitializer {
 		// Dungeons
 		AutoCloseChests()
 		DungeonAutoGFS()
+		ScoreCalculation.init()
 
 		// Kuudra
 		KuudraDisplay()
