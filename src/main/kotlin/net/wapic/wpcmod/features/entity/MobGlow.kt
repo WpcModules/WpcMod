@@ -10,12 +10,8 @@ import net.minecraft.entity.passive.*
 import net.minecraft.entity.player.PlayerEntity
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.commands.TagCommand
-import net.wapic.wpcmod.util.EntityUtils
+import net.wapic.wpcmod.util.*
 import net.wapic.wpcmod.util.EntityUtils.headTexture
-import net.wapic.wpcmod.util.HeadTextures
-import net.wapic.wpcmod.util.Island
-import net.wapic.wpcmod.util.KuudraUtils
-import net.wapic.wpcmod.util.Utils
 
 object MobGlow {
 
@@ -31,8 +27,8 @@ object MobGlow {
 
 	fun computeGlow(entity: Entity): GlowOptions {
 
-		if (TagCommand.players.contains(entity.name.string.lowercase()) || isTagged(entity)) {
-			return GlowOptions(shouldGlow = true, config.general.tagColor)
+		if (TagCommand.players.contains(entity.name.string.lowercase()) || EntityUtils.isTagged(entity)) {
+			return GlowOptions(config.general.esp.tag.glow, config.general.esp.tag.color)
 		}
 
 		if(Utils.getLocation() == Island.HUB) {
@@ -105,7 +101,7 @@ object MobGlow {
 				is PlayerEntity -> {
 					if (miniBosses.contains(entity.name.string)) {
 						GlowOptions(config.dungeon.esp.miniboss.glow, config.dungeon.esp.miniboss.color)
-					} else if(isStarredMob(entity)) {
+					} else if (EntityUtils.isStarredMob(entity)) {
 						GlowOptions(config.dungeon.esp.starMob.glow, config.dungeon.esp.starMob.color)
 					} else {
 						NO_GLOW
@@ -118,24 +114,12 @@ object MobGlow {
 				)
 
 				else -> GlowOptions(
-					isStarredMob(entity) && config.dungeon.esp.starMob.glow,
+					EntityUtils.isStarredMob(entity) && config.dungeon.esp.starMob.glow,
 					config.dungeon.esp.starMob.color
 				)
 			}
 		}
 
 		return NO_GLOW
-	}
-
-	private fun isTagged(entity: Entity): Boolean {
-		val armorStands = EntityUtils.getArmorStandsByEntity(entity)
-		return armorStands.isNotEmpty() && TagCommand.players.find {
-			armorStands.first().name?.string?.lowercase()?.contains(it) ?: false
-		}?.isNotEmpty() ?: false
-	}
-
-	private fun isStarredMob(entity: Entity): Boolean {
-		val armorStands = EntityUtils.getArmorStandsByEntity(entity)
-		return armorStands.isNotEmpty() && armorStands.first().name?.string?.contains("✯") ?: false
 	}
 }

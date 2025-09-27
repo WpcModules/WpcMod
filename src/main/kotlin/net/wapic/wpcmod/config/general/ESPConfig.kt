@@ -30,4 +30,30 @@ class ESPConfig {
 		@ConfigEditorBoolean
 		var tracer: Boolean = false
 	}
+
+	@Accordion
+	@ConfigOption(name = "Entity Tagging", desc = "Options for tagging entities with /wpc tag")
+	var tag = Tag()
+
+	class Tag {
+
+		@ConfigOption(name = "Glow", desc = "Render glow around the tagged entity")
+		@ConfigEditorBoolean
+		var glow: Boolean = false
+
+		@ConfigOption(
+			name = "Tag Outline Color",
+			desc = "Color to use when highlighting players with /wpcmod tag command"
+		)
+		@ConfigEditorColour
+		var color = ChromaColour(1f, 1f, 1f, 0, 0xFF)
+
+		@ConfigOption(name = "Glow", desc = "Render a box around the tagged entity")
+		@ConfigEditorBoolean
+		var box: Boolean = false
+
+		@ConfigOption(name = "Tag Tracer", desc = "draw a tracer line to tagged players/entities")
+		@ConfigEditorBoolean
+		var tracer: Boolean = false
+	}
 }

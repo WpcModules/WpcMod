@@ -23,7 +23,13 @@ class RatESP {
 
 			val box = entity.boundingBox.withMinY(entity.boundingBox.minY + 1.4)
 			if(config.box) RenderUtils.drawBoundingBox(worldRenderContext, box, config.color.getEffectiveColour())
-			if(config.tracer) RenderUtils.drawTracer(worldRenderContext, entity.x, entity.y, entity.z, config.color.getEffectiveColour())
+			if (config.tracer) RenderUtils.drawTracer(
+				worldRenderContext,
+				entity.x,
+				entity.eyeY,
+				entity.z,
+				config.color.getEffectiveColour()
+			)
 		}
 	}
 }
