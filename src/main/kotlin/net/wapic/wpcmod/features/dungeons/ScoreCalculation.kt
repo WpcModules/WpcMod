@@ -12,7 +12,6 @@ import net.minecraft.entity.mob.ZombieEntity
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
-import net.wapic.wpcmod.jarvis.SimpleHudElement
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.dungeon.DungeonConfig.ScoreCalculationConfig.ScoreHudType
 import net.wapic.wpcmod.events.EntityEvents
@@ -20,6 +19,7 @@ import net.wapic.wpcmod.events.PlayerListChangeEvent
 import net.wapic.wpcmod.events.ScoreboardChangeEvent
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
+import net.wapic.wpcmod.jarvis.SimpleHudElement
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.DungeonUtils.DungeonFloor
 import net.wapic.wpcmod.util.Island
@@ -28,7 +28,7 @@ import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.roundToInt
 
-object ScoreCalculation : SimpleHudElement(w = 120, h = 180) {
+object ScoreCalculation : SimpleHudElement(w = 140, h = 160) {
 
 	private val config get() = WpcMod.config.dungeon.scoreCalculation
 
@@ -62,7 +62,7 @@ object ScoreCalculation : SimpleHudElement(w = 120, h = 180) {
 		DungeonFloor.MASTER_MODE_FLOOR_3 to FloorRequirement(speed = 8 * 60),
 		DungeonFloor.MASTER_MODE_FLOOR_4 to FloorRequirement(speed = 8 * 60),
 		DungeonFloor.MASTER_MODE_FLOOR_5 to FloorRequirement(speed = 8 * 60),
-		DungeonFloor.MASTER_MODE_FLOOR_6 to FloorRequirement(speed = 8 * 60),
+		DungeonFloor.MASTER_MODE_FLOOR_6 to FloorRequirement(),
 		DungeonFloor.MASTER_MODE_FLOOR_7 to FloorRequirement(speed = 15 * 60),
 		DungeonFloor.NONE to FloorRequirement()
 	)
@@ -90,7 +90,7 @@ object ScoreCalculation : SimpleHudElement(w = 120, h = 180) {
 	private var foundSecrets = 0
 	private var totalSecrets = 0
 
-	private val secretsNeeded: Int get() = if (totalSecrets == 0) 1 else ceil(totalSecrets * floorRequirement.secretPercentage).toInt()
+	private val secretsNeeded get() = if (totalSecrets == 0) 1 else ceil(totalSecrets * floorRequirement.secretPercentage).toInt()
 	private val secretsClearedPercentage get() = foundSecrets / secretsNeeded.toDouble()
 	private val secretScore: Int
 		get() {
@@ -112,11 +112,9 @@ object ScoreCalculation : SimpleHudElement(w = 120, h = 180) {
 	private var failedPuzzles = 0
 	private val puzzlePenalty get() = 10 * (missingPuzzles + failedPuzzles)
 
-	private val skillScore: Int
-		get() {
-			val score = (20 + (80.0 * roomClearPercentage) - puzzlePenalty - deathPenalty).coerceIn(20.0, 100.0)
-			return score.applyEntranceModifier()
-		}
+	private val skillScore
+		get() = (20.0 + roomClearPercentage * 80.0 - puzzlePenalty - deathPenalty).applyEntranceModifier()
+			.coerceIn(20, 100)
 
 	// Speed
 	private var secondsElapsed = 0.0
@@ -143,7 +141,7 @@ object ScoreCalculation : SimpleHudElement(w = 120, h = 180) {
 	private var crypts = 0
 
 	private val calcBonusScore
-		get() = crypts.coerceIn(0, 5) + isPaul.ifTrue(10) + mimicFound.ifTrue(2) + princeKilled.ifTrue(1)
+		get() = crypts.coerceAtMost(5) + isPaul.ifTrue(10) + mimicFound.ifTrue(2) + princeKilled.ifTrue(1)
 	private val bonusScore get() = if (isEntrance) ceil(calcBonusScore * 0.7).toInt() else calcBonusScore
 
 	private val totalScore get() = skillScore + exploreScore + speedScore + bonusScore
@@ -353,13 +351,25 @@ object ScoreCalculation : SimpleHudElement(w = 120, h = 180) {
 
 	private fun onRenderHud(drawContext: DrawContext, tickCounter: RenderTickCounter) {
 		if (!isActive) return
+		val tr = MinecraftClient.getInstance().textRenderer
+
+		drawContext.matrices.push()
+		applyTransformations(drawContext.matrices)
 
 		if(config.scoreEstimate == ScoreHudType.MINIMIZED) {
-			text = Text.literal("§eScore: §a$totalScore §7($rank§7)")
+			drawContext.drawText(
+				tr,
+				Text.literal("§eScore: §a$totalScore §7($rank§7)"),
+				x.toInt(),
+				y.toInt(),
+				0xffffff,
+				true
+			)
+			drawContext.matrices.pop()
 			return
 		}
 
-		val lines = listOf<Text>(
+		val lines = mutableListOf<Text>(
 			Text.literal("§9Dungeon Status"),
 			Text.literal("§f* §eDeaths: §c$deaths"),
 			Text.literal("§f* §eMissing Puzzles: §c$missingPuzzles"),
@@ -367,8 +377,6 @@ object ScoreCalculation : SimpleHudElement(w = 120, h = 180) {
 			Text.literal("§f* §eSecrets: §a$foundSecrets§7/§a$secretsNeeded §7(§6Total: $totalSecrets§7)"),
 			Text.literal("§f* §eCrypts: §a$crypts"),
 			Text.literal("§f* §ePrince: ${if(princeKilled) "§a✔" else "§c✖"}"),
-			if(DungeonUtils.currentFloor in mimicFloors)
-				Text.literal("§f* §eMimic: ${if(mimicFound) "§a✔" else "§c✖"}") else Text.literal(""),
 			Text.literal(""),
 			Text.literal("§9Score"),
 			Text.literal("§f* §eSkill Score: §a$skillScore"),
@@ -379,9 +387,10 @@ object ScoreCalculation : SimpleHudElement(w = 120, h = 180) {
 			Text.literal("§f* §eRank: $rank")
 		)
 
-		val tr = MinecraftClient.getInstance().textRenderer
-		drawContext.matrices.push()
-		applyTransformations(drawContext.matrices)
+		if (DungeonUtils.currentFloor in mimicFloors) lines.add(
+			7,
+			Text.literal("§f* §eMimic: ${if (mimicFound) "§a✔" else "§c✖"}")
+		)
 
 		for ((index, line) in lines.withIndex()) {
 			drawContext.drawText(tr, line, x.toInt(), y.toInt() + (index * 10), 0xffffff, true)
