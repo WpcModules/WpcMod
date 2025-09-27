@@ -19,8 +19,6 @@ object MobGlow {
 
 	private val NO_GLOW = GlowOptions(false, ChromaColour(1f, 1f, 1f, 0, 0xff))
 
-	private const val FEL_HEAD_TEXTURE: String =
-		"ewogICJ0aW1lc3RhbXAiIDogMTcyMDAyNTQ4Njg2MywKICAicHJvZmlsZUlkIiA6ICIzZDIxZTYyMTk2NzQ0Y2QwYjM3NjNkNTU3MWNlNGJlZSIsCiAgInByb2ZpbGVOYW1lIiA6ICJTcl83MUJsYWNrYmlyZCIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9jMjg2ZGFjYjBmMjE0NGQ3YTQxODdiZTM2YmJhYmU4YTk4ODI4ZjdjNzlkZmY1Y2UwMTM2OGI2MzAwMTU1NjYzIiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0="
 	private val miniBosses: List<String> = listOf("Lost Adventurer", "Shadow Assassin", "Diamond Guy")
 
 	private val config get() = WpcMod.config
@@ -109,7 +107,7 @@ object MobGlow {
 				}
 
 				is ArmorStandEntity -> GlowOptions(
-					config.dungeon.esp.starMob.glow && entity.isMarker && entity.headTexture == FEL_HEAD_TEXTURE,
+					config.dungeon.esp.starMob.glow && entity.isMarker && entity.headTexture == HeadTextures.FEL,
 					config.dungeon.esp.starMob.color
 				)
 
