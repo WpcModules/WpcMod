@@ -7,6 +7,9 @@
 	"authors": [
 		"Wapic"
 	],
+  "contributors": [
+    "ValsCSGO"
+  ],
 	"contact": {
 		"homepage": "https://wpcmod.wapic.net/",
 		"sources": "https://github.com/WpcModules/WpcMod"
@@ -33,10 +36,6 @@
 		"minecraft": "~1.21.5",
 		"java": ">=21",
 		"fabric-api": "*",
-		"fabric-language-kotlin": "*",
-		"hypixel-mod-api": ">=1.0.1"
-	},
-	"suggests": {
-		"another-mod": "*"
+      "fabric-language-kotlin": "*"
 	}
 }
