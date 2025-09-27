@@ -59,12 +59,12 @@ object Utils {
 	}
 
 	fun getLoadedBlockEntities(): List<BlockEntity> {
-		val l = mutableListOf<BlockEntity>()
+		val blockEntities = mutableListOf<BlockEntity>()
 		val chunks = getLoadedChunks()
 		for(chunk in chunks) {
-			chunk?.blockEntities?.values?.forEach { e -> l.add(e) }
+			chunk?.blockEntities?.values?.forEach { blockEntity -> blockEntities.add(blockEntity) }
 		}
-		return l
+		return blockEntities
 	}
 
 	fun getLoadedChunks(): List<WorldChunk?> {
@@ -82,11 +82,10 @@ object Utils {
 				}
 			}
 		}
+
 		return chunks.filter { chunk -> mc.world?.isChunkLoaded(chunk.x, chunk.z) ?: false }
 			.map { chunk -> mc.world?.getChunk(chunk.x,chunk.z) }
-			.filter {chunk -> chunk?.isEmpty == false } // I don't understand this line and it's driving me insane,
-														// !chunk?.isEmpty makes me do the stupid !! but doing this
-														// doesn't make an error and works ????
+			.filter { chunk -> chunk?.isEmpty == false }
 	}
 
 }
