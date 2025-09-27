@@ -36,7 +36,6 @@ import net.wapic.wpcmod.features.general.Freecam
 import net.wapic.wpcmod.features.general.PreventPlacingItems
 import net.wapic.wpcmod.features.general.shortcut.ShortcutHandler
 import net.wapic.wpcmod.features.inventory.ArmorSwapper
-import net.wapic.wpcmod.features.inventory.DiscardHighlighter
 import net.wapic.wpcmod.features.inventory.ScrollableTooltips
 import net.wapic.wpcmod.features.inventory.experiments.AutoExperiments
 import net.wapic.wpcmod.features.inventory.experiments.SuperpairsSolver
@@ -157,7 +156,6 @@ object WpcMod : ModInitializer {
 
 		// Inventory
 		ArmorSwapper()
-		DiscardHighlighter()
 		ScrollableTooltips()
 
 		// Dev

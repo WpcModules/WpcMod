@@ -23,21 +23,6 @@ class InventoryConfig {
 		var invertedScroll: Boolean = false
 	}
 
-	@Accordion
-	@ConfigOption(name = "Discard Highlighter", desc = "")
-	var discard = DiscardSettings()
-
-	class DiscardSettings {
-
-		@ConfigOption(name = "Discard Highlighter", desc = "Highlights items based on the RegEx input")
-		@ConfigEditorBoolean
-		var highlighter: Boolean = false
-
-		@ConfigOption(name = "Search RegEx", desc = "The RegEx to use when searching for items")
-		@ConfigEditorText
-		var regex: String = "(Bank|No Pain No Gain|Combo|Feather Falling|Infinite Quiver|Ultimate Jerry) (I*V*I)"
-	}
-
 	@Category(name = "Experiments", desc = "Experimentation Config")
 	var experiments: ExperimentConfig = ExperimentConfig()
 }
