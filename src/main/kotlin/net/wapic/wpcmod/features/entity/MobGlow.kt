@@ -2,18 +2,18 @@ package net.wapic.wpcmod.features.entity
 
 import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.entity.Entity
-import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.boss.dragon.EnderDragonEntity
 import net.minecraft.entity.decoration.ArmorStandEntity
 import net.minecraft.entity.mob.MagmaCubeEntity
 import net.minecraft.entity.mob.ShulkerEntity
 import net.minecraft.entity.passive.*
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.predicate.entity.EntityPredicates
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.commands.TagCommand
+import net.wapic.wpcmod.util.EntityUtils
+import net.wapic.wpcmod.util.EntityUtils.headTexture
+import net.wapic.wpcmod.util.HeadTextures
 import net.wapic.wpcmod.util.Island
-import net.wapic.wpcmod.util.ItemUtils.headTexture
 import net.wapic.wpcmod.util.KuudraUtils
 import net.wapic.wpcmod.util.Utils
 
@@ -33,6 +33,16 @@ object MobGlow {
 
 		if (TagCommand.players.contains(entity.name.string.lowercase()) || isTagged(entity)) {
 			return GlowOptions(shouldGlow = true, config.general.tagColor)
+		}
+
+		if(Utils.getLocation() == Island.HUB) {
+			return when (entity) {
+				is ArmorStandEntity -> GlowOptions(
+					config.general.esp.rat.glow && entity.headTexture == HeadTextures.RAT,
+					config.general.esp.rat.color
+				)
+				else -> NO_GLOW
+			}
 		}
 
 		if (Utils.getLocation() == Island.GALATEA) {
@@ -92,16 +102,19 @@ object MobGlow {
 					config.dungeon.esp.bat.glow, config.dungeon.esp.bat.color
 				)
 
-				is PlayerEntity -> GlowOptions(
-					config.dungeon.esp.miniboss.glow && miniBosses.contains(
-						entity.name.string
-					), config.dungeon.esp.miniboss.color
-				)
+				is PlayerEntity -> {
+					if (miniBosses.contains(entity.name.string)) {
+						GlowOptions(config.dungeon.esp.miniboss.glow, config.dungeon.esp.miniboss.color)
+					} else if(isStarredMob(entity)) {
+						GlowOptions(config.dungeon.esp.starMob.glow, config.dungeon.esp.starMob.color)
+					} else {
+						NO_GLOW
+					}
+				}
 
 				is ArmorStandEntity -> GlowOptions(
-					config.dungeon.esp.starMob.glow && entity.isMarker && entity.getEquippedStack(
-						EquipmentSlot.HEAD
-					).headTexture == FEL_HEAD_TEXTURE, config.dungeon.esp.starMob.color
+					config.dungeon.esp.starMob.glow && entity.isMarker && entity.headTexture == FEL_HEAD_TEXTURE,
+					config.dungeon.esp.starMob.color
 				)
 
 				else -> GlowOptions(
@@ -114,21 +127,15 @@ object MobGlow {
 		return NO_GLOW
 	}
 
-	private fun getArmorStandsByEntity(entity: Entity): List<ArmorStandEntity> {
-		return entity.world.getEntitiesByClass(
-			ArmorStandEntity::class.java, entity.boundingBox.expand(0.0, 2.0, 0.0), EntityPredicates.NOT_MOUNTED
-		)
-	}
-
 	private fun isTagged(entity: Entity): Boolean {
-		val armorStands = getArmorStandsByEntity(entity)
+		val armorStands = EntityUtils.getArmorStandsByEntity(entity)
 		return armorStands.isNotEmpty() && TagCommand.players.find {
 			armorStands.first().name?.string?.lowercase()?.contains(it) ?: false
 		}?.isNotEmpty() ?: false
 	}
 
 	private fun isStarredMob(entity: Entity): Boolean {
-		val armorStands = getArmorStandsByEntity(entity)
+		val armorStands = EntityUtils.getArmorStandsByEntity(entity)
 		return armorStands.isNotEmpty() && armorStands.first().name?.string?.contains("✯") ?: false
 	}
 }

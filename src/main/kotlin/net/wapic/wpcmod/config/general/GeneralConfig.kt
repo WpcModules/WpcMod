@@ -21,4 +21,7 @@ class GeneralConfig {
 	val shortcutEditor = Runnable {
 		MinecraftClient.getInstance().setScreen(ShortcutScreen())
 	}
+
+	@Category(name = "ESP", desc = "Configure ESP Features")
+	var esp: ESPConfig = ESPConfig()
 }
