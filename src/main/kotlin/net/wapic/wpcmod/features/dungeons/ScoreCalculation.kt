@@ -28,7 +28,11 @@ import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.roundToInt
 
-object ScoreCalculation : SimpleHudElement(w = 140, h = 160) {
+object ScoreCalculation : SimpleHudElement(
+	text = Text.literal("Score Estimate HUD"),
+	w = 140,
+	h = 160
+) {
 
 	private val config get() = WpcMod.config.dungeon.scoreCalculation
 
