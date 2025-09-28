@@ -44,6 +44,7 @@ import net.wapic.wpcmod.features.kuudra.KuudraDisplay
 import net.wapic.wpcmod.features.kuudra.KuudraESP
 import net.wapic.wpcmod.features.mining.ChestESP
 import net.wapic.wpcmod.features.mining.PigeonSwapper
+import net.wapic.wpcmod.jarvis.JarvisManager
 import net.wapic.wpcmod.listeners.NetworkListener
 import net.wapic.wpcmod.util.*
 import org.slf4j.Logger
@@ -110,6 +111,7 @@ object WpcMod : ModInitializer {
 
 		ClientLifecycleEvents.CLIENT_STOPPING.register {
 			ConfigManager.saveConfig()
+			JarvisManager.saveLocations()
 			globalJob.cancel()
 		}
 

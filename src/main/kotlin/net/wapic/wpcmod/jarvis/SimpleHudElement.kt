@@ -1,6 +1,6 @@
 package net.wapic.wpcmod.jarvis
 
-import moe.nea.jarvis.api.JarvisHud
+import moe.nea.jarvis.api.JarvisScalable
 import net.minecraft.text.Text
 
 abstract class SimpleHudElement(
@@ -8,8 +8,9 @@ abstract class SimpleHudElement(
 	var yPos: Double = 0.0,
 	var text: Text = Text.literal(""),
 	var w: Int = 0,
-	var h: Int = 0
-) : JarvisHud {
+	var h: Int = 0,
+	var defaultScale: Float = 1f
+) : JarvisScalable {
 
 	override fun getX(): Double {
 		return xPos
@@ -37,5 +38,13 @@ abstract class SimpleHudElement(
 
 	override fun getHeight(): Int {
 		return h
+	}
+
+	override fun getScale(): Float {
+		return defaultScale
+	}
+
+	override fun setScale(newScale: Float) {
+		defaultScale = newScale
 	}
 }
