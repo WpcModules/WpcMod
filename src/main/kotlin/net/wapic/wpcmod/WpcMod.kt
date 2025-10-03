@@ -27,6 +27,7 @@ import net.wapic.wpcmod.features.chat.SpamFilter
 import net.wapic.wpcmod.features.dev.SkyBlockID
 import net.wapic.wpcmod.features.dungeons.AutoCloseChests
 import net.wapic.wpcmod.features.dungeons.DungeonAutoGFS
+import net.wapic.wpcmod.features.dungeons.DungeonESP
 import net.wapic.wpcmod.features.dungeons.ScoreCalculation
 import net.wapic.wpcmod.features.end.EndESP
 import net.wapic.wpcmod.features.entity.RatESP
@@ -127,7 +128,7 @@ object WpcMod : ModInitializer {
 		PreventPlacingItems()
 		Freecam()
 		RatESP()
-		TagESP()
+		TagESP.init()
 
 		//Experiments
 		AutoExperiments()
@@ -137,6 +138,7 @@ object WpcMod : ModInitializer {
 		AutoCloseChests()
 		DungeonAutoGFS()
 		ScoreCalculation.init()
+		DungeonESP()
 
 		// Kuudra
 		KuudraDisplay()

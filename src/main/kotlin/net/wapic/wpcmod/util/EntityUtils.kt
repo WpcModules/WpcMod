@@ -6,7 +6,6 @@ import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.entity.decoration.ArmorStandEntity
 import net.minecraft.predicate.entity.EntityPredicates
-import net.wapic.wpcmod.commands.TagCommand
 import net.wapic.wpcmod.util.ItemUtils.headTexture
 
 object EntityUtils {
@@ -24,15 +23,4 @@ object EntityUtils {
 		)
 	}
 
-	fun isTagged(entity: Entity): Boolean {
-		val armorStands = getArmorStandsByEntity(entity)
-		return armorStands.isNotEmpty() && TagCommand.players.find {
-			armorStands.first().name?.string?.lowercase()?.contains(it) ?: false
-		}?.isNotEmpty() ?: false
-	}
-
-	fun isStarredMob(entity: Entity): Boolean {
-		val armorStands = getArmorStandsByEntity(entity)
-		return armorStands.isNotEmpty() && armorStands.first().name?.string?.contains("✯") ?: false
-	}
 }

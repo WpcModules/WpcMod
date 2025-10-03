@@ -1,6 +1,5 @@
 package net.wapic.wpcmod.features.galatea
 
-import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
@@ -11,7 +10,11 @@ import net.minecraft.entity.Entity
 import net.minecraft.entity.decoration.ArmorStandEntity
 import net.minecraft.entity.decoration.DisplayEntity
 import net.minecraft.entity.mob.ShulkerEntity
-import net.minecraft.entity.passive.*
+import net.minecraft.entity.passive.AxolotlEntity
+import net.minecraft.entity.passive.FrogEntity
+import net.minecraft.entity.passive.PandaEntity
+import net.minecraft.entity.passive.PufferfishEntity
+import net.minecraft.entity.passive.TurtleEntity
 import net.minecraft.item.Items
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket
 import net.minecraft.particle.ParticleTypes
@@ -21,17 +24,18 @@ import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec3d
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.ParticleEvents
+import net.wapic.wpcmod.features.entity.MobGlow
+import net.wapic.wpcmod.features.entity.MobGlowCache
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.render.RenderUtils
 import java.util.concurrent.CopyOnWriteArraySet
 
-class GalateaESP {
+class GalateaESP : MobGlowCache() {
 
 	private var forestNodes = CopyOnWriteArraySet<Box>()
 	private val config get() = WpcMod.config.galatea.esp
 
-	data class ESPSettings(var box: Boolean, var tracer: Boolean, var color: ChromaColour)
 
 	init {
 		WorldRenderEvents.END.register(::renderWorld)
@@ -43,37 +47,20 @@ class GalateaESP {
 		ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register { _, _ -> forestNodes.clear() }
 	}
 
-	private fun getSettings(entity: Entity): ESPSettings {
-		return when (entity) {
-			is ShulkerEntity -> ESPSettings(config.shulker.box, config.shulker.tracer, config.shulker.color)
-			is AxolotlEntity -> ESPSettings(config.axolotl.box, config.axolotl.tracer, config.axolotl.color)
-			is FrogEntity -> ESPSettings(config.frog.box, config.frog.tracer, config.frog.color)
-			is PandaEntity -> ESPSettings(config.panda.box, config.panda.tracer, config.panda.color)
-			is PufferfishEntity -> ESPSettings(config.pufferfish.box, config.pufferfish.tracer, config.pufferfish.color)
-			is TurtleEntity -> ESPSettings(config.shellwise.box, config.shellwise.tracer, config.shellwise.color)
-
-			is ArmorStandEntity -> ESPSettings(
-				config.invisibug.box && entity.velocity != Vec3d.ZERO && entity.y > 92 && entity.boundingBox.averageSideLength == 0.0,
-				config.invisibug.tracer && entity.velocity != Vec3d.ZERO && entity.y > 92 && entity.boundingBox.averageSideLength == 0.0,
-				config.invisibug.color
-			)
-
-			else -> ESPSettings(box = false, tracer = false, color = ChromaColour(1f, 1f, 1f, 0, 0xff))
-		}
-	}
-
 	private fun stringCount(entity: DisplayEntity.ItemDisplayEntity): Boolean {
 		return !entity.itemStack.isEmpty && entity.itemStack.item.equals(Items.STRING)
 	}
 
 	private fun onBlockInteract(pos: BlockPos): ActionResult {
-		if (Utils.getLocation() != Island.GALATEA) return ActionResult.PASS
-		forestNodes.removeIf { it == Box.of(pos.toCenterPos(), 1.0, 1.0, 1.0) }
+		if (isEnabled()) {
+			forestNodes.removeIf { it == Box.of(pos.toCenterPos(), 1.0, 1.0, 1.0) }
+		}
+
 		return ActionResult.PASS
 	}
 
 	private fun onParticle(packet: ParticleS2CPacket, world: ClientWorld) {
-		if (Utils.getLocation() != Island.GALATEA) return
+		if (!isEnabled()) return
 		if (!config.forestNode.tracer && !config.forestNode.box) return
 
 		if (ParticleTypes.HAPPY_VILLAGER.type.equals(packet.parameters.type)) {
@@ -89,32 +76,71 @@ class GalateaESP {
 		}
 	}
 
-	private fun renderWorld(worldRenderContext: WorldRenderContext) {
-		if (Utils.getLocation() != Island.GALATEA) return
+	private fun isInvisibug(entity: Entity): Boolean {
+		return entity.velocity != Vec3d.ZERO && entity.boundingBox.averageSideLength == 0.0 && entity.y > 92 && entity is ArmorStandEntity
+	}
 
-		worldRenderContext.world().entities.forEach { entity ->
-			val settings = getSettings(entity)
-			val boundingBox =
-				if (entity.boundingBox.averageSideLength == 0.0) entity.boundingBox.expand(0.5) else entity.boundingBox
-			if (settings.box) RenderUtils.drawBoundingBox(
-				worldRenderContext, boundingBox, settings.color.getEffectiveColour()
-			)
-			if (settings.tracer) RenderUtils.drawTracer(
-				worldRenderContext, entity.x, entity.eyeY, entity.z, settings.color.getEffectiveColour()
-			)
+
+	private fun renderWorld(worldRenderContext: WorldRenderContext) {
+		if (!isEnabled()) return
+
+		for (entity in worldRenderContext.world().entities) {
+			var boundingBox = entity.boundingBox
+
+			val settings = when {
+				entity is ShulkerEntity -> config.shulker
+ 				entity is AxolotlEntity -> config.axolotl
+				entity is FrogEntity -> config.frog
+				entity is PandaEntity -> config.panda
+				entity is PufferfishEntity -> config.pufferfish
+				entity is TurtleEntity -> config.shellwise
+				isInvisibug(entity) -> {
+					boundingBox = entity.boundingBox.expand(0.5)
+					config.invisibug
+				}
+				else -> continue
+			}
+
+			if (settings.box)
+				RenderUtils.drawBoundingBox(worldRenderContext, boundingBox, settings.color.getEffectiveColour())
+
+			if (settings.tracer)
+				RenderUtils.drawTracer(worldRenderContext, entity.eyePos, settings.color.getEffectiveColour())
 		}
 
 		for (node in forestNodes) {
-			if (config.forestNode.box) RenderUtils.drawBoundingBox(
-				worldRenderContext, node.withMinY(node.maxY), color = config.forestNode.color.getEffectiveColour()
-			)
-			if (config.forestNode.tracer) RenderUtils.drawTracer(
-				worldRenderContext,
-				node.center.x,
-				node.maxY,
-				node.center.z,
-				color = config.forestNode.color.getEffectiveColour()
-			)
+			if (config.forestNode.box){
+				RenderUtils.drawBoundingBox(
+					worldRenderContext,
+					node.withMinY(node.maxY),
+					config.forestNode.color.getEffectiveColour()
+				)
+			}
+			if (config.forestNode.tracer) {
+				RenderUtils.drawTracer(
+					worldRenderContext,
+					node.center.x,
+					node.maxY,
+					node.center.z,
+					config.forestNode.color.getEffectiveColour()
+				)
+			}
 		}
+	}
+
+	override fun compute(entity: Entity): Int {
+		return when {
+			entity is ShulkerEntity && config.shulker.glow -> config.shulker.color.getEffectiveColourRGB()
+			entity is AxolotlEntity && config.axolotl.glow -> config.axolotl.color.getEffectiveColourRGB()
+			entity is FrogEntity && config.frog.glow -> config.frog.color.getEffectiveColourRGB()
+			entity is PandaEntity && config.panda.glow -> config.panda.color.getEffectiveColourRGB()
+			entity is PufferfishEntity && config.pufferfish.glow -> config.pufferfish.color.getEffectiveColourRGB()
+			entity is TurtleEntity && config.shellwise.glow -> config.shellwise.color.getEffectiveColourRGB()
+			else -> MobGlow.NO_GLOW
+		}
+	}
+
+	override fun isEnabled(): Boolean {
+		return Utils.getLocation() == Island.GALATEA
 	}
 }
