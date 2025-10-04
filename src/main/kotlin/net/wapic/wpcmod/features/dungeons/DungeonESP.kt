@@ -3,12 +3,15 @@ package net.wapic.wpcmod.features.dungeons
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
 import net.minecraft.entity.Entity
+import net.minecraft.entity.decoration.ArmorStandEntity
 import net.minecraft.entity.passive.BatEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.features.entity.MobGlow
 import net.wapic.wpcmod.features.entity.MobGlowCache
 import net.wapic.wpcmod.util.EntityUtils.getArmorStandsByEntity
+import net.wapic.wpcmod.util.EntityUtils.headTexture
+import net.wapic.wpcmod.util.HeadTextures
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.render.RenderUtils
@@ -27,7 +30,7 @@ class DungeonESP : MobGlowCache() {
 
 		for(entity in worldRenderContext.world().entities) {
 			val entityConfig = when {
-				isStarredMob(entity) -> config.starMob
+				isStarredMob(entity) || (entity is ArmorStandEntity && entity.headTexture == HeadTextures.FEL) -> config.starMob
 				entity is BatEntity -> config.bat
 				entity is PlayerEntity && entity.name.string in miniBosses -> config.miniboss
 				else -> continue
@@ -49,7 +52,7 @@ class DungeonESP : MobGlowCache() {
 
 	override fun compute(entity: Entity): Int {
 		return when {
-			config.starMob.glow && isStarredMob(entity) -> config.starMob.color.getEffectiveColourRGB()
+			config.starMob.glow && (isStarredMob(entity) || (entity is ArmorStandEntity && entity.headTexture == HeadTextures.FEL)) -> config.starMob.color.getEffectiveColourRGB()
 			config.miniboss.glow && entity.name.string in miniBosses -> config.miniboss.color.getEffectiveColourRGB()
 			config.bat.glow && entity is BatEntity -> config.bat.color.getEffectiveColourRGB()
 			else -> MobGlow.NO_GLOW
