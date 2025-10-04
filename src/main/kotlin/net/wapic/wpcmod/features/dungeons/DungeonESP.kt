@@ -31,7 +31,7 @@ class DungeonESP : MobGlowCache() {
 		for(entity in worldRenderContext.world().entities) {
 			val entityConfig = when {
 				isStarredMob(entity) || (entity is ArmorStandEntity && entity.headTexture == HeadTextures.FEL) -> config.starMob
-				entity is BatEntity -> config.bat
+				entity is BatEntity && !entity.isInvisible -> config.bat
 				entity is PlayerEntity && entity.name.string in miniBosses -> config.miniboss
 				else -> continue
 			}
