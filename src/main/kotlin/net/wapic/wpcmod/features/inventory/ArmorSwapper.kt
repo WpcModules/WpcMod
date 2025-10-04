@@ -19,7 +19,7 @@ class ArmorSwapper {
 	private val armorSwapBind: KeyBinding =
 		KeyBindingHelper.registerKeyBinding(KeyBinding("Armor Swap", InputUtil.GLFW_KEY_V, "WpcMod"))
 	private val wardrobeTitle = "Wardrobe \\((?<page>[1-2])/2\\)".toRegex()
-	private var sorrowPiece = "(?:Ancient|Renowned) Sorrow Boots".toRegex()
+	private var sorrowPiece = "(?:\\w+\\s)?Sorrow Boots".toRegex()
 	private var shouldSwap = false
 
 	private var sorrowSlot: Int? = null
@@ -41,7 +41,7 @@ class ArmorSwapper {
 		if (!screen.title.string.contains(wardrobeTitle)) return
 		val inv = screen.screenHandler.inventory
 
-		for (index in 27..inv.size() - 1) {
+		for (index in 27..<inv.size()) {
 			val stack = inv.getStack(index)
 			if (stack.item == Items.AIR) continue
 
