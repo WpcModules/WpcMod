@@ -12,7 +12,7 @@ import net.wapic.wpcmod.util.ChatUtils
 object TagCommand : Command("tag") {
 
 	private val commandClearPlayers = literal("clear").executes {
-		TagESP.taggedEntities.clear()
+		TagESP.clearTagList()
 		return@executes 0
 	}
 
@@ -22,7 +22,7 @@ object TagCommand : Command("tag") {
 	}
 
 	override fun executes(context: CommandContext<FabricClientCommandSource>): Int {
-		ChatUtils.sendMessage("Tagged Players: ${TagESP.taggedEntities.joinToString { it }}")
+		ChatUtils.sendMessage("Tagged Players: ${TagESP.getTagList()}")
 		return super.executes(context)
 	}
 

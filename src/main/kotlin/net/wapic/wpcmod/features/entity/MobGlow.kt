@@ -1,5 +1,6 @@
 package net.wapic.wpcmod.features.entity
 
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.minecraft.entity.Entity
 
 object MobGlow {
@@ -8,6 +9,10 @@ object MobGlow {
 
 	private val CACHE = hashMapOf<Entity, Int>()
 	val ADDERS = mutableListOf<MobGlowCache>()
+
+	fun init() {
+		ClientTickEvents.END_CLIENT_TICK.register { _ -> clearCache() }
+	}
 
 	fun add(cache: MobGlowCache) {
 		ADDERS.add(cache)

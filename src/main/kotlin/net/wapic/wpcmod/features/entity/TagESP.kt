@@ -10,12 +10,12 @@ import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.EntityUtils.getArmorStandsByEntity
 import net.wapic.wpcmod.util.render.RenderUtils
-import java.util.Locale
+import java.util.*
 
 object TagESP : MobGlowCache() {
 
 	private val config get() = WpcMod.config.general.esp.tag
-	val taggedEntities = mutableSetOf<String>()
+	private val taggedEntities = hashSetOf<String>()
 
 	fun init() {
 		WorldRenderEvents.END.register(::onRenderWorld)
@@ -23,7 +23,7 @@ object TagESP : MobGlowCache() {
 
 	private fun onRenderWorld(worldRenderContext: WorldRenderContext) {
 		for (entity in worldRenderContext.world().entities) {
-			if(entity.name.string.lowercase(Locale.ENGLISH) !in taggedEntities || !isTagged(entity)) continue
+			if (!isTagged(entity)) continue
 
 			if (config.box)
 				RenderUtils.drawBoundingBox(worldRenderContext, entity.boundingBox, config.color.getEffectiveColour())
@@ -43,14 +43,26 @@ object TagESP : MobGlowCache() {
 		}
 	}
 
+	fun clearTagList() {
+		taggedEntities.clear()
+	}
+
+	fun getTagList(): String {
+		return taggedEntities.joinToString { it }
+	}
+
 	fun isTagged(entity: Entity): Boolean {
+		if (entity.name.string.lowercase(Locale.ENGLISH) in taggedEntities) return true
+
 		val armorStands = getArmorStandsByEntity(entity)
-		return armorStands.isNotEmpty() && armorStands.first().name?.string?.lowercase(Locale.ENGLISH) in taggedEntities
+		if (armorStands.isEmpty()) return false
+
+		return taggedEntities.any { armorStands.first().name.string.lowercase(Locale.ENGLISH).contains(it) }
 	}
 
 	override fun compute(entity: Entity): Int {
 		return when {
-			config.glow && (isTagged(entity) || entity.name.string.lowercase(Locale.ENGLISH) in taggedEntities) -> config.color.getEffectiveColourRGB()
+			config.glow && isTagged(entity) -> config.color.getEffectiveColourRGB()
 			else -> MobGlow.NO_GLOW
 		}
 	}

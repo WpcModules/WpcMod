@@ -30,6 +30,7 @@ import net.wapic.wpcmod.features.dungeons.DungeonAutoGFS
 import net.wapic.wpcmod.features.dungeons.DungeonESP
 import net.wapic.wpcmod.features.dungeons.ScoreCalculation
 import net.wapic.wpcmod.features.end.EndESP
+import net.wapic.wpcmod.features.entity.MobGlow
 import net.wapic.wpcmod.features.entity.RatESP
 import net.wapic.wpcmod.features.entity.TagESP
 import net.wapic.wpcmod.features.galatea.GalateaESP
@@ -122,6 +123,7 @@ object WpcMod : ModInitializer {
 		KuudraUtils.init()
 		DungeonUtils.init()
 		NetworkListener.init()
+		MobGlow.init()
 
 		// General
 		ShortcutHandler()
