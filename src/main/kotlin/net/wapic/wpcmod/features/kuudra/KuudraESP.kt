@@ -20,12 +20,18 @@ class KuudraESP : MobGlowCache() {
 
 	fun onRenderWorld(worldRenderContext: WorldRenderContext) {
 		KuudraUtils.kuudraEntity?.let {
-			if(config.kuudra.box) RenderUtils.drawBoundingBox(worldRenderContext, it.boundingBox, config.kuudra.color.getEffectiveColour())
-			if (config.kuudra.tracer) RenderUtils.drawTracer(
-				worldRenderContext,
-				it.boundingBox.center,
-				config.kuudra.color.getEffectiveColour()
-			)
+			if (config.kuudra.box)
+				RenderUtils.drawBoundingBox(
+					worldRenderContext,
+					it.boundingBox,
+					config.kuudra.color.getEffectiveColour()
+				)
+			if (config.kuudra.tracer)
+				RenderUtils.drawTracer(
+					worldRenderContext,
+					it.boundingBox.center,
+					config.kuudra.color.getEffectiveColour()
+				)
 		}
 	}
 

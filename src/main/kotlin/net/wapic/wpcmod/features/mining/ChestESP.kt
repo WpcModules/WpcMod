@@ -11,7 +11,7 @@ import net.wapic.wpcmod.util.render.RenderUtils
 
 class ChestESP {
 
-	private val config get() = WpcMod.config.mining.esp
+	private val config get() = WpcMod.config.mining.esp.chest
 
 	init {
 		WorldRenderEvents.END.register(::renderWorld)
@@ -19,21 +19,22 @@ class ChestESP {
 
 	private fun renderWorld(worldRenderContext: WorldRenderContext) {
 		if (Utils.getLocation() != Island.CRYSTAL_HOLLOWS) return
-		if (!config.chest.tracer && !config.chest.box) return
+		if (!config.tracer && !config.box) return
 
-		Utils.getLoadedBlockEntities().filterIsInstance<ChestBlockEntity>().forEach { blockEntity ->
-			val playerPos = worldRenderContext.camera().pos
-			if (!blockEntity.pos.isWithinDistance(playerPos, config.chest.radius.toDouble())) return
+		val blockEntities = Utils.getLoadedBlockEntities().filterIsInstance<ChestBlockEntity>()
+		val tickProgress: Float = worldRenderContext.tickCounter().dynamicDeltaTicks
+		val playerPos = worldRenderContext.camera().pos
 
-			val tickProgress: Float = worldRenderContext.tickCounter().dynamicDeltaTicks
-			if (blockEntity.getAnimationProgress(tickProgress) > 0) return@forEach
+		for (block in blockEntities) {
+			if (playerPos.distanceTo(block.pos.toCenterPos()) >= config.radius) continue
+			if (block.getAnimationProgress(tickProgress) > 0) continue
 
-			val chest = Box.of(blockEntity.pos.toCenterPos(), 1.0, 1.0, 1.0)
+			val chest = Box.of(block.pos.toCenterPos(), 1.0, 1.0, 1.0)
 
-			if (config.chest.box)
-				RenderUtils.drawBoundingBox(worldRenderContext, chest, config.chest.color.getEffectiveColour())
-			if (config.chest.tracer)
-				RenderUtils.drawTracer(worldRenderContext, chest.center, config.chest.color.getEffectiveColour())
+			if (config.box)
+				RenderUtils.drawBoundingBox(worldRenderContext, chest, config.color.getEffectiveColour())
+			if (config.tracer)
+				RenderUtils.drawTracer(worldRenderContext, chest.center, config.color.getEffectiveColour())
 		}
 	}
 }
