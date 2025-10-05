@@ -30,16 +30,10 @@ class ChestESP {
 
 			val chest = Box.of(blockEntity.pos.toCenterPos(), 1.0, 1.0, 1.0)
 
-			if (config.chest.box) RenderUtils.drawBoundingBox(
-				worldRenderContext, chest.withMinY(chest.minY), config.chest.color.getEffectiveColour()
-			)
-			if (config.chest.tracer) RenderUtils.drawTracer(
-				worldRenderContext,
-				chest.center.x,
-				chest.maxY - chest.lengthY / 2,
-				chest.center.z,
-				color = config.chest.color.getEffectiveColour()
-			)
+			if (config.chest.box)
+				RenderUtils.drawBoundingBox(worldRenderContext, chest, config.chest.color.getEffectiveColour())
+			if (config.chest.tracer)
+				RenderUtils.drawTracer(worldRenderContext, chest.center, config.chest.color.getEffectiveColour())
 		}
 	}
 }

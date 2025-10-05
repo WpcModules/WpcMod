@@ -68,21 +68,23 @@ class EndESP : MobGlowCache() {
 			if (settings.box)
 				RenderUtils.drawBoundingBox(worldRenderContext, entity.boundingBox, settings.color.getEffectiveColour())
 			if (settings.tracer)
-				RenderUtils.drawTracer(worldRenderContext, entity.eyePos, settings.color.getEffectiveColour())
+				RenderUtils.drawTracer(
+					worldRenderContext,
+					entity.boundingBox.center,
+					settings.color.getEffectiveColour()
+				)
 		}
 
 		for (node in endNodes) {
 			if (config.endNode.box)
 				RenderUtils.drawBoundingBox(
 					worldRenderContext,
-					node.withMinY(node.minY),
+					node,
 					config.endNode.color.getEffectiveColour()
 				)
 			if (config.endNode.tracer) RenderUtils.drawTracer(
 				worldRenderContext,
-				node.center.x,
-				node.maxY,
-				node.center.z,
+				node.center,
 				config.endNode.color.getEffectiveColour()
 
 			)

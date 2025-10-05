@@ -29,7 +29,7 @@ class RatESP : MobGlowCache() {
 
 			val box = entity.boundingBox.withMinY(entity.boundingBox.minY + 1.4)
 			if(config.box) RenderUtils.drawBoundingBox(worldRenderContext, box, config.color.getEffectiveColour())
-			if(config.tracer) RenderUtils.drawTracer(worldRenderContext, entity.eyePos, config.color.getEffectiveColour())
+			if (config.tracer) RenderUtils.drawTracer(worldRenderContext, box.center, config.color.getEffectiveColour())
 		}
 	}
 

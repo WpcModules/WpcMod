@@ -28,7 +28,7 @@ object TagESP : MobGlowCache() {
 			if (config.box)
 				RenderUtils.drawBoundingBox(worldRenderContext, entity.boundingBox, config.color.getEffectiveColour())
 			if (config.tracer)
-				RenderUtils.drawTracer(worldRenderContext, entity.eyePos, config.color.getEffectiveColour())
+				RenderUtils.drawTracer(worldRenderContext, entity.boundingBox.center, config.color.getEffectiveColour())
 		}
 	}
 

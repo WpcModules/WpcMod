@@ -10,11 +10,7 @@ import net.minecraft.entity.Entity
 import net.minecraft.entity.decoration.ArmorStandEntity
 import net.minecraft.entity.decoration.DisplayEntity
 import net.minecraft.entity.mob.ShulkerEntity
-import net.minecraft.entity.passive.AxolotlEntity
-import net.minecraft.entity.passive.FrogEntity
-import net.minecraft.entity.passive.PandaEntity
-import net.minecraft.entity.passive.PufferfishEntity
-import net.minecraft.entity.passive.TurtleEntity
+import net.minecraft.entity.passive.*
 import net.minecraft.item.Items
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket
 import net.minecraft.particle.ParticleTypes
@@ -95,7 +91,7 @@ class GalateaESP : MobGlowCache() {
 				entity is PufferfishEntity -> config.pufferfish
 				entity is TurtleEntity -> config.shellwise
 				isInvisibug(entity) -> {
-					boundingBox = entity.boundingBox.expand(0.5)
+					boundingBox = entity.boundingBox.expand(0.5).offset(0.0, 0.75, 0.0)
 					config.invisibug
 				}
 				else -> continue
@@ -105,7 +101,7 @@ class GalateaESP : MobGlowCache() {
 				RenderUtils.drawBoundingBox(worldRenderContext, boundingBox, settings.color.getEffectiveColour())
 
 			if (settings.tracer)
-				RenderUtils.drawTracer(worldRenderContext, entity.eyePos, settings.color.getEffectiveColour())
+				RenderUtils.drawTracer(worldRenderContext, boundingBox.center, settings.color.getEffectiveColour())
 		}
 
 		for (node in forestNodes) {
@@ -119,9 +115,7 @@ class GalateaESP : MobGlowCache() {
 			if (config.forestNode.tracer) {
 				RenderUtils.drawTracer(
 					worldRenderContext,
-					node.center.x,
-					node.maxY,
-					node.center.z,
+					node.withMinY(node.maxY).center,
 					config.forestNode.color.getEffectiveColour()
 				)
 			}

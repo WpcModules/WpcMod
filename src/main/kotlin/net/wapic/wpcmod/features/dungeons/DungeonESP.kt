@@ -40,7 +40,11 @@ class DungeonESP : MobGlowCache() {
 				RenderUtils.drawBoundingBox(worldRenderContext, entity.boundingBox, entityConfig.color.getEffectiveColour())
 			}
 			if(entityConfig.tracer) {
-				RenderUtils.drawTracer(worldRenderContext, entity.x, entity.y, entity.z, entityConfig.color.getEffectiveColour())
+				RenderUtils.drawTracer(
+					worldRenderContext,
+					entity.boundingBox.center,
+					entityConfig.color.getEffectiveColour()
+				)
 			}
 		}
 	}
