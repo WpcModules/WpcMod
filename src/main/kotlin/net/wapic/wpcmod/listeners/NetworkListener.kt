@@ -16,33 +16,34 @@ object NetworkListener {
 	}
 
 	private fun onPacketReceive(packet: Packet<*>) {
+		when(packet) {
+			is PlayerListS2CPacket -> onTabListUpdate(packet)
+			is EntitiesDestroyS2CPacket -> onEntityDespawn(packet)
+			is EntitySpawnS2CPacket -> onEntitySpawn(packet)
+		}
+	}
+
+	private fun onTabListUpdate(packet: PlayerListS2CPacket) {
+		val actions = setOf(PlayerListS2CPacket.Action.UPDATE_DISPLAY_NAME, PlayerListS2CPacket.Action.UPDATE_LISTED)
+		val hasActions = packet.actions.intersect(actions).isNotEmpty()
+		if (hasActions) {
+			PlayerListChangeEvent.EVENT.invoker().onPlayerListChange(packet.entries)
+		}
+	}
+
+	private fun onEntityDespawn(packet: EntitiesDestroyS2CPacket){
 		val world = MinecraftClient.getInstance().world ?: return
 
-		if (packet is PlayerListS2CPacket) {
-			val actions =
-				setOf(PlayerListS2CPacket.Action.UPDATE_DISPLAY_NAME, PlayerListS2CPacket.Action.UPDATE_LISTED)
-			val hasActions = packet.actions.intersect(actions).isNotEmpty()
-			if (hasActions) {
-				PlayerListChangeEvent.EVENT.invoker().onPlayerListChange(packet.entries)
-			}
+		@Suppress("DEPRECATION")
+		for (entityId in packet.entityIds) {
+			val entity = world.getEntityById(entityId) ?: continue
+			EntityEvents.DESPAWN.invoker().onEntityDespawn(entity)
 		}
+	}
 
-		if (packet is EntitiesDestroyS2CPacket) {
-			packet.entityIds.forEach { entityId ->
-				val entity = world.getEntityById(entityId)
-
-				entity?.let {
-					EntityEvents.DESPAWN.invoker().onEntityDespawn(it)
-				}
-			}
-		}
-
-		if (packet is EntitySpawnS2CPacket) {
-			val entity = world.getEntityById(packet.entityId)
-
-			entity?.let {
-				EntityEvents.SPAWN.invoker().onSpawn(it)
-			}
-		}
+	private fun onEntitySpawn(packet: EntitySpawnS2CPacket) {
+		val world = MinecraftClient.getInstance().world ?: return
+		val entity = world.getEntityById(packet.entityId) ?: return
+		EntityEvents.SPAWN.invoker().onSpawn(entity)
 	}
 }

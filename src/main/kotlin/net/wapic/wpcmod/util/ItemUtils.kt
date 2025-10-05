@@ -9,8 +9,8 @@ import kotlin.jvm.optionals.getOrNull
 
 object ItemUtils {
 
-	val ItemStack.headTexture: String?
-		get() = get(DataComponentTypes.PROFILE)?.properties?.get("textures")?.map(Property::value)?.first()
+	val ItemStack.headTexture: String
+		get() = get(DataComponentTypes.PROFILE)?.properties?.get("textures")?.map(Property::value)?.firstOrNull() ?: ""
 
 	val ItemStack.lore: List<Text> get() = getOrDefault(DataComponentTypes.LORE, LoreComponent.DEFAULT).lines
 

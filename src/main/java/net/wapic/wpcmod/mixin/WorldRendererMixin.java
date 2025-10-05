@@ -19,8 +19,8 @@ public class WorldRendererMixin {
 
 	@ModifyExpressionValue(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;hasOutline(Lnet/minecraft/entity/Entity;)Z"), method = {"getEntitiesToRender", "renderEntities"}, require = 2)
 	private boolean shouldMobGlow(boolean original, @Local Entity entity) {
-		MobGlow.GlowOptions glowOptions = MobGlow.INSTANCE.computeGlow(entity);
-		return glowOptions.getShouldGlow() || original;
+		boolean shouldGlow = MobGlow.INSTANCE.hasOrCompute(entity);
+		return shouldGlow || original;
 	}
 
 	@Redirect(method = "getEntitiesToRender", require = 0, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/Camera;getFocusedEntity()Lnet/minecraft/entity/Entity;", ordinal = 3))
@@ -38,7 +38,6 @@ public class WorldRendererMixin {
 			at = @At("STORE"), ordinal = 0
 	)
 	private int modifyGlowColor(int color, @Local Entity entity) {
-		MobGlow.GlowOptions glowOptions = MobGlow.INSTANCE.computeGlow(entity);
-		return glowOptions.getShouldGlow() ? glowOptions.getColor().getEffectiveColourRGB() : color;
+		return MobGlow.INSTANCE.getMobGlowOrDefault(entity, color);
 	}
 }

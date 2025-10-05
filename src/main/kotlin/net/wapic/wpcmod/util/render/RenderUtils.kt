@@ -75,6 +75,18 @@ object RenderUtils {
 	}
 
 	fun drawTracer(
+		worldRenderContext: WorldRenderContext, pos: Vec3d, color: Color = Color(255, 255, 255), lineWidth: Double = 2.0) {
+		val viewBobbing = mc.options.bobView.value
+		mc.options.bobView.value = false
+
+		val camera = worldRenderContext.camera()
+		val cameraPoint: Vec3d = camera.pos.add(Vec3d.fromPolar(camera.pitch, camera.yaw))
+		drawLine(worldRenderContext, cameraPoint.x, cameraPoint.y, cameraPoint.z, pos.x, pos.y, pos.z, color, lineWidth)
+
+		mc.options.bobView.value = viewBobbing
+	}
+
+	fun drawTracer(
 		worldRenderContext: WorldRenderContext,
 		x: Double,
 		y: Double,

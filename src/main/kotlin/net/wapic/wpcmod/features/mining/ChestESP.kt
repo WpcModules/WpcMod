@@ -21,8 +21,8 @@ class ChestESP {
 		if (Utils.getLocation() != Island.CRYSTAL_HOLLOWS) return
 		if (!config.tracer && !config.box) return
 
-		val tickProgress: Float = worldRenderContext.tickCounter().dynamicDeltaTicks
 		val blockEntities = Utils.getLoadedBlockEntities().filterIsInstance<ChestBlockEntity>()
+		val tickProgress: Float = worldRenderContext.tickCounter().dynamicDeltaTicks
 		val playerPos = worldRenderContext.camera().pos
 
 		for (block in blockEntities) {
@@ -33,13 +33,8 @@ class ChestESP {
 
 			if (config.box)
 				RenderUtils.drawBoundingBox(worldRenderContext, chest, config.color.getEffectiveColour())
-			if (config.tracer) RenderUtils.drawTracer(
-				worldRenderContext,
-				chest.center.x,
-				chest.center.y,
-				chest.center.z,
-				config.color.getEffectiveColour()
-			)
+			if (config.tracer)
+				RenderUtils.drawTracer(worldRenderContext, chest.center, config.color.getEffectiveColour())
 		}
 	}
 }
