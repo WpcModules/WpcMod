@@ -8,25 +8,29 @@ import io.github.notenoughupdates.moulconfig.annotations.ConfigOption
 class FishingConfig {
 
 	@Accordion
-	@ConfigOption(name = "", desc = "")
+	@ConfigOption(name = "Auto Fish", desc = "")
 	val autofish: AutoFishConfig = AutoFishConfig()
 
 	class AutoFishConfig {
 
 		@ConfigEditorBoolean
-		@ConfigOption(name = "Auto Fish", desc = "")
+		@ConfigOption(name = "Auto Fish Enabled", desc = "Automatically reel in and recast rod when active")
 		var enabled: Boolean = false
 
 		@ConfigEditorBoolean
-		@ConfigOption(name = "Recast", desc = "Allows you to stop recasting rod after reeling in")
+		@ConfigOption(name = "Recast", desc = "Won't recast after reeling in. useful when rod doesn't 1 tap")
 		var recast: Boolean = true
 
-		@ConfigEditorSlider(minStep = 1f, minValue = 200f, maxValue = 350f)
+		@ConfigEditorSlider(minStep = 1f, minValue = 200f, maxValue = 300f)
 		@ConfigOption(name = "Minimum Delay", desc = "The minimum amount of delay when casting rod")
 		var minDelay: Float = 250f
 
 		@ConfigEditorBoolean
-		@ConfigOption(name = "Randomize delay", desc = "Randomize delay based on minimum delay")
-		var slugFish: Boolean = true
+		@ConfigOption(name = "Slug Fish", desc = "wait 20s to catch")
+		var slugFish: Boolean = false
+
+		@ConfigEditorBoolean
+		@ConfigOption(name = "Assume Slug Pet", desc = "Assumes you have a LVL 100 Slug pet for slug fish")
+		var slugPet: Boolean = false
 	}
 }
