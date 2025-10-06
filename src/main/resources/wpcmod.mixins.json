@@ -25,6 +25,7 @@
     "PlayerEntityMixin",
     "SimpleInventoryMixin",
     "WorldRendererMixin",
+    "accessors.MinecraftClientAccessor",
     "devenv.DisableCommonPacketWarnings",
     "devenv.ScoreboardIgnoreExistingTeam",
     "devenv.YggdrasilIgnoreSignature"
