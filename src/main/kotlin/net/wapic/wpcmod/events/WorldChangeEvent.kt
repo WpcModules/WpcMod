@@ -2,21 +2,33 @@ package net.wapic.wpcmod.events
 
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
-import net.minecraft.client.MinecraftClient
 import net.minecraft.client.world.ClientWorld
 
 object WorldChangeEvent {
 
 	@JvmField
-	val EVENT: Event<WorldChange> = EventFactory.createArrayBacked(WorldChange::class.java) { listeners ->
-		WorldChange { client, world ->
+	val BEFORE: Event<WorldChangeBefore> = EventFactory.createArrayBacked(WorldChangeBefore::class.java) { listeners ->
+		WorldChangeBefore { world ->
 			for (listener in listeners) {
-				listener.onWorldChange(client, world)
+				listener.onWorldChange(world)
 			}
 		}
 	}
 
-	fun interface WorldChange {
-		fun onWorldChange(client: MinecraftClient, world: ClientWorld)
+	fun interface WorldChangeBefore {
+		fun onWorldChange(world: ClientWorld)
+	}
+
+	@JvmField
+	val AFTER: Event<WorldChangeAfter> = EventFactory.createArrayBacked(WorldChangeAfter::class.java) { listeners ->
+		WorldChangeAfter { world ->
+			for (listener in listeners) {
+				listener.onWorldChange(world)
+			}
+		}
+	}
+
+	fun interface WorldChangeAfter {
+		fun onWorldChange(world: ClientWorld)
 	}
 }

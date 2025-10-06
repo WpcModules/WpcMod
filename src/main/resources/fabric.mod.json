@@ -7,6 +7,9 @@
 	"authors": [
 		"Wapic"
 	],
+  "contributors": [
+    "ValsCSGO"
+  ],
 	"contact": {
 		"homepage": "https://wpcmod.wapic.net/",
 		"sources": "https://github.com/WpcModules/WpcMod"
@@ -20,7 +23,10 @@
 				"value": "net.wapic.wpcmod.WpcMod",
 				"adapter": "kotlin"
 			}
-		]
+		],
+        "jarvis": [
+          "net.wapic.wpcmod.jarvis.JarvisInitializer"
+        ]
 	},
 	"mixins": [
 		"wpcmod.mixins.json"
@@ -30,7 +36,6 @@
 		"minecraft": "~1.21.5",
 		"java": ">=21",
 		"fabric-api": "*",
-		"fabric-language-kotlin": "*",
-		"hypixel-mod-api": ">=1.0.1"
+      "fabric-language-kotlin": "*"
 	}
 }

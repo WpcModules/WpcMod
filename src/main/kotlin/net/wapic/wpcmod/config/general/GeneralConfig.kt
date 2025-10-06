@@ -1,7 +1,9 @@
 package net.wapic.wpcmod.config.general
 
-import io.github.notenoughupdates.moulconfig.ChromaColour
-import io.github.notenoughupdates.moulconfig.annotations.*
+import io.github.notenoughupdates.moulconfig.annotations.Category
+import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorBoolean
+import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorButton
+import io.github.notenoughupdates.moulconfig.annotations.ConfigOption
 import net.minecraft.client.MinecraftClient
 import net.wapic.wpcmod.features.general.shortcut.ShortcutScreen
 
@@ -11,14 +13,13 @@ class GeneralConfig {
 	@ConfigEditorBoolean
 	var preventPlacing: Boolean = false
 
-	@ConfigOption(name = "Tag Outline Color", desc = "Color to use when highlighting players with /wpcmod tag command")
-	@ConfigEditorColour
-	var tagColor = ChromaColour(1f, 1f, 1f, 0, 0xFF)
-
 	@Transient
 	@ConfigOption(name = "Command Keybind Editor", desc = "Open the screen to manage command keybinds")
 	@ConfigEditorButton(buttonText = "Open")
 	val shortcutEditor = Runnable {
 		MinecraftClient.getInstance().setScreen(ShortcutScreen())
 	}
+
+	@Category(name = "ESP", desc = "Configure ESP Features")
+	var esp: ESPConfig = ESPConfig()
 }

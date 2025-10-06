@@ -5,7 +5,6 @@ import net.fabricmc.fabric.api.event.player.UseItemCallback
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
-import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.world.World
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.Island
@@ -26,17 +25,12 @@ class PigeonSwapper {
 
 	private fun onUse(player: PlayerEntity, world: World, hand: Hand): ActionResult {
 		if (!config.pigeonSwapper || Utils.getLocation() !in allowedAreas) return ActionResult.PASS
+		if (player.mainHandStack?.skyBlockID != "ROYAL_PIGEON") return ActionResult.PASS
 
-		if (player.mainHandStack?.skyBlockID == "ROYAL_PIGEON") {
-			val inventory = player.inventory ?: return ActionResult.PASS
-			val drillItem = inventory.find { it.name.string.contains("Drill") } ?: return ActionResult.PASS
+		val inventory = player.inventory ?: return ActionResult.PASS
+		val drillItem = inventory.find { it.name.string.contains("Drill") } ?: return ActionResult.PASS
 
-			drillItem?.let {
-				inventory.setSelectedSlot(inventory.getSlotWithStack(it))
-				return ActionResult.SUCCESS
-			}
-		}
-
-		return ActionResult.PASS
+		inventory.selectedSlot = inventory.getSlotWithStack(drillItem)
+		return ActionResult.SUCCESS
 	}
 }

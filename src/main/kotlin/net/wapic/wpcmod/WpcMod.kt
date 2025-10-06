@@ -27,14 +27,18 @@ import net.wapic.wpcmod.features.chat.SpamFilter
 import net.wapic.wpcmod.features.dev.SkyBlockID
 import net.wapic.wpcmod.features.dungeons.AutoCloseChests
 import net.wapic.wpcmod.features.dungeons.DungeonAutoGFS
+import net.wapic.wpcmod.features.dungeons.DungeonESP
+import net.wapic.wpcmod.features.dungeons.ScoreCalculation
 import net.wapic.wpcmod.features.end.EndESP
 import net.wapic.wpcmod.features.fishing.AutoFish
+import net.wapic.wpcmod.features.entity.MobGlow
+import net.wapic.wpcmod.features.entity.RatESP
+import net.wapic.wpcmod.features.entity.TagESP
 import net.wapic.wpcmod.features.galatea.GalateaESP
 import net.wapic.wpcmod.features.general.Freecam
 import net.wapic.wpcmod.features.general.PreventPlacingItems
 import net.wapic.wpcmod.features.general.shortcut.ShortcutHandler
 import net.wapic.wpcmod.features.inventory.ArmorSwapper
-import net.wapic.wpcmod.features.inventory.DiscardHighlighter
 import net.wapic.wpcmod.features.inventory.ScrollableTooltips
 import net.wapic.wpcmod.features.inventory.experiments.AutoExperiments
 import net.wapic.wpcmod.features.inventory.experiments.SuperpairsSolver
@@ -43,6 +47,8 @@ import net.wapic.wpcmod.features.kuudra.KuudraDisplay
 import net.wapic.wpcmod.features.kuudra.KuudraESP
 import net.wapic.wpcmod.features.mining.ChestESP
 import net.wapic.wpcmod.features.mining.PigeonSwapper
+import net.wapic.wpcmod.jarvis.JarvisManager
+import net.wapic.wpcmod.listeners.NetworkListener
 import net.wapic.wpcmod.util.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -108,6 +114,7 @@ object WpcMod : ModInitializer {
 
 		ClientLifecycleEvents.CLIENT_STOPPING.register {
 			ConfigManager.saveConfig()
+			JarvisManager.saveLocations()
 			globalJob.cancel()
 		}
 
@@ -116,11 +123,15 @@ object WpcMod : ModInitializer {
 		SackUtils.init()
 		KuudraUtils.init()
 		DungeonUtils.init()
+		NetworkListener.init()
+		MobGlow.init()
 
 		// General
 		ShortcutHandler()
 		PreventPlacingItems()
 		Freecam()
+		RatESP()
+		TagESP.init()
 
 		//Experiments
 		AutoExperiments()
@@ -129,6 +140,8 @@ object WpcMod : ModInitializer {
 		// Dungeons
 		AutoCloseChests()
 		DungeonAutoGFS()
+		ScoreCalculation.init()
+		DungeonESP()
 
 		// Kuudra
 		KuudraDisplay()
@@ -153,7 +166,6 @@ object WpcMod : ModInitializer {
 
 		// Inventory
 		ArmorSwapper()
-		DiscardHighlighter()
 		ScrollableTooltips()
 
 		// Dev

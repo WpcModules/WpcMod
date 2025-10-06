@@ -2,11 +2,16 @@ package net.wapic.wpcmod.features.kuudra
 
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
+import net.minecraft.entity.Entity
 import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.features.entity.MobGlow
+import net.wapic.wpcmod.features.entity.MobGlowCache
+import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.KuudraUtils
+import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.render.RenderUtils
 
-class KuudraESP {
+class KuudraESP : MobGlowCache() {
 	private val config get() = WpcMod.config.kuudra.esp
 
 	init {
@@ -14,10 +19,30 @@ class KuudraESP {
 	}
 
 	fun onRenderWorld(worldRenderContext: WorldRenderContext) {
-		if (config.kuudra.tracer) {
-			KuudraUtils.kuudraEntity?.let {
-				RenderUtils.drawTracer(worldRenderContext, it.x, it.y, it.z, config.kuudra.color.getEffectiveColour())
-			}
+		KuudraUtils.kuudraEntity?.let {
+			if (config.kuudra.box)
+				RenderUtils.drawBoundingBox(
+					worldRenderContext,
+					it.boundingBox,
+					config.kuudra.color.getEffectiveColour()
+				)
+			if (config.kuudra.tracer)
+				RenderUtils.drawTracer(
+					worldRenderContext,
+					it.boundingBox.center,
+					config.kuudra.color.getEffectiveColour()
+				)
 		}
+	}
+
+	override fun compute(entity: Entity): Int {
+		if (config.kuudra.glow && entity == KuudraUtils.kuudraEntity) {
+			return config.kuudra.color.getEffectiveColourRGB()
+		}
+		return MobGlow.NO_GLOW
+	}
+
+	override fun isEnabled(): Boolean {
+		return Utils.getLocation() == Island.KUUDRA
 	}
 }

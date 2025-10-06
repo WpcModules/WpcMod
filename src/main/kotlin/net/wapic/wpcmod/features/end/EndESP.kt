@@ -1,6 +1,5 @@
 package net.wapic.wpcmod.features.end
 
-import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
@@ -12,29 +11,21 @@ import net.minecraft.entity.boss.dragon.EnderDragonEntity
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.features.entity.MobGlow
+import net.wapic.wpcmod.features.entity.MobGlowCache
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.render.RenderUtils
 
-class EndESP {
+class EndESP : MobGlowCache() {
 
 	private var endNodes: MutableSet<Box> = mutableSetOf()
 	private val config get() = WpcMod.config.end.esp
 
-	data class ESPSettings(var box: Boolean, var tracer: Boolean, var color: ChromaColour)
 
 	init {
 		WorldRenderEvents.END.register(::renderWorld)
 		ClientTickEvents.END_WORLD_TICK.register(::worldTick)
-	}
-
-	private fun getSettings(entity: Entity): ESPSettings {
-		when (entity) {
-			is EnderDragonEntity -> return ESPSettings(
-				config.dragon.box, config.dragon.tracer, config.dragon.color
-			)
-		}
-		return ESPSettings(box = false, tracer = false, color = ChromaColour(1f, 1f, 1f, 0, 0xff))
 	}
 
 	private var lock = false
@@ -68,28 +59,46 @@ class EndESP {
 	private fun renderWorld(worldRenderContext: WorldRenderContext) {
 		if (Utils.getLocation() != Island.END) return
 
-		worldRenderContext.world().entities.forEach { entity ->
-			val settings = getSettings(entity)
-			if (settings.box) RenderUtils.drawBoundingBox(
-				worldRenderContext, entity.boundingBox, color = settings.color.getEffectiveColour()
-			)
-			if (settings.tracer) RenderUtils.drawTracer(
-				worldRenderContext, entity.x, entity.eyeY, entity.z, color = settings.color.getEffectiveColour()
-			)
+		for (entity in worldRenderContext.world().entities) {
+			val settings = when (entity) {
+				is EnderDragonEntity -> config.dragon
+				else -> continue
+			}
+
+			if (settings.box)
+				RenderUtils.drawBoundingBox(worldRenderContext, entity.boundingBox, settings.color.getEffectiveColour())
+			if (settings.tracer)
+				RenderUtils.drawTracer(
+					worldRenderContext,
+					entity.boundingBox.center,
+					settings.color.getEffectiveColour()
+				)
 		}
 
-		endNodes.forEach { node ->
-			if (config.endNode.box) RenderUtils.drawBoundingBox(
-				worldRenderContext, node.withMinY(node.minY), config.endNode.color.getEffectiveColour()
-			)
+		for (node in endNodes) {
+			if (config.endNode.box)
+				RenderUtils.drawBoundingBox(
+					worldRenderContext,
+					node,
+					config.endNode.color.getEffectiveColour()
+				)
 			if (config.endNode.tracer) RenderUtils.drawTracer(
 				worldRenderContext,
-				node.center.x,
-				node.maxY,
-				node.center.z,
-				color = config.endNode.color.getEffectiveColour()
+				node.center,
+				config.endNode.color.getEffectiveColour()
 
 			)
 		}
+	}
+
+	override fun compute(entity: Entity): Int {
+		return when {
+			config.dragon.glow && entity is EnderDragonEntity -> config.dragon.color.getEffectiveColourRGB()
+			else -> MobGlow.NO_GLOW
+		}
+	}
+
+	override fun isEnabled(): Boolean {
+		return Utils.getLocation() == Island.END
 	}
 }

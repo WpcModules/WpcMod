@@ -12,10 +12,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class MinecraftClientMixin {
 
 	@Inject(method = "setWorld", at = @At("HEAD"))
-	private void world_change(ClientWorld world, CallbackInfo ci) {
+	private void world_change_before(ClientWorld world, CallbackInfo ci) {
 		if (world != null) {
-			MinecraftClient client = (MinecraftClient) (Object) this;
-			WorldChangeEvent.EVENT.invoker().onWorldChange(client, world);
+			WorldChangeEvent.BEFORE.invoker().onWorldChange(world);
+		}
+	}
+
+	@Inject(method = "setWorld", at = @At("TAIL"))
+	private void world_change_after(ClientWorld world, CallbackInfo ci) {
+		if (world != null) {
+			WorldChangeEvent.AFTER.invoker().onWorldChange(world);
 		}
 	}
 }

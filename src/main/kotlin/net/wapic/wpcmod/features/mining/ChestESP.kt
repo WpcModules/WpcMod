@@ -3,7 +3,6 @@ package net.wapic.wpcmod.features.mining
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
 import net.minecraft.block.entity.ChestBlockEntity
-import net.minecraft.client.MinecraftClient
 import net.minecraft.util.math.Box
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.Island
@@ -12,7 +11,7 @@ import net.wapic.wpcmod.util.render.RenderUtils
 
 class ChestESP {
 
-	private val config get() = WpcMod.config.mining.esp
+	private val config get() = WpcMod.config.mining.esp.chest
 
 	init {
 		WorldRenderEvents.END.register(::renderWorld)
@@ -20,24 +19,22 @@ class ChestESP {
 
 	private fun renderWorld(worldRenderContext: WorldRenderContext) {
 		if (Utils.getLocation() != Island.CRYSTAL_HOLLOWS) return
-		if (!config.chest.tracer && !config.chest.box) return
+		if (!config.tracer && !config.box) return
 
-		Utils.getLoadedBlockEntities().filterIsInstance<ChestBlockEntity>().forEach { entity ->
-			val player = MinecraftClient.getInstance().player
-			if (!entity.pos.isWithinDistance(player?.pos, config.chest.radius.toDouble())) return
+		val blockEntities = Utils.getLoadedBlockEntities().filterIsInstance<ChestBlockEntity>()
+		val tickProgress: Float = worldRenderContext.tickCounter().dynamicDeltaTicks
+		val playerPos = worldRenderContext.camera().pos
 
-			val chest = Box.of(entity.pos.toCenterPos(), 1.0, 1.0, 1.0)
+		for (block in blockEntities) {
+			if (playerPos.distanceTo(block.pos.toCenterPos()) >= config.radius) continue
+			if (block.getAnimationProgress(tickProgress) > 0) continue
 
-			if (config.chest.box) RenderUtils.drawBoundingBox(
-				worldRenderContext, chest.withMinY(chest.minY), config.chest.color.getEffectiveColour()
-			)
-			if (config.chest.tracer) RenderUtils.drawTracer(
-				worldRenderContext,
-				chest.center.x,
-				chest.maxY,
-				chest.center.z,
-				color = config.chest.color.getEffectiveColour()
-			)
+			val chest = Box.of(block.pos.toCenterPos(), 1.0, 1.0, 1.0)
+
+			if (config.box)
+				RenderUtils.drawBoundingBox(worldRenderContext, chest, config.color.getEffectiveColour())
+			if (config.tracer)
+				RenderUtils.drawTracer(worldRenderContext, chest.center, config.color.getEffectiveColour())
 		}
 	}
 }
