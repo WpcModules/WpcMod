@@ -13,7 +13,7 @@ object EntityUtils {
 	val LivingEntity?.skyBlockMaxHealth: Float
 		get() = this?.getAttributeBaseValue(EntityAttributes.MAX_HEALTH)?.toFloat() ?: 0f
 
-	val ArmorStandEntity.headTexture: String? get() = this.getEquippedStack(EquipmentSlot.HEAD).headTexture
+	val ArmorStandEntity.headTexture: String get() = this.getEquippedStack(EquipmentSlot.HEAD).headTexture
 
 	fun getArmorStandsByEntity(entity: Entity): List<ArmorStandEntity> {
 		return entity.world.getEntitiesByClass(
@@ -22,5 +22,4 @@ object EntityUtils {
 			EntityPredicates.NOT_MOUNTED
 		)
 	}
-
 }
