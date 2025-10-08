@@ -79,12 +79,11 @@ object ScoreCalculation : SimpleHudElement(
 	private var clearedPercentage = 0
 	private val totalRoomMap = mutableMapOf<Int, Int>()
 	private var bloodCleared = false
-	private var bossSpawned = false
 
 	private val roomClearPercentage: Double
 		get() {
 			val total = getTotalRooms()
-			val complete = completedRooms + (!bossSpawned).ifTrue(1) + (!bloodCleared).ifTrue(1)
+			val complete = completedRooms + (!DungeonUtils.isBossSpawned()).ifTrue(1) + (!bloodCleared).ifTrue(1)
 			return if (total > 0) (complete / total.toDouble()).coerceAtMost(1.0) else 0.0
 		}
 
@@ -196,7 +195,6 @@ object ScoreCalculation : SimpleHudElement(
 
 	private fun onWorldChange(world: ClientWorld) {
 		bloodCleared = false
-		bossSpawned = false
 		completedRooms = 0
 		clearedPercentage = 0
 		totalRoomMap.clear()
@@ -320,16 +318,6 @@ object ScoreCalculation : SimpleHudElement(
 			bloodCleared = true
 		}
 
-		if (message.startsWith("[BOSS]") && message.contains(":")) {
-			val bossName = message.substringAfter("[BOSS] ").substringBefore(":").trim()
-			if (!bossSpawned && bossName != "The Watcher" && DungeonUtils.currentFloor != DungeonFloor.NONE && checkBossName(
-					DungeonUtils.currentFloor,
-					bossName
-				)
-			) {
-				bossSpawned = true
-			}
-		}
 
 		if (message.startsWith("Party >")) {
 			if (message.contains(skytilsMimicMessage) || message.contains(mimicMessage)) {
@@ -338,20 +326,6 @@ object ScoreCalculation : SimpleHudElement(
 		}
 	}
 
-	private fun checkBossName(floor: DungeonFloor, bossName: String): Boolean {
-		val correctBoss = when (floor) {
-			DungeonFloor.ENTRANCE -> "The Watcher"
-			DungeonFloor.FLOOR_1, DungeonFloor.MASTER_MODE_FLOOR_1 -> "Bonzo"
-			DungeonFloor.FLOOR_2, DungeonFloor.MASTER_MODE_FLOOR_2 -> "Scarf"
-			DungeonFloor.FLOOR_3, DungeonFloor.MASTER_MODE_FLOOR_3 -> "The Professor"
-			DungeonFloor.FLOOR_4, DungeonFloor.MASTER_MODE_FLOOR_4 -> "Thorn"
-			DungeonFloor.FLOOR_5, DungeonFloor.MASTER_MODE_FLOOR_5 -> "Livid"
-			DungeonFloor.FLOOR_6, DungeonFloor.MASTER_MODE_FLOOR_6 -> "Sadan"
-			DungeonFloor.FLOOR_7, DungeonFloor.MASTER_MODE_FLOOR_7 -> "Maxor"
-			else -> null
-		} ?: return false
-		return bossName.endsWith(correctBoss)
-	}
 
 	private fun onRenderHud(drawContext: DrawContext, tickCounter: RenderTickCounter) {
 		if (!isActive) return

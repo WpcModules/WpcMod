@@ -24,7 +24,7 @@ object NetworkListener {
 	}
 
 	private fun onTabListUpdate(packet: PlayerListS2CPacket) {
-		val actions = setOf(PlayerListS2CPacket.Action.UPDATE_DISPLAY_NAME, PlayerListS2CPacket.Action.UPDATE_LISTED)
+		val actions = setOf(PlayerListS2CPacket.Action.UPDATE_DISPLAY_NAME, PlayerListS2CPacket.Action.ADD_PLAYER)
 		val hasActions = packet.actions.intersect(actions).isNotEmpty()
 		if (hasActions) {
 			PlayerListChangeEvent.EVENT.invoker().onPlayerListChange(packet.entries)

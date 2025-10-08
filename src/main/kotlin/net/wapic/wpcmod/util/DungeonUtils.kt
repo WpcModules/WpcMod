@@ -1,6 +1,8 @@
 package net.wapic.wpcmod.util
 
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
+import net.minecraft.client.MinecraftClient
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket
 import net.minecraft.text.Text
 import net.wapic.wpcmod.WpcMod
@@ -14,12 +16,11 @@ object DungeonUtils {
 		"§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon."
 
 	private const val DUNGEON_END_MESSAGE: String = "> EXTRA STATS <"
-	private val ENTERED_FLOOR_MESSAGE: Regex =
-		Regex("(?<rank>\\[.{3,5}]\\s)?(?<player>\\w+) entered (?<mm>MM\\s)?The Catacombs, Floor (?<floor>.+)!")
 
 	private val puzzleRegex = Regex(" (?<puzzle>.+): \\[(?:(?<completed>✔)|(?<failed>✖)|(?<missing>✦))] ?")
 	private val incompletePuzzles: HashSet<String> = hashSetOf()
 	private val failedPuzzles: HashSet<String> = hashSetOf()
+	private var bossSpawned = false
 
 	var currentFloor: DungeonFloor = DungeonFloor.NONE
 		private set
@@ -27,36 +28,24 @@ object DungeonUtils {
 	fun init() {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 		PlayerListChangeEvent.EVENT.register(::onPlayerListChange)
-		WorldChangeEvent.BEFORE.register { world ->
+		ClientTickEvents.END_CLIENT_TICK.register(::onTick)
+
+		WorldChangeEvent.BEFORE.register { _ ->
 			incompletePuzzles.clear()
 			failedPuzzles.clear()
+			bossSpawned = false
 		}
 	}
 
 	private fun onMessageReceived(message: Text, actionBar: Boolean) {
 		if (actionBar) return
 
-		val matcher = ENTERED_FLOOR_MESSAGE.find(message.string)
-		matcher?.let { result ->
-			val isMasterMode = result.groups["mm"] != null
-			val floor = result.groups["floor"]?.value
-
-			when (floor) {
-				"I" -> currentFloor = if (isMasterMode) DungeonFloor.MASTER_MODE_FLOOR_1 else DungeonFloor.FLOOR_1
-				"II" -> currentFloor = if (isMasterMode) DungeonFloor.MASTER_MODE_FLOOR_2 else DungeonFloor.FLOOR_2
-				"III" -> currentFloor = if (isMasterMode) DungeonFloor.MASTER_MODE_FLOOR_3 else DungeonFloor.FLOOR_3
-				"IV" -> currentFloor = if (isMasterMode) DungeonFloor.MASTER_MODE_FLOOR_4 else DungeonFloor.FLOOR_4
-				"V" -> currentFloor = if (isMasterMode) DungeonFloor.MASTER_MODE_FLOOR_5 else DungeonFloor.FLOOR_5
-				"VI" -> currentFloor = if (isMasterMode) DungeonFloor.MASTER_MODE_FLOOR_6 else DungeonFloor.FLOOR_6
-				"VII" -> currentFloor = if (isMasterMode) DungeonFloor.MASTER_MODE_FLOOR_7 else DungeonFloor.FLOOR_7
-			}
-		}
-
 		if (message.string == DUNGEON_START_MESSAGE) {
 			WpcMod.logger.debug("Dungeon Started")
 			DungeonEvents.START.invoker().onStart()
 			if (currentFloor == DungeonFloor.NONE) {
 				WpcMod.logger.error("Current dungeon floor was not found!")
+				ChatUtils.sendMessage("Current dungeon floor could not be detected, score calculation might be incorrect")
 			}
 		}
 
@@ -65,6 +54,40 @@ object DungeonUtils {
 			DungeonEvents.END.invoker().onEnd()
 		}
 
+		if (message.string.startsWith("[BOSS]") && message.string.contains(":")) {
+			val bossName = message.string.substringAfter("[BOSS] ").substringBefore(":").trim()
+			if (!bossSpawned && bossName != "The Watcher" && currentFloor != DungeonFloor.NONE && checkBossName(
+					currentFloor,
+					bossName
+				)
+			) {
+				bossSpawned = true
+			}
+		}
+	}
+
+	fun onTick(client: MinecraftClient) {
+		ScoreboardUtil.fetchScoreboardLines().map { ScoreboardUtil.cleanSB(it) }
+
+		ScoreboardUtil.sidebarLines.find { it.contains("The Catacombs (") }?.let {
+			val floorShortName = it.substringBefore("(").substringAfter(")")
+			currentFloor = DungeonFloor.fromShortName(floorShortName)
+		}
+	}
+
+	private fun checkBossName(floor: DungeonFloor, bossName: String): Boolean {
+		val correctBoss = when (floor) {
+			DungeonFloor.ENTRANCE -> "The Watcher"
+			DungeonFloor.FLOOR_1, DungeonFloor.MASTER_MODE_FLOOR_1 -> "Bonzo"
+			DungeonFloor.FLOOR_2, DungeonFloor.MASTER_MODE_FLOOR_2 -> "Scarf"
+			DungeonFloor.FLOOR_3, DungeonFloor.MASTER_MODE_FLOOR_3 -> "The Professor"
+			DungeonFloor.FLOOR_4, DungeonFloor.MASTER_MODE_FLOOR_4 -> "Thorn"
+			DungeonFloor.FLOOR_5, DungeonFloor.MASTER_MODE_FLOOR_5 -> "Livid"
+			DungeonFloor.FLOOR_6, DungeonFloor.MASTER_MODE_FLOOR_6 -> "Sadan"
+			DungeonFloor.FLOOR_7, DungeonFloor.MASTER_MODE_FLOOR_7 -> "Maxor"
+			else -> null
+		} ?: return false
+		return bossName.endsWith(correctBoss)
 	}
 
 	private fun onPlayerListChange(entries: List<PlayerListS2CPacket.Entry>) {
@@ -104,6 +127,10 @@ object DungeonUtils {
 		}
 	}
 
+	fun isBossSpawned(): Boolean {
+		return bossSpawned
+	}
+
 	enum class DungeonFloor(val shortName: String) {
 		ENTRANCE("E"),
 		FLOOR_1("F1"),
@@ -120,6 +147,12 @@ object DungeonUtils {
 		MASTER_MODE_FLOOR_5("M5"),
 		MASTER_MODE_FLOOR_6("M6"),
 		MASTER_MODE_FLOOR_7("M7"),
-		NONE("")
+		NONE("");
+
+		companion object {
+			fun fromShortName(shortName: String): DungeonFloor {
+				return entries.find { it.shortName == shortName } ?: NONE
+			}
+		}
 	}
 }

@@ -1,6 +1,7 @@
 package net.wapic.wpcmod.util
 
-enum class Island(val displayName: String, val internalName: String) {
+enum class Island(val displayName: String = "", val internalName: String = "") {
+	UNKNOWN,
 	HUB("Hub", "hub"),
 	PARK("The Park", "foraging_1"),
 	GALATEA("Galatea", "foraging_2"),
