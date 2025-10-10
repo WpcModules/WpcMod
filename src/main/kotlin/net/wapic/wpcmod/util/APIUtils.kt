@@ -1,10 +1,6 @@
 package net.wapic.wpcmod.util
 
 import com.google.gson.JsonParser
-import net.wapic.wpcmod.features.funnymap.utils.getJsonArray
-import net.wapic.wpcmod.features.funnymap.utils.getJsonObject
-import net.wapic.wpcmod.features.funnymap.utils.getJsonPrimitive
-import net.wapic.wpcmod.features.funnymap.utils.toJsonObject
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
