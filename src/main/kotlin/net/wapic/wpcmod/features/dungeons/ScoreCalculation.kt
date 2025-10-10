@@ -49,6 +49,7 @@ object ScoreCalculation : SimpleHudElement(
 
 	private val skytilsMimicMessage = Regex("\\\$SKYTILS-DUNGEON-SCORE-MIMIC")
 	private val mimicMessage = Regex("Mimic (Dead|Killed)(!)?")
+	private val princeMessage = Regex("Prince (Dead|Killed)(!)?")
 
 	data class FloorRequirement(val secretPercentage: Double = 1.0, val speed: Int = 10 * 60)
 
@@ -326,6 +327,10 @@ object ScoreCalculation : SimpleHudElement(
 		if (message.startsWith("Party >")) {
 			if (message.contains(skytilsMimicMessage) || message.contains(mimicMessage)) {
 				mimicFound = true
+			}
+
+			if (message.contains(princeMessage)) {
+				princeKilled = true
 			}
 		}
 	}
