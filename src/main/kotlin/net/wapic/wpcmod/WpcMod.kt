@@ -30,10 +30,11 @@ import net.wapic.wpcmod.features.dungeons.DungeonAutoGFS
 import net.wapic.wpcmod.features.dungeons.DungeonESP
 import net.wapic.wpcmod.features.dungeons.ScoreCalculation
 import net.wapic.wpcmod.features.end.EndESP
-import net.wapic.wpcmod.features.fishing.AutoFish
 import net.wapic.wpcmod.features.entity.MobGlow
 import net.wapic.wpcmod.features.entity.RatESP
 import net.wapic.wpcmod.features.entity.TagESP
+import net.wapic.wpcmod.features.fishing.AutoFish
+import net.wapic.wpcmod.features.funnymap.FunnyMap
 import net.wapic.wpcmod.features.galatea.GalateaESP
 import net.wapic.wpcmod.features.general.Freecam
 import net.wapic.wpcmod.features.general.PreventPlacingItems
@@ -93,6 +94,7 @@ object WpcMod : ModInitializer {
 					.then(ShortcutsCommand.getCommand())
 					.then(TagCommand.getCommand())
 					.then(FreecamCommand.getCommand())
+					.then(FunnyMapCommands.getCommand())
 			)
 
 			dispatcher.register(ClientCommandManager.literal("wpcmod").redirect(mainCommand))
@@ -142,6 +144,7 @@ object WpcMod : ModInitializer {
 		DungeonAutoGFS()
 		ScoreCalculation.init()
 		DungeonESP()
+		FunnyMap.init()
 
 		// Kuudra
 		KuudraDisplay()
