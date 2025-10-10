@@ -5,8 +5,7 @@ import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.ChatUtils
-import net.wapic.wpcmod.util.Island
-import net.wapic.wpcmod.util.Utils
+import net.wapic.wpcmod.util.DungeonUtils
 
 class AutoCloseChests {
 
@@ -18,7 +17,7 @@ class AutoCloseChests {
 	}
 
 	fun onScreenInit(screen: Screen) {
-		if (!config.autoCloseChests || Utils.getLocation() != Island.DUNGEON) return
+		if (!config.autoCloseChests || !DungeonUtils.inDungeons) return
 		if (screen !is GenericContainerScreen || !defaultTitles.contains(screen.title.string)) return
 
 		if (config.alertOnTreasureTalismans) {
