@@ -9,9 +9,8 @@ import net.minecraft.util.Hand
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.world.World
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.util.Island
+import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.ItemUtils.skyBlockID
-import net.wapic.wpcmod.util.Utils
 
 class PreventPlacingItems {
 
@@ -81,7 +80,7 @@ class PreventPlacingItems {
 		if (item.contains("ABIPHONE".toRegex()) || item in placeableItems) {
 
 			val block = MinecraftClient.getInstance().world?.getBlockState(hitResult.blockPos)
-			if (block?.block in interactables || Utils.getLocation() == Island.DUNGEON && (block?.block == Blocks.COAL_BLOCK || block?.block == Blocks.RED_TERRACOTTA)) {
+			if (block?.block in interactables || DungeonUtils.inDungeons && (block?.block == Blocks.COAL_BLOCK || block?.block == Blocks.RED_TERRACOTTA)) {
 				return ActionResult.PASS
 			}
 

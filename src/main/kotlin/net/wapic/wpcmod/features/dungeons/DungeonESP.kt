@@ -9,11 +9,10 @@ import net.minecraft.entity.player.PlayerEntity
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.features.entity.MobGlow
 import net.wapic.wpcmod.features.entity.MobGlowCache
+import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.EntityUtils.getArmorStandsByEntity
 import net.wapic.wpcmod.util.EntityUtils.headTexture
 import net.wapic.wpcmod.util.HeadTextures
-import net.wapic.wpcmod.util.Island
-import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.render.RenderUtils
 
 class DungeonESP : MobGlowCache() {
@@ -63,5 +62,5 @@ class DungeonESP : MobGlowCache() {
 		}
 	}
 
-	override fun isEnabled(): Boolean = Utils.getLocation() == Island.DUNGEON
+	override fun isEnabled(): Boolean = DungeonUtils.inDungeons
 }

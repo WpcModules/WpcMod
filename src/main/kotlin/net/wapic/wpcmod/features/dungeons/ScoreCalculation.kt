@@ -20,9 +20,9 @@ import net.wapic.wpcmod.events.ScoreboardChangeEvent
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.jarvis.SimpleHudElement
+import net.wapic.wpcmod.util.APIUtils
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.DungeonUtils.DungeonFloor
-import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.Utils
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -173,6 +173,9 @@ object ScoreCalculation : SimpleHudElement(
 		ScoreboardChangeEvent.EVENT.register(::onScoreboardChange)
 		EntityEvents.DESPAWN.register(::onEntityDespawn)
 		DungeonEvents.PUZZLE_RESET.register(::onPuzzleReset)
+		DungeonEvents.START.register {
+			isPaul = APIUtils.hasBonusPaulScore()
+		}
 
 		HudLayerRegistrationCallback.EVENT.register { layeredDrawer ->
 			layeredDrawer.attachLayerBefore(
@@ -312,6 +315,7 @@ object ScoreCalculation : SimpleHudElement(
 
 		if (message == "A Prince falls. +1 Bonus Score") {
 			princeKilled = true
+			Utils.runCommand("/pc Prince Killed!")
 		}
 
 		if (message == "[BOSS] The Watcher: You have proven yourself. You may pass.") {
@@ -382,6 +386,6 @@ object ScoreCalculation : SimpleHudElement(
 	}
 
 	override fun isActive(): Boolean {
-		return config.scoreEstimate != ScoreHudType.DISABLED && Utils.getLocation() == Island.DUNGEON
+		return config.scoreEstimate != ScoreHudType.DISABLED && DungeonUtils.inDungeons
 	}
 }

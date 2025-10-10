@@ -22,6 +22,8 @@ object DungeonUtils {
 	private val failedPuzzles: HashSet<String> = hashSetOf()
 	private var bossSpawned = false
 
+	val inDungeons get() = Utils.getLocation() == Island.DUNGEON
+
 	var currentFloor: DungeonFloor = DungeonFloor.NONE
 		private set
 
@@ -67,10 +69,11 @@ object DungeonUtils {
 	}
 
 	fun onTick(client: MinecraftClient) {
-		ScoreboardUtil.fetchScoreboardLines().map { ScoreboardUtil.cleanSB(it) }
+		if (!inDungeons) return
+		ScoreboardUtil.sidebarLines = ScoreboardUtil.fetchScoreboardLines().map { ScoreboardUtil.cleanSB(it) }
 
-		ScoreboardUtil.sidebarLines.find { it.contains("The Catacombs (") }?.let {
-			val floorShortName = it.substringBefore("(").substringAfter(")")
+		ScoreboardUtil.sidebarLines.find { it.contains("The Catac") }?.let {
+			val floorShortName = it.substringAfter("(").substringBefore(")")
 			currentFloor = DungeonFloor.fromShortName(floorShortName)
 		}
 	}
@@ -91,7 +94,7 @@ object DungeonUtils {
 	}
 
 	private fun onPlayerListChange(entries: List<PlayerListS2CPacket.Entry>) {
-		if (Utils.getLocation() != Island.DUNGEON) return
+		if (!inDungeons) return
 
 		entries.forEach { playerData ->
 			val name = playerData.displayName?.string ?: playerData.profile?.name ?: return@forEach
