@@ -50,7 +50,9 @@ class AutoFish {
 			val notInGui = client.player?.currentScreenHandler is PlayerScreenHandler
 
 			if (isHoldingRod && notInGui) {
-				(client as MinecraftClientAccessor).doItemUse_WpcMod()
+				client.execute {
+					(client as MinecraftClientAccessor).doItemUse_WpcMod()
+				}
 			}
 		}
 
