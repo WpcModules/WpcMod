@@ -19,6 +19,8 @@ object Utils {
 
 	private var location: Island? = null
 
+	fun Any?.equalsOneOf(vararg other: Any): Boolean = other.any { this == it }
+
 	fun init() {
 		ClientTickEvents.END_CLIENT_TICK.register { onTick() }
 		HypixelModAPI.getInstance().subscribeToEventPacket(ClientboundLocationPacket::class.java)
