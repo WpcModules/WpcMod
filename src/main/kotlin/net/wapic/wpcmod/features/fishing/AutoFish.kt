@@ -8,8 +8,8 @@ import net.minecraft.entity.projectile.FishingBobberEntity
 import net.minecraft.item.Items
 import net.minecraft.screen.PlayerScreenHandler
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.mixin.accessors.MinecraftClientAccessor
 import net.wapic.wpcmod.util.EntityUtils
+import net.wapic.wpcmod.util.MC
 import kotlin.random.Random
 
 class AutoFish {
@@ -25,18 +25,17 @@ class AutoFish {
 	private fun onTick(client: MinecraftClient) {
 		if(!config.enabled || preventFutureRodUse) return
 
-		val fishHook = client.player?.fishHook ?: return
+		val fishHook = MC.player?.fishHook ?: return
 
 		if (config.slugFish && fishHook.age < slugDelayInTicks) return
 
-		if(isHookReady(fishHook)) {
+		if(isHookReady(fishHook) && fishHook.isInFluid) {
+			preventFutureRodUse = true
 			useRod(client)
 		}
 	}
 
 	private fun useRod(client: MinecraftClient) = WpcMod.coroutineScope.launch {
-		preventFutureRodUse = true
-
 		val cast = if(config.recast) 2 else 1
 
 		val minDelay = config.minDelay.toLong()
@@ -50,12 +49,13 @@ class AutoFish {
 			val notInGui = client.player?.currentScreenHandler is PlayerScreenHandler
 
 			if (isHoldingRod && notInGui) {
-				client.execute {
-					(client as MinecraftClientAccessor).doItemUse_WpcMod()
+				MC.runOnThread { 
+					MC.accessor.doItemUse_WpcMod()
 				}
 			}
 		}
 
+		delay(250) // Delay to prevent false positive from old armor stand
 		preventFutureRodUse = false
 	}
 
