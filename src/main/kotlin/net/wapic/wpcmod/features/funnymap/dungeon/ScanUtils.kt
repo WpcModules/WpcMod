@@ -14,8 +14,8 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.world.Heightmap
 import net.wapic.wpcmod.features.funnymap.core.RoomData
 import net.wapic.wpcmod.features.funnymap.core.map.Room
-import net.wapic.wpcmod.util.Utils.equalsOneOf
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.Utils.equalsOneOf
 import kotlin.math.roundToInt
 
 object ScanUtils {

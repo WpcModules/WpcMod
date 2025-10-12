@@ -11,8 +11,8 @@ import net.minecraft.util.math.BlockPos
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.features.funnymap.dungeon.ScanUtils.getRoomFromPos
 import net.wapic.wpcmod.util.ItemUtils.headTexture
-import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.Utils
 
 object MimicDetector {
 

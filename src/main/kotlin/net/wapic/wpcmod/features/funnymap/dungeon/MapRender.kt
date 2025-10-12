@@ -10,13 +10,11 @@ import net.wapic.wpcmod.features.funnymap.utils.MapUtils
 import net.wapic.wpcmod.features.funnymap.utils.MapUtils.CONNECTOR_SIZE
 import net.wapic.wpcmod.features.funnymap.utils.MapUtils.halfRoomSize
 import net.wapic.wpcmod.features.funnymap.utils.MapUtils.roomSize
+import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 import net.wapic.wpcmod.util.render.RenderUtils2D
 import net.wapic.wpcmod.util.render.RenderUtils2D.darken
 import net.wapic.wpcmod.util.render.RenderUtils2D.grayScale
-import net.wapic.wpcmod.util.MC
-import net.wapic.wpcmod.util.render.RenderUtils2D.axis
-import net.wapic.wpcmod.util.render.drawText
 import java.awt.Color
 
 object MapRender {
@@ -102,7 +100,7 @@ object MapRender {
 							color.rgb
 						)
 
-						if(legitRender && tile.state == RoomState.UNOPENED) {
+						if (legitRender && tile.state == RoomState.UNOPENED) {
 							RenderUtils2D.drawCheckmark(drawContext, xOffset.toFloat(), yOffset.toFloat(), tile.state)
 						}
 					}
@@ -112,8 +110,8 @@ object MapRender {
 						RenderUtils2D.renderRect(
 							drawContext,
 							xOffset, yOffset,
-							roomSize ,
-							roomSize ,
+							roomSize,
+							roomSize,
 							color.rgb
 						)
 					}
@@ -213,19 +211,20 @@ object MapRender {
 			if (vertical) y1 += doorwayOffset else x1 += doorwayOffset
 		}
 
-		RenderUtils2D.renderRect(drawContext,
+		RenderUtils2D.renderRect(
+			drawContext,
 			x1, y1,
-			if(vertical) CONNECTOR_SIZE else width,
-			if(vertical) width else CONNECTOR_SIZE,
+			if (vertical) CONNECTOR_SIZE else width,
+			if (vertical) width else CONNECTOR_SIZE,
 			color.rgb
 		)
 
-//		drawContext.fill(
-//			x1,
-//			y1,
-//			x1 + if(vertical) CONNECTOR_SIZE else width,
-//			y1 + if(vertical) width else CONNECTOR_SIZE,
-//			color.rgb
-//		)
+		//		drawContext.fill(
+		//			x1,
+		//			y1,
+		//			x1 + if(vertical) CONNECTOR_SIZE else width,
+		//			y1 + if(vertical) width else CONNECTOR_SIZE,
+		//			color.rgb
+		//		)
 	}
 }

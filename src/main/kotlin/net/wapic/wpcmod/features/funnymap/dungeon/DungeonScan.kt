@@ -9,8 +9,8 @@ import net.wapic.wpcmod.features.funnymap.core.map.*
 import net.wapic.wpcmod.features.funnymap.dungeon.DungeonScan.scan
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.DungeonUtils
-import net.wapic.wpcmod.util.Utils.equalsOneOf
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.Utils.equalsOneOf
 import kotlin.math.ceil
 
 /**

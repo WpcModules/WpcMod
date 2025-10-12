@@ -9,8 +9,8 @@ import net.wapic.wpcmod.features.funnymap.dungeon.RunInformation.secretPercentag
 import net.wapic.wpcmod.util.APIUtils
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.DungeonUtils
-import net.wapic.wpcmod.util.Utils.runCommand
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.Utils.runCommand
 import kotlin.math.roundToInt
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration

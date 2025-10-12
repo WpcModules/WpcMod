@@ -18,7 +18,6 @@ import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.DungeonUtils.inDungeons
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 import kotlin.math.ceil
-import kotlin.text.get
 
 /**
  * Many parts of this code are modified from [Skytils](https://github.com/Skytils/SkytilsMod/blob/1.x/src/main/kotlin/gg/skytils/skytilsmod/features/impl/dungeons/ScoreCalculation.kt).

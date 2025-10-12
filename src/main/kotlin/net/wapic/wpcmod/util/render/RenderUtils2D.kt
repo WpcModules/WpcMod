@@ -1,15 +1,11 @@
 package net.wapic.wpcmod.util.render
 
-import com.mojang.blaze3d.opengl.GlStateManager
-import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.render.RenderLayer
-import net.minecraft.client.render.VertexConsumer
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.RotationAxis
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.dungeon.FunnyConfig
-import net.wapic.wpcmod.features.funnymap.FunnyMap
 import net.wapic.wpcmod.features.funnymap.core.DungeonPlayer
 import net.wapic.wpcmod.features.funnymap.core.map.RoomState
 import net.wapic.wpcmod.features.funnymap.dungeon.DungeonScan
@@ -18,9 +14,7 @@ import net.wapic.wpcmod.features.funnymap.utils.MapUtils
 import net.wapic.wpcmod.util.ItemUtils.skyBlockID
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.equalsOneOf
-import org.joml.Matrix4f
-import org.joml.Quaternionf
-import org.joml.Vector3f
+
 import java.awt.Color
 import kotlin.math.roundToInt
 

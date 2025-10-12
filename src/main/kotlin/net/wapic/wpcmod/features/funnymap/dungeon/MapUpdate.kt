@@ -12,8 +12,8 @@ import net.wapic.wpcmod.features.funnymap.utils.MapUtils.mapX
 import net.wapic.wpcmod.features.funnymap.utils.MapUtils.mapZ
 import net.wapic.wpcmod.features.funnymap.utils.MapUtils.yaw
 import net.wapic.wpcmod.features.funnymap.utils.TabList
-import net.wapic.wpcmod.util.Utils.equalsOneOf
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.Utils.equalsOneOf
 import kotlin.math.roundToInt
 
 object MapUpdate {
