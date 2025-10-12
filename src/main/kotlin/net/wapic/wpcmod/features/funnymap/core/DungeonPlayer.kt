@@ -3,7 +3,7 @@ package net.wapic.wpcmod.features.funnymap.core
 import net.minecraft.client.util.SkinTextures
 import net.minecraft.entity.player.PlayerEntity
 import net.wapic.wpcmod.features.funnymap.core.map.Room
-import net.wapic.wpcmod.features.funnymap.features.dungeon.Dungeon
+import net.wapic.wpcmod.features.funnymap.dungeon.Dungeon
 import net.wapic.wpcmod.features.funnymap.utils.MapUtils
 import net.wapic.wpcmod.util.DungeonUtils
 
@@ -46,8 +46,8 @@ data class DungeonPlayer(val skin: SkinTextures) {
 	fun getCurrentRoom(): String {
 		if (dead) return "Dead"
 		if (DungeonUtils.isBossSpawned()) return "Boss"
-		val x = (mapX - MapUtils.startCorner.first) / (MapUtils.roomSize + MapUtils.connectorSize)
-		val z = (mapZ - MapUtils.startCorner.second) / (MapUtils.roomSize + MapUtils.connectorSize)
+		val x = (mapX - MapUtils.startCorner.first) / (MapUtils.roomSize + MapUtils.CONNECTOR_SIZE)
+		val z = (mapZ - MapUtils.startCorner.second) / (MapUtils.roomSize + MapUtils.CONNECTOR_SIZE)
 		return (Dungeon.Info.dungeonList.getOrNull(x * 2 + z * 22) as? Room)?.data?.name ?: "Error"
 	}
 }

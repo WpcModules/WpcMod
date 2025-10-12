@@ -1,10 +1,10 @@
-package net.wapic.wpcmod.features.funnymap.features.dungeon
+package net.wapic.wpcmod.features.funnymap.dungeon
 
 import net.wapic.wpcmod.features.funnymap.core.RoomData
 import net.wapic.wpcmod.features.funnymap.core.map.Room
 import net.wapic.wpcmod.features.funnymap.core.map.RoomState
 import net.wapic.wpcmod.features.funnymap.core.map.Tile
-import net.wapic.wpcmod.features.funnymap.utils.Utils.equalsOneOf
+import net.wapic.wpcmod.util.Utils.equalsOneOf
 
 object PlayerTracker {
 

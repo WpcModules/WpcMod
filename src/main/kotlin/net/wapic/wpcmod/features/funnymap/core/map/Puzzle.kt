@@ -1,6 +1,6 @@
 package net.wapic.wpcmod.features.funnymap.core.map
 
-import net.wapic.wpcmod.features.funnymap.utils.Utils.equalsOneOf
+import net.wapic.wpcmod.util.Utils.equalsOneOf
 
 enum class Puzzle(val roomDataName: String, val tabName: String = roomDataName) {
 	BOMB_DEFUSE("Bomb Defuse"),

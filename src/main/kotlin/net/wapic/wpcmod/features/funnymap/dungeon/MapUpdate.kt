@@ -1,11 +1,10 @@
-package net.wapic.wpcmod.features.funnymap.features.dungeon
+package net.wapic.wpcmod.features.funnymap.dungeon
 
 import net.minecraft.block.Blocks
 import net.minecraft.client.network.PlayerListEntry
 import net.minecraft.item.map.MapDecorationTypes
 import net.minecraft.text.Text
 import net.minecraft.util.math.BlockPos
-import net.wapic.wpcmod.features.funnymap.FunnyMap.mc
 import net.wapic.wpcmod.features.funnymap.core.DungeonPlayer
 import net.wapic.wpcmod.features.funnymap.core.map.*
 import net.wapic.wpcmod.features.funnymap.utils.MapUtils
@@ -13,7 +12,8 @@ import net.wapic.wpcmod.features.funnymap.utils.MapUtils.mapX
 import net.wapic.wpcmod.features.funnymap.utils.MapUtils.mapZ
 import net.wapic.wpcmod.features.funnymap.utils.MapUtils.yaw
 import net.wapic.wpcmod.features.funnymap.utils.TabList
-import net.wapic.wpcmod.features.funnymap.utils.Utils.equalsOneOf
+import net.wapic.wpcmod.util.Utils.equalsOneOf
+import net.wapic.wpcmod.util.MC
 import kotlin.math.roundToInt
 
 object MapUpdate {
@@ -36,7 +36,7 @@ object MapUpdate {
 				val name = second.string.trim().substringAfterLast("] ").split(" ")[0]
 				if (name != "") {
 					Dungeon.dungeonTeammates[name] = DungeonPlayer(first.skinTextures).apply {
-						mc.world?.players?.find { it.name.string == name }?.let { setData(it) }
+						MC.world?.players?.find { it.name.string == name }?.let { setData(it) }
 						colorPrefix = second.string.substringBefore(name, "f").last()
 						this.name = name
 						icon = "icon-$iconNum"
@@ -66,7 +66,7 @@ object MapUpdate {
 					iconNum++
 				}
 				if (!playerLoaded) {
-					mc.world?.players?.find { it.name.string == name }?.let { setData(it) }
+					MC.world?.players?.find { it.name.string == name }?.let { setData(it) }
 				}
 
 				val room = getCurrentRoom()
@@ -83,6 +83,7 @@ object MapUpdate {
 		}
 
 		val decor = MapUtils.mapData?.decorations ?: return
+		val mcPlayer = MC.player ?: return
 		Dungeon.dungeonTeammates.forEach { (name, player) ->
 			decor.find { mapDecoration ->
 				mapDecoration.assetId.toString() == player.icon
@@ -92,8 +93,7 @@ object MapUpdate {
 				player.mapZ = decoration.mapZ
 				player.yaw = decoration.yaw
 			}
-			if (player.isPlayer || name == mc.player?.name?.string) {
-				val mcPlayer = mc.player ?: return@forEach
+			if (player.isPlayer || name == mcPlayer.name?.string) {
 				player.yaw = mcPlayer.yaw
 				player.mapX =
 					((mcPlayer.pos.x - DungeonScan.START_X + 15) * MapUtils.coordMultiplier + MapUtils.startCorner.first).roundToInt()
@@ -114,14 +114,12 @@ object MapUpdate {
 				val mapTile = map.getTile(x, z)
 
 				if (room is Unknown) {
-					MapRenderList.renderUpdated = true
 					roomAdded = true
 					Dungeon.Info.dungeonList[z * 11 + x] = mapTile
 					continue
 				}
 
 				if (mapTile.state.ordinal < room.state.ordinal) {
-					MapRenderList.renderUpdated = true
 					PlayerTracker.roomStateChange(room, room.state, mapTile.state)
 					if (room is Room && room.data.type == RoomType.BLOOD && mapTile.state == RoomState.GREEN) {
 						RunInformation.bloodDone = true
@@ -131,14 +129,12 @@ object MapUpdate {
 
 				if (mapTile is Room && room is Room) {
 					if (room.data.type != mapTile.data.type && mapTile.data.type != RoomType.NORMAL) {
-						MapRenderList.renderUpdated = true
 						room.data.type = mapTile.data.type
 					}
 				}
 
 				if (mapTile is Door && room is Door) {
 					if (mapTile.type == DoorType.WITHER && room.type != DoorType.WITHER) {
-						MapRenderList.renderUpdated = true
 						room.type = mapTile.type
 					}
 				}
@@ -146,13 +142,11 @@ object MapUpdate {
 				if (room is Door && room.type.equalsOneOf(DoorType.ENTRANCE, DoorType.WITHER, DoorType.BLOOD)) {
 					if (mapTile is Door && mapTile.type == DoorType.WITHER) {
 						if (room.opened) {
-							MapRenderList.renderUpdated = true
 							room.opened = false
 						}
-					} else if (!room.opened && mc.world?.isChunkLoaded(room.x shr 4, room.z shr 4) == true &&
-						mc.world?.getBlockState(BlockPos(room.x, 69, room.z))?.block == Blocks.AIR
+					} else if (!room.opened && MC.world?.isChunkLoaded(room.x shr 4, room.z shr 4) == true &&
+						MC.world?.getBlockState(BlockPos(room.x, 69, room.z))?.block == Blocks.AIR
 					) {
-						MapRenderList.renderUpdated = true
 						room.opened = true
 					}
 

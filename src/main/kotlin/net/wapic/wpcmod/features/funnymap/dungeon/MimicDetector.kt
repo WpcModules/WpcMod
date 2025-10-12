@@ -1,4 +1,4 @@
-package net.wapic.wpcmod.features.funnymap.features.dungeon
+package net.wapic.wpcmod.features.funnymap.dungeon
 
 import net.minecraft.block.BlockState
 import net.minecraft.block.Blocks
@@ -9,10 +9,10 @@ import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.mob.ZombieEntity
 import net.minecraft.util.math.BlockPos
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.features.funnymap.FunnyMap.mc
-import net.wapic.wpcmod.features.funnymap.features.dungeon.ScanUtils.getRoomFromPos
+import net.wapic.wpcmod.features.funnymap.dungeon.ScanUtils.getRoomFromPos
 import net.wapic.wpcmod.util.ItemUtils.headTexture
 import net.wapic.wpcmod.util.Utils
+import net.wapic.wpcmod.util.MC
 
 object MimicDetector {
 
@@ -33,10 +33,10 @@ object MimicDetector {
 		if (mimicOpenTime == 0L) return
 		if (System.currentTimeMillis() - mimicOpenTime < 750) return
 
-		val playerDistanceFromMimic = mc.player?.squaredDistanceTo(mimicPos?.toCenterPos()) ?: return
+		val playerDistanceFromMimic = MC.player?.squaredDistanceTo(mimicPos?.toCenterPos()) ?: return
 
 		if (playerDistanceFromMimic < 400.0) {
-			val isMimicDead = mc.world?.entities?.none {
+			val isMimicDead = MC.world?.entities?.none {
 				it is ZombieEntity && it.isBaby && it.getEquippedStack(EquipmentSlot.HEAD).headTexture == "bcb486a4-0cb5-35db-93f0-039fbdde03f0"
 			}
 			if (isMimicDead == true)
@@ -59,7 +59,6 @@ object MimicDetector {
 				Dungeon.Info.uniqueRooms.find { it.name == room && it.mainRoom.data.trappedChests < trappedChests }
 					?.let {
 						it.hasMimic = true
-						MapRenderList.renderUpdated = true
 						return it.name
 					}
 			}

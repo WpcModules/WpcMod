@@ -5,7 +5,7 @@ import com.google.common.collect.Ordering
 import net.minecraft.client.network.PlayerListEntry
 import net.minecraft.text.Text
 import net.minecraft.world.GameMode
-import net.wapic.wpcmod.features.funnymap.FunnyMap.mc
+import net.wapic.wpcmod.util.MC
 
 object TabList {
 	private val tabListOrder = Ordering.from<PlayerListEntry> { o1, o2 ->
@@ -19,9 +19,9 @@ object TabList {
 	}
 
 	fun getTabList(): List<Pair<PlayerListEntry, Text>> {
-		return mc.player?.networkHandler?.playerList?.let {
+		return MC.player?.networkHandler?.playerList?.let {
 			tabListOrder.immutableSortedCopy(it)
-		}?.map { Pair(it, mc.inGameHud.playerListHud.getPlayerName(it)) } ?: emptyList()
+		}?.map { Pair(it, MC.inGameHud.playerListHud.getPlayerName(it)) } ?: emptyList()
 	}
 
 	fun getDungeonTabList(): List<Pair<PlayerListEntry, Text>>? {

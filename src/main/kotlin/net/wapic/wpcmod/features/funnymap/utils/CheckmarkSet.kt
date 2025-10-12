@@ -1,9 +1,9 @@
 package net.wapic.wpcmod.features.funnymap.utils
 
 import net.minecraft.util.Identifier
-import net.wapic.wpcmod.features.funnymap.FunnyMap.mc
 import net.wapic.wpcmod.features.funnymap.core.map.RoomState
-import net.wapic.wpcmod.features.funnymap.features.dungeon.MapRender
+import net.wapic.wpcmod.features.funnymap.dungeon.MapRender
+import net.wapic.wpcmod.util.MC
 
 class CheckmarkSet(val size: Int, location: String) {
 	private val crossResource = Identifier.of("wpcmod", "$location/cross.png")
@@ -13,7 +13,7 @@ class CheckmarkSet(val size: Int, location: String) {
 
 	init {
 		listOf(crossResource, greenResource, questionResource, whiteResource).forEach {
-			mc.textureManager.registerTexture(it)
+			MC.textureManager.registerTexture(it)
 		}
 	}
 

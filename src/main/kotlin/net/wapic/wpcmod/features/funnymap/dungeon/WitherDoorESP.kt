@@ -1,4 +1,4 @@
-package net.wapic.wpcmod.features.funnymap.features.dungeon
+package net.wapic.wpcmod.features.funnymap.dungeon
 
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
@@ -14,7 +14,7 @@ object WitherDoorESP {
 	val config get() = WpcMod.config.funnyMap
 
 	fun init() {
-		WorldRenderEvents.LAST.register(::onRenderWorld)
+		WorldRenderEvents.END.register(::onRenderWorld)
 	}
 
 	fun onRenderWorld(worldRenderContext: WorldRenderContext) {

@@ -1,16 +1,16 @@
-package net.wapic.wpcmod.features.funnymap.features.dungeon
+package net.wapic.wpcmod.features.funnymap.dungeon
 
 import net.minecraft.sound.SoundEvents
 import net.minecraft.text.Style
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.features.funnymap.FunnyMap.mc
-import net.wapic.wpcmod.features.funnymap.features.dungeon.RunInformation.completedRoomsPercentage
-import net.wapic.wpcmod.features.funnymap.features.dungeon.RunInformation.mimicKilled
-import net.wapic.wpcmod.features.funnymap.features.dungeon.RunInformation.secretPercentage
+import net.wapic.wpcmod.features.funnymap.dungeon.RunInformation.completedRoomsPercentage
+import net.wapic.wpcmod.features.funnymap.dungeon.RunInformation.mimicKilled
+import net.wapic.wpcmod.features.funnymap.dungeon.RunInformation.secretPercentage
 import net.wapic.wpcmod.util.APIUtils
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.Utils.runCommand
+import net.wapic.wpcmod.util.MC
 import kotlin.math.roundToInt
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
@@ -34,7 +34,7 @@ object ScoreCalculation {
 			}
 
 			if (FunnyConfig.scoreTitle300) {
-				mc.player?.playSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 0.5.toFloat())
+				MC.player?.playSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 0.5.toFloat())
 				ChatUtils.sendAlert(FunnyConfig.message300, Style.EMPTY)
 			}
 			if (FunnyConfig.timeTo300) {
@@ -46,7 +46,7 @@ object ScoreCalculation {
 				runCommand("/pc ${FunnyConfig.message270}")
 			}
 			if (FunnyConfig.scoreTitle270) {
-				mc.player?.playSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 0.5.toFloat())
+				MC.player?.playSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 0.5.toFloat())
 				ChatUtils.sendAlert(FunnyConfig.message270, Style.EMPTY)
 			}
 		}

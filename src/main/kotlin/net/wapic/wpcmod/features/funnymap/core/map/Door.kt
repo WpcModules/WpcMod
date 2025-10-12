@@ -1,7 +1,7 @@
 package net.wapic.wpcmod.features.funnymap.core.map
 
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.features.funnymap.features.dungeon.MapRender
+import net.wapic.wpcmod.features.funnymap.dungeon.MapRender
 import java.awt.Color
 
 class Door(override val x: Int, override val z: Int, var type: DoorType) : Tile {

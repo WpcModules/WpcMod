@@ -1,16 +1,16 @@
-package net.wapic.wpcmod.features.funnymap.features.dungeon
+package net.wapic.wpcmod.features.funnymap.dungeon
 
 import net.minecraft.block.Blocks
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.Heightmap
 import net.minecraft.world.chunk.EmptyChunk
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.features.funnymap.FunnyMap.mc
 import net.wapic.wpcmod.features.funnymap.core.map.*
-import net.wapic.wpcmod.features.funnymap.features.dungeon.DungeonScan.scan
-import net.wapic.wpcmod.features.funnymap.utils.Utils.equalsOneOf
+import net.wapic.wpcmod.features.funnymap.dungeon.DungeonScan.scan
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.DungeonUtils
+import net.wapic.wpcmod.util.Utils.equalsOneOf
+import net.wapic.wpcmod.util.MC
 import kotlin.math.ceil
 
 /**
@@ -41,6 +41,7 @@ object DungeonScan {
 	fun scan() {
 		isScanning = true
 		var allChunksLoaded = true
+		var prev: Tile? = null
 
 		// Scans the dungeon in a 11x11 grid.
 		for (x in 0..10) {
@@ -49,8 +50,7 @@ object DungeonScan {
 				val xPos = START_X + x * (ROOM_SIZE shr 1)
 				val zPos = START_Z + z * (ROOM_SIZE shr 1)
 
-				if (mc.world?.getChunk(xPos shr 4, zPos shr 4) is EmptyChunk) {
-					// The room being scanned has not been loaded in.
+				if (MC.world?.getChunk(xPos shr 4, zPos shr 4) is EmptyChunk) {
 					allChunksLoaded = false
 					continue
 				}
@@ -60,7 +60,6 @@ object DungeonScan {
 				if (hasBeenScanned) continue
 
 				scanRoom(xPos, zPos, z, x)?.let {
-					val prev = Dungeon.Info.dungeonList[z * 11 + x]
 					if (it is Room) {
 						if ((prev as? Room)?.uniqueRoom != null) {
 							prev.uniqueRoom?.addTile(x, z, it)
@@ -68,10 +67,9 @@ object DungeonScan {
 							UniqueRoom(x, z, it)
 						}
 						MapUpdate.roomAdded = true
-						println("added room ${it.data.name}")
 					}
-					Dungeon.Info.dungeonList[z * 11 + x] = it
-					MapRenderList.renderUpdated = true
+					Dungeon.Info.dungeonList[x + z * 11] = it
+					prev = it
 				}
 			}
 		}
@@ -112,7 +110,7 @@ object DungeonScan {
 	}
 
 	private fun scanRoom(x: Int, z: Int, row: Int, column: Int): Tile? {
-		val height = mc.world?.getChunk(x shr 4, z shr 4)?.sampleHeightmap(Heightmap.Type.WORLD_SURFACE_WG, x, z)
+		val height = MC.world?.getChunk(x shr 4, z shr 4)?.sampleHeightmap(Heightmap.Type.WORLD_SURFACE_WG, x, z)
 		if (height == 0) return null
 
 		val rowEven = row and 1 == 0
@@ -122,38 +120,34 @@ object DungeonScan {
 			// Scanning a room
 			rowEven && columnEven -> {
 				val roomCore = ScanUtils.getCore(x, z)
-				Room(x, z, ScanUtils.getRoomData(roomCore) ?: return null).apply {
-					println(roomCore)
-					core = roomCore
-				}
+				Room(x, z, ScanUtils.getRoomData(roomCore) ?: return null).apply { core = roomCore }
 			}
 
 			// Can only be the center "block" of a 2x2 room.
 			!rowEven && !columnEven -> {
 				Dungeon.Info.dungeonList[column - 1 + (row - 1) * 11].let {
 					if (it is Room) {
-						Room(x, z, it.data).apply {
-							isSeparator = true
-						}
-					} else null
+						Room(x, z, it.data).apply { isSeparator = true }
+					} else {
+						null
+					}
 				}
 			}
 
 			// Doorway between rooms
 			// Old trap has a single block at 82
 			height.equalsOneOf(73, 82) -> {
-				println("$x, $z with $height is ${mc.world?.getBlockState(BlockPos(x, 69, z))}")
 				Door(
 					x, z,
 					// Finds door type from door block
-					type = when (mc.world?.getBlockState(BlockPos(x, 69, z))?.block) {
+					type = when (MC.world?.getBlockState(BlockPos(x, 69, z))?.block) {
 						Blocks.COAL_BLOCK -> {
 							Dungeon.Info.witherDoors++
 							DoorType.WITHER
 						}
 
 						Blocks.INFESTED_CHISELED_STONE_BRICKS -> DoorType.ENTRANCE
-						Blocks.TERRACOTTA -> DoorType.BLOOD
+						Blocks.RED_TERRACOTTA -> DoorType.BLOOD
 						else -> DoorType.NORMAL
 					}
 				)

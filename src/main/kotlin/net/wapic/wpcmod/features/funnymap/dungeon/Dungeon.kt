@@ -1,4 +1,4 @@
-package net.wapic.wpcmod.features.funnymap.features.dungeon
+package net.wapic.wpcmod.features.funnymap.dungeon
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
@@ -9,13 +9,13 @@ import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.funnymap.core.DungeonPlayer
 import net.wapic.wpcmod.features.funnymap.core.map.*
-import net.wapic.wpcmod.features.funnymap.features.dungeon.Dungeon.Info.ended
+import net.wapic.wpcmod.features.funnymap.dungeon.Dungeon.Info.ended
 import net.wapic.wpcmod.features.funnymap.utils.MapUtils
 import net.wapic.wpcmod.features.funnymap.utils.TabList
-import net.wapic.wpcmod.features.funnymap.utils.Utils.equalsOneOf
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.DungeonUtils.inDungeons
+import net.wapic.wpcmod.util.Utils.equalsOneOf
 
 object Dungeon {
 	val FunnyConfig get() = WpcMod.config.funnyMap
@@ -32,12 +32,12 @@ object Dungeon {
 
 	// TODO: Convert to 1.21.5
 	private val keyGainRegex = listOf(
-		Regex(".+ §r§ehas obtained §r§a§r§.+ Key§r§e!§r"),
-		Regex("§r§eA §r§a§r§.+ Key§r§e was picked up!§r")
+		Regex(".+ has obtained .+ Key!"),
+		Regex("A .+ Key was picked up!")
 	)
 	private val keyUseRegex = listOf(
-		Regex("§r§cThe §r§c§lBLOOD DOOR§r§c has been opened!§r"),
-		Regex("§r§a.+§r§a opened a §r§8§lWITHER §r§adoor!§r"),
+		Regex("The BLOOD DOOR has been opened!"),
+		Regex(".+ opened a WITHER door!"),
 	)
 
 	fun init() {

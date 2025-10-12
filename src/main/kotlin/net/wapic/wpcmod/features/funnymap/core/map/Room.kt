@@ -2,11 +2,11 @@ package net.wapic.wpcmod.features.funnymap.core.map
 
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.features.funnymap.core.RoomData
-import net.wapic.wpcmod.features.funnymap.features.dungeon.MapRender
+import net.wapic.wpcmod.features.funnymap.dungeon.MapRender
 import java.awt.Color
 
 class Room(override val x: Int, override val z: Int, var data: RoomData) : Tile {
-	val config get() = WpcMod.config.funnyMap
+	private val config get() = WpcMod.config.funnyMap
 	var core = 0
 	var isSeparator = false
 	var uniqueRoom: UniqueRoom? = null

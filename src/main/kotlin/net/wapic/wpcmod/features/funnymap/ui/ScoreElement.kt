@@ -2,17 +2,16 @@ package net.wapic.wpcmod.features.funnymap.ui
 
 import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback
 import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer
-import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.render.RenderTickCounter
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.features.funnymap.FunnyMap.mc
-import net.wapic.wpcmod.features.funnymap.features.dungeon.RunInformation
-import net.wapic.wpcmod.features.funnymap.features.dungeon.ScoreCalculation
+import net.wapic.wpcmod.features.funnymap.dungeon.RunInformation
+import net.wapic.wpcmod.features.funnymap.dungeon.ScoreCalculation
 import net.wapic.wpcmod.jarvis.SimpleHudElement
 import net.wapic.wpcmod.util.DungeonUtils
+import net.wapic.wpcmod.util.MC
 
 object ScoreElement : SimpleHudElement(
 	text = Text.literal("Dungeon Map"),
@@ -20,7 +19,6 @@ object ScoreElement : SimpleHudElement(
 	h = 64
 ) {
 
-	val fr: TextRenderer = mc.textRenderer
 	val config get() = WpcMod.config.funnyMap
 	var y2 = 0
 
@@ -46,15 +44,14 @@ object ScoreElement : SimpleHudElement(
 		val lines = getScoreLines()
 		elementLines = lines.size
 		lines.forEach {
-			drawContext.drawText(fr, it, 0, y.toInt(), 0xffffff, true)
-			y += fr.fontHeight
+			drawContext.drawText(MC.textRenderer, it, 0, y.toInt(), 0xffffff, true)
+			y += MC.textRenderer.fontHeight
 		}
 	}
 
 	override fun isActive(): Boolean {
-		if (!isEnabled) return false
 		if (config.scoreHideInBoss && DungeonUtils.isBossSpawned()) return false
-		return super.isActive()
+		return isEnabled && DungeonUtils.inDungeons
 	}
 
 	override fun isEnabled(): Boolean {

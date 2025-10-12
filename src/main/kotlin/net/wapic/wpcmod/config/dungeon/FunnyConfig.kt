@@ -53,28 +53,16 @@ class FunnyConfig {
 	@ConfigEditorBoolean
 	var mapVanillaMarker = false
 
-	@ConfigOption(name = "Map X", desc = "x pos of map")
-	@ConfigEditorSlider(minStep = 1f, maxValue = 2560f, minValue = 0f)
-	var mapX = 10f
-
-	@ConfigOption(name = "Map Y", desc = "y pos of map")
-	@ConfigEditorSlider(minStep = 1f, maxValue = 1440f, minValue = 0f)
-	var mapY = 10f
-
-	@ConfigOption(name = "Map Size", desc = "Size")
-	@ConfigEditorSlider(minStep = 0.01f, maxValue = 4f, minValue = 0.1f)
-	var mapScale = 1.25f
-
 	@ConfigOption(name = "Map Text Scale", desc = "Scale of room names and secret counts relative to map size.")
-	@ConfigEditorSlider(minStep = 0.01f, maxValue = 2f, minValue = 0.1f)
-	var textScale = 0.75f
+	@ConfigEditorSlider(minStep = 0.1f, maxValue = 2f, minValue = 0.1f)
+	var textScale = .8f
 
 	@ConfigOption(name = "Player Heads Scale", desc = "Scale of player heads relative to map size.")
-	@ConfigEditorSlider(minStep = 0.01f, maxValue = 2f, minValue = 0.1f)
+	@ConfigEditorSlider(minStep = 0.1f, maxValue = 2f, minValue = 0.1f)
 	var playerHeadScale = 1f
 
 	@ConfigOption(name = "Player Name Scale", desc = "Scale of player names relative to head size.")
-	@ConfigEditorSlider(minStep = 0.01f, maxValue = 2f, minValue = 0.1f)
+	@ConfigEditorSlider(minStep = 0.1f, maxValue = 2f, minValue = 0.1f)
 	var playerNameScale = .8f
 
 	@ConfigOption(name = "Map Background Color", desc = "background color")
@@ -84,10 +72,6 @@ class FunnyConfig {
 	@ConfigOption(name = "Map Border Color", desc = "border color")
 	@ConfigEditorColour
 	var mapBorder = ChromaColour(1f, 1f, 1f, 0, 100)
-
-	@ConfigOption(name = "Border Thickness", desc = "border thicc")
-	@ConfigEditorSlider(minStep = 0.01f, maxValue = 10f, minValue = 0.1f)
-	var mapBorderWidth = 3f
 
 	@ConfigOption(name = "Dark Undiscovered Rooms", desc = "Darkens unentered rooms.")
 	@ConfigEditorBoolean
@@ -105,17 +89,9 @@ class FunnyConfig {
 	@ConfigEditorBoolean
 	var mapRoomNames = false
 
-	@ConfigOption(name = "Room Secrets", desc = "Shows total secrets of rooms on map.")
-	@ConfigEditorBoolean
-	var mapRoomSecrets = false
-
 	@ConfigOption(name = "Center Room Names", desc = "Center room names.")
 	@ConfigEditorBoolean
 	var mapCenterRoomName = true
-
-	@ConfigOption(name = "Color Text", desc = "Colors name and secret count based on room state.")
-	@ConfigEditorBoolean
-	var mapColorText = true
 
 	@ConfigOption(name = "Room Checkmarks", desc = "Adds room checkmarks based on room state.")
 	@ConfigEditorBoolean
@@ -188,22 +164,6 @@ class FunnyConfig {
 	@ConfigOption(name = "Unopened Room", desc = "Unopened Room color")
 	@ConfigEditorColour
 	var colorUnopened = ChromaColour(1f, 1f, 1f, 0, 255)
-
-	@ConfigOption(name = "Cleared Room Text", desc = "Cleared Room Text color")
-	@ConfigEditorColour
-	var colorTextCleared = ChromaColour(1f, 1f, 1f, 0, 255)
-
-	@ConfigOption(name = "Uncleared Room Text", desc = "Uncleared Room Text color")
-	@ConfigEditorColour
-	var colorTextUncleared = ChromaColour(1f, 1f, 1f, 0, 255)
-
-	@ConfigOption(name = "Green Room Text", desc = "Green Room Text color")
-	@ConfigEditorColour
-	var colorTextGreen = ChromaColour(1f, 1f, 1f, 0, 255)
-
-	@ConfigOption(name = "Failed Room Text", desc = "Failed Room Text color")
-	@ConfigEditorColour
-	var colorTextFailed = ChromaColour(1f, 1f, 1f, 0, 255)
 
 	@ConfigOption(name = "Show Score", desc = "Shows separate score element.")
 	@ConfigEditorBoolean
@@ -308,9 +268,4 @@ class FunnyConfig {
 	@ConfigOption(name = "Paul Score", desc = "Assumes paul perk is active to give 10 bonus score.")
 	@ConfigEditorBoolean
 	var paulBonus = false
-
-	@ConfigOption(name = "Beta Rendering", desc = "Debug")
-	@ConfigEditorBoolean
-	var renderBeta = false
-
 }

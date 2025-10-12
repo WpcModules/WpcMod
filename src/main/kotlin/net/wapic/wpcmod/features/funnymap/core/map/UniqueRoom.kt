@@ -1,8 +1,8 @@
 package net.wapic.wpcmod.features.funnymap.core.map
 
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.features.funnymap.features.dungeon.Dungeon
-import net.wapic.wpcmod.features.funnymap.features.dungeon.MapRender
+import net.wapic.wpcmod.features.funnymap.dungeon.Dungeon
+import net.wapic.wpcmod.features.funnymap.dungeon.MapRender
 
 class UniqueRoom(arrX: Int, arrY: Int, room: Room) {
 	var name: String
@@ -24,6 +24,7 @@ class UniqueRoom(arrX: Int, arrY: Int, room: Room) {
 		}
 		room.uniqueRoom = this
 		Dungeon.Info.uniqueRooms.add(this)
+		println("added unique room $name")
 	}
 
 	fun init(arrX: Int, arrY: Int, room: Room) {

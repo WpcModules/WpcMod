@@ -1,4 +1,4 @@
-package net.wapic.wpcmod.features.funnymap.features.dungeon
+package net.wapic.wpcmod.features.funnymap.dungeon
 
 import com.google.gson.Gson
 import com.google.gson.JsonIOException
@@ -12,16 +12,16 @@ import net.minecraft.state.property.Properties
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.Heightmap
-import net.wapic.wpcmod.features.funnymap.FunnyMap.mc
 import net.wapic.wpcmod.features.funnymap.core.RoomData
 import net.wapic.wpcmod.features.funnymap.core.map.Room
-import net.wapic.wpcmod.features.funnymap.utils.Utils.equalsOneOf
+import net.wapic.wpcmod.util.Utils.equalsOneOf
+import net.wapic.wpcmod.util.MC
 import kotlin.math.roundToInt
 
 object ScanUtils {
 	val roomListModern: Set<RoomData> = try {
 		Gson().fromJson(
-			mc.resourceManager.getResource(
+			MC.resourceManager.getResource(
 				Identifier.of("wpcmod", "rooms-modern.json")
 			).get().inputStream.bufferedReader(), object : TypeToken<Set<RoomData>>() {}.type
 		)
@@ -37,7 +37,7 @@ object ScanUtils {
 
 	val roomList: Set<RoomData> = try {
 		Gson().fromJson(
-			mc.resourceManager.getResource(
+			MC.resourceManager.getResource(
 				Identifier.of("wpcmod", "rooms-legacy.json")
 			).get().inputStream.bufferedReader(), object : TypeToken<Set<RoomData>>() {}.type
 		)
@@ -474,7 +474,7 @@ object ScanUtils {
 
 	fun getCore(x: Int, z: Int): Int {
 		val sb = StringBuilder(150)
-		val chunk = mc.world?.getChunk(x shr 4, z shr 4) ?: return 0
+		val chunk = MC.world?.getChunk(x shr 4, z shr 4) ?: return 0
 		val height = chunk.sampleHeightmap(Heightmap.Type.WORLD_SURFACE_WG, x, z).coerceIn(11..140)
 		sb.append(CharArray(140 - height) { '0' })
 		var bedrock = 0

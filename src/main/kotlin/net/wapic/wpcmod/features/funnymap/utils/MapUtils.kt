@@ -6,11 +6,11 @@ import net.minecraft.item.Items
 import net.minecraft.item.map.MapDecoration
 import net.minecraft.item.map.MapState
 import net.minecraft.network.packet.s2c.play.MapUpdateS2CPacket
-import net.wapic.wpcmod.features.funnymap.FunnyMap.mc
-import net.wapic.wpcmod.features.funnymap.features.dungeon.DungeonScan
-import net.wapic.wpcmod.features.funnymap.utils.Utils.equalsOneOf
+import net.wapic.wpcmod.features.funnymap.dungeon.DungeonScan
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.DungeonUtils.inDungeons
+import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.Utils.equalsOneOf
 
 object MapUtils {
 	val MapDecoration.mapX
@@ -27,27 +27,28 @@ object MapUtils {
 	var coordMultiplier = 0.625
 	var roomSize = 16
 	var halfRoomSize = roomSize / 2
-	val connectorSize = 4
+	const val CONNECTOR_SIZE = 4
 	var calibrated = false
 	var mapDataUpdated = false
 
 	private fun getMapItem(): ItemStack? {
-		val map = mc.player?.inventory?.getStack(8) ?: return null
+		val map = MC.player?.inventory?.getStack(8) ?: return null
 		if (map.item != Items.MAP || !map.name.string.contains("Magical Map")) return null
 		return map
 	}
 
 	fun updateMapData(packet: MapUpdateS2CPacket) {
 		if (!inDungeons) return
-		Utils.runMinecraftThread {
+		MC.runOnThread {
 			val map = getMapItem()
 			map?.let {
-				mapData = FilledMapItem.getMapState(it, mc.world)
+				mapData = FilledMapItem.getMapState(it, MC.world)
 			}
 
 			if (mapData == null) {
-				mapData = FilledMapItem.getMapState(packet.mapId, mc.world)
+				mapData = FilledMapItem.getMapState(packet.mapId, MC.world)
 			}
+
 			packet.apply(mapData)
 			mapDataUpdated = true
 		}
@@ -72,7 +73,7 @@ object MapUtils {
 					Pair(startX % (roomSize + 4), startZ % (roomSize + 4))
 				}
 			}
-			coordMultiplier = (roomSize + connectorSize).toDouble() / DungeonScan.ROOM_SIZE
+			coordMultiplier = (roomSize + CONNECTOR_SIZE).toDouble() / DungeonScan.ROOM_SIZE
 			return true
 		}
 		return false
