@@ -19,22 +19,8 @@ import net.wapic.wpcmod.util.Utils.equalsOneOf
 import kotlin.math.roundToInt
 
 object ScanUtils {
-	val roomListModern: Set<RoomData> = try {
-		Gson().fromJson(
-			MC.resourceManager.getResource(
-				Identifier.of("wpcmod", "rooms-modern.json")
-			).get().inputStream.bufferedReader(), object : TypeToken<Set<RoomData>>() {}.type
-		)
-	} catch (e: JsonSyntaxException) {
-		println("Error parsing FunnyMap room data.")
-		e.printStackTrace()
-		setOf()
-	} catch (e: JsonIOException) {
-		println("Error reading FunnyMap room data.")
-		e.printStackTrace()
-		setOf()
-	}
 
+	// TODO: convert to modern hashCodes
 	val roomList: Set<RoomData> = try {
 		Gson().fromJson(
 			MC.resourceManager.getResource(
@@ -140,6 +126,14 @@ object ScanUtils {
 		Blocks.BLACK_WOOL to 35,
 		Blocks.DANDELION to 37,
 		Blocks.POPPY to 38,
+		Blocks.BLUE_ORCHID to 38,
+		Blocks.ALLIUM to 38,
+		Blocks.AZURE_BLUET to 38,
+		Blocks.RED_TULIP to 38,
+		Blocks.ORANGE_TULIP to 38,
+		Blocks.WHITE_TULIP to 38,
+		Blocks.PINK_TULIP to 38,
+		Blocks.OXEYE_DAISY to 38,
 		Blocks.BROWN_MUSHROOM to 39,
 		Blocks.RED_MUSHROOM to 40,
 		Blocks.GOLD_BLOCK to 41,
@@ -226,11 +220,11 @@ object ScanUtils {
 		Blocks.BLACK_STAINED_GLASS to 95,
 		Blocks.OAK_TRAPDOOR to 96,
 		Blocks.INFESTED_STONE to 97,
-		Blocks.INFESTED_STONE_BRICKS to 97,
-		Blocks.INFESTED_CHISELED_STONE_BRICKS to 97,
 		Blocks.INFESTED_COBBLESTONE to 97,
-		Blocks.INFESTED_CRACKED_STONE_BRICKS to 97,
+		Blocks.INFESTED_STONE_BRICKS to 97,
 		Blocks.INFESTED_MOSSY_STONE_BRICKS to 97,
+		Blocks.INFESTED_CRACKED_STONE_BRICKS to 97,
+		Blocks.INFESTED_CHISELED_STONE_BRICKS to 97,
 		Blocks.STONE_BRICKS to 98,
 		Blocks.MOSSY_STONE_BRICKS to 98,
 		Blocks.CRACKED_STONE_BRICKS to 98,
@@ -303,8 +297,8 @@ object ScanUtils {
 		Blocks.CARROTS to 141,
 		Blocks.POTATOES to 142,
 		Blocks.OAK_BUTTON to 143,
-		Blocks.WITHER_SKELETON_SKULL to 144,
 		Blocks.SKELETON_SKULL to 144,
+		Blocks.WITHER_SKELETON_SKULL to 144,
 		Blocks.ZOMBIE_HEAD to 144,
 		Blocks.PLAYER_HEAD to 144,
 		Blocks.CREEPER_HEAD to 144,
@@ -367,8 +361,8 @@ object ScanUtils {
 		Blocks.BARRIER to 166,
 		Blocks.IRON_TRAPDOOR to 167,
 		Blocks.PRISMARINE to 168,
-		Blocks.DARK_PRISMARINE to 168,
 		Blocks.PRISMARINE_BRICKS to 168,
+		Blocks.DARK_PRISMARINE to 168,
 		Blocks.SEA_LANTERN to 169,
 		Blocks.HAY_BLOCK to 170,
 		Blocks.WHITE_CARPET to 171,

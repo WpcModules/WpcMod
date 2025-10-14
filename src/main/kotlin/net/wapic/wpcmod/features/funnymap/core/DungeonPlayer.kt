@@ -25,7 +25,6 @@ data class DungeonPlayer(val skin: SkinTextures) {
 	/** Has information from player entity been loaded */
 	var playerLoaded = false
 	var icon = ""
-	var renderHat = false
 	var dead = false
 	var uuid = ""
 	var isPlayer = false
@@ -37,7 +36,6 @@ data class DungeonPlayer(val skin: SkinTextures) {
 
 	/** Set player data that requires entity to be loaded */
 	fun setData(player: PlayerEntity) {
-		renderHat = false // TODO: Should render hat?
 		uuid = player.uuidAsString
 		playerLoaded = true
 	}

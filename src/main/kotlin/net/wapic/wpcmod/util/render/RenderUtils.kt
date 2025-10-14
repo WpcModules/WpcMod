@@ -1,19 +1,19 @@
 package net.wapic.wpcmod.util.render
 
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
-import net.minecraft.client.MinecraftClient
 import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.render.VertexConsumer
 import net.minecraft.client.render.VertexConsumerProvider
 import net.minecraft.client.render.VertexRendering
 import net.minecraft.client.util.math.MatrixStack
+import net.minecraft.entity.Entity
 import net.minecraft.util.math.Box
+import net.minecraft.util.math.MathHelper
 import net.minecraft.util.math.Vec3d
+import net.wapic.wpcmod.util.MC
 import java.awt.Color
 
 object RenderUtils {
-
-	private val mc: MinecraftClient = MinecraftClient.getInstance()
 
 	fun drawBoundingBox(
 		worldRenderContext: WorldRenderContext,
@@ -75,15 +75,40 @@ object RenderUtils {
 	}
 
 	fun drawTracer(
-		worldRenderContext: WorldRenderContext, pos: Vec3d, color: Color = Color(255, 255, 255), lineWidth: Double = 2.0) {
-		val viewBobbing = mc.options.bobView.value
-		mc.options.bobView.value = false
+		worldRenderContext: WorldRenderContext,
+		entity: Entity,
+		color: Color = Color(255, 255, 255),
+		lineWidth: Double = 2.0
+	) {
+		val tickProgress = worldRenderContext.tickCounter().dynamicDeltaTicks
+		val viewBobbing = MC.options.bobView.value
+		MC.options.bobView.value = false
+
+		val x = MathHelper.lerp(tickProgress.toDouble(), entity.lastRenderX, entity.x)
+		val y = MathHelper.lerp(tickProgress.toDouble(), entity.lastRenderY, entity.y)
+		val z = MathHelper.lerp(tickProgress.toDouble(), entity.lastRenderZ, entity.z)
+
+		val camera = worldRenderContext.camera()
+		val cameraPoint: Vec3d = camera.pos.add(Vec3d.fromPolar(camera.pitch, camera.yaw))
+		drawLine(worldRenderContext, cameraPoint.x, cameraPoint.y, cameraPoint.z, x, y, z, color, lineWidth)
+
+		MC.options.bobView.value = viewBobbing
+	}
+
+	fun drawTracer(
+		worldRenderContext: WorldRenderContext,
+		pos: Vec3d,
+		color: Color = Color(255, 255, 255),
+		lineWidth: Double = 2.0
+	) {
+		val viewBobbing = MC.options.bobView.value
+		MC.options.bobView.value = false
 
 		val camera = worldRenderContext.camera()
 		val cameraPoint: Vec3d = camera.pos.add(Vec3d.fromPolar(camera.pitch, camera.yaw))
 		drawLine(worldRenderContext, cameraPoint.x, cameraPoint.y, cameraPoint.z, pos.x, pos.y, pos.z, color, lineWidth)
 
-		mc.options.bobView.value = viewBobbing
+		MC.options.bobView.value = viewBobbing
 	}
 
 	fun drawTracer(
@@ -92,14 +117,14 @@ object RenderUtils {
 		y: Double,
 		z: Double, color: Color = Color(255, 255, 255), lineWidth: Double = 2.0
 	) {
-		val viewBobbing = mc.options.bobView.value
-		mc.options.bobView.value = false
+		val viewBobbing = MC.options.bobView.value
+		MC.options.bobView.value = false
 
 		val camera = worldRenderContext.camera()
 		val cameraPoint: Vec3d = camera.pos.add(Vec3d.fromPolar(camera.pitch, camera.yaw))
 		drawLine(worldRenderContext, cameraPoint.x, cameraPoint.y, cameraPoint.z, x, y, z, color, lineWidth)
 
-		mc.options.bobView.value = viewBobbing
+		MC.options.bobView.value = viewBobbing
 	}
 
 	fun drawLine(
@@ -109,7 +134,9 @@ object RenderUtils {
 		z1: Double,
 		x2: Double,
 		y2: Double,
-		z2: Double, color: Color = Color(255, 255, 255), lineWidth: Double = 2.0
+		z2: Double,
+		color: Color = Color(255, 255, 255),
+		lineWidth: Double = 2.0
 	) {
 		val matrixStack = worldRenderContext.matrixStack() ?: return
 		val camera: Vec3d = worldRenderContext.camera().pos

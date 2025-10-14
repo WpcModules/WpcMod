@@ -4,19 +4,14 @@ import net.minecraft.block.BlockState
 import net.minecraft.block.Blocks
 import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.block.entity.ChestBlockEntity
-import net.minecraft.entity.Entity
-import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.mob.ZombieEntity
 import net.minecraft.util.math.BlockPos
-import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.features.dungeons.ScoreCalculation
 import net.wapic.wpcmod.features.funnymap.dungeon.ScanUtils.getRoomFromPos
-import net.wapic.wpcmod.util.ItemUtils.headTexture
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils
 
 object MimicDetector {
-
-	val FunnyConfig get() = WpcMod.config.funnyMap
 
 	var mimicOpenTime = 0L
 	var mimicPos: BlockPos? = null
@@ -29,27 +24,16 @@ object MimicDetector {
 	}
 
 	fun checkMimicDead() {
-		if (RunInformation.mimicKilled) return
 		if (mimicOpenTime == 0L) return
 		if (System.currentTimeMillis() - mimicOpenTime < 750) return
 
 		val playerDistanceFromMimic = MC.player?.squaredDistanceTo(mimicPos?.toCenterPos()) ?: return
 
 		if (playerDistanceFromMimic < 400.0) {
-			val isMimicDead = MC.world?.entities?.none {
-				it is ZombieEntity && it.isBaby && it.getEquippedStack(EquipmentSlot.HEAD).headTexture == "bcb486a4-0cb5-35db-93f0-039fbdde03f0"
-			}
+			val isMimicDead = MC.world?.entities?.none { it is ZombieEntity && it.isBaby }
 			if (isMimicDead == true)
-				setMimicKilled()
+				ScoreCalculation.mimicFound = true
 		}
-	}
-
-	fun setMimicKilled() {
-		RunInformation.mimicKilled = true
-	}
-
-	fun isMimic(entity: Entity): Boolean {
-		return entity is ZombieEntity && entity.isBaby
 	}
 
 	fun findMimic(): String? {

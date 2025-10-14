@@ -1,6 +1,9 @@
 package net.wapic.wpcmod.config.dungeon
 
+import io.github.notenoughupdates.moulconfig.ChromaColour
 import io.github.notenoughupdates.moulconfig.annotations.Accordion
+import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorBoolean
+import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorColour
 import io.github.notenoughupdates.moulconfig.annotations.ConfigOption
 import net.wapic.wpcmod.config.components.GlowableESPConfig
 
@@ -23,4 +26,22 @@ class ESPConfig {
 	var miniboss = MiniBossConfig()
 
 	class MiniBossConfig(): GlowableESPConfig()
+
+	@Accordion
+	@ConfigOption(name = "Wither Doors", desc = "Wither Doors")
+	var witherDoor = WitherDoorConfig()
+
+	class WitherDoorConfig {
+		@ConfigOption(name = "Has Key Color", desc = "Color for when you have the key")
+		@ConfigEditorColour
+		var hasKeyColor = ChromaColour(1f, 1f, 1f, 0, 1)
+
+		@ConfigOption(name = "No Key Color", desc = "Color for when you don't have a key")
+		@ConfigEditorColour
+		var noKeyColor = ChromaColour(1f, 1f, 1f, 0, 1)
+
+		@ConfigOption(name = "Box", desc = "Draw a box around the object")
+		@ConfigEditorBoolean
+		var box: Boolean = false
+	}
 }

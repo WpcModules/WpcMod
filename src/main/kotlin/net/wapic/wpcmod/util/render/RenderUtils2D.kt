@@ -9,7 +9,6 @@ import net.wapic.wpcmod.config.dungeon.FunnyConfig
 import net.wapic.wpcmod.features.funnymap.core.DungeonPlayer
 import net.wapic.wpcmod.features.funnymap.core.map.RoomState
 import net.wapic.wpcmod.features.funnymap.dungeon.DungeonScan
-import net.wapic.wpcmod.features.funnymap.utils.CheckmarkSet
 import net.wapic.wpcmod.features.funnymap.utils.MapUtils
 import net.wapic.wpcmod.util.ItemUtils.skyBlockID
 import net.wapic.wpcmod.util.MC
@@ -22,10 +21,12 @@ object RenderUtils2D {
 
 	val config get() = WpcMod.config.funnyMap
 
-	val neuCheckmarks = CheckmarkSet(10, "neu")
-	val defaultCheckmarks = CheckmarkSet(16, "default")
-	val legacyCheckmarks = CheckmarkSet(8, "legacy")
-	private val mapIcons = Identifier.of("wpcmod", "marker.png")
+	private val crossResource = Identifier.of("wpcmod", "dungeon/cross.png")
+	private val greenResource = Identifier.of("wpcmod", "dungeon/green_check.png")
+	private val questionResource = Identifier.of("wpcmod", "dungeon/question.png")
+	private val whiteResource = Identifier.of("wpcmod", "dungeon/white_check.png")
+	private val mapIcons = Identifier.of("wpcmod", "dungeon/marker.png")
+
 	val axis: RotationAxis = RotationAxis.POSITIVE_Z
 
 	fun renderCenteredText(drawContext: DrawContext, text: List<String>, x: Int, y: Int, color: Int) {
@@ -38,48 +39,45 @@ object RenderUtils2D {
 		matrixStack.scale(config.textScale, config.textScale, 1f)
 
 		if (config.mapRotate) {
-			matrixStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(player.yaw))
+			matrixStack.multiply(axis.rotationDegrees(player.yaw+180f))
 		}
 
-		val fontHeight = MC.textRenderer.fontHeight + 1
+		val tr = MC.textRenderer
+		val fontHeight = tr.fontHeight + 1
 		val yTextOffset = text.size * fontHeight / -2f
 
-		text.withIndex().forEach { (index, text) ->
+		for (i in 0..<text.size) {
 			drawContext.drawText(
-				text,
-				MC.textRenderer.getWidth(text) / -2,
-				yTextOffset.toInt() + index * fontHeight,
+				tr,
+				text[i],
+				tr.getWidth(text[i]) / -2,
+				yTextOffset.toInt() + i * fontHeight,
 				color,
-				true
+				false
 			)
 		}
 
 		matrixStack.pop()
 	}
 
-	fun renderRect(drawContext: DrawContext, x: Int, y: Int, w: Int, h: Int, color: Int) {
-		val matrix = drawContext.matrices.peek().positionMatrix
-
-		 drawContext.draw { consumerProvider ->
-			val vertexConsumer = consumerProvider.getBuffer(RenderLayer.getGui())
-			vertexConsumer.vertex(matrix, x.toFloat(), y.toFloat() + h, 0f).color(color)
-			vertexConsumer.vertex(matrix, x.toFloat() + w, y.toFloat() + h, 0f).color(color)
-			vertexConsumer.vertex(matrix, x.toFloat() + w, y.toFloat(), 0f).color(color)
-			vertexConsumer.vertex(matrix, x.toFloat(), y.toFloat(), 0f).color(color)
-		}
-	}
-
 	fun drawCheckmark(drawContext: DrawContext, x: Float, y: Float, state: RoomState) {
 		if (!config.mapCheckmark) return
-		val (checkmark, size) = neuCheckmarks.getCheckmark(state) to neuCheckmarks.size
+		val checkmark = when (state) {
+			RoomState.CLEARED -> whiteResource
+			RoomState.GREEN -> greenResource
+			RoomState.FAILED -> crossResource
+			RoomState.UNOPENED -> if (config.legitMode) questionResource else null
+			else -> null
+		}
 
 		checkmark?.let {
 			drawContext.drawTexture(
 				RenderLayer::getGuiTextured, it,
-				x.toInt() + (MapUtils.roomSize - size) / 2,
-				y.toInt() + (MapUtils.roomSize - size) / 2,
-				size.toFloat(), size.toFloat(),
-				size, size, size, size, size
+				x.toInt() + (MapUtils.roomSize - 10) / 2,
+				y.toInt() + (MapUtils.roomSize - 10) / 2,
+				0f, 0f,
+				10, 10, 10, 10,
+				Color.white.rgb
 			)
 		}
 	}
@@ -126,14 +124,15 @@ object RenderUtils2D {
 				matrixStack.translate(0f, config.playerHeadScale * 4f, 0f)
 				matrixStack.scale(config.playerNameScale, config.playerNameScale, 1f)
 				drawContext.drawText(
+					MC.textRenderer,
 					name,
 					-MC.textRenderer.getWidth(name) / 2,
 					0,
 					0xffffff,
 					true
 				)
-				matrixStack.pop()
 			}
+			matrixStack.pop()
 
 		} catch (e: Exception) {
 			e.printStackTrace()

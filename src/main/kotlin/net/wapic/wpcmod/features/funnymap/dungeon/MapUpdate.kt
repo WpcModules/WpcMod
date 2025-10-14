@@ -5,6 +5,8 @@ import net.minecraft.client.network.PlayerListEntry
 import net.minecraft.item.map.MapDecorationTypes
 import net.minecraft.text.Text
 import net.minecraft.util.math.BlockPos
+import net.minecraft.world.chunk.EmptyChunk
+import net.wapic.wpcmod.features.dungeons.ScoreCalculation
 import net.wapic.wpcmod.features.funnymap.core.DungeonPlayer
 import net.wapic.wpcmod.features.funnymap.core.map.*
 import net.wapic.wpcmod.features.funnymap.utils.MapUtils
@@ -22,7 +24,6 @@ object MapUpdate {
 	fun preloadHeads() {
 		val tabEntries = TabList.getDungeonTabList() ?: return
 		for (i in listOf(5, 9, 13, 17, 1)) {
-			// Accessing the skin locations to load in skin
 			tabEntries[i].first.skinTextures
 		}
 	}
@@ -40,7 +41,6 @@ object MapUpdate {
 						colorPrefix = second.string.substringBefore(name, "f").last()
 						this.name = name
 						icon = "icon-$iconNum"
-						println("$name with $icon")
 					}
 					iconNum++
 				}
@@ -122,7 +122,7 @@ object MapUpdate {
 				if (mapTile.state.ordinal < room.state.ordinal) {
 					PlayerTracker.roomStateChange(room, room.state, mapTile.state)
 					if (room is Room && room.data.type == RoomType.BLOOD && mapTile.state == RoomState.GREEN) {
-						RunInformation.bloodDone = true
+						ScoreCalculation.bloodCleared = true
 					}
 					room.state = mapTile.state
 				}
@@ -144,7 +144,7 @@ object MapUpdate {
 						if (room.opened) {
 							room.opened = false
 						}
-					} else if (!room.opened && MC.world?.isChunkLoaded(room.x shr 4, room.z shr 4) == true &&
+					} else if (!room.opened && MC.world?.getChunk(room.x shr 4, room.z shr 4) !is EmptyChunk &&
 						MC.world?.getBlockState(BlockPos(room.x, 69, room.z))?.block == Blocks.AIR
 					) {
 						room.opened = true

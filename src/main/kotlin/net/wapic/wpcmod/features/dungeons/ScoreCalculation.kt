@@ -79,7 +79,7 @@ object ScoreCalculation : SimpleHudElement(
 	private var completedRooms = 0
 	private var clearedPercentage = 0
 	private val totalRoomMap = mutableMapOf<Int, Int>()
-	private var bloodCleared = false
+	var bloodCleared = false
 
 	private val roomClearPercentage: Double
 		get() {
@@ -138,7 +138,7 @@ object ScoreCalculation : SimpleHudElement(
 		}
 
 	// Bonus
-	private var mimicFound = false
+	var mimicFound = false
 	private var isPaul = false
 		get() = if(config.assumePaul) true else field
 	private var princeKilled = false

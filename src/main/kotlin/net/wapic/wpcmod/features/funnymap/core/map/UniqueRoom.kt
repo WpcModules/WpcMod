@@ -2,9 +2,10 @@ package net.wapic.wpcmod.features.funnymap.core.map
 
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.features.funnymap.dungeon.Dungeon
-import net.wapic.wpcmod.features.funnymap.dungeon.MapRender
 
 class UniqueRoom(arrX: Int, arrY: Int, room: Room) {
+	private val config get() = WpcMod.config.funnyMap
+
 	var name: String
 	var topLeft = Pair(arrX, arrY)
 	private var center = Pair(arrX, arrY)
@@ -13,31 +14,21 @@ class UniqueRoom(arrX: Int, arrY: Int, room: Room) {
 	val tiles = mutableListOf(room to Pair(arrX, arrY))
 	var hasMimic = false
 
-	val config get() = WpcMod.config.funnyMap
-
 	init {
 		if (room.data.name == "Unknown") {
 			name = "Unknown_${arrX}_${arrY}"
 		} else {
 			name = room.data.name
-			init(arrX, arrY, room)
+			init(room)
 		}
 		room.uniqueRoom = this
 		Dungeon.Info.uniqueRooms.add(this)
-		println("added unique room $name")
 	}
 
-	fun init(arrX: Int, arrY: Int, room: Room) {
+	fun init(room: Room) {
 		Dungeon.Info.cryptCount += room.data.crypts
 		Dungeon.Info.secretCount += room.data.secrets
 		when (room.data.type) {
-			RoomType.ENTRANCE -> MapRender.dynamicRotation = when {
-				arrY == 0 -> 180f
-				arrX == 0 -> -90f
-				arrX > arrY -> 90f
-				else -> 0f
-			}
-
 			RoomType.TRAP -> Dungeon.Info.trapType = room.data.name.split(" ")[0]
 			RoomType.PUZZLE -> Puzzle.fromName(room.data.name)?.let { Dungeon.Info.puzzles.putIfAbsent(it, false) }
 
@@ -64,7 +55,7 @@ class UniqueRoom(arrX: Int, arrY: Int, room: Room) {
 	private fun addToTiles(x: Int, y: Int, tile: Room) {
 		if (mainRoom.data.name == "Unknown") {
 			if (tile.data.name != "Unknown") {
-				init(x, y, tile)
+				init(tile)
 				name = tile.data.name
 				mainRoom.data = tile.data
 			}

@@ -11,20 +11,20 @@ import net.wapic.wpcmod.util.render.RenderUtils
 
 object WitherDoorESP {
 
-	val config get() = WpcMod.config.funnyMap
+	val config get() = WpcMod.config.dungeon.esp.witherDoor
 
 	fun init() {
 		WorldRenderEvents.END.register(::onRenderWorld)
 	}
 
 	fun onRenderWorld(worldRenderContext: WorldRenderContext) {
-		if (!inDungeons || DungeonUtils.isBossSpawned() || !config.witherDoorESP) return
-		val color = if (Dungeon.Info.keys > 0) config.witherDoorKeyColor else config.witherDoorNoKeyColor
+		if (!inDungeons || DungeonUtils.isBossSpawned() || !config.box) return
+		val color = (if (Dungeon.Info.keys > 0) config.hasKeyColor else config.noKeyColor).getEffectiveColour()
 
 		Dungeon.espDoors.forEach { door ->
 			if (door.state == RoomState.UNDISCOVERED) return@forEach
 			val box = Box(door.x - 1.0, 69.0, door.z - 1.0, door.x + 2.0, 73.0, door.z + 2.0)
-			RenderUtils.drawBoundingBox(worldRenderContext, box, color.getEffectiveColour())
+			RenderUtils.drawBoundingBox(worldRenderContext, box, color)
 		}
 	}
 }

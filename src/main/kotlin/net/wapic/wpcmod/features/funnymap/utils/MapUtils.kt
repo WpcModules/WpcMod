@@ -49,8 +49,10 @@ object MapUtils {
 				mapData = FilledMapItem.getMapState(packet.mapId, MC.world)
 			}
 
-			packet.apply(mapData)
-			mapDataUpdated = true
+			mapData?.let {
+				packet.apply(mapData)
+				mapDataUpdated = true
+			}
 		}
 	}
 

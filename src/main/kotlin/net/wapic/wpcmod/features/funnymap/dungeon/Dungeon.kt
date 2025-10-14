@@ -53,7 +53,7 @@ object Dungeon {
 
 		if (shouldSearchMimic()) {
 			MimicDetector.findMimic()?.let {
-				if (FunnyConfig.scanChatInfo) ChatUtils.sendMessage("&7Mimic Room: &c$it")
+				if (FunnyConfig.scanChatInfo) ChatUtils.sendMessage("§7Mimic Room: §c$it")
 				Info.mimicFound = true
 			}
 		}
@@ -71,11 +71,8 @@ object Dungeon {
 			MimicDetector.checkMimicDead()
 		}
 
-		ScoreCalculation.updateScore()
-
 		TabList.getDungeonTabList()?.let {
 			MapUpdate.updatePlayers(it)
-			RunInformation.updatePuzzleCount(it)
 		}
 
 		if (DungeonScan.shouldScan) {
@@ -116,7 +113,6 @@ object Dungeon {
 		MapUtils.calibrated = false
 		MapUtils.mapData = null
 		DungeonScan.hasScanned = false
-		RunInformation.reset()
 	}
 
 	private fun shouldSearchMimic() = !Info.mimicFound && !FunnyConfig.legitMode && isMimicFloor

@@ -11,14 +11,13 @@ import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.equalsOneOf
-import kotlin.math.ceil
 
 /**
  * Handles everything related to scanning the dungeon. Running [scan] will update the instance of [Dungeon].
  */
 object DungeonScan {
 
-	val FunnyConfig get() = WpcMod.config.funnyMap
+	private val config get() = WpcMod.config.funnyMap
 
 	/**
 	 * The size of each dungeon room in blocks.
@@ -36,12 +35,11 @@ object DungeonScan {
 	var hasScanned = false
 
 	val shouldScan: Boolean
-		get() = FunnyConfig.autoScan && !isScanning && !hasScanned && System.currentTimeMillis() - lastScanTime >= 250 && DungeonUtils.currentFloor != DungeonUtils.DungeonFloor.NONE
+		get() = config.autoScan && !isScanning && !hasScanned && System.currentTimeMillis() - lastScanTime >= 250 && DungeonUtils.currentFloor != DungeonUtils.DungeonFloor.NONE
 
 	fun scan() {
 		isScanning = true
 		var allChunksLoaded = true
-		var prev: Tile? = null
 
 		// Scans the dungeon in a 11x11 grid.
 		for (x in 0..10) {
@@ -60,6 +58,7 @@ object DungeonScan {
 				if (hasBeenScanned) continue
 
 				scanRoom(xPos, zPos, z, x)?.let {
+					val prev = Dungeon.Info.dungeonList[z * 11 + x]
 					if (it is Room) {
 						if ((prev as? Room)?.uniqueRoom != null) {
 							prev.uniqueRoom?.addTile(x, z, it)
@@ -69,7 +68,6 @@ object DungeonScan {
 						MapUpdate.roomAdded = true
 					}
 					Dungeon.Info.dungeonList[x + z * 11] = it
-					prev = it
 				}
 			}
 		}
@@ -79,13 +77,7 @@ object DungeonScan {
 		}
 
 		if (allChunksLoaded) {
-			if (FunnyConfig.scanChatInfo) {
-				val maxSecrets = ceil(Dungeon.Info.secretCount * ScoreCalculation.getSecretPercent())
-				var maxBonus = 5
-				if (Dungeon.isMimicFloor) maxBonus += 2
-				if (ScoreCalculation.paul) maxBonus += 10
-				val minSecrets = ceil(maxSecrets * (40 - maxBonus) / 40).toInt()
-
+			if (config.scanChatInfo) {
 				val lines = mutableListOf(
 					"§aScan Finished!",
 					"§aPuzzles (§c${Dungeon.Info.puzzles.size}§a):",
@@ -97,7 +89,7 @@ object DungeonScan {
 					"§8Wither Doors: §7${Dungeon.Info.witherDoors - 1}",
 					"§7Total Crypts: §6${Dungeon.Info.cryptCount}",
 					"§7Total Secrets: §b${Dungeon.Info.secretCount}",
-					"§7Minimum Secrets: §e${minSecrets}"
+					"§aUnique Rooms: §e${Dungeon.Info.uniqueRooms.joinToString { it.name}}"
 				)
 				ChatUtils.sendMessage(lines.joinToString(separator = "\n"))
 			}
@@ -111,7 +103,7 @@ object DungeonScan {
 
 	private fun scanRoom(x: Int, z: Int, row: Int, column: Int): Tile? {
 		val height = MC.world?.getChunk(x shr 4, z shr 4)?.sampleHeightmap(Heightmap.Type.WORLD_SURFACE_WG, x, z)
-		if (height == 0) return null
+		if (height == -1) return null
 
 		val rowEven = row and 1 == 0
 		val columnEven = column and 1 == 0
