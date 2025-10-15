@@ -27,4 +27,6 @@ object MC {
 	inline val screenName get() = screen?.title?.string
 	inline val textureManager get() = instance.textureManager
 	inline val resourceManager get() = instance.resourceManager
+	inline val interactionManager get() = instance.interactionManager
+	inline val mouse get() = instance.mouse
 }

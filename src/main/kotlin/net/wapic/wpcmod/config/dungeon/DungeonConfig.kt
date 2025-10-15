@@ -62,4 +62,7 @@ class DungeonConfig {
 
 	@Category(name = "ESP", desc = "Configure ESP on Dungeon mobs")
 	var esp: ESPConfig = ESPConfig()
+
+	@Category(name = "Floor 7", desc = "Floor 7 Features")
+	var floor7: Floor7Config = Floor7Config()
 }

@@ -9,6 +9,7 @@ import net.minecraft.util.Util
 import net.minecraft.util.math.ChunkPos
 import net.minecraft.world.chunk.WorldChunk
 import net.wapic.wpcmod.WpcMod
+import java.util.Locale
 import kotlin.math.max
 
 object Utils {
@@ -20,6 +21,7 @@ object Utils {
 	private var location: Island? = null
 
 	fun Any?.equalsOneOf(vararg other: Any): Boolean = other.any { this == it }
+	fun Number.toFixed(decimals: Int = 2): String = "%.${decimals}f".format(Locale.ENGLISH, this)
 
 	fun init() {
 		ClientTickEvents.END_CLIENT_TICK.register { onTick() }

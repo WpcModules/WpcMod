@@ -29,6 +29,11 @@ import net.wapic.wpcmod.features.dungeons.AutoCloseChests
 import net.wapic.wpcmod.features.dungeons.DungeonAutoGFS
 import net.wapic.wpcmod.features.dungeons.DungeonESP
 import net.wapic.wpcmod.features.dungeons.ScoreCalculation
+import net.wapic.wpcmod.features.dungeons.floor7.ArrowAlign
+import net.wapic.wpcmod.features.dungeons.floor7.InactiveWaypoints
+import net.wapic.wpcmod.features.dungeons.floor7.MelodyMessage
+import net.wapic.wpcmod.features.dungeons.floor7.TerminalSolver
+import net.wapic.wpcmod.features.dungeons.floor7.TickTimers
 import net.wapic.wpcmod.features.end.EndESP
 import net.wapic.wpcmod.features.fishing.AutoFish
 import net.wapic.wpcmod.features.entity.MobGlow
@@ -93,6 +98,7 @@ object WpcMod : ModInitializer {
 					.then(ShortcutsCommand.getCommand())
 					.then(TagCommand.getCommand())
 					.then(FreecamCommand.getCommand())
+					.then(TermSimCommand.getCommand())
 			)
 
 			dispatcher.register(ClientCommandManager.literal("wpcmod").redirect(mainCommand))
@@ -142,6 +148,11 @@ object WpcMod : ModInitializer {
 		DungeonAutoGFS()
 		ScoreCalculation.init()
 		DungeonESP()
+		TickTimers.init()
+		TerminalSolver.init()
+		MelodyMessage.init()
+		InactiveWaypoints.init()
+		ArrowAlign.init()
 
 		// Kuudra
 		KuudraDisplay()

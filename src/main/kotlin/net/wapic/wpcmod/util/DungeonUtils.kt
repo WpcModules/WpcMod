@@ -10,6 +10,7 @@ import net.wapic.wpcmod.events.PlayerListChangeEvent
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.util.ChatUtils.removeFormatting
+import net.wapic.wpcmod.util.Utils.equalsOneOf
 
 object DungeonUtils {
 	private const val DUNGEON_START_MESSAGE: String =
@@ -53,6 +54,7 @@ object DungeonUtils {
 
 		if (message.string.removeFormatting().trim() == DUNGEON_END_MESSAGE) {
 			WpcMod.logger.debug("Dungeon Ended")
+			bossSpawned = false
 			DungeonEvents.END.invoker().onEnd()
 		}
 
@@ -132,6 +134,36 @@ object DungeonUtils {
 
 	fun isBossSpawned(): Boolean {
 		return bossSpawned
+	}
+
+	fun getF7Phase(): F7Phase {
+		if ((!currentFloor.equalsOneOf(DungeonFloor.FLOOR_7, DungeonFloor.MASTER_MODE_FLOOR_7) || !bossSpawned) && Utils.getLocation() == Island.DUNGEON) return F7Phase.UNKNOWN
+
+		with(MC.player ?: return F7Phase.UNKNOWN) {
+			return when {
+				y > 210 -> F7Phase.MAXOR
+				y > 155 -> F7Phase.STORM
+				y > 100 -> F7Phase.GOLDOR
+				y > 45 -> F7Phase.NECRON
+				else -> F7Phase.WITHER_KING
+			}
+		}
+	}
+
+	enum class F7Phase(val stateName: String) {
+		MAXOR("P1"),
+		STORM("P2"),
+		GOLDOR("P3"),
+		NECRON("P4"),
+		WITHER_KING("P5"),
+		UNKNOWN("UNKNOWN");
+
+
+		companion object {
+			fun fromStateName(stateName: String): F7Phase {
+				return entries.find { it.stateName == stateName} ?: UNKNOWN
+			}
+		}
 	}
 
 	enum class DungeonFloor(val shortName: String) {

@@ -5,6 +5,8 @@ import com.google.gson.GsonBuilder
 import moe.nea.jarvis.api.JarvisScalable
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.features.dungeons.ScoreCalculation
+import net.wapic.wpcmod.features.dungeons.floor7.InactiveWaypoints
+import net.wapic.wpcmod.features.dungeons.floor7.TickTimers
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
@@ -20,6 +22,8 @@ object JarvisManager {
 
 	val hudElements = listOf<JarvisScalable>(
 		ScoreCalculation,
+		InactiveWaypoints,
+		TickTimers
 	)
 
 	private fun readFile(): String = try {
