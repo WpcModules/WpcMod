@@ -25,6 +25,6 @@ object TabList {
 	}
 
 	fun getDungeonTabList(): List<Pair<PlayerListEntry, Text>>? {
-		return getTabList().let { if (it.size > 18 && it[0].second.contains(Text.literal("Party ("))) it else null }
+		return getTabList().let { if (it.size > 18 && it[0].second.string.contains("Party (")) it else null }
 	}
 }
