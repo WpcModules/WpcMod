@@ -106,66 +106,66 @@ class FunnyConfig {
 
 		@ConfigOption(name = "Blood Door", desc = "blood door color")
 		@ConfigEditorColour
-		var colorBloodDoor = ChromaColour(1f, 1f, 1f, 0, 255)
+		var colorBloodDoor = ChromaColour.fromRGB(255, 0, 0, 0, 255)
 
 		@ConfigOption(name = "Entrance Door", desc = "entranceDoor color")
 		@ConfigEditorColour
-		var colorEntranceDoor = ChromaColour(1f, 1f, 1f, 0, 255)
+		var colorEntranceDoor = ChromaColour.fromRGB(0, 255, 0, 0, 255)
 
 		@ConfigOption(name = "Normal Door", desc = "normal door color")
 		@ConfigEditorColour
-		var colorRoomDoor = ChromaColour(1f, 1f, 1f, 0, 255)
+		var colorRoomDoor = ChromaColour.fromRGB(165, 80, 0, 0, 255)
 
 		@ConfigOption(name = "Wither Door", desc = "wither door color")
 		@ConfigEditorColour
-		var colorWitherDoor = ChromaColour(1f, 1f, 1f, 0, 255)
+		var colorWitherDoor = ChromaColour.fromRGB(10, 10, 10, 0, 255)
 
 		@ConfigOption(name = "Opened Wither Door", desc = "opened wither door color")
 		@ConfigEditorColour
-		var colorOpenWitherDoor = ChromaColour(1f, 1f, 1f, 0, 255)
+		var colorOpenWitherDoor = ChromaColour.fromRGB(10, 10, 10, 0, 255)
 
 		@ConfigOption(name = "Unopened Door", desc = "unopened door color")
 		@ConfigEditorColour
-		var colorUnopenedDoor = ChromaColour(1f, 1f, 1f, 0, 255)
+		var colorUnopenedDoor = ChromaColour.fromRGB(85, 85, 85, 0, 255)
 
 		@ConfigOption(name = "Blood Room", desc = "blood room color")
 		@ConfigEditorColour
-		var colorBlood = ChromaColour(1f, 1f, 1f, 0, 255)
+		var colorBlood = ChromaColour.fromRGB(255, 0, 0, 0, 255)
 
 		@ConfigOption(name = "Entrance Room", desc = "Entrance Room color")
 		@ConfigEditorColour
-		var colorEntrance = ChromaColour(1f, 1f, 1f, 0, 255)
+		var colorEntrance = ChromaColour.fromRGB(0, 255, 0, 0, 255)
 
 		@ConfigOption(name = "Fairy Room", desc = "Fairy Room color")
 		@ConfigEditorColour
-		var colorFairy = ChromaColour(1f, 1f, 1f, 0, 255)
+		var colorFairy = ChromaColour.fromRGB(255, 100, 255, 0, 255)
 
 		@ConfigOption(name = "Miniboss Room", desc = "miniboss room color")
 		@ConfigEditorColour
-		var colorMiniboss = ChromaColour(1f, 1f, 1f, 0, 255)
+		var colorMiniboss = ChromaColour.fromRGB(255, 225, 0, 0, 255)
 
 		@ConfigOption(name = "Normal Room", desc = "Normal Room color")
 		@ConfigEditorColour
-		var colorRoom = ChromaColour(1f, 1f, 1f, 0, 255)
+		var colorRoom = ChromaColour.fromRGB(165, 80, 0, 0, 255)
 
 		@ConfigOption(name = "Mimic Room", desc = "mimic room color")
 		@ConfigEditorColour
-		var colorRoomMimic = ChromaColour(1f, 1f, 1f, 0, 255)
+		var colorRoomMimic = ChromaColour.fromRGB(255, 85, 85, 0, 255)
 
 		@ConfigOption(name = "Puzzle Room", desc = "Puzzle Room color")
 		@ConfigEditorColour
-		var colorPuzzle = ChromaColour(1f, 1f, 1f, 0, 255)
+		var colorPuzzle = ChromaColour.fromRGB(155, 0, 255, 0, 255)
 
 		@ConfigOption(name = "Rare Room", desc = "rare room color")
 		@ConfigEditorColour
-		var colorRare = ChromaColour(1f, 1f, 1f, 0, 255)
+		var colorRare = ChromaColour.fromRGB(0, 255, 255, 0, 255)
 
 		@ConfigOption(name = "Trap Room", desc = "Trap Room Color")
 		@ConfigEditorColour
-		var colorTrap = ChromaColour(1f, 1f, 1f, 0, 255)
+		var colorTrap = ChromaColour.fromRGB(255, 125, 0, 0, 255)
 
 		@ConfigOption(name = "Unopened Room", desc = "Unopened Room color")
 		@ConfigEditorColour
-		var colorUnopened = ChromaColour(1f, 1f, 1f, 0, 255)
+		var colorUnopened = ChromaColour.fromRGB(85, 85, 85, 0, 255)
 	}
 }
