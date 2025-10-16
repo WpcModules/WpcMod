@@ -64,11 +64,11 @@ class FunnyConfig {
 
 	@ConfigOption(name = "Map Background Color", desc = "background color")
 	@ConfigEditorColour
-	var mapBackground = ChromaColour(1f, 1f, 1f, 0, 100)
+	var mapBackground = ChromaColour.fromRGB(90, 90, 90, 0, 100)
 
 	@ConfigOption(name = "Map Border Color", desc = "border color")
 	@ConfigEditorColour
-	var mapBorder = ChromaColour(1f, 1f, 1f, 0, 100)
+	var mapBorder = ChromaColour.fromRGB(255, 255, 255, 0, 100)
 
 	@ConfigOption(name = "Dark Undiscovered Rooms", desc = "Darkens unentered rooms.")
 	@ConfigEditorBoolean
