@@ -6,6 +6,7 @@ import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.block.entity.ChestBlockEntity
 import net.minecraft.entity.mob.ZombieEntity
 import net.minecraft.util.math.BlockPos
+import net.wapic.wpcmod.events.BlockEvents
 import net.wapic.wpcmod.features.dungeons.ScoreCalculation
 import net.wapic.wpcmod.features.funnymap.dungeon.ScanUtils.getRoomFromPos
 import net.wapic.wpcmod.util.MC
@@ -16,6 +17,10 @@ object MimicDetector {
 	var mimicOpenTime = 0L
 	var mimicPos: BlockPos? = null
 
+	fun init() {
+		BlockEvents.CHANGE.register(::onBlockChange)
+	}
+
 	fun onBlockChange(pos: BlockPos, old: BlockState, new: BlockState) {
 		if (old.block == Blocks.TRAPPED_CHEST && new.block == Blocks.AIR) {
 			mimicOpenTime = System.currentTimeMillis()
@@ -24,7 +29,7 @@ object MimicDetector {
 	}
 
 	fun checkMimicDead() {
-		if (mimicOpenTime == 0L) return
+		if (mimicOpenTime == 0L || ScoreCalculation.mimicFound) return
 		if (System.currentTimeMillis() - mimicOpenTime < 750) return
 
 		val playerDistanceFromMimic = MC.player?.squaredDistanceTo(mimicPos?.toCenterPos()) ?: return
