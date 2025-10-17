@@ -1,26 +1,17 @@
-package net.wapic.wpcmod.features.funnymap.utils
+package net.wapic.wpcmod.features.dungeons.funnymap.utils
 
 import net.minecraft.item.FilledMapItem
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
-import net.minecraft.item.map.MapDecoration
 import net.minecraft.item.map.MapState
 import net.minecraft.network.packet.s2c.play.MapUpdateS2CPacket
-import net.wapic.wpcmod.features.funnymap.dungeon.DungeonScan
+import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.DungeonScan
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.DungeonUtils.inDungeons
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 
 object MapUtils {
-	val MapDecoration.mapX
-		get() = (x + 128) shr 1
-
-	val MapDecoration.mapZ
-		get() = (z + 128) shr 1
-
-	val MapDecoration.yaw
-		get() = rotation * 22.5f
 
 	var mapData: MapState? = null
 	var startCorner = Pair(5, 5)

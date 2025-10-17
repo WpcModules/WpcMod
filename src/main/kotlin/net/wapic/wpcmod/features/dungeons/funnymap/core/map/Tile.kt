@@ -1,4 +1,4 @@
-package net.wapic.wpcmod.features.funnymap.core.map
+package net.wapic.wpcmod.features.dungeons.funnymap.core.map
 
 import java.awt.Color
 

@@ -1,60 +1,42 @@
-package net.wapic.wpcmod.features.funnymap.ui
+package net.wapic.wpcmod.features.dungeons.funnymap.ui
 
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
-import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback
-import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.option.KeyBinding
 import net.minecraft.client.render.RenderTickCounter
 import net.minecraft.client.util.InputUtil
-import net.minecraft.text.Text
-import net.minecraft.util.Identifier
 import net.minecraft.util.math.RotationAxis
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.features.funnymap.core.DungeonPlayer
-import net.wapic.wpcmod.features.funnymap.core.map.Door
-import net.wapic.wpcmod.features.funnymap.core.map.Room
-import net.wapic.wpcmod.features.funnymap.core.map.RoomState
-import net.wapic.wpcmod.features.funnymap.core.map.RoomType
-import net.wapic.wpcmod.features.funnymap.core.map.Unknown
-import net.wapic.wpcmod.features.funnymap.dungeon.Dungeon
-import net.wapic.wpcmod.features.funnymap.dungeon.DungeonScan
-import net.wapic.wpcmod.features.funnymap.utils.MapUtils
-import net.wapic.wpcmod.features.funnymap.utils.MapUtils.CONNECTOR_SIZE
-import net.wapic.wpcmod.features.funnymap.utils.MapUtils.halfRoomSize
-import net.wapic.wpcmod.features.funnymap.utils.MapUtils.roomSize
+import net.wapic.wpcmod.features.dungeons.funnymap.core.DungeonPlayer
+import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Door
+import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Room
+import net.wapic.wpcmod.features.dungeons.funnymap.core.map.RoomState
+import net.wapic.wpcmod.features.dungeons.funnymap.core.map.RoomType
+import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Unknown
+import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.DungeonScan
+import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
+import net.wapic.wpcmod.features.dungeons.funnymap.ui.MapRenderer.darken
+import net.wapic.wpcmod.features.dungeons.funnymap.ui.MapRenderer.grayScale
+import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils
+import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils.CONNECTOR_SIZE
+import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils.halfRoomSize
+import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils.roomSize
 import net.wapic.wpcmod.jarvis.SimpleHudElement
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.equalsOneOf
-import net.wapic.wpcmod.util.render.RenderUtils2D
-import net.wapic.wpcmod.util.render.RenderUtils2D.darken
-import net.wapic.wpcmod.util.render.RenderUtils2D.grayScale
 import java.awt.Color
 import kotlin.collections.component1
 import kotlin.collections.component2
 
-object MapElement : SimpleHudElement(
-	text = Text.literal("Dungeon Map"),
-	w = 128,
-	h = 128
-) {
+object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 
 	private val legitPeekBind: KeyBinding = KeyBindingHelper.registerKeyBinding(KeyBinding("Legit Peek", InputUtil.GLFW_KEY_J, "WpcMod"))
-	val config get() = WpcMod.config.funnyMap
+	val config get() = WpcMod.config.dungeon.funnyMap
 
 	val legitRender: Boolean get() = config.legitMode && !legitPeekBind.isPressed
 
-	fun init() {
-		HudLayerRegistrationCallback.EVENT.register { layeredDrawer ->
-			layeredDrawer.attachLayerBefore(
-				IdentifiedLayer.DEMO_TIMER,
-				IdentifiedLayer.of(Identifier.of("wpcmod", "dungeon_map"), ::render)
-			)
-		}
-	}
-
-	fun render(drawContext: DrawContext, tickCounter: RenderTickCounter) {
+	override fun render(drawContext: DrawContext, renderTickCounter: RenderTickCounter) {
 		if (!isActive) return
 		val player = MC.player ?: return
 		val matrixStack = drawContext.matrices
@@ -114,14 +96,14 @@ object MapElement : SimpleHudElement(
 				xPos += xStep
 				xStep = if (xEven) roomSize else CONNECTOR_SIZE
 
-				val tile = Dungeon.Info.dungeonList[y * 11 + x]
+				val tile = FunnyMap.Info.dungeonList[y * 11 + x]
 				if (tile is Unknown) continue
 				if (legitRender && tile.state == RoomState.UNDISCOVERED) continue
 
 				var color = tile.color
 
 				if (tile.state.equalsOneOf(RoomState.UNDISCOVERED, RoomState.UNOPENED) &&
-					!legitRender && Dungeon.Info.startTime != 0L
+					!legitRender && FunnyMap.Info.startTime != 0L
 				) {
 					if (config.mapDarkenUndiscovered) {
 						color = color.darken(1 - config.mapDarkenPercent)
@@ -156,7 +138,7 @@ object MapElement : SimpleHudElement(
 		matrixStack.push()
 		matrixStack.translate(MapUtils.startCorner.first.toFloat(), MapUtils.startCorner.second.toFloat(), 0f)
 
-		Dungeon.Info.uniqueRooms.forEach { unique ->
+		FunnyMap.Info.uniqueRooms.forEach { unique ->
 			val room = unique.mainRoom
 			if (legitRender && room.state.equalsOneOf(RoomState.UNDISCOVERED, RoomState.UNOPENED)) return@forEach
 			val checkPos = unique.getCheckmarkPosition()
@@ -179,7 +161,7 @@ object MapElement : SimpleHudElement(
 			name.addAll(room.data.name.split(" "))
 
 			// Offset + half of roomsize
-			RenderUtils2D.renderCenteredText(
+			MapRenderer.renderCenteredText(
 				drawContext,
 				name,
 				xOffsetName.toInt() + halfRoomSize,
@@ -188,7 +170,7 @@ object MapElement : SimpleHudElement(
 			)
 
 			if (config.mapCheckmark) {
-				RenderUtils2D.drawCheckmark(drawContext, xOffsetCheck, yOffsetCheck, room.state)
+				MapRenderer.drawCheckmark(drawContext, xOffsetCheck, yOffsetCheck, room.state)
 			}
 		}
 		matrixStack.pop()
@@ -196,16 +178,16 @@ object MapElement : SimpleHudElement(
 
 	fun renderPlayerHeads(drawContext: DrawContext) {
 		try {
-			if (Dungeon.dungeonTeammates.isEmpty()) {
+			if (FunnyMap.dungeonTeammates.isEmpty()) {
 				MC.player?.let {
-					RenderUtils2D.drawPlayerHead(drawContext, it.name.string, DungeonPlayer(it.skinTextures).apply {
+					MapRenderer.drawPlayerHead(drawContext, it.name.string, DungeonPlayer(it.skinTextures).apply {
 						yaw = it.yaw
 					})
 				}
 			} else {
-				Dungeon.dungeonTeammates.forEach { (name, teammate) ->
+				FunnyMap.dungeonTeammates.forEach { (name, teammate) ->
 					if (!teammate.dead) {
-						RenderUtils2D.drawPlayerHead(drawContext, name, teammate)
+						MapRenderer.drawPlayerHead(drawContext, name, teammate)
 					}
 				}
 			}

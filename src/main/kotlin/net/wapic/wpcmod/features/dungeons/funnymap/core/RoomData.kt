@@ -1,6 +1,6 @@
-package net.wapic.wpcmod.features.funnymap.core
+package net.wapic.wpcmod.features.dungeons.funnymap.core
 
-import net.wapic.wpcmod.features.funnymap.core.map.RoomType
+import net.wapic.wpcmod.features.dungeons.funnymap.core.map.RoomType
 
 data class RoomData(
 	val name: String,

@@ -1,10 +1,10 @@
-package net.wapic.wpcmod.features.funnymap.core
+package net.wapic.wpcmod.features.dungeons.funnymap.core
 
 import net.minecraft.client.util.SkinTextures
 import net.minecraft.entity.player.PlayerEntity
-import net.wapic.wpcmod.features.funnymap.core.map.Room
-import net.wapic.wpcmod.features.funnymap.dungeon.Dungeon
-import net.wapic.wpcmod.features.funnymap.utils.MapUtils
+import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Room
+import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
+import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils
 import net.wapic.wpcmod.util.DungeonUtils
 
 data class DungeonPlayer(val skin: SkinTextures) {
@@ -46,6 +46,6 @@ data class DungeonPlayer(val skin: SkinTextures) {
 		if (DungeonUtils.isBossSpawned()) return "Boss"
 		val x = (mapX - MapUtils.startCorner.first) / (MapUtils.roomSize + MapUtils.CONNECTOR_SIZE)
 		val z = (mapZ - MapUtils.startCorner.second) / (MapUtils.roomSize + MapUtils.CONNECTOR_SIZE)
-		return (Dungeon.Info.dungeonList.getOrNull(x * 2 + z * 22) as? Room)?.data?.name ?: "Error"
+		return (FunnyMap.Info.dungeonList.getOrNull(x * 2 + z * 22) as? Room)?.data?.name ?: "Error"
 	}
 }

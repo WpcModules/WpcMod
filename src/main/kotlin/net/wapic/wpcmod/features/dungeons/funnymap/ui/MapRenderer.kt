@@ -1,31 +1,31 @@
-package net.wapic.wpcmod.util.render
+package net.wapic.wpcmod.features.dungeons.funnymap.ui
 
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.render.RenderLayer
-import net.minecraft.util.Identifier
 import net.minecraft.util.math.RotationAxis
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.dungeon.FunnyConfig
-import net.wapic.wpcmod.features.funnymap.core.DungeonPlayer
-import net.wapic.wpcmod.features.funnymap.core.map.RoomState
-import net.wapic.wpcmod.features.funnymap.dungeon.DungeonScan
-import net.wapic.wpcmod.features.funnymap.utils.MapUtils
+import net.wapic.wpcmod.features.dungeons.funnymap.core.DungeonPlayer
+import net.wapic.wpcmod.features.dungeons.funnymap.core.map.RoomState
+import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.DungeonScan
+import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils
 import net.wapic.wpcmod.util.ItemUtils.skyBlockID
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.Utils.equalsOneOf
-
+import net.wapic.wpcmod.util.render.drawTexture
 import java.awt.Color
 import kotlin.math.roundToInt
 
-object RenderUtils2D {
+object MapRenderer {
 
-	val config get() = WpcMod.config.funnyMap
+	val config get() = WpcMod.config.dungeon.funnyMap
 
-	private val crossResource = Identifier.of("wpcmod", "dungeon/cross.png")
-	private val greenResource = Identifier.of("wpcmod", "dungeon/green_check.png")
-	private val questionResource = Identifier.of("wpcmod", "dungeon/question.png")
-	private val whiteResource = Identifier.of("wpcmod", "dungeon/white_check.png")
-	private val mapIcons = Identifier.of("wpcmod", "dungeon/marker.png")
+	private val crossResource = Utils.modIdentifier("dungeon/cross.png")
+	private val greenResource = Utils.modIdentifier("dungeon/green_check.png")
+	private val questionResource = Utils.modIdentifier("dungeon/question.png")
+	private val whiteResource = Utils.modIdentifier("dungeon/white_check.png")
+	private val mapIcons = Utils.modIdentifier("dungeon/marker.png")
 
 	val axis: RotationAxis = RotationAxis.POSITIVE_Z
 
@@ -39,7 +39,7 @@ object RenderUtils2D {
 		matrixStack.scale(config.textScale, config.textScale, 1f)
 
 		if (config.mapRotate) {
-			matrixStack.multiply(axis.rotationDegrees(player.yaw+180f))
+			matrixStack.multiply(axis.rotationDegrees(player.yaw + 180f))
 		}
 
 		val tr = MC.textRenderer
@@ -83,17 +83,15 @@ object RenderUtils2D {
 	}
 
 	fun drawPlayerHead(drawContext: DrawContext, name: String, player: DungeonPlayer) {
-		val yaw = MC.player?.yaw ?: return
 		val matrixStack = drawContext.matrices
 		matrixStack.push()
-
 		try {
 			// Translates to the player's location which is updated every tick.
 			if (player.isPlayer || name == MC.player?.name?.string) {
 				MC.player?.let {
 					matrixStack.translate(
-						(it.pos.x - DungeonScan.START_X + 15) * MapUtils.coordMultiplier + MapUtils.startCorner.first,
-						(it.pos.z - DungeonScan.START_Z + 15) * MapUtils.coordMultiplier + MapUtils.startCorner.second,
+						(it.pos.x - DungeonScan.START_X + 13) * MapUtils.coordMultiplier + MapUtils.startCorner.first,
+						(it.pos.z - DungeonScan.START_Z + 13) * MapUtils.coordMultiplier + MapUtils.startCorner.second,
 						0.0
 					)
 				}
@@ -101,10 +99,8 @@ object RenderUtils2D {
 				matrixStack.translate(player.mapX.toFloat(), player.mapZ.toFloat(), 0f)
 			}
 
-			matrixStack.push()
-			matrixStack.translate(-2f, -2f, 0f)
 			matrixStack.scale(config.playerHeadScale, config.playerHeadScale, 1f)
-			matrixStack.multiply(axis.rotationDegrees(yaw + 180f))
+			matrixStack.multiply(axis.rotationDegrees(player.yaw + 180))
 
 			if (config.mapVanillaMarker && (player.isPlayer || name == MC.player?.name?.string)) {
 				drawContext.drawTexture(mapIcons, -4, -4, 0f, 0f, 8, 8, 8, 8)
@@ -119,7 +115,7 @@ object RenderUtils2D {
 				(config.playerHeads == FunnyConfig.PlayerNameType.HOLDING_LEAP && MC.heldItem.skyBlockID.equalsOneOf("SPIRIT_LEAP", "INFINITE_SPIRIT_LEAP", "HAUNT_ABILITY"))
 				) {
 				if(!config.mapRotate) {
-					matrixStack.multiply(axis.rotationDegrees(-yaw + 180f))
+					matrixStack.multiply(axis.rotationDegrees(-player.yaw + 180f))
 				}
 				matrixStack.translate(0f, config.playerHeadScale * 4f, 0f)
 				matrixStack.scale(config.playerNameScale, config.playerNameScale, 1f)
@@ -132,7 +128,6 @@ object RenderUtils2D {
 					true
 				)
 			}
-			matrixStack.pop()
 
 		} catch (e: Exception) {
 			e.printStackTrace()

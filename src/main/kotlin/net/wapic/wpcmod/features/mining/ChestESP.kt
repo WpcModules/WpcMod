@@ -7,7 +7,8 @@ import net.minecraft.util.math.Box
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.Utils
-import net.wapic.wpcmod.util.render.RenderUtils
+import net.wapic.wpcmod.util.render.RenderUtils.drawBoundingBox
+import net.wapic.wpcmod.util.render.RenderUtils.drawTracer
 
 class ChestESP {
 
@@ -32,9 +33,9 @@ class ChestESP {
 			val chest = Box.of(block.pos.toCenterPos(), 1.0, 1.0, 1.0)
 
 			if (config.box)
-				RenderUtils.drawBoundingBox(worldRenderContext, chest, config.color.getEffectiveColour())
+				worldRenderContext.drawBoundingBox(chest, config.color.getEffectiveColour())
 			if (config.tracer)
-				RenderUtils.drawTracer(worldRenderContext, chest.center, config.color.getEffectiveColour())
+				worldRenderContext.drawTracer(chest.center, config.color.getEffectiveColour())
 		}
 	}
 }

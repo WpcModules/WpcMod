@@ -62,4 +62,7 @@ class DungeonConfig {
 
 	@Category(name = "ESP", desc = "Configure ESP on Dungeon mobs")
 	var esp: ESPConfig = ESPConfig()
+
+	@Category(name = "FunnyMap", desc = "funny map")
+	var funnyMap: FunnyConfig = FunnyConfig()
 }

@@ -23,12 +23,12 @@ enum class Island(val displayName: String = "", val internalName: String = "") {
 
 	companion object {
 
-		fun fromDisplayName(displayName: String): Island? {
-			return entries.find { it.displayName == displayName }
+		fun fromDisplayName(displayName: String): Island {
+			return entries.find { it.displayName == displayName } ?: UNKNOWN
 		}
 
-		fun fromInternalName(internalName: String): Island? {
-			return entries.find { it.internalName == internalName }
+		fun fromInternalName(internalName: String): Island {
+			return entries.find { it.internalName == internalName } ?: UNKNOWN
 		}
 	}
 }

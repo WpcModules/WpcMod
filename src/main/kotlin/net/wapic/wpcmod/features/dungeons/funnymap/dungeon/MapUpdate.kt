@@ -1,4 +1,4 @@
-package net.wapic.wpcmod.features.funnymap.dungeon
+package net.wapic.wpcmod.features.dungeons.funnymap.dungeon
 
 import net.minecraft.block.Blocks
 import net.minecraft.client.network.PlayerListEntry
@@ -6,14 +6,18 @@ import net.minecraft.item.map.MapDecorationTypes
 import net.minecraft.text.Text
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.chunk.EmptyChunk
+import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.features.dungeons.ScoreCalculation
-import net.wapic.wpcmod.features.funnymap.core.DungeonPlayer
-import net.wapic.wpcmod.features.funnymap.core.map.*
-import net.wapic.wpcmod.features.funnymap.utils.MapUtils
-import net.wapic.wpcmod.features.funnymap.utils.MapUtils.mapX
-import net.wapic.wpcmod.features.funnymap.utils.MapUtils.mapZ
-import net.wapic.wpcmod.features.funnymap.utils.MapUtils.yaw
-import net.wapic.wpcmod.features.funnymap.utils.TabList
+import net.wapic.wpcmod.features.dungeons.funnymap.core.DungeonPlayer
+import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Door
+import net.wapic.wpcmod.features.dungeons.funnymap.core.map.DoorType
+import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Room
+import net.wapic.wpcmod.features.dungeons.funnymap.core.map.RoomState
+import net.wapic.wpcmod.features.dungeons.funnymap.core.map.RoomType
+import net.wapic.wpcmod.features.dungeons.funnymap.core.map.UniqueRoom
+import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Unknown
+import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils
+import net.wapic.wpcmod.util.TabListUtil
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 import kotlin.math.roundToInt
@@ -22,21 +26,21 @@ object MapUpdate {
 	var roomAdded = false
 
 	fun preloadHeads() {
-		val tabEntries = TabList.getDungeonTabList() ?: return
+		val tabEntries = TabListUtil.getDungeonTabList() ?: return
 		for (i in listOf(5, 9, 13, 17, 1)) {
 			tabEntries[i].first.skinTextures
 		}
 	}
 
 	fun getPlayers() {
-		val tabEntries = TabList.getDungeonTabList() ?: return
-		Dungeon.dungeonTeammates.clear()
+		val tabEntries = TabListUtil.getDungeonTabList() ?: return
+		FunnyMap.dungeonTeammates.clear()
 		var iconNum = 0
 		for (i in listOf(5, 9, 13, 17, 1)) {
 			with(tabEntries[i]) {
 				val name = second.string.trim().substringAfterLast("] ").split(" ")[0]
 				if (name != "") {
-					Dungeon.dungeonTeammates[name] = DungeonPlayer(first.skinTextures).apply {
+					FunnyMap.dungeonTeammates[name] = DungeonPlayer(first.skinTextures).apply {
 						MC.world?.players?.find { it.name.string == name }?.let { setData(it) }
 						colorPrefix = second.string.substringBefore(name, "f").last()
 						this.name = name
@@ -49,15 +53,15 @@ object MapUpdate {
 	}
 
 	fun updatePlayers(tabEntries: List<Pair<PlayerListEntry, Text>>) {
-		if (Dungeon.dungeonTeammates.isEmpty()) return
+		if (FunnyMap.dungeonTeammates.isEmpty()) return
 		// Update map icons
-		val time = System.currentTimeMillis() - Dungeon.Info.startTime
+		val time = System.currentTimeMillis() - FunnyMap.Info.startTime
 		var iconNum = 0
 		for (i in listOf(5, 9, 13, 17, 1)) {
 			val tabText = tabEntries[i].second.string.trim()
 			val name = tabText.substringAfterLast("] ").split(" ")[0]
-			if (name == "") continue
-			Dungeon.dungeonTeammates[name]?.run {
+			if (name.isEmpty()) continue
+			FunnyMap.dungeonTeammates[name]?.run {
 				dead = tabText.contains("(DEAD)")
 				if (dead) {
 					icon = ""
@@ -82,40 +86,50 @@ object MapUpdate {
 			}
 		}
 
-		val decor = MapUtils.mapData?.decorations ?: return
-		val mcPlayer = MC.player ?: return
+		/*
 		Dungeon.dungeonTeammates.forEach { (name, player) ->
-			decor.find { mapDecoration ->
-				mapDecoration.assetId.toString() == player.icon
-			}?.let { decoration ->
-				player.isPlayer = decoration.type == MapDecorationTypes.PLAYER
-				player.mapX = decoration.mapX
-				player.mapZ = decoration.mapZ
-				player.yaw = decoration.yaw
+			MC.world?.players?.find { it.name.string == name }?.let {
+				player.isPlayer = it.name.string != MC.player?.name?.string
+				player.yaw = it.yaw
+				player.mapX = ((it.pos.x - DungeonScan.START_X + 15) * MapUtils.coordMultiplier + MapUtils.startCorner.first).roundToInt()
+				player.mapZ = ((it.pos.z - DungeonScan.START_Z + 15) * MapUtils.coordMultiplier + MapUtils.startCorner.second).roundToInt()
 			}
-			if (player.isPlayer || name == mcPlayer.name?.string) {
-				player.yaw = mcPlayer.yaw
-				player.mapX =
-					((mcPlayer.pos.x - DungeonScan.START_X + 15) * MapUtils.coordMultiplier + MapUtils.startCorner.first).roundToInt()
-				player.mapZ =
-					((mcPlayer.pos.z - DungeonScan.START_Z + 15) * MapUtils.coordMultiplier + MapUtils.startCorner.second).roundToInt()
+		}
+		 */
+
+
+		val decor = MapUtils.mapData?.decorations ?: return
+
+		decor.forEachIndexed { index, decoration ->
+			val player = FunnyMap.dungeonTeammates.values.first { it.icon == "icon-$index" }
+			player.isPlayer = decoration.type == MapDecorationTypes.FRAME
+			if(player.isPlayer) {
+				MC.player?.let {
+					player.yaw = it.yaw
+					player.mapX = ((it.pos.x - DungeonScan.START_X + 15) * MapUtils.coordMultiplier + MapUtils.startCorner.first).roundToInt()
+					player.mapZ = ((it.pos.z - DungeonScan.START_Z + 15) * MapUtils.coordMultiplier + MapUtils.startCorner.second).roundToInt()
+					return@forEachIndexed
+				}
 			}
+			player.yaw = decoration.rotation * 22.5f
+			player.mapX = (decoration.x + 128) shr 1
+			player.mapZ = (decoration.z + 128) shr 1
 		}
 	}
 
 	fun updateRooms() {
-		if (Dungeon.Info.ended) return
+		if (FunnyMap.Info.ended) return
 		val map = DungeonMap(MapUtils.mapData?.colors ?: return)
-		Dungeon.espDoors.clear()
+		FunnyMap.espDoors.clear()
 
 		for (x in 0..10) {
 			for (z in 0..10) {
-				val room = Dungeon.Info.dungeonList[z * 11 + x]
+				val room = FunnyMap.Info.dungeonList[z * 11 + x]
 				val mapTile = map.getTile(x, z)
 
 				if (room is Unknown) {
 					roomAdded = true
-					Dungeon.Info.dungeonList[z * 11 + x] = mapTile
+					FunnyMap.Info.dungeonList[z * 11 + x] = mapTile
 					continue
 				}
 
@@ -151,7 +165,7 @@ object MapUpdate {
 					}
 
 					if (!room.opened) {
-						Dungeon.espDoors.add(room)
+						FunnyMap.espDoors.add(room)
 					}
 				}
 			}
@@ -170,16 +184,16 @@ object MapUpdate {
 				if (visited[index]) continue
 				visited[index] = true
 
-				val room = Dungeon.Info.dungeonList[index]
+				val room = FunnyMap.Info.dungeonList[index]
 				if (room !is Room) continue
 
 				val connected = getConnectedIndices(x, z)
 				var unique = room.uniqueRoom
 				if (unique == null || unique.name.startsWith("Unknown")) {
 					unique = connected.firstOrNull {
-						(Dungeon.Info.dungeonList[it.second * 11 + it.first] as? Room)?.uniqueRoom?.name?.startsWith("Unknown") == false
+						(FunnyMap.Info.dungeonList[it.second * 11 + it.first] as? Room)?.uniqueRoom?.name?.startsWith("Unknown") == false
 					}?.let {
-						(Dungeon.Info.dungeonList[it.second * 11 + it.first] as? Room)?.uniqueRoom
+						(FunnyMap.Info.dungeonList[it.second * 11 + it.first] as? Room)?.uniqueRoom
 					} ?: unique
 				}
 
@@ -188,6 +202,12 @@ object MapUpdate {
 				finalUnique.addTiles(connected)
 
 				connected.forEach {
+					val tile = FunnyMap.Info.dungeonList[it.second * 11 + it.first] as? Room
+					// WE'RE CATCHING THIS ISSUE EVENTUALLY
+					WpcMod.logger.debug(
+						"connected tile details:\nname: {}, color: {}, uniqueName: {}, core: {}, type: {}, cores. {}",
+						tile?.data?.name, tile?.color, tile?.uniqueRoom?.name, tile?.core, tile?.data?.type, tile?.data?.cores
+					)
 					visited[it.second * 11 + it.first] = true
 				}
 			}
@@ -196,7 +216,7 @@ object MapUpdate {
 	}
 
 	private fun getConnectedIndices(arrayX: Int, arrayY: Int): List<Pair<Int, Int>> {
-		val tile = Dungeon.Info.dungeonList[arrayY * 11 + arrayX]
+		val tile = FunnyMap.Info.dungeonList[arrayY * 11 + arrayX]
 		if (tile !is Room) return emptyList()
 		val directions = listOf(
 			Pair(0, 1),
@@ -214,7 +234,7 @@ object MapUpdate {
 				val x = current.first + it.first
 				val y = current.second + it.second
 				if (x !in 0..10 || y !in 0..10) return@forEach
-				if (Dungeon.Info.dungeonList[y * 11 + x] is Room) {
+				if (FunnyMap.Info.dungeonList[y * 11 + x] is Room) {
 					queue.add(Pair(x, y))
 				}
 			}

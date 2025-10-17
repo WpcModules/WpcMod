@@ -10,6 +10,7 @@ import net.wapic.wpcmod.events.PlayerListChangeEvent
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.util.ChatUtils.removeFormatting
+import net.wapic.wpcmod.util.Utils.equalsOneOf
 
 object DungeonUtils {
 	private const val DUNGEON_START_MESSAGE: String =
@@ -26,6 +27,14 @@ object DungeonUtils {
 
 	var currentFloor: DungeonFloor = DungeonFloor.NONE
 		private set
+
+	val isMimicFloor: Boolean
+		get() = currentFloor.equalsOneOf(
+			DungeonFloor.FLOOR_6,
+			DungeonFloor.FLOOR_7,
+			DungeonFloor.MASTER_MODE_FLOOR_6,
+			DungeonFloor.MASTER_MODE_FLOOR_7
+		)
 
 	fun init() {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)

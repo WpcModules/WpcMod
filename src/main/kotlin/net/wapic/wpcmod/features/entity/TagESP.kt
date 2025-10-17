@@ -9,7 +9,8 @@ import net.minecraft.entity.Entity
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.EntityUtils.getArmorStandsByEntity
-import net.wapic.wpcmod.util.render.RenderUtils
+import net.wapic.wpcmod.util.render.RenderUtils.drawBoundingBox
+import net.wapic.wpcmod.util.render.RenderUtils.drawTracer
 import java.util.*
 
 object TagESP : MobGlowCache() {
@@ -26,9 +27,9 @@ object TagESP : MobGlowCache() {
 			if (!isTagged(entity)) continue
 
 			if (config.box)
-				RenderUtils.drawBoundingBox(worldRenderContext, entity.boundingBox, config.color.getEffectiveColour())
+				worldRenderContext.drawBoundingBox(entity.boundingBox, config.color.getEffectiveColour())
 			if (config.tracer)
-				RenderUtils.drawTracer(worldRenderContext, entity.boundingBox.center, config.color.getEffectiveColour())
+				worldRenderContext.drawTracer(entity.boundingBox.center, config.color.getEffectiveColour())
 		}
 	}
 

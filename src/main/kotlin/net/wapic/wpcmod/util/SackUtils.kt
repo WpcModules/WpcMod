@@ -9,7 +9,7 @@ object SackUtils {
 
 	private val gfsQueue: MutableList<String> = mutableListOf()
 	private var lastCommand: Long = 0
-	private const val COMMAND_DELAY: Long = 2000
+	private const val COMMAND_DELAY: Long = 2500
 
 	fun init() {
 		ClientTickEvents.END_CLIENT_TICK.register(::onTick)

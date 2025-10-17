@@ -1,31 +1,28 @@
 package net.wapic.wpcmod.util
 
-import net.minecraft.client.MinecraftClient
+import net.minecraft.text.MutableText
 import net.minecraft.text.Style
 import net.minecraft.text.Text
+import net.minecraft.util.Formatting
 
 object ChatUtils {
 
-	const val PREFIX = "§b[WpcMod]§r: "
+	val PREFIX: MutableText = Text.literal("[WpcMod]: ").setStyle(Style.EMPTY.withColor(Formatting.AQUA))
 
 	fun sendMessage(message: String, style: Style = Style.EMPTY) {
-		MinecraftClient.getInstance().inGameHud.chatHud.addMessage(
-			Text.literal(PREFIX).append(Text.literal(message).setStyle(style))
-		)
+		MC.inGameHud.chatHud.addMessage(PREFIX.append(Text.literal(message).setStyle(style)))
 	}
 
-	fun sendAlert(message: String, style: Style) {
-		MinecraftClient.getInstance().inGameHud.setTitle(Text.literal(message).setStyle(style))
-		MinecraftClient.getInstance().inGameHud.setTitleTicks(0, 15, 5)
-		MinecraftClient.getInstance().inGameHud.chatHud.addMessage(
-			Text.literal(PREFIX).append(Text.literal(message).setStyle(style))
-		)
+	fun sendAlert(title: MutableText, subtitle: MutableText = Text.literal(""), fadeInTicks: Int = 5, stayTicks: Int = 20, fadeOutTicks: Int = 5) = with(MC.inGameHud) {
+		setTitle(title)
+		setSubtitle(subtitle)
+		setTitleTicks(fadeInTicks, stayTicks, fadeOutTicks)
+		chatHud.addMessage(PREFIX.append(title).append(subtitle))
 	}
 
-	fun sendChatMessage(message: String) {
-		val networkHandler = MinecraftClient.getInstance().networkHandler ?: return
-		networkHandler.sendChatMessage(message)
+	fun sendServerMessage(message: String) = with(MC.networkHandler) {
+		this?.sendChatMessage(message)
 	}
 
-	fun String.removeFormatting() = this.replace(Regex("§[0-9a-f]"), "")
+	fun String.removeFormatting() = replace(Regex("§[0-9a-f]"), "")
 }

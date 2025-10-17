@@ -1,23 +1,30 @@
-package net.wapic.wpcmod.features.funnymap.dungeon
+package net.wapic.wpcmod.features.dungeons.funnymap.dungeon
 
 import net.minecraft.block.Blocks
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.Heightmap
 import net.minecraft.world.chunk.EmptyChunk
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.features.funnymap.core.map.*
-import net.wapic.wpcmod.features.funnymap.dungeon.DungeonScan.scan
+import net.wapic.wpcmod.features.dungeons.ScoreCalculation
+import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Door
+import net.wapic.wpcmod.features.dungeons.funnymap.core.map.DoorType
+import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Room
+import net.wapic.wpcmod.features.dungeons.funnymap.core.map.RoomType
+import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Tile
+import net.wapic.wpcmod.features.dungeons.funnymap.core.map.UniqueRoom
+import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Unknown
+import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.DungeonScan.scan
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 
 /**
- * Handles everything related to scanning the dungeon. Running [scan] will update the instance of [Dungeon].
+ * Handles everything related to scanning the dungeon. Running [scan] will update the instance of [FunnyMap].
  */
 object DungeonScan {
 
-	private val config get() = WpcMod.config.funnyMap
+	private val config get() = WpcMod.config.dungeon.funnyMap
 
 	/**
 	 * The size of each dungeon room in blocks.
@@ -54,20 +61,21 @@ object DungeonScan {
 				}
 
 				val hasBeenScanned =
-					Dungeon.Info.dungeonList[x + z * 11].run { this !is Unknown && (this as? Room)?.data?.name != "Unknown" }
+					FunnyMap.Info.dungeonList[x + z * 11].run { this !is Unknown && (this as? Room)?.data?.name != "Unknown" }
 				if (hasBeenScanned) continue
 
 				scanRoom(xPos, zPos, z, x)?.let {
-					val prev = Dungeon.Info.dungeonList[z * 11 + x]
+					val prev = FunnyMap.Info.dungeonList[z * 11 + x]
 					if (it is Room) {
 						if ((prev as? Room)?.uniqueRoom != null) {
 							prev.uniqueRoom?.addTile(x, z, it)
-						} else if (Dungeon.Info.uniqueRooms.none { unique -> unique.name == it.data.name }) {
+						} else if (FunnyMap.Info.uniqueRooms.none { unique -> unique.name == it.data.name }) {
 							UniqueRoom(x, z, it)
 						}
 						MapUpdate.roomAdded = true
+						WpcMod.logger.debug("{} room with type {} was added", it.data.name, it.data.type)
 					}
-					Dungeon.Info.dungeonList[x + z * 11] = it
+					FunnyMap.Info.dungeonList[x + z * 11] = it
 				}
 			}
 		}
@@ -80,20 +88,22 @@ object DungeonScan {
 			if (config.scanChatInfo) {
 				val lines = mutableListOf(
 					"§aScan Finished!",
-					"§aPuzzles (§c${Dungeon.Info.puzzles.size}§a):",
-					Dungeon.Info.puzzles.entries.joinToString(
+					"§aPuzzles (§c${FunnyMap.Info.puzzles.size}§a):",
+					FunnyMap.Info.puzzles.entries.joinToString(
 						separator = "\n§b- §d",
 						prefix = "§b- §d"
 					) { it.key.roomDataName },
-					"§6Trap: §a${Dungeon.Info.trapType}",
-					"§8Wither Doors: §7${Dungeon.Info.witherDoors - 1}",
-					"§7Total Crypts: §6${Dungeon.Info.cryptCount}",
-					"§7Total Secrets: §b${Dungeon.Info.secretCount}",
-					"§aUnique Rooms: §e${Dungeon.Info.uniqueRooms.joinToString { it.name}}"
+					"§6Trap: §a${FunnyMap.Info.trapType}",
+					"§8Wither Doors: §7${FunnyMap.Info.witherDoors - 1}",
+					"§7Total Crypts: §6${FunnyMap.Info.cryptCount}",
+					"§7Total Secrets: §b${FunnyMap.Info.secretCount}",
 				)
 				ChatUtils.sendMessage(lines.joinToString(separator = "\n"))
 			}
-			Dungeon.Info.roomCount = Dungeon.Info.dungeonList.filter { it is Room && !it.isSeparator }.size
+			FunnyMap.Info.roomCount = FunnyMap.Info.dungeonList.filter { it is Room && !it.isSeparator }.size
+
+			ScoreCalculation.totalSecrets = FunnyMap.Info.secretCount
+
 			hasScanned = true
 		}
 
@@ -117,7 +127,7 @@ object DungeonScan {
 
 			// Can only be the center "block" of a 2x2 room.
 			!rowEven && !columnEven -> {
-				Dungeon.Info.dungeonList[column - 1 + (row - 1) * 11].let {
+				FunnyMap.Info.dungeonList[column - 1 + (row - 1) * 11].let {
 					if (it is Room) {
 						Room(x, z, it.data).apply { isSeparator = true }
 					} else {
@@ -134,7 +144,7 @@ object DungeonScan {
 					// Finds door type from door block
 					type = when (MC.world?.getBlockState(BlockPos(x, 69, z))?.block) {
 						Blocks.COAL_BLOCK -> {
-							Dungeon.Info.witherDoors++
+							FunnyMap.Info.witherDoors++
 							DoorType.WITHER
 						}
 
@@ -147,7 +157,7 @@ object DungeonScan {
 
 			// Connection between large rooms
 			else -> {
-				Dungeon.Info.dungeonList[if (rowEven) row * 11 + column - 1 else (row - 1) * 11 + column].let {
+				FunnyMap.Info.dungeonList[if (rowEven) row * 11 + column - 1 else (row - 1) * 11 + column].let {
 					if (it !is Room) {
 						null
 					} else if (it.data.type == RoomType.ENTRANCE) {

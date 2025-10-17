@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder
 import moe.nea.jarvis.api.JarvisScalable
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.features.dungeons.ScoreCalculation
-import net.wapic.wpcmod.features.funnymap.ui.MapElement
+import net.wapic.wpcmod.features.dungeons.funnymap.ui.MapElement
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption

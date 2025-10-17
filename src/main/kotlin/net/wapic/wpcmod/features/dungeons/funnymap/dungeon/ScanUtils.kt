@@ -1,4 +1,4 @@
-package net.wapic.wpcmod.features.funnymap.dungeon
+package net.wapic.wpcmod.features.dungeons.funnymap.dungeon
 
 import com.google.gson.Gson
 import com.google.gson.JsonIOException
@@ -7,35 +7,20 @@ import com.google.gson.reflect.TypeToken
 import net.minecraft.block.Block
 import net.minecraft.block.Blocks
 import net.minecraft.block.SlabBlock
+import net.minecraft.block.entity.TrappedChestBlockEntity
 import net.minecraft.block.enums.SlabType
 import net.minecraft.state.property.Properties
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.Heightmap
-import net.wapic.wpcmod.features.funnymap.core.RoomData
-import net.wapic.wpcmod.features.funnymap.core.map.Room
+import net.wapic.wpcmod.features.dungeons.funnymap.core.RoomData
+import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Room
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 import kotlin.math.roundToInt
 
 object ScanUtils {
-
-	// TODO: convert to modern hashCodes
-	val roomList: Set<RoomData> = try {
-		Gson().fromJson(
-			MC.resourceManager.getResource(
-				Identifier.of("wpcmod", "rooms-legacy.json")
-			).get().inputStream.bufferedReader(), object : TypeToken<Set<RoomData>>() {}.type
-		)
-	} catch (e: JsonSyntaxException) {
-		println("Error parsing FunnyMap room data.")
-		e.printStackTrace()
-		setOf()
-	} catch (e: JsonIOException) {
-		println("Error reading FunnyMap room data.")
-		e.printStackTrace()
-		setOf()
-	}
 
 	val legacyIds = hashMapOf<Block, Int>(
 		Blocks.AIR to 0,
@@ -445,6 +430,35 @@ object ScanUtils {
 		Blocks.DARK_OAK_DOOR to 197,
 	)
 
+	var roomList: Set<RoomData> = setOf()
+
+	init {
+		try {
+			roomList = Gson().fromJson(
+				MC.resourceManager.getResourceOrThrow(Identifier.of("wpcmod", "rooms-legacy.json"))
+				.inputStream.bufferedReader(),
+				object : TypeToken<Set<RoomData>>() {}.type)
+		} catch (e: JsonSyntaxException) {
+			println("Error parsing FunnyMap room data.")
+			e.printStackTrace()
+		} catch (e: JsonIOException) {
+			println("Error reading FunnyMap room data.")
+			e.printStackTrace()
+		}
+	}
+
+	fun findMimic(): String? {
+		Utils.getLoadedBlockEntities().filterIsInstance<TrappedChestBlockEntity>()
+			.groupingBy { getRoomFromPos(it.pos)?.data?.name }.eachCount()
+			.forEach { (room, trappedChests) ->
+				FunnyMap.Info.uniqueRooms.find { it.name == room && it.mainRoom.data.trappedChests < trappedChests }?.let {
+					it.hasMimic = true
+					return it.name
+				}
+			}
+		return null
+	}
+
 	fun getRoomData(x: Int, z: Int): RoomData? {
 		return getRoomData(getCore(x, z))
 	}
@@ -462,7 +476,7 @@ object ScanUtils {
 	fun getRoomFromPos(pos: BlockPos): Room? {
 		val x = ((pos.x - DungeonScan.START_X + 15) shr 5)
 		val z = ((pos.z - DungeonScan.START_Z + 15) shr 5)
-		val room = Dungeon.Info.dungeonList.getOrNull(x * 2 + z * 22)
+		val room = FunnyMap.Info.dungeonList.getOrNull(x * 2 + z * 22)
 		return room as? Room
 	}
 

@@ -1,11 +1,11 @@
-package net.wapic.wpcmod.features.funnymap.core.map
+package net.wapic.wpcmod.features.dungeons.funnymap.core.map
 
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.features.funnymap.ui.MapElement
+import net.wapic.wpcmod.features.dungeons.funnymap.ui.MapElement
 import java.awt.Color
 
 class Door(override val x: Int, override val z: Int, var type: DoorType) : Tile {
-	private val config get() = WpcMod.config.funnyMap.colorConfig
+	private val config get() = WpcMod.config.dungeon.funnyMap.colorConfig
 
 	var opened = false
 	override var state: RoomState = RoomState.UNDISCOVERED

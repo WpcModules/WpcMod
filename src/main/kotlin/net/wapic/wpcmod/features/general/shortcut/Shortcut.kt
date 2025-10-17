@@ -23,7 +23,7 @@ class Shortcut {
 
 		this.boundKey = key
 		KEYS_BY_ID.add(this)
-		KEY_TO_BINDINGS.put(key.code, this)
+		KEY_TO_BINDINGS[key.code] = this
 	}
 
 	fun setBoundKey(key: InputUtil.Key) {
@@ -67,7 +67,7 @@ class Shortcut {
 			this.boundKey = InputUtil.Type.KEYSYM.createFromCode(this.keyCode)
 		}
 		KEYS_BY_ID.add(this)
-		KEY_TO_BINDINGS.put(this.keyCode, this)
+		KEY_TO_BINDINGS[this.keyCode] = this
 	}
 
 	companion object {
@@ -79,7 +79,7 @@ class Shortcut {
 			KEY_TO_BINDINGS.clear()
 
 			for (shortCut in KEYS_BY_ID) {
-				KEY_TO_BINDINGS.put(shortCut.keyCode, shortCut)
+				KEY_TO_BINDINGS[shortCut.keyCode] = shortCut
 			}
 		}
 

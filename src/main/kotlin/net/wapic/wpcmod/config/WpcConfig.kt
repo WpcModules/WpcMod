@@ -8,7 +8,6 @@ import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.chat.ChatConfig
 import net.wapic.wpcmod.config.dev.DevConfig
 import net.wapic.wpcmod.config.dungeon.DungeonConfig
-import net.wapic.wpcmod.config.dungeon.FunnyConfig
 import net.wapic.wpcmod.config.end.EndConfig
 import net.wapic.wpcmod.config.fishing.FishingConfig
 import net.wapic.wpcmod.config.galatea.GalateaConfig
@@ -66,9 +65,6 @@ class WpcConfig : Config() {
 
 	@Category(name = "Render", desc = "Features that handle any rendering options")
 	var render: RenderConfig = RenderConfig()
-
-	@Category(name = "FunnyMap", desc = "funny map")
-	var funnyMap: FunnyConfig = FunnyConfig()
 
 	@Category(name = "Dev", desc = "Development features")
 	var dev: DevConfig = DevConfig()

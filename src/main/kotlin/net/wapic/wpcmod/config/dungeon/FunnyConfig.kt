@@ -76,7 +76,7 @@ class FunnyConfig {
 
 	@ConfigOption(name = "Darken Multiplier", desc = "How much to darken undiscovered rooms.")
 	@ConfigEditorSlider(minStep = 0.1f, maxValue = 1f, minValue = 0f)
-	var mapDarkenPercent = 0.4f
+	var mapDarkenPercent = 0.5f
 
 	@ConfigOption(name = "Gray Undiscovered Rooms", desc = "Grayscale unentered rooms.")
 	@ConfigEditorBoolean

@@ -1,13 +1,12 @@
-package net.wapic.wpcmod.features.funnymap.utils
+package net.wapic.wpcmod.util
 
 import com.google.common.collect.ComparisonChain
 import com.google.common.collect.Ordering
 import net.minecraft.client.network.PlayerListEntry
 import net.minecraft.text.Text
 import net.minecraft.world.GameMode
-import net.wapic.wpcmod.util.MC
 
-object TabList {
+object TabListUtil {
 	private val tabListOrder = Ordering.from<PlayerListEntry> { o1, o2 ->
 		if (o1 == null) return@from -1
 		if (o2 == null) return@from 0

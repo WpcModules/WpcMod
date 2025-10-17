@@ -1,16 +1,17 @@
-package net.wapic.wpcmod.features.funnymap.core.map
+package net.wapic.wpcmod.features.dungeons.funnymap.core.map
 
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.features.funnymap.dungeon.Dungeon
+import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
+import kotlin.collections.remove
 
 class UniqueRoom(arrX: Int, arrY: Int, room: Room) {
-	private val config get() = WpcMod.config.funnyMap
+	private val config get() = WpcMod.config.dungeon.funnyMap
 
 	var name: String
 	var topLeft = Pair(arrX, arrY)
 	private var center = Pair(arrX, arrY)
 	var mainRoom = room
-		get() = Dungeon.Info.dungeonList[topLeft.second * 11 + topLeft.first] as? Room ?: field
+		get() = FunnyMap.Info.dungeonList[topLeft.second * 11 + topLeft.first] as? Room ?: field
 	val tiles = mutableListOf(room to Pair(arrX, arrY))
 	var hasMimic = false
 
@@ -22,15 +23,15 @@ class UniqueRoom(arrX: Int, arrY: Int, room: Room) {
 			init(room)
 		}
 		room.uniqueRoom = this
-		Dungeon.Info.uniqueRooms.add(this)
+		FunnyMap.Info.uniqueRooms.add(this)
 	}
 
 	fun init(room: Room) {
-		Dungeon.Info.cryptCount += room.data.crypts
-		Dungeon.Info.secretCount += room.data.secrets
+		FunnyMap.Info.cryptCount += room.data.crypts
+		FunnyMap.Info.secretCount += room.data.secrets
 		when (room.data.type) {
-			RoomType.TRAP -> Dungeon.Info.trapType = room.data.name.split(" ")[0]
-			RoomType.PUZZLE -> Puzzle.fromName(room.data.name)?.let { Dungeon.Info.puzzles.putIfAbsent(it, false) }
+			RoomType.TRAP -> FunnyMap.Info.trapType = room.data.name.split(" ")[0]
+			RoomType.PUZZLE -> Puzzle.fromName(room.data.name)?.let { FunnyMap.Info.puzzles.putIfAbsent(it, false) }
 
 			else -> {}
 		}
@@ -43,9 +44,9 @@ class UniqueRoom(arrX: Int, arrY: Int, room: Room) {
 
 	fun addTiles(tiles: Iterable<Pair<Int, Int>>) {
 		tiles.forEach { (x, y) ->
-			val room = Dungeon.Info.dungeonList[y * 11 + x] as? Room ?: return@forEach
+			val room = FunnyMap.Info.dungeonList[y * 11 + x] as? Room ?: return@forEach
 			if (room.uniqueRoom !== this) {
-				Dungeon.Info.uniqueRooms.remove(room.uniqueRoom)
+				FunnyMap.Info.uniqueRooms.remove(room.uniqueRoom)
 				addToTiles(x, y, room)
 			}
 		}

@@ -9,7 +9,8 @@ import net.wapic.wpcmod.util.EntityUtils.headTexture
 import net.wapic.wpcmod.util.HeadTextures
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.Utils
-import net.wapic.wpcmod.util.render.RenderUtils
+import net.wapic.wpcmod.util.render.RenderUtils.drawBoundingBox
+import net.wapic.wpcmod.util.render.RenderUtils.drawTracer
 
 class RatESP : MobGlowCache() {
 
@@ -28,8 +29,8 @@ class RatESP : MobGlowCache() {
 			if(!isRat(entity)) continue
 
 			val box = entity.boundingBox.withMinY(entity.boundingBox.minY + 1.4)
-			if(config.box) RenderUtils.drawBoundingBox(worldRenderContext, box, config.color.getEffectiveColour())
-			if (config.tracer) RenderUtils.drawTracer(worldRenderContext, box.center, config.color.getEffectiveColour())
+			if (config.box) worldRenderContext.drawBoundingBox(box, config.color.getEffectiveColour())
+			if (config.tracer) worldRenderContext.drawTracer(box.center, config.color.getEffectiveColour())
 		}
 	}
 

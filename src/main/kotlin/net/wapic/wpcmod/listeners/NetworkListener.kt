@@ -8,7 +8,7 @@ import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket
 import net.wapic.wpcmod.events.EntityEvents
 import net.wapic.wpcmod.events.PacketEvents
 import net.wapic.wpcmod.events.PlayerListChangeEvent
-import net.wapic.wpcmod.features.funnymap.utils.MapUtils
+import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils
 import net.wapic.wpcmod.util.MC
 
 object NetworkListener {

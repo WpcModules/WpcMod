@@ -34,7 +34,7 @@ import net.wapic.wpcmod.features.entity.MobGlow
 import net.wapic.wpcmod.features.entity.RatESP
 import net.wapic.wpcmod.features.entity.TagESP
 import net.wapic.wpcmod.features.fishing.AutoFish
-import net.wapic.wpcmod.features.funnymap.FunnyMap
+import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
 import net.wapic.wpcmod.features.galatea.GalateaESP
 import net.wapic.wpcmod.features.general.Freecam
 import net.wapic.wpcmod.features.general.PreventPlacingItems

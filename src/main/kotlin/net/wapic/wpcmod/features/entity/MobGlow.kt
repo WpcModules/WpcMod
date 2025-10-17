@@ -18,7 +18,7 @@ object MobGlow {
 		ADDERS.add(cache)
 	}
 
-	fun CacheIsNotEmpty(): Boolean {
+	fun cacheIsNotEmpty(): Boolean {
 		return CACHE.isNotEmpty()
 	}
 

@@ -15,12 +15,12 @@ import java.awt.Color
 
 object RenderUtils {
 
-	fun drawBoundingBox(
-		worldRenderContext: WorldRenderContext,
-		boundingBox: Box, color: Color = Color(255, 255, 255), lineWidth: Double = 2.0
+	fun WorldRenderContext.drawBoundingBox(
+		boundingBox: Box,
+		color: Color = Color(255, 255, 255),
+		lineWidth: Double = 2.0
 	) {
 		drawBox(
-			worldRenderContext,
 			boundingBox.minX,
 			boundingBox.minY,
 			boundingBox.minZ,
@@ -32,8 +32,7 @@ object RenderUtils {
 		)
 	}
 
-	fun drawBox(
-		worldRenderContext: WorldRenderContext,
+	fun WorldRenderContext.drawBox(
 		minX: Double,
 		minY: Double,
 		minZ: Double,
@@ -41,17 +40,14 @@ object RenderUtils {
 		maxY: Double,
 		maxZ: Double, color: Color = Color(255, 255, 255), lineWidth: Double = 2.0
 	) {
-		if (worldRenderContext.frustum()?.isVisible(Box(minX, minY, minZ, maxX, maxY, maxZ)) == false) return
-
-		val matrixStack = worldRenderContext.matrixStack() ?: return
-		val camera = worldRenderContext.camera().pos
+		val matrixStack = matrixStack() ?: return
+		val camera = camera().pos
 
 		matrixStack.push()
-		matrixStack.multiplyPositionMatrix(worldRenderContext.positionMatrix())
+		matrixStack.multiplyPositionMatrix(positionMatrix())
 		matrixStack.translate(-camera.x, -camera.y, -camera.z)
 
-		val vertexConsumerProvider: VertexConsumerProvider.Immediate =
-			worldRenderContext.consumers() as VertexConsumerProvider.Immediate
+		val vertexConsumerProvider: VertexConsumerProvider.Immediate = consumers() as VertexConsumerProvider.Immediate
 		val layer: RenderLayer = RenderLayers.getLines(lineWidth)
 		val bufferBuilder: VertexConsumer = vertexConsumerProvider.getBuffer(layer)
 
@@ -69,50 +65,35 @@ object RenderUtils {
 			color.blue * 255f,
 			color.alpha * 255f
 		)
+
 		vertexConsumerProvider.draw(layer)
 
 		matrixStack.pop()
 	}
 
-	fun drawTracer(
-		worldRenderContext: WorldRenderContext,
+	fun WorldRenderContext.drawTracer(
 		entity: Entity,
 		color: Color = Color(255, 255, 255),
 		lineWidth: Double = 2.0
 	) {
-		val tickProgress = worldRenderContext.tickCounter().dynamicDeltaTicks
-		val viewBobbing = MC.options.bobView.value
-		MC.options.bobView.value = false
+		val tickProgress = tickCounter().dynamicDeltaTicks
 
 		val x = MathHelper.lerp(tickProgress.toDouble(), entity.lastRenderX, entity.x)
 		val y = MathHelper.lerp(tickProgress.toDouble(), entity.lastRenderY, entity.y)
 		val z = MathHelper.lerp(tickProgress.toDouble(), entity.lastRenderZ, entity.z)
 
-		val camera = worldRenderContext.camera()
-		val cameraPoint: Vec3d = camera.pos.add(Vec3d.fromPolar(camera.pitch, camera.yaw))
-		drawLine(worldRenderContext, cameraPoint.x, cameraPoint.y, cameraPoint.z, x, y, z, color, lineWidth)
-
-		MC.options.bobView.value = viewBobbing
+		drawTracer(x, y, z, color, lineWidth)
 	}
 
-	fun drawTracer(
-		worldRenderContext: WorldRenderContext,
+	fun WorldRenderContext.drawTracer(
 		pos: Vec3d,
 		color: Color = Color(255, 255, 255),
 		lineWidth: Double = 2.0
 	) {
-		val viewBobbing = MC.options.bobView.value
-		MC.options.bobView.value = false
-
-		val camera = worldRenderContext.camera()
-		val cameraPoint: Vec3d = camera.pos.add(Vec3d.fromPolar(camera.pitch, camera.yaw))
-		drawLine(worldRenderContext, cameraPoint.x, cameraPoint.y, cameraPoint.z, pos.x, pos.y, pos.z, color, lineWidth)
-
-		MC.options.bobView.value = viewBobbing
+		drawTracer(pos.x, pos.y, pos.z, color, lineWidth)
 	}
 
-	fun drawTracer(
-		worldRenderContext: WorldRenderContext,
+	fun WorldRenderContext.drawTracer(
 		x: Double,
 		y: Double,
 		z: Double, color: Color = Color(255, 255, 255), lineWidth: Double = 2.0
@@ -120,15 +101,14 @@ object RenderUtils {
 		val viewBobbing = MC.options.bobView.value
 		MC.options.bobView.value = false
 
-		val camera = worldRenderContext.camera()
+		val camera = camera()
 		val cameraPoint: Vec3d = camera.pos.add(Vec3d.fromPolar(camera.pitch, camera.yaw))
-		drawLine(worldRenderContext, cameraPoint.x, cameraPoint.y, cameraPoint.z, x, y, z, color, lineWidth)
+		drawLine(cameraPoint.x, cameraPoint.y, cameraPoint.z, x, y, z, color, lineWidth)
 
 		MC.options.bobView.value = viewBobbing
 	}
 
-	fun drawLine(
-		worldRenderContext: WorldRenderContext,
+	fun WorldRenderContext.drawLine(
 		x1: Double,
 		y1: Double,
 		z1: Double,
@@ -138,17 +118,16 @@ object RenderUtils {
 		color: Color = Color(255, 255, 255),
 		lineWidth: Double = 2.0
 	) {
-		val matrixStack = worldRenderContext.matrixStack() ?: return
-		val camera: Vec3d = worldRenderContext.camera().pos
+		val matrixStack = matrixStack() ?: return
+		val camera: Vec3d = camera().pos
 
 		matrixStack.push()
-		matrixStack.multiplyPositionMatrix(worldRenderContext.positionMatrix())
+		matrixStack.multiplyPositionMatrix(positionMatrix())
 		matrixStack.translate(-camera.x, -camera.y, -camera.z)
 
 		val entry: MatrixStack.Entry = matrixStack.peek()
 
-		val vertexConsumerProvider: VertexConsumerProvider.Immediate =
-			worldRenderContext.consumers() as VertexConsumerProvider.Immediate
+		val vertexConsumerProvider: VertexConsumerProvider.Immediate = consumers() as VertexConsumerProvider.Immediate
 		val layer: RenderLayer = RenderLayers.getLines(lineWidth)
 		val bufferBuilder: VertexConsumer = vertexConsumerProvider.getBuffer(layer)
 
