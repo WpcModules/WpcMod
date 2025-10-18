@@ -20,6 +20,7 @@ import net.minecraft.text.ClickEvent
 import net.minecraft.text.HoverEvent
 import net.minecraft.text.Style
 import net.minecraft.text.Text
+import net.minecraft.util.Formatting
 import net.wapic.wpcmod.commands.*
 import net.wapic.wpcmod.config.ConfigManager
 import net.wapic.wpcmod.config.WpcConfig
@@ -29,12 +30,12 @@ import net.wapic.wpcmod.features.dungeons.AutoCloseChests
 import net.wapic.wpcmod.features.dungeons.DungeonAutoGFS
 import net.wapic.wpcmod.features.dungeons.DungeonESP
 import net.wapic.wpcmod.features.dungeons.ScoreCalculation
+import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
 import net.wapic.wpcmod.features.end.EndESP
 import net.wapic.wpcmod.features.entity.MobGlow
 import net.wapic.wpcmod.features.entity.RatESP
 import net.wapic.wpcmod.features.entity.TagESP
 import net.wapic.wpcmod.features.fishing.AutoFish
-import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
 import net.wapic.wpcmod.features.galatea.GalateaESP
 import net.wapic.wpcmod.features.general.Freecam
 import net.wapic.wpcmod.features.general.PreventPlacingItems
@@ -109,7 +110,7 @@ object WpcMod : ModInitializer {
 						HoverEvent.ShowText(Text.of("Click to update"))
 					).withClickEvent(
 						ClickEvent.RunCommand("/wpcmod update")
-					)
+					).withColor(Formatting.WHITE)
 				)
 			}
 		}
