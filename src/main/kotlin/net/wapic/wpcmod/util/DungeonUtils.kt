@@ -9,6 +9,7 @@ import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.PlayerListChangeEvent
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
+import net.wapic.wpcmod.features.dungeons.ScoreCalculation
 import net.wapic.wpcmod.util.ChatUtils.removeFormatting
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 
@@ -74,6 +75,7 @@ object DungeonUtils {
 				)
 			) {
 				bossSpawned = true
+				ScoreCalculation.bloodCleared = true
 			}
 		}
 	}

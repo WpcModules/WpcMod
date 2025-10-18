@@ -324,11 +324,6 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 			Utils.runCommand("/pc Prince Killed!")
 		}
 
-		if (message == "[BOSS] The Watcher: You have proven yourself. You may pass.") {
-			bloodCleared = true
-		}
-
-
 		if (message.startsWith("Party >")) {
 			if (message.contains(skytilsMimicMessage) || message.contains(mimicMessage)) {
 				mimicFound = true

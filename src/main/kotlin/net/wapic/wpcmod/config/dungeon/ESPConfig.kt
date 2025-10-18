@@ -32,16 +32,17 @@ class ESPConfig {
 	var witherDoor = WitherDoorConfig()
 
 	class WitherDoorConfig {
-		@ConfigOption(name = "Has Key Color", desc = "Color for when you have the key")
-		@ConfigEditorColour
-		var hasKeyColor = ChromaColour(1f, 1f, 1f, 0, 1)
-
-		@ConfigOption(name = "No Key Color", desc = "Color for when you don't have a key")
-		@ConfigEditorColour
-		var noKeyColor = ChromaColour(1f, 1f, 1f, 0, 1)
 
 		@ConfigOption(name = "Box", desc = "Draw a box around the object")
 		@ConfigEditorBoolean
 		var box: Boolean = false
+
+		@ConfigOption(name = "Has Key Color", desc = "Color for when you have the key")
+		@ConfigEditorColour
+		var hasKeyColor = ChromaColour.fromRGB(0, 255, 0, 0, 1)
+
+		@ConfigOption(name = "No Key Color", desc = "Color for when you don't have a key")
+		@ConfigEditorColour
+		var noKeyColor = ChromaColour.fromRGB(255, 0, 0, 0, 1)
 	}
 }
