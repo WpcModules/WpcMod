@@ -8,16 +8,12 @@ import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.dungeons.funnymap.core.DungeonPlayer
-import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Door
-import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Puzzle
-import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Tile
-import net.wapic.wpcmod.features.dungeons.funnymap.core.map.UniqueRoom
-import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Unknown
+import net.wapic.wpcmod.features.dungeons.funnymap.core.map.*
 import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils
-import net.wapic.wpcmod.util.TabListUtil
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.DungeonUtils.inDungeons
 import net.wapic.wpcmod.util.DungeonUtils.isMimicFloor
+import net.wapic.wpcmod.util.TabListUtil
 
 object FunnyMap {
 	val config get() = WpcMod.config.dungeon.funnyMap
@@ -99,7 +95,7 @@ object FunnyMap {
 		DungeonScan.hasScanned = false
 	}
 
-	private fun shouldSearchMimic() = !config.legitMode && isMimicFloor
+	private fun shouldSearchMimic() = !Info.mimicFound && !config.legitMode && isMimicFloor
 
 	object Info {
 		// 6 x 6 room grid, 11 x 11 with connections
