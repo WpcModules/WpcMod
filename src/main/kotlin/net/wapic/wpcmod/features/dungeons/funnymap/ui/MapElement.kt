@@ -8,11 +8,7 @@ import net.minecraft.client.util.InputUtil
 import net.minecraft.util.math.RotationAxis
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.features.dungeons.funnymap.core.DungeonPlayer
-import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Door
-import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Room
-import net.wapic.wpcmod.features.dungeons.funnymap.core.map.RoomState
-import net.wapic.wpcmod.features.dungeons.funnymap.core.map.RoomType
-import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Unknown
+import net.wapic.wpcmod.features.dungeons.funnymap.core.map.*
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.DungeonScan
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
 import net.wapic.wpcmod.features.dungeons.funnymap.ui.MapRenderer.darken
@@ -26,8 +22,6 @@ import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 import java.awt.Color
-import kotlin.collections.component1
-import kotlin.collections.component2
 
 object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 
@@ -197,7 +191,7 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 
 	override fun isActive(): Boolean {
 		if (!isEnabled || !DungeonUtils.inDungeons) return false
-		if (DungeonUtils.isBossSpawned() && config.mapHideInBoss) return false
+		if (DungeonUtils.bossSpawned && config.mapHideInBoss) return false
 		return true
 	}
 

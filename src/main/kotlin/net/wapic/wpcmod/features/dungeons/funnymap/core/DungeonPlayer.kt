@@ -43,7 +43,7 @@ data class DungeonPlayer(val skin: SkinTextures) {
 	/** Gets the player's room, used for room tracker */
 	fun getCurrentRoom(): String {
 		if (dead) return "Dead"
-		if (DungeonUtils.isBossSpawned()) return "Boss"
+		if (DungeonUtils.bossSpawned) return "Boss"
 		val x = (mapX - MapUtils.startCorner.first) / (MapUtils.roomSize + MapUtils.CONNECTOR_SIZE)
 		val z = (mapZ - MapUtils.startCorner.second) / (MapUtils.roomSize + MapUtils.CONNECTOR_SIZE)
 		return (FunnyMap.Info.dungeonList.getOrNull(x * 2 + z * 22) as? Room)?.data?.name ?: "Error"

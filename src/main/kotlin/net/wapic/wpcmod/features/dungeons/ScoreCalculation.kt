@@ -15,11 +15,7 @@ import net.minecraft.text.Text
 import net.minecraft.util.math.BlockPos
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.dungeon.DungeonConfig.ScoreCalculationConfig.ScoreHudType
-import net.wapic.wpcmod.events.BlockEvents
-import net.wapic.wpcmod.events.EntityEvents
-import net.wapic.wpcmod.events.PlayerListChangeEvent
-import net.wapic.wpcmod.events.ScoreboardChangeEvent
-import net.wapic.wpcmod.events.WorldChangeEvent
+import net.wapic.wpcmod.events.*
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
 import net.wapic.wpcmod.jarvis.SimpleHudElement
@@ -84,7 +80,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 	private val roomClearPercentage: Double
 		get() {
 			val total = if(FunnyMap.Info.roomCount != 0) FunnyMap.Info.roomCount else getTotalRooms()
-			val complete = completedRooms + (!DungeonUtils.isBossSpawned()).ifTrue(1) + (!bloodCleared).ifTrue(1)
+			val complete = completedRooms + (!DungeonUtils.bossSpawned).ifTrue(1) + (!bloodCleared).ifTrue(1)
 			return if (total > 0) (complete / total.toDouble()).coerceAtMost(1.0) else 0.0
 		}
 

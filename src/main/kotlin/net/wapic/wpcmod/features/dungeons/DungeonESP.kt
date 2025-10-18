@@ -8,10 +8,10 @@ import net.minecraft.entity.passive.BatEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.math.Box
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.features.entity.MobGlow
-import net.wapic.wpcmod.features.entity.MobGlowCache
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.RoomState
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
+import net.wapic.wpcmod.features.entity.MobGlow
+import net.wapic.wpcmod.features.entity.MobGlowCache
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.EntityUtils.getArmorStandsByEntity
 import net.wapic.wpcmod.util.EntityUtils.headTexture
@@ -47,7 +47,7 @@ class DungeonESP : MobGlowCache() {
 			}
 		}
 
-		if (!DungeonUtils.isBossSpawned() || config.witherDoor.box) {
+		if (!DungeonUtils.bossSpawned || config.witherDoor.box) {
 			val color = (if (FunnyMap.Info.keys > 0) config.witherDoor.hasKeyColor else config.witherDoor.noKeyColor).getEffectiveColour()
 
 			FunnyMap.espDoors.forEach { door ->

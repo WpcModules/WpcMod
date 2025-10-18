@@ -21,7 +21,8 @@ object DungeonUtils {
 	private val puzzleRegex = Regex(" (?<puzzle>.+): \\[(?:(?<completed>✔)|(?<failed>✖)|(?<missing>✦))] ?")
 	private val incompletePuzzles: HashSet<String> = hashSetOf()
 	private val failedPuzzles: HashSet<String> = hashSetOf()
-	private var bossSpawned = false
+	var bossSpawned = false
+		private set
 
 	val inDungeons get() = Utils.getLocation() == Island.DUNGEON
 
@@ -137,10 +138,6 @@ object DungeonUtils {
 				}
 			}
 		}
-	}
-
-	fun isBossSpawned(): Boolean {
-		return bossSpawned
 	}
 
 	enum class DungeonFloor(val shortName: String) {
