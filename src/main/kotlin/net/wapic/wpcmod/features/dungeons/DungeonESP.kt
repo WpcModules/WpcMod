@@ -47,7 +47,7 @@ class DungeonESP : MobGlowCache() {
 			}
 		}
 
-		if (!DungeonUtils.bossSpawned || config.witherDoor.box) {
+		if (config.witherDoor.box) {
 			val color = (if (FunnyMap.Info.keys > 0) config.witherDoor.hasKeyColor else config.witherDoor.noKeyColor).getEffectiveColour()
 
 			FunnyMap.espDoors.forEach { door ->
@@ -72,5 +72,5 @@ class DungeonESP : MobGlowCache() {
 		}
 	}
 
-	override fun isEnabled(): Boolean = DungeonUtils.inDungeons
+	override fun isEnabled(): Boolean = DungeonUtils.inDungeons && !DungeonUtils.bossSpawned
 }
