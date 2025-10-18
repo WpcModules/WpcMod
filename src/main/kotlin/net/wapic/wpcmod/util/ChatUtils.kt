@@ -6,18 +6,17 @@ import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 
 object ChatUtils {
-
 	val PREFIX: MutableText = Text.literal("[WpcMod]: ").setStyle(Style.EMPTY.withColor(Formatting.AQUA))
 
 	fun sendMessage(message: String, style: Style = Style.EMPTY) {
-		MC.inGameHud.chatHud.addMessage(PREFIX.append(Text.literal(message).setStyle(style)))
+		MC.inGameHud.chatHud.addMessage(PREFIX.copy().append(Text.literal(message).setStyle(style)))
 	}
 
 	fun sendAlert(title: MutableText, subtitle: MutableText = Text.literal(""), fadeInTicks: Int = 5, stayTicks: Int = 20, fadeOutTicks: Int = 5) = with(MC.inGameHud) {
 		setTitle(title)
 		setSubtitle(subtitle)
 		setTitleTicks(fadeInTicks, stayTicks, fadeOutTicks)
-		chatHud.addMessage(PREFIX.append(title).append(subtitle))
+		chatHud.addMessage(PREFIX.copy().append(title).append(subtitle))
 	}
 
 	fun sendServerMessage(message: String) = with(MC.networkHandler) {
