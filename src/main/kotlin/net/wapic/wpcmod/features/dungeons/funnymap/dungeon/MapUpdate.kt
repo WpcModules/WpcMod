@@ -9,16 +9,10 @@ import net.minecraft.world.chunk.EmptyChunk
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.features.dungeons.ScoreCalculation
 import net.wapic.wpcmod.features.dungeons.funnymap.core.DungeonPlayer
-import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Door
-import net.wapic.wpcmod.features.dungeons.funnymap.core.map.DoorType
-import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Room
-import net.wapic.wpcmod.features.dungeons.funnymap.core.map.RoomState
-import net.wapic.wpcmod.features.dungeons.funnymap.core.map.RoomType
-import net.wapic.wpcmod.features.dungeons.funnymap.core.map.UniqueRoom
-import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Unknown
+import net.wapic.wpcmod.features.dungeons.funnymap.core.map.*
 import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils
-import net.wapic.wpcmod.util.TabListUtil
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.TabListUtil
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 import kotlin.math.roundToInt
 
@@ -101,7 +95,8 @@ object MapUpdate {
 		val decor = MapUtils.mapData?.decorations ?: return
 
 		decor.forEachIndexed { index, decoration ->
-			val player = FunnyMap.dungeonTeammates.values.first { it.icon == "icon-$index" }
+			val player =
+				FunnyMap.dungeonTeammates.values.firstOrNull { it.icon == "icon-$index" } ?: return@forEachIndexed
 			player.isPlayer = decoration.type == MapDecorationTypes.FRAME
 			if(player.isPlayer) {
 				MC.player?.let {
