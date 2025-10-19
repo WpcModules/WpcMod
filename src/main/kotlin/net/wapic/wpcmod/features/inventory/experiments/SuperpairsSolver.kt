@@ -22,7 +22,7 @@ class SuperpairsSolver {
 	private val config get() = WpcMod.config.inventory.experiments
 
 	/** REGEX-TEST: Superpairs (Metaphysical) */
-	private val superpairsTitle = "Superpairs ?\\(.+\\)".toRegex()
+	private val superpairsTitle = Regex("Superpairs ?\\(.+\\)")
 	private var inSuperpairs: Boolean = false
 
 	private val powerUps = listOf<Item>(Items.DIAMOND, Items.FEATHER, Items.LAPIS_BLOCK)
@@ -38,12 +38,6 @@ class SuperpairsSolver {
 	private var itemToInstantFind: Slot? = null
 	private var activeInstantFinds: Int = 0
 
-	/**
-	 * REGEX-TEST: ?
-	 * REGEX-TEST: Click any button!
-	 * REGEX-TEST: Click a second button!
-	 * REGEX-TEST: Next button is instantly rewarded!
-	 */
 	private val skyHanniRegex = "\\?|(?:Click a(?: seco)?n[dy]|Next) button(?: is instantly rewarded)?!?".toRegex()
 
 	init {

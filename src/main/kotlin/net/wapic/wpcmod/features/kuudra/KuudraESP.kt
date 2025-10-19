@@ -9,7 +9,8 @@ import net.wapic.wpcmod.features.entity.MobGlowCache
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.KuudraUtils
 import net.wapic.wpcmod.util.Utils
-import net.wapic.wpcmod.util.render.RenderUtils
+import net.wapic.wpcmod.util.render.drawBoundingBox
+import net.wapic.wpcmod.util.render.drawTracer
 
 class KuudraESP : MobGlowCache() {
 	private val config get() = WpcMod.config.kuudra.esp
@@ -21,17 +22,9 @@ class KuudraESP : MobGlowCache() {
 	fun onRenderWorld(worldRenderContext: WorldRenderContext) {
 		KuudraUtils.kuudraEntity?.let {
 			if (config.kuudra.box)
-				RenderUtils.drawBoundingBox(
-					worldRenderContext,
-					it.boundingBox,
-					config.kuudra.color.getEffectiveColour()
-				)
+				worldRenderContext.drawBoundingBox(it.boundingBox, config.kuudra.color.getEffectiveColour())
 			if (config.kuudra.tracer)
-				RenderUtils.drawTracer(
-					worldRenderContext,
-					it.boundingBox.center,
-					config.kuudra.color.getEffectiveColour()
-				)
+				worldRenderContext.drawTracer(it.boundingBox.center, config.kuudra.color.getEffectiveColour())
 		}
 	}
 

@@ -1,9 +1,8 @@
-package net.wapic.wpcmod.config.mining;
+package net.wapic.wpcmod.config.mining
 
 import io.github.notenoughupdates.moulconfig.annotations.Category
-import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorBoolean;
-import io.github.notenoughupdates.moulconfig.annotations.ConfigOption;
-import net.wapic.wpcmod.config.mining.ESPConfig
+import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorBoolean
+import io.github.notenoughupdates.moulconfig.annotations.ConfigOption
 
 class MiningConfig {
 

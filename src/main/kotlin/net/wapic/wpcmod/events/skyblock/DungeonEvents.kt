@@ -7,7 +7,7 @@ object DungeonEvents {
 
 	@JvmField
 	val START: Event<Start> = EventFactory.createArrayBacked(Start::class.java) { listeners ->
-		Start { ->
+		Start {
 			for (listener in listeners) {
 				listener.onStart()
 			}
@@ -20,7 +20,7 @@ object DungeonEvents {
 
 	@JvmField
 	val END: Event<End> = EventFactory.createArrayBacked(End::class.java) { listeners ->
-		End { ->
+		End {
 			for (listener in listeners) {
 				listener.onEnd()
 			}
@@ -33,7 +33,7 @@ object DungeonEvents {
 
 	@JvmField
 	val PUZZLE_RESET: Event<PuzzleReset> = EventFactory.createArrayBacked(PuzzleReset::class.java) { listeners ->
-		PuzzleReset { ->
+		PuzzleReset {
 			for (listener in listeners) {
 				listener.onPuzzleReset()
 			}

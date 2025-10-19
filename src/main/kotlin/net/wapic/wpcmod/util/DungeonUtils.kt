@@ -9,7 +9,9 @@ import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.PlayerListChangeEvent
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
+import net.wapic.wpcmod.features.dungeons.ScoreCalculation
 import net.wapic.wpcmod.util.ChatUtils.removeFormatting
+import net.wapic.wpcmod.util.Utils.equalsOneOf
 
 object DungeonUtils {
 	private const val DUNGEON_START_MESSAGE: String =
@@ -20,12 +22,21 @@ object DungeonUtils {
 	private val puzzleRegex = Regex(" (?<puzzle>.+): \\[(?:(?<completed>✔)|(?<failed>✖)|(?<missing>✦))] ?")
 	private val incompletePuzzles: HashSet<String> = hashSetOf()
 	private val failedPuzzles: HashSet<String> = hashSetOf()
-	private var bossSpawned = false
+	var bossSpawned = false
+		private set
 
 	val inDungeons get() = Utils.getLocation() == Island.DUNGEON
 
 	var currentFloor: DungeonFloor = DungeonFloor.NONE
 		private set
+
+	val isMimicFloor: Boolean
+		get() = currentFloor.equalsOneOf(
+			DungeonFloor.FLOOR_6,
+			DungeonFloor.FLOOR_7,
+			DungeonFloor.MASTER_MODE_FLOOR_6,
+			DungeonFloor.MASTER_MODE_FLOOR_7
+		)
 
 	fun init() {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
@@ -64,6 +75,7 @@ object DungeonUtils {
 				)
 			) {
 				bossSpawned = true
+				ScoreCalculation.bloodCleared = true
 			}
 		}
 	}
@@ -128,10 +140,6 @@ object DungeonUtils {
 				}
 			}
 		}
-	}
-
-	fun isBossSpawned(): Boolean {
-		return bossSpawned
 	}
 
 	enum class DungeonFloor(val shortName: String) {

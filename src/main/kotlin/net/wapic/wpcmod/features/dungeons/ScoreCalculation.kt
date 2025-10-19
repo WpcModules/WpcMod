@@ -1,38 +1,34 @@
 package net.wapic.wpcmod.features.dungeons
 
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
-import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback
-import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer
+import net.minecraft.block.BlockState
+import net.minecraft.block.Blocks
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.render.RenderTickCounter
 import net.minecraft.client.world.ClientWorld
 import net.minecraft.entity.Entity
+import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.mob.ZombieEntity
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket
 import net.minecraft.text.Text
-import net.minecraft.util.Identifier
+import net.minecraft.util.math.BlockPos
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.dungeon.DungeonConfig.ScoreCalculationConfig.ScoreHudType
-import net.wapic.wpcmod.events.EntityEvents
-import net.wapic.wpcmod.events.PlayerListChangeEvent
-import net.wapic.wpcmod.events.ScoreboardChangeEvent
-import net.wapic.wpcmod.events.WorldChangeEvent
+import net.wapic.wpcmod.events.*
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
+import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
 import net.wapic.wpcmod.jarvis.SimpleHudElement
-import net.wapic.wpcmod.util.APIUtils
-import net.wapic.wpcmod.util.DungeonUtils
+import net.wapic.wpcmod.util.*
 import net.wapic.wpcmod.util.DungeonUtils.DungeonFloor
-import net.wapic.wpcmod.util.Utils
+import net.wapic.wpcmod.util.DungeonUtils.isMimicFloor
+import net.wapic.wpcmod.util.ItemUtils.headTexture
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.roundToInt
 
-object ScoreCalculation : SimpleHudElement(
-	text = Text.literal("Score Estimate HUD"),
-	w = 140,
-	h = 160
-) {
+object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 
 	private val config get() = WpcMod.config.dungeon.scoreCalculation
 
@@ -48,8 +44,8 @@ object ScoreCalculation : SimpleHudElement(
 	private val roomCompletedPattern = Regex(" Completed Rooms: (?<count>\\d+)")
 
 	private val skytilsMimicMessage = Regex("\\\$SKYTILS-DUNGEON-SCORE-MIMIC")
-	private val mimicMessage = Regex("Mimic (Dead|Killed)(!)?")
-	private val princeMessage = Regex("Prince (Dead|Killed)(!)?")
+	private val mimicMessage = Regex("Mimic (Dead|Killed)!?", RegexOption.IGNORE_CASE)
+	private val princeMessage = Regex("Prince (Dead|Killed)!?", RegexOption.IGNORE_CASE)
 
 	data class FloorRequirement(val secretPercentage: Double = 1.0, val speed: Int = 10 * 60)
 
@@ -69,22 +65,21 @@ object ScoreCalculation : SimpleHudElement(
 		DungeonFloor.MASTER_MODE_FLOOR_5 to FloorRequirement(speed = 8 * 60),
 		DungeonFloor.MASTER_MODE_FLOOR_6 to FloorRequirement(),
 		DungeonFloor.MASTER_MODE_FLOOR_7 to FloorRequirement(speed = 15 * 60),
-		DungeonFloor.NONE to FloorRequirement()
 	)
 
-	private val floorRequirement get() = floorRequirements[DungeonUtils.currentFloor]!!
+	private val floorRequirement get() = floorRequirements[DungeonUtils.currentFloor] ?: FloorRequirement()
 	private val isEntrance get() = DungeonUtils.currentFloor == DungeonFloor.ENTRANCE
 
 	// Room Clear
 	private var completedRooms = 0
 	private var clearedPercentage = 0
 	private val totalRoomMap = mutableMapOf<Int, Int>()
-	private var bloodCleared = false
+	var bloodCleared = false
 
 	private val roomClearPercentage: Double
 		get() {
 			val total = getTotalRooms()
-			val complete = completedRooms + (!DungeonUtils.isBossSpawned()).ifTrue(1) + (!bloodCleared).ifTrue(1)
+			val complete = completedRooms + (!DungeonUtils.bossSpawned).ifTrue(1) + (!bloodCleared).ifTrue(1)
 			return if (total > 0) (complete / total.toDouble()).coerceAtMost(1.0) else 0.0
 		}
 
@@ -92,7 +87,7 @@ object ScoreCalculation : SimpleHudElement(
 
 	// Secrets
 	private var foundSecrets = 0
-	private var totalSecrets = 0
+	var totalSecrets = 0
 
 	private val secretsNeeded get() = if (totalSecrets == 0) 1 else ceil(totalSecrets * floorRequirement.secretPercentage).toInt()
 	private val secretsClearedPercentage get() = foundSecrets / secretsNeeded.toDouble()
@@ -138,7 +133,7 @@ object ScoreCalculation : SimpleHudElement(
 		}
 
 	// Bonus
-	private var mimicFound = false
+	var mimicFound = false
 	private var isPaul = false
 		get() = if(config.assumePaul) true else field
 	private var princeKilled = false
@@ -160,12 +155,8 @@ object ScoreCalculation : SimpleHudElement(
 			else -> "§6§lS+"
 		}
 
-	private val mimicFloors = listOf(
-		DungeonFloor.FLOOR_6,
-		DungeonFloor.FLOOR_7,
-		DungeonFloor.MASTER_MODE_FLOOR_6,
-		DungeonFloor.MASTER_MODE_FLOOR_7
-	)
+	var mimicOpenTime = 0L
+	var mimicPos: BlockPos? = null
 
 	fun init() {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
@@ -174,26 +165,22 @@ object ScoreCalculation : SimpleHudElement(
 		ScoreboardChangeEvent.EVENT.register(::onScoreboardChange)
 		EntityEvents.DESPAWN.register(::onEntityDespawn)
 		DungeonEvents.PUZZLE_RESET.register(::onPuzzleReset)
-		DungeonEvents.START.register {
-			isPaul = APIUtils.hasBonusPaulScore()
-		}
-
-		HudLayerRegistrationCallback.EVENT.register { layeredDrawer ->
-			layeredDrawer.attachLayerBefore(
-				IdentifiedLayer.CHAT,
-				IdentifiedLayer.of(Identifier.of("wpcmod", "score_calculation"), ::onRenderHud)
-			)
-		}
+		BlockEvents.CHANGE.register(::onBlockChange)
+		DungeonEvents.START.register { isPaul = APIUtils.hasBonusPaulScore() }
+		ClientTickEvents.START_CLIENT_TICK.register { if(isMimicFloor) checkMimicDead() }
 	}
 
 	private fun Boolean.ifTrue(num: Int) = if (this) num else 0
 	private fun Double.applyEntranceModifier() = if (isEntrance) (this * 0.7).toInt() else this.toInt()
 	private fun getTotalRooms(): Int {
+		if (FunnyMap.Info.roomCount != 0) return FunnyMap.Info.roomCount
+
 		if (clearedPercentage > 0 && completedRooms > 0) {
 			val key = (100 * (completedRooms / clearedPercentage.toDouble())).roundToInt()
 			totalRoomMap[key] = (totalRoomMap[key] ?: 0) + 1
 			return totalRoomMap.toList().maxByOrNull { it.second }!!.first
 		}
+
 		return 0
 	}
 
@@ -220,6 +207,26 @@ object ScoreCalculation : SimpleHudElement(
 		crypts = 0
 	}
 
+	fun checkMimicDead() {
+		if (mimicOpenTime == 0L || mimicFound) return
+		if (System.currentTimeMillis() - mimicOpenTime < 750) return
+
+		val playerDistanceFromMimic = MC.player?.squaredDistanceTo(mimicPos?.toCenterPos()) ?: return
+
+		if (playerDistanceFromMimic < 400.0) {
+			val isMimicDead = MC.world?.entities?.none { it is ZombieEntity && it.isBaby }
+			if (isMimicDead == true)
+				mimicFound = true
+		}
+	}
+
+	fun onBlockChange(pos: BlockPos, old: BlockState, new: BlockState) {
+		if (old.block == Blocks.TRAPPED_CHEST && new.block == Blocks.AIR) {
+			mimicOpenTime = System.currentTimeMillis()
+			mimicPos = pos
+		}
+	}
+
 	private fun onPuzzleReset() {
 		if(!isActive) return
 		missingPuzzles = (missingPuzzles + 1)
@@ -228,7 +235,7 @@ object ScoreCalculation : SimpleHudElement(
 
 	private fun onEntityDespawn(entity: Entity) {
 		if (!isActive) return
-		if (entity is ZombieEntity && entity.isBaby) {
+		if (entity is ZombieEntity && entity.isBaby && entity.getEquippedStack(EquipmentSlot.HEAD).headTexture == HeadTextures.MIMIC) {
 			mimicFound = true
 			if (config.mimicMessage) Utils.runCommand("/pc Mimic Killed!")
 		}
@@ -319,44 +326,26 @@ object ScoreCalculation : SimpleHudElement(
 			Utils.runCommand("/pc Prince Killed!")
 		}
 
-		if (message == "[BOSS] The Watcher: You have proven yourself. You may pass.") {
-			bloodCleared = true
-		}
-
-
-		if (message.startsWith("Party >")) {
+		if (message.startsWith("§9Party §8>")) {
 			if (message.contains(skytilsMimicMessage) || message.contains(mimicMessage)) {
 				mimicFound = true
-			}
-
-			if (message.contains(princeMessage)) {
+			} else if (message.contains(princeMessage)) {
 				princeKilled = true
 			}
 		}
 	}
 
 
-	private fun onRenderHud(drawContext: DrawContext, tickCounter: RenderTickCounter) {
+	override fun render(drawContext: DrawContext, renderTickCounter: RenderTickCounter) {
 		if (!isActive) return
 		val tr = MinecraftClient.getInstance().textRenderer
 
 		drawContext.matrices.push()
 		applyTransformations(drawContext.matrices)
 
-		if(config.scoreEstimate == ScoreHudType.MINIMIZED) {
-			drawContext.drawText(
-				tr,
-				Text.literal("§eScore: §a$totalScore §7($rank§7)"),
-				x.toInt(),
-				y.toInt(),
-				0xffffff,
-				true
-			)
-			drawContext.matrices.pop()
-			return
-		}
+		val minimizedLine = setOf<Text>(Text.literal("§eScore: §a$totalScore §7($rank§7)"))
 
-		val lines = mutableListOf<Text>(
+		var statusLines = setOf<Text>(
 			Text.literal("§9Dungeon Status"),
 			Text.literal("§f* §eDeaths: §c$deaths"),
 			Text.literal("§f* §eMissing Puzzles: §c$missingPuzzles"),
@@ -364,6 +353,13 @@ object ScoreCalculation : SimpleHudElement(
 			Text.literal("§f* §eSecrets: §a$foundSecrets§7/§a$secretsNeeded §7(§6Total: $totalSecrets§7)"),
 			Text.literal("§f* §eCrypts: §a$crypts"),
 			Text.literal("§f* §ePrince: ${if(princeKilled) "§a✔" else "§c✖"}"),
+		)
+
+		val mimicLine = Text.literal("§f* §eMimic: ${if (mimicFound) "§a✔" else "§c✖"}")
+
+		if(isMimicFloor) statusLines = statusLines + mimicLine
+
+		val scoreLines = setOf<Text>(
 			Text.literal(""),
 			Text.literal("§9Score"),
 			Text.literal("§f* §eSkill Score: §a$skillScore"),
@@ -374,10 +370,7 @@ object ScoreCalculation : SimpleHudElement(
 			Text.literal("§f* §eRank: $rank")
 		)
 
-		if (DungeonUtils.currentFloor in mimicFloors) lines.add(
-			7,
-			Text.literal("§f* §eMimic: ${if (mimicFound) "§a✔" else "§c✖"}")
-		)
+		val lines = if(config.scoreEstimate == ScoreHudType.MINIMIZED) minimizedLine else statusLines + scoreLines
 
 		for ((index, line) in lines.withIndex()) {
 			drawContext.drawText(tr, line, x.toInt(), y.toInt() + (index * 10), 0xffffff, true)

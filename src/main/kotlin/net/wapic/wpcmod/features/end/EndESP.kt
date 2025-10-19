@@ -15,7 +15,8 @@ import net.wapic.wpcmod.features.entity.MobGlow
 import net.wapic.wpcmod.features.entity.MobGlowCache
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.Utils
-import net.wapic.wpcmod.util.render.RenderUtils
+import net.wapic.wpcmod.util.render.drawBoundingBox
+import net.wapic.wpcmod.util.render.drawTracer
 
 class EndESP : MobGlowCache() {
 
@@ -66,28 +67,21 @@ class EndESP : MobGlowCache() {
 			}
 
 			if (settings.box)
-				RenderUtils.drawBoundingBox(worldRenderContext, entity.boundingBox, settings.color.getEffectiveColour())
+				worldRenderContext.drawBoundingBox(entity.boundingBox, settings.color.getEffectiveColour())
 			if (settings.tracer)
-				RenderUtils.drawTracer(
-					worldRenderContext,
+				worldRenderContext.drawTracer(
 					entity.boundingBox.center,
 					settings.color.getEffectiveColour()
 				)
 		}
 
-		for (node in endNodes) {
-			if (config.endNode.box)
-				RenderUtils.drawBoundingBox(
-					worldRenderContext,
-					node,
-					config.endNode.color.getEffectiveColour()
-				)
-			if (config.endNode.tracer) RenderUtils.drawTracer(
-				worldRenderContext,
-				node.center,
-				config.endNode.color.getEffectiveColour()
-
-			)
+		if(config.endNode.box || config.endNode.tracer) {
+			for (node in endNodes) {
+				if (config.endNode.box)
+					worldRenderContext.drawBoundingBox(node, config.endNode.color.getEffectiveColour())
+				if (config.endNode.tracer)
+					worldRenderContext.drawTracer(node.center, config.endNode.color.getEffectiveColour())
+			}
 		}
 	}
 
