@@ -16,8 +16,8 @@ import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.EntityUtils.getArmorStandsByEntity
 import net.wapic.wpcmod.util.EntityUtils.headTexture
 import net.wapic.wpcmod.util.HeadTextures
-import net.wapic.wpcmod.util.render.RenderUtils.drawBoundingBox
-import net.wapic.wpcmod.util.render.RenderUtils.drawTracer
+import net.wapic.wpcmod.util.render.drawBoundingBox
+import net.wapic.wpcmod.util.render.drawTracer
 
 class DungeonESP : MobGlowCache() {
 

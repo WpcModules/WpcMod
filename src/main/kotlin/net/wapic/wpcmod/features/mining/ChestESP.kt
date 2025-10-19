@@ -7,8 +7,8 @@ import net.minecraft.util.math.Box
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.Utils
-import net.wapic.wpcmod.util.render.RenderUtils.drawBoundingBox
-import net.wapic.wpcmod.util.render.RenderUtils.drawTracer
+import net.wapic.wpcmod.util.render.drawBoundingBox
+import net.wapic.wpcmod.util.render.drawTracer
 
 class ChestESP {
 

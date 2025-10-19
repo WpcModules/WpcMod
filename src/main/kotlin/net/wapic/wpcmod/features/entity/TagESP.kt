@@ -9,8 +9,8 @@ import net.minecraft.entity.Entity
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.EntityUtils.getArmorStandsByEntity
-import net.wapic.wpcmod.util.render.RenderUtils.drawBoundingBox
-import net.wapic.wpcmod.util.render.RenderUtils.drawTracer
+import net.wapic.wpcmod.util.render.drawBoundingBox
+import net.wapic.wpcmod.util.render.drawTracer
 import java.util.*
 
 object TagESP : MobGlowCache() {

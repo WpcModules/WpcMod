@@ -67,7 +67,6 @@ object DungeonScan {
 							UniqueRoom(x, z, it)
 						}
 						MapUpdate.roomAdded = true
-						WpcMod.logger.debug("{} room with type {} was added", it.data.name, it.data.type)
 					}
 					FunnyMap.Info.dungeonList[x + z * 11] = it
 				}
