@@ -9,6 +9,7 @@ import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.render.RenderTickCounter
 import net.minecraft.client.world.ClientWorld
 import net.minecraft.entity.Entity
+import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.mob.ZombieEntity
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket
 import net.minecraft.text.Text
@@ -19,12 +20,10 @@ import net.wapic.wpcmod.events.*
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
 import net.wapic.wpcmod.jarvis.SimpleHudElement
-import net.wapic.wpcmod.util.APIUtils
-import net.wapic.wpcmod.util.DungeonUtils
+import net.wapic.wpcmod.util.*
 import net.wapic.wpcmod.util.DungeonUtils.DungeonFloor
 import net.wapic.wpcmod.util.DungeonUtils.isMimicFloor
-import net.wapic.wpcmod.util.MC
-import net.wapic.wpcmod.util.Utils
+import net.wapic.wpcmod.util.ItemUtils.headTexture
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.roundToInt
@@ -45,8 +44,8 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 	private val roomCompletedPattern = Regex(" Completed Rooms: (?<count>\\d+)")
 
 	private val skytilsMimicMessage = Regex("\\\$SKYTILS-DUNGEON-SCORE-MIMIC")
-	private val mimicMessage = Regex("Mimic (Dead|Killed)(!)?")
-	private val princeMessage = Regex("Prince (Dead|Killed)(!)?")
+	private val mimicMessage = Regex("Mimic (Dead|Killed)!?", RegexOption.IGNORE_CASE)
+	private val princeMessage = Regex("Prince (Dead|Killed)!?", RegexOption.IGNORE_CASE)
 
 	data class FloorRequirement(val secretPercentage: Double = 1.0, val speed: Int = 10 * 60)
 
@@ -233,7 +232,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 
 	private fun onEntityDespawn(entity: Entity) {
 		if (!isActive) return
-		if (entity is ZombieEntity && entity.isBaby) {
+		if (entity is ZombieEntity && entity.isBaby && entity.getEquippedStack(EquipmentSlot.HEAD).headTexture == HeadTextures.MIMIC) {
 			mimicFound = true
 			if (config.mimicMessage) Utils.runCommand("/pc Mimic Killed!")
 		}
@@ -324,12 +323,10 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 			Utils.runCommand("/pc Prince Killed!")
 		}
 
-		if (message.startsWith("Party >")) {
+		if (message.startsWith("§9Party §8>")) {
 			if (message.contains(skytilsMimicMessage) || message.contains(mimicMessage)) {
 				mimicFound = true
-			}
-
-			if (message.contains(princeMessage)) {
+			} else if (message.contains(princeMessage)) {
 				princeKilled = true
 			}
 		}
