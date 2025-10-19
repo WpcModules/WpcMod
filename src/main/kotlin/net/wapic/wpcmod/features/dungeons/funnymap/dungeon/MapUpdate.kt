@@ -6,7 +6,6 @@ import net.minecraft.item.map.MapDecorationTypes
 import net.minecraft.text.Text
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.chunk.EmptyChunk
-import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.features.dungeons.ScoreCalculation
 import net.wapic.wpcmod.features.dungeons.funnymap.core.DungeonPlayer
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.*
@@ -79,18 +78,6 @@ object MapUpdate {
 				}
 			}
 		}
-
-		/*
-		Dungeon.dungeonTeammates.forEach { (name, player) ->
-			MC.world?.players?.find { it.name.string == name }?.let {
-				player.isPlayer = it.name.string != MC.player?.name?.string
-				player.yaw = it.yaw
-				player.mapX = ((it.pos.x - DungeonScan.START_X + 15) * MapUtils.coordMultiplier + MapUtils.startCorner.first).roundToInt()
-				player.mapZ = ((it.pos.z - DungeonScan.START_Z + 15) * MapUtils.coordMultiplier + MapUtils.startCorner.second).roundToInt()
-			}
-		}
-		 */
-
 
 		val decor = MapUtils.mapData?.decorations ?: return
 
@@ -197,12 +184,6 @@ object MapUpdate {
 				finalUnique.addTiles(connected)
 
 				connected.forEach {
-					val tile = FunnyMap.Info.dungeonList[it.second * 11 + it.first] as? Room
-					// WE'RE CATCHING THIS ISSUE EVENTUALLY
-					WpcMod.logger.debug(
-						"connected tile details:\nname: {}, color: {}, uniqueName: {}, core: {}, type: {}, cores. {}",
-						tile?.data?.name, tile?.color, tile?.uniqueRoom?.name, tile?.core, tile?.data?.type, tile?.data?.cores
-					)
 					visited[it.second * 11 + it.first] = true
 				}
 			}
