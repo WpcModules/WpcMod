@@ -9,14 +9,14 @@ object BlockEvents {
 
 	@JvmField
 	val CHANGE: Event<BlockChange> = EventFactory.createArrayBacked(BlockChange::class.java) { listeners ->
-		BlockChange { pos, oldBlockState, newBlockState ->
+		BlockChange { pos, oldState, newState ->
 			for (listener in listeners) {
-				listener.onChange(pos, oldBlockState, newBlockState)
+				listener.onChange(pos, oldState, newState)
 			}
 		}
 	}
 
 	fun interface BlockChange {
-		fun onChange(pos: BlockPos, oldBlockState: BlockState, newBlockState: BlockState)
+		fun onChange(pos: BlockPos, oldState: BlockState, newState: BlockState)
 	}
 }

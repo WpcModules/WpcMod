@@ -24,6 +24,7 @@
     "NetworkThreadUtilsMixin",
     "PlayerEntityMixin",
     "SimpleInventoryMixin",
+    "WorldChunkMixin",
     "WorldRendererMixin",
     "accessors.MinecraftClientAccessor",
     "devenv.DisableCommonPacketWarnings",
