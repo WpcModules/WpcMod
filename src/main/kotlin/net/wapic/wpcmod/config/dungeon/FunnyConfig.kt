@@ -62,14 +62,6 @@ class FunnyConfig {
 	@ConfigEditorSlider(minStep = 0.1f, maxValue = 2f, minValue = 0.5f)
 	var playerNameScale = .8f
 
-	@ConfigOption(name = "Map Background Color", desc = "background color")
-	@ConfigEditorColour
-	var mapBackground = ChromaColour.fromRGB(90, 90, 90, 0, 100)
-
-	@ConfigOption(name = "Map Border Color", desc = "border color")
-	@ConfigEditorColour
-	var mapBorder = ChromaColour.fromRGB(255, 255, 255, 0, 100)
-
 	@ConfigOption(name = "Dark Undiscovered Rooms", desc = "Darkens unentered rooms.")
 	@ConfigEditorBoolean
 	var mapDarkenUndiscovered = true
@@ -100,53 +92,61 @@ class FunnyConfig {
 
 	@Accordion
 	@ConfigOption(name = "Colors", desc = "Configure each color on the map")
-	var colorConfig = ColorConfig()
+	var colors: ColorConfig = ColorConfig()
 
 	class ColorConfig {
 
+		@ConfigOption(name = "Map Background Color", desc = "background color")
+		@ConfigEditorColour
+		var mapBackground = ChromaColour.fromRGB(90, 90, 90, 0, 100)
+
+		@ConfigOption(name = "Map Border Color", desc = "border color")
+		@ConfigEditorColour
+		var mapBorder = ChromaColour.fromRGB(255, 255, 255, 0, 100)
+
 		@ConfigOption(name = "Blood Door", desc = "blood door color")
 		@ConfigEditorColour
-		var colorBloodDoor = ChromaColour.fromRGB(255, 0, 0, 0, 255)
+		var colorBloodDoor = ChromaColour.fromRGB(252, 0, 0, 0, 255)
 
 		@ConfigOption(name = "Entrance Door", desc = "entranceDoor color")
 		@ConfigEditorColour
-		var colorEntranceDoor = ChromaColour.fromRGB(0, 255, 0, 0, 255)
+		var colorEntranceDoor = ChromaColour.fromRGB(0, 123, 0, 0, 255)
 
 		@ConfigOption(name = "Normal Door", desc = "normal door color")
 		@ConfigEditorColour
-		var colorRoomDoor = ChromaColour.fromRGB(165, 80, 0, 0, 255)
+		var colorRoomDoor = ChromaColour.fromRGB(113, 66, 27, 0, 255)
 
 		@ConfigOption(name = "Wither Door", desc = "wither door color")
 		@ConfigEditorColour
-		var colorWitherDoor = ChromaColour.fromRGB(10, 10, 10, 0, 255)
+		var colorWitherDoor = ChromaColour.fromRGB(13, 13, 13, 0, 255)
 
 		@ConfigOption(name = "Opened Wither Door", desc = "opened wither door color")
 		@ConfigEditorColour
-		var colorOpenWitherDoor = ChromaColour.fromRGB(10, 10, 10, 0, 255)
+		var colorOpenWitherDoor = ChromaColour.fromRGB(113, 66, 27, 0, 255)
 
 		@ConfigOption(name = "Unopened Door", desc = "unopened door color")
 		@ConfigEditorColour
-		var colorUnopenedDoor = ChromaColour.fromRGB(85, 85, 85, 0, 255)
+		var colorUnopenedDoor = ChromaColour.fromRGB(64, 64, 64, 0, 255)
 
 		@ConfigOption(name = "Blood Room", desc = "blood room color")
 		@ConfigEditorColour
-		var colorBlood = ChromaColour.fromRGB(255, 0, 0, 0, 255)
+		var colorBlood = ChromaColour.fromRGB(252, 0, 0, 0, 255)
 
 		@ConfigOption(name = "Entrance Room", desc = "Entrance Room color")
 		@ConfigEditorColour
-		var colorEntrance = ChromaColour.fromRGB(0, 255, 0, 0, 255)
+		var colorEntrance = ChromaColour.fromRGB(0, 123, 0, 0, 255)
 
 		@ConfigOption(name = "Fairy Room", desc = "Fairy Room color")
 		@ConfigEditorColour
-		var colorFairy = ChromaColour.fromRGB(255, 100, 255, 0, 255)
+		var colorFairy = ChromaColour.fromRGB(239, 125, 163, 0, 255)
 
 		@ConfigOption(name = "Miniboss Room", desc = "miniboss room color")
 		@ConfigEditorColour
-		var colorMiniboss = ChromaColour.fromRGB(255, 225, 0, 0, 255)
+		var colorMiniboss = ChromaColour.fromRGB(226, 226, 50, 0, 255)
 
 		@ConfigOption(name = "Normal Room", desc = "Normal Room color")
 		@ConfigEditorColour
-		var colorRoom = ChromaColour.fromRGB(165, 80, 0, 0, 255)
+		var colorRoom = ChromaColour.fromRGB(113, 66, 27, 0, 255)
 
 		@ConfigOption(name = "Mimic Room", desc = "mimic room color")
 		@ConfigEditorColour
@@ -154,7 +154,7 @@ class FunnyConfig {
 
 		@ConfigOption(name = "Puzzle Room", desc = "Puzzle Room color")
 		@ConfigEditorColour
-		var colorPuzzle = ChromaColour.fromRGB(155, 0, 255, 0, 255)
+		var colorPuzzle = ChromaColour.fromRGB(176, 75, 213, 0, 255)
 
 		@ConfigOption(name = "Rare Room", desc = "rare room color")
 		@ConfigEditorColour
@@ -162,10 +162,10 @@ class FunnyConfig {
 
 		@ConfigOption(name = "Trap Room", desc = "Trap Room Color")
 		@ConfigEditorColour
-		var colorTrap = ChromaColour.fromRGB(255, 125, 0, 0, 255)
+		var colorTrap = ChromaColour.fromRGB(213, 125, 50, 0, 255)
 
 		@ConfigOption(name = "Unopened Room", desc = "Unopened Room color")
 		@ConfigEditorColour
-		var colorUnopened = ChromaColour.fromRGB(85, 85, 85, 0, 255)
+		var colorUnopened = ChromaColour.fromRGB(64, 64, 64, 0, 255)
 	}
 }

@@ -6,7 +6,7 @@ import net.wapic.wpcmod.features.dungeons.funnymap.ui.MapElement
 import java.awt.Color
 
 class Room(override val x: Int, override val z: Int, var data: RoomData) : Tile {
-	private val config get() = WpcMod.config.dungeon.funnyMap.colorConfig
+	private val config get() = WpcMod.config.dungeon.funnyMap.colors
 	var core = 0
 	var isSeparator = false
 	var uniqueRoom: UniqueRoom? = null

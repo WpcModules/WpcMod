@@ -38,8 +38,8 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 		matrixStack.push()
 		applyTransformations(matrixStack)
 
-		drawContext.fill(0, 0, width, height, config.mapBackground.getEffectiveColourRGB())
-		drawContext.drawBorder(0, 0, width, height, config.mapBorder.getEffectiveColourRGB())
+		drawContext.fill(0, 0, width, height, config.colors.mapBackground.getEffectiveColourRGB())
+		drawContext.drawBorder(0, 0, width, height, config.colors.mapBorder.getEffectiveColourRGB())
 
 		if (config.mapRotate) {
 			matrixStack.push()
