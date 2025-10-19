@@ -4,8 +4,10 @@ import net.minecraft.text.MutableText
 import net.minecraft.text.Style
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
+import java.util.regex.Pattern
 
 object ChatUtils {
+	val formattingRegex: Pattern = Pattern.compile("(?i)§[0-9A-FK-OR]")
 	val PREFIX: MutableText = Text.literal("[WpcMod]: ").setStyle(Style.EMPTY.withColor(Formatting.AQUA))
 
 	fun sendMessage(message: String, style: Style = Style.EMPTY) {
@@ -23,5 +25,5 @@ object ChatUtils {
 		this?.sendChatMessage(message)
 	}
 
-	fun String.removeFormatting() = Formatting.strip(this)
+	fun String.removeFormatting(): String = formattingRegex.matcher(this).replaceAll("");
 }

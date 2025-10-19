@@ -6,13 +6,7 @@ import net.minecraft.world.Heightmap
 import net.minecraft.world.chunk.EmptyChunk
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.features.dungeons.ScoreCalculation
-import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Door
-import net.wapic.wpcmod.features.dungeons.funnymap.core.map.DoorType
-import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Room
-import net.wapic.wpcmod.features.dungeons.funnymap.core.map.RoomType
-import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Tile
-import net.wapic.wpcmod.features.dungeons.funnymap.core.map.UniqueRoom
-import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Unknown
+import net.wapic.wpcmod.features.dungeons.funnymap.core.map.*
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.DungeonScan.scan
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.DungeonUtils
@@ -137,8 +131,8 @@ object DungeonScan {
 			}
 
 			// Doorway between rooms
-			// Old trap has a single block at 82
-			height.equalsOneOf(73, 82) -> {
+			// Old trap has a single block at 81
+			height.equalsOneOf(73, 81) -> {
 				Door(
 					x, z,
 					// Finds door type from door block
