@@ -1,16 +1,35 @@
 package net.wapic.wpcmod.jarvis
 
 import moe.nea.jarvis.api.JarvisScalable
+import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback
+import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer
+import net.minecraft.client.gui.DrawContext
+import net.minecraft.client.render.RenderTickCounter
 import net.minecraft.text.Text
+import net.wapic.wpcmod.util.Utils.modIdentifier
+import java.util.Locale
 
 abstract class SimpleHudElement(
+	var displayLabel: String,
+	var w: Int,
+	var h: Int,
 	var xPos: Double = 0.0,
 	var yPos: Double = 0.0,
-	var text: Text = Text.literal(""),
-	var w: Int = 0,
-	var h: Int = 0,
 	var defaultScale: Float = 1f
 ) : JarvisScalable {
+
+	init {
+		val identifier = modIdentifier(displayLabel.lowercase(Locale.US).replace(" ", "_"))
+
+		HudLayerRegistrationCallback.EVENT.register { layeredDrawerWrapper ->
+			layeredDrawerWrapper.attachLayerBefore(
+				IdentifiedLayer.DEMO_TIMER,
+				IdentifiedLayer.of(identifier, ::render)
+			)
+		}
+	}
+
+	abstract fun render(drawContext: DrawContext, renderTickCounter: RenderTickCounter)
 
 	override fun getX(): Double {
 		return xPos
@@ -29,7 +48,7 @@ abstract class SimpleHudElement(
 	}
 
 	override fun getLabel(): Text {
-		return text
+		return Text.of(displayLabel)
 	}
 
 	override fun getWidth(): Int {

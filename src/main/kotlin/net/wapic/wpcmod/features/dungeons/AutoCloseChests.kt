@@ -3,6 +3,7 @@ package net.wapic.wpcmod.features.dungeons
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen
+import net.minecraft.text.Text
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.DungeonUtils
@@ -27,7 +28,7 @@ class AutoCloseChests {
 						"Treasure Talisman"
 					)
 				}?.let { stack ->
-					ChatUtils.sendAlert(stack.name.string, stack.name.style)
+					ChatUtils.sendAlert(Text.literal(stack.name.string).setStyle(stack.name.style))
 				}
 				screen.close()
 			}

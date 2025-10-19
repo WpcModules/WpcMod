@@ -77,7 +77,7 @@ class PreventPlacingItems {
 		if (!config.preventPlacing || player.mainHandStack.isEmpty) return ActionResult.PASS
 		val item = player.mainHandStack.skyBlockID ?: return ActionResult.PASS
 
-		if (item.contains("ABIPHONE".toRegex()) || item in placeableItems) {
+		if (item.contains("ABIPHONE") || item in placeableItems) {
 
 			val block = MinecraftClient.getInstance().world?.getBlockState(hitResult.blockPos)
 			if (block?.block in interactables || DungeonUtils.inDungeons && (block?.block == Blocks.COAL_BLOCK || block?.block == Blocks.RED_TERRACOTTA)) {

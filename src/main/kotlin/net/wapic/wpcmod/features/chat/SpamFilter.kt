@@ -20,14 +20,13 @@ class SpamFilter {
 	private val notifyQueue = mutableListOf<Notification>()
 
 	private val abilityRegex =
-		"^Your (\\w+(?:\\s\\w+)*) hit (\\d+) enem(?:y|ies) for (\\d+(?:,\\d+)*(\\.\\d+)?) damage\\.$".toRegex()
-	private val tpFailRegex = "^There are blocks in the way!$".toRegex()
+		Regex("^Your (\\w+(?:\\s\\w+)*) hit (\\d+) enem(?:y|ies) for (\\d+(?:,\\d+)*(\\.\\d+)?) damage\\.$")
+	private val tpFailRegex = Regex("^There are blocks in the way!$")
 	private val killComboRegex =
-		"\\+\\d+ Kill Combo(?: \\+\\d+[%☯]? (?:✯ Magic Find|coins per kill|Combat Wisdom))?".toRegex()
-	private val joinOrLeaveRegex = "^(?:Friend|Guild) > \\w+ (?:joined|left)\\.$".toRegex()
+		Regex("\\+\\d+ Kill Combo(?: \\+\\d+[%☯]? (?:✯ Magic Find|coins per kill|Combat Wisdom))?")
+	private val joinOrLeaveRegex = Regex("^(?:Friend|Guild) > \\w+ (?:joined|left)\\.$")
 
 	data class Notification(val text: Text, var delay: Int) {
-
 		var x = MinecraftClient.getInstance().textRenderer.getWidth(text.string)
 	}
 

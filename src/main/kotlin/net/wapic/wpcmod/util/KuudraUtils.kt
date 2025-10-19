@@ -7,6 +7,7 @@ import net.minecraft.client.world.ClientWorld
 import net.minecraft.entity.mob.MagmaCubeEntity
 import net.minecraft.text.Text
 import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.events.skyblock.KuudraEvents
 import net.wapic.wpcmod.util.EntityUtils.skyBlockMaxHealth
 
@@ -28,7 +29,7 @@ object KuudraUtils {
 		ClientTickEvents.END_WORLD_TICK.register(::onTick)
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 
-		ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register { _, _ ->
+		WorldChangeEvent.BEFORE.register {
 			kuudraEntity = null
 			phase = null
 		}

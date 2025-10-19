@@ -41,7 +41,7 @@ class ArmorSwapper {
 		if (!screen.title.string.contains(wardrobeTitle)) return
 		val inv = screen.screenHandler.inventory
 
-		for (index in 27..inv.size() - 1) {
+		for (index in 27..<inv.size()) {
 			val stack = inv.getStack(index)
 			if (stack.item == Items.AIR) continue
 
@@ -49,7 +49,7 @@ class ArmorSwapper {
 				sorrowSlot = index + 9
 			}
 
-			if (stack.name.string.contains("Equipped".toRegex())) {
+			if (stack.name.string.contains("Equipped")) {
 				if (sorrowSlot == index) {
 					lastArmorSlot?.let {
 						client.interactionManager?.clickSlot(

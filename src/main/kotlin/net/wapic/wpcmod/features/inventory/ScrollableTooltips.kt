@@ -36,10 +36,10 @@ class ScrollableTooltips {
 		}
 		if (config.invertedScroll) {
 			scrolledAmount = MathHelper.clamp(scrolledAmount, 0, height)
-			pos.y = pos.y - scrolledAmount
+			pos.y -= scrolledAmount
 		} else {
 			scrolledAmount = MathHelper.clamp(scrolledAmount, -height, 0)
-			pos.y = pos.y + scrolledAmount
+			pos.y += scrolledAmount
 		}
 
 

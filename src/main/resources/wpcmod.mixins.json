@@ -26,6 +26,7 @@
     "NetworkThreadUtilsMixin",
     "PlayerEntityMixin",
     "SimpleInventoryMixin",
+    "WorldChunkMixin",
     "WorldRendererMixin",
     "accessors.HandledScreenAccessor",
     "accessors.MinecraftClientAccessor",

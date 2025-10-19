@@ -10,14 +10,15 @@ import java.util.function.DoubleFunction
 
 object RenderLayers {
 
-	val LINES_LAYERS: Double2ObjectMap<RenderLayer.MultiPhase> = Double2ObjectOpenHashMap<RenderLayer.MultiPhase>()
+	val LINES_LAYERS: Double2ObjectMap<RenderLayer.MultiPhase> = Double2ObjectOpenHashMap()
 
 	val LINES: DoubleFunction<RenderLayer.MultiPhase> = Double2ObjectFunctions.primitive { lineWidth ->
 		RenderLayer.of(
 			"wpcmod_lines",
 			RenderLayer.DEFAULT_BUFFER_SIZE,
 			WpcModRenderPipelines.LINES,
-			RenderLayer.MultiPhaseParameters.builder().lineWidth(RenderPhase.LineWidth(OptionalDouble.of(lineWidth)))
+			RenderLayer.MultiPhaseParameters.builder()
+				.lineWidth(RenderPhase.LineWidth(OptionalDouble.of(lineWidth)))
 				.layering(RenderPhase.VIEW_OFFSET_Z_LAYERING).build(false)
 		)
 	}

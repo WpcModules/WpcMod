@@ -24,7 +24,8 @@ import net.wapic.wpcmod.features.entity.MobGlow
 import net.wapic.wpcmod.features.entity.MobGlowCache
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.Utils
-import net.wapic.wpcmod.util.render.RenderUtils
+import net.wapic.wpcmod.util.render.drawBoundingBox
+import net.wapic.wpcmod.util.render.drawTracer
 import java.util.concurrent.CopyOnWriteArraySet
 
 class GalateaESP : MobGlowCache() {
@@ -98,26 +99,26 @@ class GalateaESP : MobGlowCache() {
 			}
 
 			if (settings.box)
-				RenderUtils.drawBoundingBox(worldRenderContext, boundingBox, settings.color.getEffectiveColour())
+				worldRenderContext.drawBoundingBox(boundingBox, settings.color.getEffectiveColour())
 
 			if (settings.tracer)
-				RenderUtils.drawTracer(worldRenderContext, boundingBox.center, settings.color.getEffectiveColour())
+				worldRenderContext.drawTracer(boundingBox.center, settings.color.getEffectiveColour())
 		}
 
-		for (node in forestNodes) {
-			if (config.forestNode.box){
-				RenderUtils.drawBoundingBox(
-					worldRenderContext,
-					node.withMinY(node.maxY),
-					config.forestNode.color.getEffectiveColour()
-				)
-			}
-			if (config.forestNode.tracer) {
-				RenderUtils.drawTracer(
-					worldRenderContext,
-					node.withMinY(node.maxY).center,
-					config.forestNode.color.getEffectiveColour()
-				)
+		if(config.forestNode.box || config.forestNode.tracer) {
+			for (node in forestNodes) {
+				if (config.forestNode.box) {
+					worldRenderContext.drawBoundingBox(
+						node.withMinY(node.maxY),
+						config.forestNode.color.getEffectiveColour()
+					)
+				}
+				if (config.forestNode.tracer) {
+					worldRenderContext.drawTracer(
+						node.withMinY(node.maxY).center,
+						config.forestNode.color.getEffectiveColour()
+					)
+				}
 			}
 		}
 	}

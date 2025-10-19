@@ -1,35 +1,24 @@
 package net.wapic.wpcmod.features.kuudra
 
-import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback
-import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.render.RenderTickCounter
 import net.minecraft.util.Formatting
-import net.minecraft.util.Identifier
 import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.jarvis.SimpleHudElement
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.KuudraUtils
 import net.wapic.wpcmod.util.KuudraUtils.Phase
 import net.wapic.wpcmod.util.KuudraUtils.kuudraEntity
 import net.wapic.wpcmod.util.Utils
 
-class KuudraDisplay {
+class KuudraDisplay : SimpleHudElement("Kuudra Display", 75, 11) {
 
 	private val config get() = WpcMod.config.kuudra
 
 	private val mc = MinecraftClient.getInstance()
 
-	init {
-		HudLayerRegistrationCallback.EVENT.register { layeredDrawer ->
-			layeredDrawer.attachLayerAfter(
-				IdentifiedLayer.TITLE_AND_SUBTITLE,
-				IdentifiedLayer.of(Identifier.of("wpcmod", "kuudra_display"), ::onRenderHud)
-			)
-		}
-	}
-
-	fun onRenderHud(drawContext: DrawContext, tickCounter: RenderTickCounter) {
+	override fun render(drawContext: DrawContext, renderTickCounter: RenderTickCounter) {
 		if (Utils.getLocation() != Island.KUUDRA || !config.healthDisplay) return
 
 		kuudraEntity?.let {

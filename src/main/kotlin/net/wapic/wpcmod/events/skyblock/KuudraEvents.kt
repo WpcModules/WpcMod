@@ -7,7 +7,7 @@ object KuudraEvents {
 
 	@JvmField
 	val START: Event<Start> = EventFactory.createArrayBacked(Start::class.java) { listeners ->
-		Start { ->
+		Start {
 			for (listener in listeners) {
 				listener.onStart()
 			}
@@ -16,7 +16,7 @@ object KuudraEvents {
 
 	@JvmField
 	val END: Event<End> = EventFactory.createArrayBacked(End::class.java) { listeners ->
-		End { ->
+		End {
 			for (listener in listeners) {
 				listener.onEnd()
 			}
