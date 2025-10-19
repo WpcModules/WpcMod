@@ -25,5 +25,5 @@ object ChatUtils {
 		this?.sendChatMessage(message)
 	}
 
-	fun String.removeFormatting(): String = formattingRegex.matcher(this).replaceAll("");
+	fun String.removeFormatting(): String = formattingRegex.matcher(this).replaceAll("")
 }
