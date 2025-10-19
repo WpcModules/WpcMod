@@ -1,6 +1,5 @@
 package net.wapic.wpcmod.features.dungeons.floor7
 
-import net.wapic.wpcmod.features.dungeons.floor7.termsim.TermSimGUI
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.client.gui.DrawContext
@@ -19,23 +18,17 @@ import net.minecraft.screen.sync.ItemStackHash
 import net.minecraft.text.Text
 import net.minecraft.util.Colors
 import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.config.dungeon.Floor7Config.TerminalSolverConfig.RenderType
 import net.wapic.wpcmod.events.GuiEvents
 import net.wapic.wpcmod.events.PacketEvents
+import net.wapic.wpcmod.events.TooltipEvents
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
-import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalHandler
-import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalTypes
+import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.*
+import net.wapic.wpcmod.features.dungeons.floor7.termsim.TermSimGUI
+import net.wapic.wpcmod.mixin.accessors.HandledScreenAccessor
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.equalsOneOf
-import net.wapic.wpcmod.config.dungeon.Floor7Config.TerminalSolverConfig.RenderType
-import net.wapic.wpcmod.events.TooltipEvents
-import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.MelodyHandler
-import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.NumbersHandler
-import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.PanesHandler
-import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.RubixHandler
-import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.SelectAllHandler
-import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.StartsWithHandler
-import net.wapic.wpcmod.mixin.accessors.HandledScreenAccessor
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
 
@@ -134,7 +127,6 @@ object TerminalSolver {
 
             else -> return
         }
-        if (packet is CloseHandledScreenC2SPacket) leftTerm()
     }
 
     fun onGuiClick(screen: Screen, mouseX: Int, mouseY: Int, button: Int, callbackInfoReturnable: CallbackInfoReturnable<Boolean>) = with(currentTerm) {

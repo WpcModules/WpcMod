@@ -1,10 +1,10 @@
 package net.wapic.wpcmod.features.dungeons.floor7.termGUI
 
 import net.minecraft.client.gui.DrawContext
-import net.wapic.wpcmod.features.dungeons.floor7.TerminalSolver
 import net.minecraft.client.gui.screen.Screen
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
+import net.wapic.wpcmod.features.dungeons.floor7.TerminalSolver
 import net.wapic.wpcmod.util.MC
 import java.awt.Color
 import kotlin.math.ceil
@@ -19,7 +19,7 @@ abstract class TermGui {
     abstract fun renderTerminal(drawContext: DrawContext, slotCount: Int)
 
     protected fun renderBackground(drawContext: DrawContext, slotCount: Int, slotWidth: Int) {
-        val slotSize = 55f * config.customTermSize
+		val slotSize = 40f * config.customTermSize
         val gap = config.gap * config.customTermSize
         val totalSlotSpace = slotSize + gap
 
@@ -32,7 +32,7 @@ abstract class TermGui {
     }
 
     protected fun renderSlot(drawContext: DrawContext, index: Int, startColor: Color): Pair<Float, Float> {
-        val slotSize = 55f * config.customTermSize
+		val slotSize = 40f * config.customTermSize
         val totalSlotSpace = slotSize + config.gap * config.customTermSize
 
         val x = (index % 9 - 4) * totalSlotSpace + drawContext.scaledWindowWidth / 2f - slotSize / 2

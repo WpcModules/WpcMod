@@ -1,8 +1,6 @@
 package net.wapic.wpcmod.features.dungeons.floor7
 
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
-import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback
-import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.render.RenderTickCounter
 import net.minecraft.client.world.ClientWorld
@@ -11,7 +9,6 @@ import net.minecraft.network.packet.Packet
 import net.minecraft.network.packet.s2c.common.CommonPingS2CPacket
 import net.minecraft.text.Text
 import net.minecraft.util.Colors
-import net.minecraft.util.Identifier
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.PacketEvents
 import net.wapic.wpcmod.events.WorldChangeEvent
@@ -20,7 +17,7 @@ import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.toFixed
 
-object TickTimers : SimpleHudElement(text = Text.of("Tick Timers"), h = 12, w = 120) {
+object TickTimers : SimpleHudElement("Tick Timers", h = 12, w = 120) {
 	private val config get() = WpcMod.config.dungeon.floor7.tickTimers
 
     private val necronRegex = Regex("^\\[BOSS] Necron: I'm afraid, your journey ends now\\.$")
@@ -40,13 +37,10 @@ object TickTimers : SimpleHudElement(text = Text.of("Tick Timers"), h = 12, w = 
 		PacketEvents.RECEIVE.register(::onPacketReceive)
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 		WorldChangeEvent.BEFORE.register(::onWorldChange)
-		HudLayerRegistrationCallback.EVENT.register { layeredDrawer ->
-			layeredDrawer.attachLayerBefore(IdentifiedLayer.DEMO_TIMER, IdentifiedLayer.of(Identifier.of("wpcmod", "tick_timers"), ::render))
-		}
 	}
 
     fun onPacketReceive(packet: Packet<out PacketListener>) {
-        if (!DungeonUtils.isBossSpawned()) return
+		if (!DungeonUtils.bossSpawned) return
         if (packet !is CommonPingS2CPacket) return
 
 		if (goldorTickTime == 0 && goldorStartTime <= 0 && isActive) goldorTickTime = 60
@@ -92,7 +86,7 @@ object TickTimers : SimpleHudElement(text = Text.of("Tick Timers"), h = 12, w = 
         return "${if (config.showPrefix) "$prefix " else ""}$color$timeDisplay"
     }
 
-	private fun render(drawContext: DrawContext, renderTickCounter: RenderTickCounter) {
+	override fun render(drawContext: DrawContext, renderTickCounter: RenderTickCounter) {
 		if(!isActive) return
 		val matrixStack = drawContext.matrices
 		matrixStack.push()

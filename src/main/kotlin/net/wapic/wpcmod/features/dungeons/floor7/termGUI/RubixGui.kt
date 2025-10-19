@@ -2,6 +2,7 @@ package net.wapic.wpcmod.features.dungeons.floor7.termGUI
 
 import net.minecraft.client.gui.DrawContext
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.render.drawText
 import java.awt.Color
 
 object RubixGui : TermGui() {
@@ -15,13 +16,13 @@ object RubixGui : TermGui() {
             if (clicksRequired == 0) return@forEach
 
             val (slotX, slotY) = renderSlot(drawContext, index, getColor(clicksRequired))
-            val slotSize = 55f * config.customTermSize
-            val fontSize = 30f * config.customTermSize
+			val slotSize = 40f * config.customTermSize
+			val fontSize = 10f * config.customTermSize
 
             val textX = slotX + (slotSize - MC.textRenderer.getWidth(clicksRequired.toString())) / 2f
             val textY = slotY + (slotSize + fontSize) / 2f - fontSize * 0.9f
 
-            drawContext.drawText(MC.textRenderer, "$clicksRequired", textX.toInt(), textY.toInt(), Color.WHITE.rgb, true)
+			drawContext.drawText(clicksRequired.toString(), textX.toInt(), textY.toInt(), Color.WHITE.rgb, true)
         }
     }
 
