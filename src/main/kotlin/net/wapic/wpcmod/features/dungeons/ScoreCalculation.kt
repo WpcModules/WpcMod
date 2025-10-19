@@ -78,7 +78,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 
 	private val roomClearPercentage: Double
 		get() {
-			val total = if(FunnyMap.Info.roomCount != 0) FunnyMap.Info.roomCount else getTotalRooms()
+			val total = getTotalRooms()
 			val complete = completedRooms + (!DungeonUtils.bossSpawned).ifTrue(1) + (!bloodCleared).ifTrue(1)
 			return if (total > 0) (complete / total.toDouble()).coerceAtMost(1.0) else 0.0
 		}
@@ -173,11 +173,14 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 	private fun Boolean.ifTrue(num: Int) = if (this) num else 0
 	private fun Double.applyEntranceModifier() = if (isEntrance) (this * 0.7).toInt() else this.toInt()
 	private fun getTotalRooms(): Int {
+		if (FunnyMap.Info.roomCount != 0) return FunnyMap.Info.roomCount
+
 		if (clearedPercentage > 0 && completedRooms > 0) {
 			val key = (100 * (completedRooms / clearedPercentage.toDouble())).roundToInt()
 			totalRoomMap[key] = (totalRoomMap[key] ?: 0) + 1
 			return totalRoomMap.toList().maxByOrNull { it.second }!!.first
 		}
+
 		return 0
 	}
 
