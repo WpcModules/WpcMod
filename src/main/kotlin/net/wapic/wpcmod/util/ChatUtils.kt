@@ -23,5 +23,5 @@ object ChatUtils {
 		this?.sendChatMessage(message)
 	}
 
-	fun String.removeFormatting() = replace(Regex("§[0-9a-f]"), "")
+	fun String.removeFormatting() = Formatting.strip(this)
 }
