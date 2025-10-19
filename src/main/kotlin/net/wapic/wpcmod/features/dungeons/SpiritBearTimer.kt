@@ -19,14 +19,12 @@ import net.wapic.wpcmod.util.Utils.equalsOneOf
 import net.wapic.wpcmod.util.render.drawText
 import java.awt.Color
 
-object SpiritBearTimer : SimpleHudElement("Spirit Bear Timer", 80, 11) {
+object SpiritBearTimer : SimpleHudElement("Spirit Bear Timer", 90, 12) {
 
 	private val config get() = WpcMod.config.dungeon
 
 	private val lastBlockPos = BlockPos(7, 77, 34)
 	private val isThornFloor get() = currentFloor.equalsOneOf(DungeonFloor.FLOOR_4, DungeonFloor.MASTER_MODE_FLOOR_4)
-	private val spawnTime: Long get() = lastLitUpTime + 3400L
-
 	private var lastLitUpTime: Long = 0L
 
 	fun init() {
@@ -43,9 +41,12 @@ object SpiritBearTimer : SimpleHudElement("Spirit Bear Timer", 80, 11) {
 		matrixStack.push()
 		applyTransformations(matrixStack)
 
+		val spawnTime = lastLitUpTime + 3400L
+		val diff = (spawnTime - Util.getMeasuringTimeMs()) / 1000f
+
 		drawContext.drawText(
-			"Spirit Bear: ${(spawnTime - Util.getMeasuringTimeMs()) / 1000}s",
-			x = 0, y = 0,
+			"Spirit Bear: ${String.format("%.2f", diff)}s",
+			x = 2, y = 2,
 			Color.MAGENTA.rgb,
 			shadow = true
 		)
