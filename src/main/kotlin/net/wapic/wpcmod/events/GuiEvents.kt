@@ -14,29 +14,15 @@ object GuiEvents {
 	@JvmField
 	val DRAW_SLOT_BACKGROUND: Event<DrawSlotBefore> =
 		EventFactory.createArrayBacked(DrawSlotBefore::class.java) { listeners ->
-			DrawSlotBefore { drawContext, slot, callbackInfo ->
+			DrawSlotBefore { drawContext, screen, slot, callbackInfo ->
 				for (listener in listeners) {
-					listener.onDrawSlot(drawContext, slot, callbackInfo)
+					listener.onDrawSlot(drawContext, screen, slot, callbackInfo)
 				}
 			}
 		}
 
 	fun interface DrawSlotBefore {
-		fun onDrawSlot(drawContext: DrawContext, slot: Slot, ci: CallbackInfo)
-	}
-
-	@JvmField
-	val DRAW_SLOT_FOREGROUND: Event<DrawSlotAfter> =
-		EventFactory.createArrayBacked(DrawSlotAfter::class.java) { listeners ->
-			DrawSlotAfter { drawContext, slot, ci->
-				for (listener in listeners) {
-					listener.onDrawSlot(drawContext, slot, ci)
-				}
-			}
-		}
-
-	fun interface DrawSlotAfter {
-		fun onDrawSlot(drawContext: DrawContext, slot: Slot, ci: CallbackInfo)
+		fun onDrawSlot(drawContext: DrawContext, screen: Screen, slot: Slot, ci: CallbackInfo)
 	}
 
 	@JvmField

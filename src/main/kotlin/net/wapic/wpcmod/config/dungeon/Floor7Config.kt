@@ -207,9 +207,5 @@ class Floor7Config {
 		@ConfigOption(name = "Color", desc = "The color of the box.")
 		@ConfigEditorColour
 		val color: ChromaColour = ChromaColour(1f, 1f, 1f, 0, 255)
-
-		@ConfigOption(name = "Depth check",desc = "Boxes show through walls.")
-		@ConfigEditorBoolean
-		val depthCheck: Boolean = false
 	}
 }

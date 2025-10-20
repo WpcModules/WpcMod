@@ -24,12 +24,7 @@ public abstract class HandledScreenMixin {
 
 	@Inject(at = @At("HEAD"), method = "drawSlot", cancellable = true)
 	protected void drawSlot$Before(DrawContext context, Slot slot, CallbackInfo ci) {
-		GuiEvents.DRAW_SLOT_BACKGROUND.invoker().onDrawSlot(context, slot, ci);
-	}
-
-	@Inject(at = @At("TAIL"), method = "drawSlot", cancellable = true)
-	protected void drawSlot$After(DrawContext context, Slot slot, CallbackInfo ci) {
-		GuiEvents.DRAW_SLOT_FOREGROUND.invoker().onDrawSlot(context, slot, ci);
+		GuiEvents.DRAW_SLOT_BACKGROUND.invoker().onDrawSlot(context, (Screen) (Object) this, slot, ci);
 	}
 
 	@Inject(at = @At("HEAD"), method = "onMouseClick(Lnet/minecraft/screen/slot/Slot;IILnet/minecraft/screen/slot/SlotActionType;)V")

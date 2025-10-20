@@ -28,7 +28,6 @@ import net.wapic.wpcmod.features.dungeons.floor7.termsim.TermSimGUI
 import net.wapic.wpcmod.mixin.accessors.HandledScreenAccessor
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.MC
-import net.wapic.wpcmod.util.Utils.equalsOneOf
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
 
@@ -48,7 +47,7 @@ object TerminalSolver {
 		PacketEvents.RECEIVE.register(::onPacketReceive)
 		PacketEvents.SEND.register(::onPacketSend)
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
-		GuiEvents.DRAW_SLOT_FOREGROUND.register(::drawSlot)
+		GuiEvents.DRAW_SLOT_BACKGROUND.register(::drawSlot)
 		GuiEvents.MOUSE_CLICK.register(::onGuiClick)
 		TooltipEvents.RENDER.register(::onTooltipDraw)
 		GuiEvents.RENDER.register(::onGuiRender)
@@ -172,20 +171,17 @@ object TerminalSolver {
         drawContext.fill(screen.x + 7, screen.y + 16, screen.x + screen.width - 7, screen.y + screen.height - 96, config.backgroundColor.getEffectiveColourRGB())
     }
 
-    fun drawSlot(drawContext: DrawContext, slot: Slot, callbackInfo: CallbackInfo) = with(currentTerm) {
-        if (!config.hideClicked || config.renderType == RenderType.CUSTOM || this?.type == null || (type == TerminalTypes.MELODY && config.cancelMelodySolver)) return
+	fun drawSlot(drawContext: DrawContext, screen: Screen, slot: Slot, callbackInfo: CallbackInfo) = with(currentTerm) {
+		if (!config.enabled || config.renderType == RenderType.CUSTOM || this?.type == null || (type == TerminalTypes.MELODY)) return
 
         val slotIndex = slot.id
-        val inventorySize = (MC.screen as? HandledScreen<*>)?.screenHandler?.slots?.size ?: return
+		val inventorySize = (screen as? HandledScreen<*>)?.screenHandler?.slots?.size ?: return
 
         callbackInfo.cancel()
         if (slotIndex !in solution || slotIndex > inventorySize - 37) return
 
         when (type) {
             TerminalTypes.PANES -> drawContext.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, config.panesColor.getEffectiveColourRGB())
-
-            TerminalTypes.STARTS_WITH, TerminalTypes.SELECT ->
-                drawContext.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, config.startsWithColor.getEffectiveColourRGB())
 
             TerminalTypes.NUMBERS -> {
                 val index = solution.indexOf(slot.index)
@@ -200,7 +196,14 @@ object TerminalSolver {
                 }
                 val amount = slot.stack?.count?.toString() ?: ""
                 if (config.showNumbers)
-					drawContext.drawText(MC.textRenderer, amount, slot.x + 8 - MC.textRenderer.getWidth(amount) / 2, slot.y + 4, Colors.WHITE, false)
+					drawContext.drawText(
+						MC.textRenderer,
+						amount,
+						slot.x + 8 - MC.textRenderer.getWidth(amount) / 2,
+						slot.y + 4,
+						Colors.WHITE,
+						true
+					)
             }
 
             TerminalTypes.RUBIX -> {
@@ -219,14 +222,15 @@ object TerminalSolver {
                 }
             }
 
-            TerminalTypes.MELODY -> {
-                drawContext.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, when {
-                    slotIndex / 9 == 0 || slotIndex / 9 == 5 -> config.melodyColumColor
-                    (slotIndex % 9).equalsOneOf(1, 2, 3, 4, 5) -> config.melodyPointerColor
-                    else -> config.melodyPointerColor
-                }.getEffectiveColourRGB())
-            }
-        }
+			// Select & StartsWith
+			else -> drawContext.fill(
+				slot.x,
+				slot.y,
+				slot.x + 16,
+				slot.y + 16,
+				config.startsWithColor.getEffectiveColourRGB()
+			)
+		}
     }
 
     fun onTooltipDraw(screen: Screen, mouseX: Int, mouseY: Int, drawContext: DrawContext, callbackInfo: CallbackInfo) {
