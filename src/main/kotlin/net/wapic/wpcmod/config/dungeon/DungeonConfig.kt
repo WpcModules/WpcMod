@@ -17,6 +17,21 @@ class DungeonConfig {
 	var spiritBear: Boolean = false
 
 	@Accordion
+	@ConfigOption(name = "Hitboxes", desc = "Enable bigger hitboxes on certain blocks")
+	var hitboxes: BiggerHitboxes = BiggerHitboxes()
+
+	class BiggerHitboxes {
+
+		@ConfigOption(name = "Lever", desc = "")
+		@ConfigEditorBoolean
+		var lever = false
+
+		@ConfigOption(name = "Button", desc = "")
+		@ConfigEditorBoolean
+		var button = false
+	}
+
+	@Accordion
 	@ConfigOption(name = "Auto GFS", desc = "Automatically run /getfromsack for these items on dungeon start")
 	var autoGFS: AutoGetFromSack = AutoGetFromSack()
 
