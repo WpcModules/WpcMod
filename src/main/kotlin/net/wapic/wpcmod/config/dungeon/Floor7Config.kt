@@ -1,14 +1,13 @@
 package net.wapic.wpcmod.config.dungeon
 
 import io.github.notenoughupdates.moulconfig.ChromaColour
-import io.github.notenoughupdates.moulconfig.annotations.Accordion
-import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorBoolean
-import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorColour
-import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorDropdown
-import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorSlider
-import io.github.notenoughupdates.moulconfig.annotations.ConfigOption
+import io.github.notenoughupdates.moulconfig.annotations.*
 
 class Floor7Config {
+
+	@ConfigOption(name = "Melody Message", desc = "Helpful messages for the melody terminal in floor 7.")
+	@ConfigEditorBoolean
+	var melodyMessage: Boolean = false
 
 	@Accordion
 	@ConfigOption(name = "Arrow Align Solver", desc = "Solver for Arrow Device in P3")
@@ -53,7 +52,7 @@ class Floor7Config {
 
 		@ConfigOption(name = "Start timer", desc = "Displays a timer counting down until devices/terms are able to be activated/completed.")
 		@ConfigEditorBoolean
-		var startTimer: Boolean = false // Goldor dependency
+		var startTimer: Boolean = false
 	}
 
 	@Accordion
@@ -66,7 +65,7 @@ class Floor7Config {
 		@ConfigEditorBoolean
 		var enabled = false
 
-		@ConfigOption(name = "renderType", desc = "Which type of terminal to render")
+		@ConfigOption(name = "GUI Type", desc = "Type of GUI to render for terminals")
 		@ConfigEditorDropdown
 		var renderType: RenderType = RenderType.NORMAL
 
@@ -102,90 +101,71 @@ class Floor7Config {
 		@ConfigEditorSlider(minValue = 0.5f, maxValue = 3f, minStep = 0.1f)
 		var customTermSize: Float = 1f
 
-		@ConfigOption(name = "Roundness", desc = "The roundness of the custom terminal gui.")
-		@ConfigEditorSlider(minValue = 0f, maxValue = 15f, minStep = 1f)
-		var roundness: Float = 9f
-
 		@ConfigOption(name = "Gap",	desc = "The gap between the slots in the custom terminal gui.")
 		@ConfigEditorSlider(minValue = 0f, maxValue = 15f, minStep = 1f)
 		var gap: Float = 5f
 
 		@ConfigOption(name = "Background", desc = "Background color of the terminal solver.")
 		@ConfigEditorColour
-		var backgroundColor = ChromaColour(1f, 1f, 1f, 0, 255)
+		var backgroundColor = ChromaColour.fromRGB(0, 0, 0, 0, 125)
 
 		@ConfigOption(name = "Panes",	desc = "Color of the panes terminal solver.")
 		@ConfigEditorColour
-		var panesColor = ChromaColour(1f, 1f, 1f, 0, 255)
+		var panesColor = ChromaColour.fromRGB(0, 255, 255, 0, 255)
 
 		@ConfigOption(name = "Rubix 1", desc = "Color of the rubix terminal solver for 1 click.")
 		@ConfigEditorColour
-		var rubixColor1= ChromaColour(1f, 1f, 1f, 0, 255)
+		var rubixColor1 = ChromaColour.fromRGB(0, 255, 255, 0, 255)
 
 		@ConfigOption(name = "Rubix 2", desc = "Color of the rubix terminal solver for 2 click.")
 		@ConfigEditorColour
-		var rubixColor2 = ChromaColour(1f, 1f, 1f, 0, 255)
+		var rubixColor2 = ChromaColour.fromRGB(0, 255, 255, 0, 125)
 
 		@ConfigOption(name = "Rubix -1", desc = "Color of the rubix terminal solver for -1 click.")
 		@ConfigEditorColour
-		var oppositeRubixColor1 = ChromaColour(1f, 1f, 1f, 0, 255)
+		var oppositeRubixColor1 = ChromaColour.fromRGB(255, 0, 0, 0, 255)
 		
 		@ConfigOption(name = "Rubix -2", desc = "Color of the rubix terminal solver for -2 click.")
 		@ConfigEditorColour
-		var oppositeRubixColor2 = ChromaColour(1f, 1f, 1f, 0, 255)
+		var oppositeRubixColor2 = ChromaColour.fromRGB(255, 0, 0, 0, 125)
 
 		@ConfigOption(name = "Order 1", desc = "Color of the order terminal solver for 1st item.")
 		@ConfigEditorColour
-		var orderColor = ChromaColour(1f, 1f, 1f, 0, 255)
+		var orderColor = ChromaColour.fromRGB(0, 255, 255, 0, 255)
 
 		@ConfigOption(name = "Order 2", desc = "Color of the order terminal solver for 2nd item.")
 		@ConfigEditorColour
-		var orderColor2 = ChromaColour(1f, 1f, 1f, 0, 255)
+		var orderColor2 = ChromaColour.fromRGB(0, 255, 255, 0, 170)
 
 		@ConfigOption(name = "Order 3", desc = "Color of the order terminal solver for 3rd item.")
 		@ConfigEditorColour
-		var orderColor3 = ChromaColour(1f, 1f, 1f, 0, 255)
+		var orderColor3 = ChromaColour.fromRGB(0, 255, 255, 0, 85)
 
 		@ConfigOption(name = "Starts With", desc = "Color of the starts with terminal solver.")
 		@ConfigEditorColour
-		var startsWithColor = ChromaColour(1f, 1f, 1f, 0, 255)
+		var startsWithColor = ChromaColour.fromRGB(0, 255, 255, 0, 255)
 
 		@ConfigOption(name = "Select", desc = "Color of the select terminal solver.")
 		@ConfigEditorColour
-		var selectColor = ChromaColour(1f, 1f, 1f, 0, 255)
+		var selectColor = ChromaColour.fromRGB(0, 255, 255, 0, 255)
 
 		@ConfigOption(name = "Melody Column", desc = "Color of the colum indicator for melody.")
 		@ConfigEditorColour
-		var melodyColumColor = ChromaColour(1f, 1f, 1f, 0, 255)
+		var melodyColumColor = ChromaColour.fromRGB(255, 0, 255, 0, 255)
 
 		@ConfigOption(name = "Melody Row", desc = "Color of the row indicator for melody.")
 		@ConfigEditorColour
-		var melodyRowColor = ChromaColour(1f, 1f, 1f, 0, 255)
+		var melodyRowColor = ChromaColour.fromRGB(255, 0, 0, 0, 255)
 
 		@ConfigOption(name = "Melody Pointer", desc = "Color of the location for pressing for melody.")
 		@ConfigEditorColour
-		var melodyPointerColor = ChromaColour(1f, 1f, 1f, 0, 255)
+		var melodyPointerColor = ChromaColour.fromRGB(0, 255, 0, 0, 255)
 
 		enum class RenderType {
 			NORMAL,
 			CUSTOM
 		}
 	}
-
-	@Accordion
-	@ConfigOption(name = "Terminal Simulator", desc = "Simulates a floor 7 terminal from phase 3.")
-	var termSim: TerminalSimulatorConfig = TerminalSimulatorConfig()
-
-	class TerminalSimulatorConfig {
-
-		@ConfigOption(name = "Ping", desc = "Ping of the terminal.")
-		@ConfigEditorSlider(minStep = 1f, minValue = 0f, maxValue = 500f)
-		var ping: Float = 0f
-	}
-
-	@ConfigOption(name = "Melody Message", desc = "Helpful messages for the melody terminal in floor 7.")
-	@ConfigEditorBoolean
-	var melodyMessage: Boolean = false
 
 	@Accordion
 	@ConfigOption(name = "Inactive Waypoints", desc = "Shows inactive terminals, devices and levers.")
