@@ -33,7 +33,8 @@ public abstract class HandledScreenMixin {
 			GuiEvents.SLOT_CLICKED.invoker().onSlotClick(slot, slotId, button, slotActionType, ci);
 		}
 	}
-	@Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
+
+	@Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true, order = 0)
 	private void onMouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
 		GuiEvents.MOUSE_CLICK.invoker().onMouseClick((Screen) (Object) this, (int) mouseX, (int) mouseY, button, cir);
 	}

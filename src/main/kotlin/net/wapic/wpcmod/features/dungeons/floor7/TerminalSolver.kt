@@ -1,7 +1,9 @@
 package net.wapic.wpcmod.features.dungeons.floor7
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps
+import me.shedaniel.rei.api.client.config.ConfigManager
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
+import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.screen.ingame.HandledScreen
@@ -42,6 +44,7 @@ object TerminalSolver {
     private val startsWithRegex = Regex("What starts with: '(\\w+)'?")
     private val selectAllRegex = Regex("Select all the (.+) items!")
     private var lastClickTime = 0L
+	private var isREIOverlayEnabled = false
 
 	fun init() {
 		PacketEvents.RECEIVE.register(::onPacketReceive)
@@ -92,6 +95,10 @@ object TerminalSolver {
 					WpcMod.logger.debug("§aNew terminal: §6${it.type.name}")
 					DungeonEvents.TERMINAL_OPENED.invoker().onOpen(it)
                     lastTermOpened = it
+					if (FabricLoader.getInstance().isModLoaded("roughlyenoughitems")) {
+						isREIOverlayEnabled = ConfigManager.getInstance().config.isOverlayVisible
+						ConfigManager.getInstance().config.isOverlayVisible = false
+					}
                 }
             }
 
@@ -243,6 +250,9 @@ object TerminalSolver {
 			DungeonEvents.TERMINAL_CLOSED.invoker().onClose(it)
             currentTerm?.type?.getGUI()?.closeGui()
             currentTerm = null
+			if (FabricLoader.getInstance().isModLoaded("roughlyenoughitems")) {
+				ConfigManager.getInstance().config.isOverlayVisible = isREIOverlayEnabled
+			}
         }
     }
 }

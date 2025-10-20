@@ -41,6 +41,7 @@ repositories {
             includeGroup("maven.modrinth")
         }
     }
+    maven { url "https://maven.shedaniel.me" }
 }
 
 configurations {
@@ -66,6 +67,8 @@ dependencies {
 
     modCompileOnly "moe.nea.jarvis:jarvis-api:1.1.4"
     include "moe.nea.jarvis:jarvis-fabric:1.1.4"
+
+    modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:19.0.809"
 
     // Dev Runtimes
     modLocalRuntime "moe.nea.jarvis:jarvis-fabric:1.1.4"
