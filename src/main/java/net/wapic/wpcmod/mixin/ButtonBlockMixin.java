@@ -25,7 +25,10 @@ public abstract class ButtonBlockMixin extends WallMountedBlock {
 	@Inject(method = "getOutlineShape", at = @At("HEAD"), cancellable = true)
 	public void onGetOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context, CallbackInfoReturnable<VoxelShape> cir) {
 		if (WpcMod.config.getDungeon().getHitboxes().getButton()) {
-			cir.setReturnValue(BiggerHitboxes.INSTANCE.getButtonHitbox(state));
+			VoxelShape shape = BiggerHitboxes.INSTANCE.getButtonHitbox(state.get(FACE), state.get(FACING));
+			if (shape != null) {
+				cir.setReturnValue(shape);
+			}
 		}
 	}
 }

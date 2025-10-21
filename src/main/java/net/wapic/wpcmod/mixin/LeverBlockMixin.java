@@ -24,8 +24,10 @@ public abstract class LeverBlockMixin extends WallMountedBlock {
 	@Inject(method = "getOutlineShape", at = @At("HEAD"), cancellable = true)
 	public void onGetOutLineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context, CallbackInfoReturnable<VoxelShape> cir) {
 		if (WpcMod.config.getDungeon().getHitboxes().getLever()) {
-			VoxelShape shape = BiggerHitboxes.INSTANCE.getLeverHitbox(state);
-			cir.setReturnValue(shape);
+			VoxelShape shape = BiggerHitboxes.INSTANCE.getLeverHitbox(state.get(FACE), state.get(FACING));
+			if (shape != null) {
+				cir.setReturnValue(shape);
+			}
 		}
 	}
 }
