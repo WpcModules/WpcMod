@@ -8,7 +8,8 @@ import net.minecraft.entity.projectile.FishingBobberEntity
 import net.minecraft.item.Items
 import net.minecraft.screen.PlayerScreenHandler
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.util.EntityUtils
+import net.wapic.wpcmod.mixin.accessors.MinecraftClientAccessor
+import net.wapic.wpcmod.util.EntityUtils.getArmorStandsByEntity
 import net.wapic.wpcmod.util.MC
 import kotlin.random.Random
 
@@ -25,11 +26,11 @@ class AutoFish {
 	private fun onTick(client: MinecraftClient) {
 		if(!config.enabled || preventFutureRodUse) return
 
-		val fishHook = MC.player?.fishHook ?: return
+		val fishHook = client.player?.fishHook ?: return
 
 		if (config.slugFish && fishHook.age < slugDelayInTicks) return
 
-		if(isHookReady(fishHook) && fishHook.isInFluid) {
+		if (fishHook.hasCaughtFish) {
 			preventFutureRodUse = true
 			useRod(client)
 		}
@@ -49,18 +50,15 @@ class AutoFish {
 			val notInGui = client.player?.currentScreenHandler is PlayerScreenHandler
 
 			if (isHoldingRod && notInGui) {
-				MC.runOnThread { 
-					MC.accessor.doItemUse_WpcMod()
+				MC.runOnThread {
+					(client as MinecraftClientAccessor).doItemUse_WpcMod()
 				}
 			}
 		}
 
-		delay(250) // Delay to prevent false positive from old armor stand
+		delay(200) // Delay to prevent false positive from old armor stand
 		preventFutureRodUse = false
 	}
 
-	private fun isHookReady(hook: FishingBobberEntity): Boolean {
-		val armorStands = EntityUtils.getArmorStandsByEntity(hook)
-		return armorStands.any { it.name.string == "!!!" }
-	}
+	private val FishingBobberEntity.hasCaughtFish: Boolean get() = getArmorStandsByEntity(this).any { it.name.string == "!!!" } && isInFluid
 }

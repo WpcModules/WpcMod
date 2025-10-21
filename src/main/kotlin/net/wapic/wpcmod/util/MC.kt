@@ -10,14 +10,12 @@ import net.minecraft.client.util.Window
 import net.minecraft.client.world.ClientWorld
 import net.minecraft.item.ItemStack
 import net.minecraft.resource.ResourceManager
-import net.wapic.wpcmod.mixin.accessors.MinecraftClientAccessor
 
 object MC {
 
 	fun runOnThread(run: () -> Unit) = if(instance.isOnThread) run() else instance.send { run() }
 
 	inline val instance: MinecraftClient get() = MinecraftClient.getInstance()
-	inline val accessor: MinecraftClientAccessor get() = instance as MinecraftClientAccessor
 	inline val player: ClientPlayerEntity? get() = instance.player
 	inline val textRenderer: TextRenderer get() = instance.textRenderer
 	inline val world: ClientWorld? get() = instance.world

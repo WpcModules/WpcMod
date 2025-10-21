@@ -21,9 +21,9 @@ class FishingConfig {
 		@ConfigOption(name = "Recast", desc = "Won't recast after reeling in. useful when rod doesn't 1 tap")
 		var recast: Boolean = true
 
-		@ConfigEditorSlider(minStep = 1f, minValue = 200f, maxValue = 300f)
+		@ConfigEditorSlider(minStep = 1f, minValue = 100f, maxValue = 250f)
 		@ConfigOption(name = "Minimum Delay", desc = "The minimum amount of delay when casting rod")
-		var minDelay: Float = 250f
+		var minDelay: Float = 175f
 
 		@ConfigEditorBoolean
 		@ConfigOption(name = "Slug Fish", desc = "wait 20s to catch")
