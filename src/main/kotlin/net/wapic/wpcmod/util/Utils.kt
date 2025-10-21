@@ -4,7 +4,6 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.hypixel.modapi.HypixelModAPI
 import net.hypixel.modapi.packet.impl.clientbound.event.ClientboundLocationPacket
 import net.minecraft.block.entity.BlockEntity
-import net.minecraft.client.MinecraftClient
 import net.minecraft.client.util.Clipboard
 import net.minecraft.util.Identifier
 import net.minecraft.util.Util
@@ -41,7 +40,7 @@ object Utils {
 	}
 
 	fun runCommand(command: String) {
-		MinecraftClient.getInstance().networkHandler?.sendCommand(command.removePrefix("/"))
+		MC.networkHandler?.sendCommand(command.removePrefix("/"))
 	}
 
 	private fun onTick() {

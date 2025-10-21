@@ -12,7 +12,10 @@ import net.minecraft.entity.Entity
 import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.mob.ZombieEntity
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket
+import net.minecraft.sound.SoundEvents
+import net.minecraft.text.Style
 import net.minecraft.text.Text
+import net.minecraft.util.Formatting
 import net.minecraft.util.math.BlockPos
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.dungeon.DungeonConfig.ScoreCalculationConfig.ScoreHudType
@@ -103,10 +106,11 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 	// Death
 	private var deaths = 0
 	private var firstDeathHadSpirit = false
+		get() = if (config.assumeSpirit) true else field
+
 	private val deathPenalty get() = (2 * deaths) - if (firstDeathHadSpirit) 1 else 0
 
 	// Puzzle
-
 	private var missingPuzzles = 0
 	private var failedPuzzles = 0
 	private val puzzlePenalty get() = 10 * (missingPuzzles + failedPuzzles)
@@ -143,7 +147,26 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 		get() = crypts.coerceAtMost(5) + isPaul.ifTrue(10) + mimicFound.ifTrue(2) + princeKilled.ifTrue(1)
 	private val bonusScore get() = if (isEntrance) ceil(calcBonusScore * 0.7).toInt() else calcBonusScore
 
-	private val totalScore get() = skillScore + exploreScore + speedScore + bonusScore
+	private var sent300Message = false
+	private var sent270Message = false
+
+	private val totalScore: Int
+		get() {
+			val total = skillScore + exploreScore + speedScore + bonusScore
+
+			if (config.scoreAlert) {
+				if (total >= 300 && !sent300Message) {
+					sendScoreMessage(300)
+					sent300Message = true
+					sent270Message = true
+				} else if (total >= 270 && !sent270Message) {
+					sendScoreMessage(270)
+					sent270Message = true
+				}
+			}
+
+			return total
+		}
 
 	private val rank
 		get() = when {
@@ -172,6 +195,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 
 	private fun Boolean.ifTrue(num: Int) = if (this) num else 0
 	private fun Double.applyEntranceModifier() = if (isEntrance) (this * 0.7).toInt() else this.toInt()
+
 	private fun getTotalRooms(): Int {
 		if (FunnyMap.Info.roomCount != 0) return FunnyMap.Info.roomCount
 
@@ -182,6 +206,12 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 		}
 
 		return 0
+	}
+
+	private fun sendScoreMessage(score: Int) {
+		ChatUtils.sendAlert(Text.literal("$score").setStyle(Style.EMPTY.withColor(Formatting.GOLD)))
+		Utils.runCommand("/pc $score Score Reached!")
+		MC.player?.playSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1f)
 	}
 
 	private fun onWorldChange(world: ClientWorld) {
@@ -205,6 +235,9 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 		isPaul = false
 		princeKilled = false
 		crypts = 0
+
+		sent270Message = false
+		sent300Message = false
 	}
 
 	fun checkMimicDead() {
