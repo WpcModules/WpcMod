@@ -8,12 +8,12 @@ import net.minecraft.util.shape.VoxelShape
 object BiggerHitboxes {
 
 	val LEVER_SHAPES = hashMapOf(
-		BlockFace.FLOOR to Block.createCuboidShape(2.0, 0.0, 2.0, 14.0, 8.0, 14.0),
-		BlockFace.CEILING to Block.createCuboidShape(2.0, 8.0, 2.0, 14.0, 16.0, 14.0),
-		Direction.NORTH to Block.createCuboidShape(2.0, 2.0, 8.0, 14.0, 14.0, 16.0),
-		Direction.SOUTH to Block.createCuboidShape(2.0, 2.0, 0.0, 14.0, 14.0, 8.0),
-		Direction.WEST to Block.createCuboidShape(8.0, 2.0, 2.0, 16.0, 14.0, 14.0),
-		Direction.EAST to Block.createCuboidShape(0.0, 2.0, 2.0, 8.0, 14.0, 14.0)
+		BlockFace.FLOOR to Block.createCuboidShape(2.0, 0.0, 2.0, 14.0, 10.0, 14.0),
+		BlockFace.CEILING to Block.createCuboidShape(2.0, 6.0, 2.0, 14.0, 16.0, 14.0),
+		Direction.NORTH to Block.createCuboidShape(2.0, 2.0, 6.0, 14.0, 14.0, 16.0),
+		Direction.SOUTH to Block.createCuboidShape(2.0, 2.0, 0.0, 14.0, 14.0, 10.0),
+		Direction.WEST to Block.createCuboidShape(6.0, 2.0, 2.0, 16.0, 14.0, 14.0),
+		Direction.EAST to Block.createCuboidShape(0.0, 2.0, 2.0, 10.0, 14.0, 14.0)
 	)
 
 	val BUTTON_SHAPES = mapOf(

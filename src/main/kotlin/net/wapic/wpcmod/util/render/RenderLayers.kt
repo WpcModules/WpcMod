@@ -23,6 +23,14 @@ object RenderLayers {
 		)
 	}
 
+	val FILLED_BOX: RenderLayer.MultiPhase = RenderLayer.of(
+		"wpcmod_filled_box",
+		RenderLayer.DEFAULT_BUFFER_SIZE,
+		WpcModRenderPipelines.FILLED_BOX,
+		RenderLayer.MultiPhaseParameters.builder()
+				.layering(RenderPhase.VIEW_OFFSET_Z_LAYERING).build(false)
+		)
+
 	fun getLines(lineWidth: Double): RenderLayer.MultiPhase {
 		return LINES_LAYERS.computeIfAbsent(lineWidth, LINES)
 	}

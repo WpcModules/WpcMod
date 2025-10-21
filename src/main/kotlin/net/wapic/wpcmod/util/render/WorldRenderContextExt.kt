@@ -77,6 +77,93 @@ fun WorldRenderContext.drawBoundingBox(
 	)
 }
 
+fun WorldRenderContext.drawFilledBoxWithOutline(
+	minX: Double,
+	minY: Double,
+	minZ: Double,
+	maxX: Double,
+	maxY: Double,
+	maxZ: Double,
+	color: Color = Color(255, 255, 255),
+	outlineColor: Color = Color(255, 255, 255),
+	lineWidth: Double = 2.0
+) {
+	drawFilledBox(minX, minY, minZ, maxX, maxY, maxZ, color)
+	drawBox(minX, minY, minZ, maxX, maxY, maxZ, outlineColor, lineWidth)
+}
+
+fun WorldRenderContext.drawFilledBoxWithOutline(
+	boundingBox: Box,
+	color: Color = Color(255, 255, 255),
+	outlineColor: Color = Color(255, 255, 255),
+	lineWidth: Double = 2.0
+) {
+	drawFilledBoxWithOutline(
+		boundingBox.minX,
+		boundingBox.minY,
+		boundingBox.minZ,
+		boundingBox.maxX,
+		boundingBox.maxY,
+		boundingBox.maxZ,
+		color,
+		outlineColor,
+		lineWidth
+	)
+}
+
+fun WorldRenderContext.drawFilledBoundingBox(
+	boundingBox: Box,
+	color: Color = Color(255, 255, 255),
+) {
+	drawFilledBox(
+		boundingBox.minX,
+		boundingBox.minY,
+		boundingBox.minZ,
+		boundingBox.maxX,
+		boundingBox.maxY,
+		boundingBox.maxZ,
+		color,
+	)
+}
+
+fun WorldRenderContext.drawFilledBox(
+	minX: Double,
+	minY: Double,
+	minZ: Double,
+	maxX: Double,
+	maxY: Double,
+	maxZ: Double, color: Color = Color(255, 255, 255)
+) {
+	val matrixStack = matrixStack() ?: return
+	val camera = camera().pos
+
+	matrixStack.push()
+	matrixStack.multiplyPositionMatrix(positionMatrix())
+	matrixStack.translate(-camera)
+
+	val vertexConsumerProvider = consumers() as VertexConsumerProvider.Immediate
+	val layer: RenderLayer = RenderLayers.FILLED_BOX
+	val bufferBuilder = vertexConsumerProvider.getBuffer(layer)
+
+	VertexRendering.drawFilledBox(
+		matrixStack,
+		bufferBuilder,
+		minX,
+		minY,
+		minZ,
+		maxX,
+		maxY,
+		maxZ,
+		color.red * 255f,
+		color.green * 255f,
+		color.blue * 255f,
+		color.alpha * 255f
+	)
+
+	vertexConsumerProvider.draw()
+	matrixStack.pop()
+}
+
 fun WorldRenderContext.drawBox(
 	minX: Double,
 	minY: Double,
@@ -90,7 +177,7 @@ fun WorldRenderContext.drawBox(
 
 	matrixStack.push()
 	matrixStack.multiplyPositionMatrix(positionMatrix())
-	matrixStack.translate(-camera.x, -camera.y, -camera.z)
+	matrixStack.translate(-camera)
 
 	val vertexConsumerProvider: VertexConsumerProvider.Immediate = consumers() as VertexConsumerProvider.Immediate
 	val layer: RenderLayer = RenderLayers.getLines(lineWidth)
@@ -112,7 +199,6 @@ fun WorldRenderContext.drawBox(
 	)
 
 	vertexConsumerProvider.draw(layer)
-
 	matrixStack.pop()
 }
 
@@ -124,7 +210,7 @@ fun WorldRenderContext.drawTracer(
 	val tickProgress = tickCounter().dynamicDeltaTicks
 
 	val x = MathHelper.lerp(tickProgress.toDouble(), entity.lastRenderX, entity.x)
-	val y = MathHelper.lerp(tickProgress.toDouble(), entity.lastRenderY, entity.y)
+	val y = MathHelper.lerp(tickProgress.toDouble(), entity.lastRenderY, entity.eyeY)
 	val z = MathHelper.lerp(tickProgress.toDouble(), entity.lastRenderZ, entity.z)
 
 	drawTracer(x, y, z, color, lineWidth)
