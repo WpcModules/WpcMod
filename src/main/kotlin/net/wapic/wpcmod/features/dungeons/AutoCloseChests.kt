@@ -3,10 +3,12 @@ package net.wapic.wpcmod.features.dungeons
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen
+import net.minecraft.sound.SoundEvents
 import net.minecraft.text.Text
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.DungeonUtils
+import net.wapic.wpcmod.util.MC
 
 class AutoCloseChests {
 
@@ -29,11 +31,12 @@ class AutoCloseChests {
 					)
 				}?.let { stack ->
 					ChatUtils.sendAlert(Text.literal(stack.name.string).setStyle(stack.name.style))
+					ChatUtils.sendMessage(stack.name.string, stack.name.style)
+					MC.player?.playSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP)
 				}
-				screen.close()
 			}
-		} else {
-			screen.close()
 		}
+
+		screen.close()
 	}
 }

@@ -68,6 +68,14 @@ class DungeonConfig {
 		@ConfigEditorBoolean
 		var assumePaul: Boolean = false
 
+		@ConfigOption(name = "Assume Spirit Pet", desc = "Assume the first death is with spirit pet")
+		@ConfigEditorBoolean
+		var assumeSpirit: Boolean = false
+
+		@ConfigOption(name = "Score Alert", desc = "Send alert when score reaches 270 or 300")
+		@ConfigEditorBoolean
+		var scoreAlert: Boolean = false
+
 		enum class ScoreHudType {
 			DISABLED,
 			MINIMIZED,

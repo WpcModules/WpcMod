@@ -18,11 +18,6 @@ object ChatUtils {
 		setTitle(title)
 		setSubtitle(subtitle)
 		setTitleTicks(fadeInTicks, stayTicks, fadeOutTicks)
-		chatHud.addMessage(PREFIX.copy().append(title).append(subtitle))
-	}
-
-	fun sendServerMessage(message: String) = with(MC.networkHandler) {
-		this?.sendChatMessage(message)
 	}
 
 	fun String.removeFormatting(): String = formattingRegex.matcher(this).replaceAll("")
