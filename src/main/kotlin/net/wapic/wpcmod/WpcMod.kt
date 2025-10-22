@@ -26,12 +26,8 @@ import net.wapic.wpcmod.config.ConfigManager
 import net.wapic.wpcmod.config.WpcConfig
 import net.wapic.wpcmod.features.chat.SpamFilter
 import net.wapic.wpcmod.features.dev.SkyBlockID
-import net.wapic.wpcmod.features.dungeons.AutoCloseChests
-import net.wapic.wpcmod.features.dungeons.DungeonAutoGFS
-import net.wapic.wpcmod.features.dungeons.DungeonESP
-import net.wapic.wpcmod.features.dungeons.ScoreCalculation
-import net.wapic.wpcmod.features.dungeons.floor7.*
 import net.wapic.wpcmod.features.dungeons.*
+import net.wapic.wpcmod.features.dungeons.floor7.*
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
 import net.wapic.wpcmod.features.end.EndESP
 import net.wapic.wpcmod.features.entity.MobGlow
@@ -155,6 +151,7 @@ object WpcMod : ModInitializer {
 		ArrowAlign.init()
 		FunnyMap.init()
 		SpiritBearTimer.init()
+		DungeonBreaker.init()
 
 		// Kuudra
 		KuudraDisplay()

@@ -19,6 +19,10 @@ class DungeonConfig {
 	@ConfigEditorBoolean
 	var spiritBear: Boolean = false
 
+	@ConfigOption(name = "Stop Breaking Chests", desc = "Prevents Dungeonbreaker from breaking chests")
+	@ConfigEditorBoolean
+	var preventBreakingChests: Boolean = false
+
 	@Accordion
 	@ConfigOption(name = "Hitboxes", desc = "Enable bigger hitboxes on certain blocks")
 	var hitboxes: BiggerHitboxes = BiggerHitboxes()
