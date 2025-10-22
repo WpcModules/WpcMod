@@ -97,7 +97,10 @@ class Floor7Config {
 		@ConfigEditorBoolean
 		var showNumbers: Boolean = true
 
-		@ConfigOption(name = "Reload Threshold", desc = "The amount of time in seconds before the terminal reloads.")
+		@ConfigOption(
+			name = "Reload Threshold",
+			desc = "The amount of time in milliseconds before the terminal reloads."
+		)
 		@ConfigEditorSlider(minValue = 300f, maxValue = 1000f, minStep = 10f)
 		var terminalReloadThreshold: Float = 600f
 
