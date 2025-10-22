@@ -1,5 +1,7 @@
 package net.wapic.wpcmod.features.dungeons.floor7.termsim
 
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.entity.player.PlayerEquipment
@@ -19,6 +21,7 @@ import net.minecraft.screen.slot.Slot
 import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.sound.SoundEvents
 import net.minecraft.text.Text
+import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.PacketEvents
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalHandler
@@ -88,19 +91,13 @@ open class TermSimGUI(
         callbackInfo.cancel()
     }
 
-    fun onPacketReceive() {
-//        val packet = event.packet as? ScreenHandlerSlotUpdateS2CPacket ?: return
-//        if (OdinMain.mc.currentScreen !== this || packet.func_149175_c() == -2 || event.packet.func_149173_d() !in 0 until size) return
-//        packet.func_149174_e()?.let { mc.thePlayer?.inventoryContainer?.putStackInSlot(packet.func_149173_d(), it) }
-//        event.isCanceled = true
-    }
-
-    private fun delaySlotClick(slot: Slot, button: Int) {
-        if (MC.screen == StartGUI) return slotClick(slot, button)
-        if (!doesAcceptClick || slot.inventory != inv || slot.stack?.item == Items.BLACK_STAINED_GLASS_PANE) return
+	fun delaySlotClick(slot: Slot, button: Int) = WpcMod.coroutineScope.launch {
+		if (MC.screen == StartGUI) return@launch slotClick(slot, button)
+		if (!doesAcceptClick || slot.inventory != inv || slot.stack?.item == Items.BLACK_STAINED_GLASS_PANE) return@launch
         doesAcceptClick = false
 
-		if (MC.screen != this) return
+		delay((ping).coerceAtLeast(1))
+		if (MC.screen != this@TermSimGUI) return@launch
 		doesAcceptClick = true
 		slotClick(slot, button)
     }
@@ -120,6 +117,8 @@ open class TermSimGUI(
     }
 
     protected fun playTermSimSound() {
-		MC.player?.playSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1f)
+		MC.runOnThread {
+			MC.player?.playSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1f)
+		}
     }
 }

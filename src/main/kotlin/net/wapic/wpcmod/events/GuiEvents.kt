@@ -36,7 +36,7 @@ object GuiEvents {
 
 	fun interface SlotClick {
 		fun onSlotClick(
-			slot: Slot, slotId: Int, button: Int, slotActionType: SlotActionType, callbackInfo: CallbackInfo
+			slot: Slot?, slotId: Int, button: Int, slotActionType: SlotActionType, callbackInfo: CallbackInfo
 		)
 	}
 
@@ -83,14 +83,14 @@ object GuiEvents {
 
 	@JvmField
 	val DRAW_BACKGROUND: Event<DrawBackground> = EventFactory.createArrayBacked(DrawBackground::class.java) { listeners ->
-		DrawBackground { screen, context ->
+		DrawBackground { screen, context, callbackInfo ->
 			for (listener in listeners) {
-				listener.onDrawBackground(screen, context)
+				listener.onDrawBackground(screen, context, callbackInfo)
 			}
 		}
 	}
 
 	fun interface DrawBackground {
-		fun onDrawBackground(screen: Screen, drawContext: DrawContext)
+		fun onDrawBackground(screen: Screen, drawContext: DrawContext, callbackInfo: CallbackInfo)
 	}
 }

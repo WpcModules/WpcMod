@@ -27,14 +27,12 @@ public abstract class HandledScreenMixin {
 		GuiEvents.DRAW_SLOT_BACKGROUND.invoker().onDrawSlot(context, (Screen) (Object) this, slot, ci);
 	}
 
-	@Inject(at = @At("HEAD"), method = "onMouseClick(Lnet/minecraft/screen/slot/Slot;IILnet/minecraft/screen/slot/SlotActionType;)V")
+	@Inject(at = @At("HEAD"), method = "onMouseClick(Lnet/minecraft/screen/slot/Slot;IILnet/minecraft/screen/slot/SlotActionType;)V", cancellable = true)
 	private void mouseClicked(Slot slot, int slotId, int button, SlotActionType slotActionType, CallbackInfo ci) {
-		if (slot != null) {
-			GuiEvents.SLOT_CLICKED.invoker().onSlotClick(slot, slotId, button, slotActionType, ci);
-		}
+		GuiEvents.SLOT_CLICKED.invoker().onSlotClick(slot, slotId, button, slotActionType, ci);
 	}
 
-	@Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true, order = 0)
+	@Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
 	private void onMouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
 		GuiEvents.MOUSE_CLICK.invoker().onMouseClick((Screen) (Object) this, (int) mouseX, (int) mouseY, button, cir);
 	}
@@ -58,4 +56,8 @@ public abstract class HandledScreenMixin {
 		GuiEvents.RENDER.invoker().onRender((Screen) (Object) this, context, mouseX, mouseY, deltaTicks, ci);
 	}
 
+	@Inject(method = "renderBackground", at = @At("HEAD"), cancellable = true)
+	private void renderBackground(DrawContext context, int mouseX, int mouseY, float deltaTicks, CallbackInfo ci) {
+		GuiEvents.DRAW_BACKGROUND.invoker().onDrawBackground((Screen) (Object) this, context, ci);
+	}
 }

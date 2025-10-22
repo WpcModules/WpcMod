@@ -54,7 +54,6 @@ object TerminalSolver {
 		GuiEvents.MOUSE_CLICK.register(::onGuiClick)
 		TooltipEvents.RENDER.register(::onTooltipDraw)
 		GuiEvents.RENDER.register(::onGuiRender)
-		GuiEvents.DRAW_BACKGROUND.register(::onDrawBackground)
 	}
 
     fun onPacketReceive(packet: Packet<out PacketListener>) {
@@ -147,13 +146,13 @@ object TerminalSolver {
         val slotIndex = (MC.screen as HandledScreenAccessor).focusedSlot()?.id ?: return
 
         if (config.blockIncorrectClicks && !canClick(slotIndex, button)) {
-            callbackInfoReturnable.cancel()
+			callbackInfoReturnable.cancel()
             return
         }
 
         if (config.middleClickGUI) {
             click(slotIndex, button, config.hideClicked && !isClicked)
-            callbackInfoReturnable.cancel()
+			callbackInfoReturnable.cancel()
             return
         }
 
@@ -163,23 +162,33 @@ object TerminalSolver {
         }
     }
 
-    fun onGuiRender(screen: Screen, drawContext: DrawContext, mouseX: Int, mouseY: Int, deltaTicks: Float, callbackInfo: CallbackInfo) {
-        if (!config.enabled || currentTerm == null || (currentTerm?.type == TerminalTypes.MELODY && config.cancelMelodySolver)) return
+	fun onGuiRender(
+		screen: Screen,
+		drawContext: DrawContext,
+		mouseX: Int,
+		mouseY: Int,
+		deltaTicks: Float,
+		callbackInfo: CallbackInfo
+	) {
+		if (!config.enabled || currentTerm == null || (currentTerm?.type == TerminalTypes.MELODY && config.cancelMelodySolver)) return
+		if (config.renderType == RenderType.CUSTOM) {
+			currentTerm?.type?.getGUI()?.render(drawContext)
+			callbackInfo.cancel()
+			return
+		}
 
-        if (config.renderType == RenderType.CUSTOM) {
-            currentTerm?.type?.getGUI()?.render(drawContext)
-            callbackInfo.cancel()
-        }
-    }
-
-    fun onDrawBackground(screen: Screen, drawContext: DrawContext) {
-        if (!config.enabled || currentTerm == null || (currentTerm?.type == TerminalTypes.MELODY && config.cancelMelodySolver) || config.renderType != RenderType.NORMAL) return
-        val screen = (screen as? HandledScreen<*>) as? HandledScreenAccessor ?: return
-        drawContext.fill(screen.x + 7, screen.y + 16, screen.x + screen.width - 7, screen.y + screen.height - 96, config.backgroundColor.getEffectiveColourRGB())
-    }
+		val screen = (screen as? HandledScreen<*>) as? HandledScreenAccessor ?: return
+		drawContext.fill(
+			screen.x + 7,
+			screen.y + 16,
+			screen.x + screen.width - 7,
+			screen.y + screen.height - 96,
+			config.backgroundColor.getEffectiveColourRGB()
+		)
+	}
 
 	fun drawSlot(drawContext: DrawContext, screen: Screen, slot: Slot, callbackInfo: CallbackInfo) = with(currentTerm) {
-		if (!config.enabled || config.renderType == RenderType.CUSTOM || this?.type == null || (type == TerminalTypes.MELODY)) return
+		if (!config.enabled || config.renderType == RenderType.CUSTOM || this?.type == null || type == TerminalTypes.MELODY) return
 
         val slotIndex = slot.id
 		val inventorySize = (screen as? HandledScreen<*>)?.screenHandler?.slots?.size ?: return

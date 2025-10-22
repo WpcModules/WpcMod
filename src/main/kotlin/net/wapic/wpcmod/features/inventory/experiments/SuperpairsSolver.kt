@@ -76,17 +76,25 @@ class SuperpairsSolver {
 		callbackInfoReturnable.returnValue = replacementItem
 	}
 
-	fun onMouseClick(slot: Slot, slotId: Int, button: Int, slotActionType: SlotActionType, callbackInfo: CallbackInfo) {
-		if (slot.inventory is PlayerInventory || !inSuperpairs || !config.superpairsSolver || slot.stack.item in ignoredItems) return
+	fun onMouseClick(
+		slot: Slot?,
+		slotId: Int,
+		button: Int,
+		slotActionType: SlotActionType,
+		callbackInfo: CallbackInfo
+	) {
+		if (slot?.inventory is PlayerInventory || !inSuperpairs || !config.superpairsSolver || slot?.stack?.item in ignoredItems) return
 
-		if (slotId !in superpairsMap.keys) {
-			if (skyHanniRegex.matches(slot.stack.name.string)) {
-				slotsToRead.add(slot)
-				return
+		slot?.let { slot ->
+			if (slotId !in superpairsMap.keys) {
+				if (skyHanniRegex.matches(slot.stack.name.string)) {
+					slotsToRead.add(slot)
+					return
+				}
+				superpairsMap[slotId] = slot.stack
 			}
-			superpairsMap[slotId] = slot.stack
+			if (lastClickedSlot?.index != slotId) checkForPair(slot)
 		}
-		if (lastClickedSlot?.index != slotId) checkForPair(slot)
 	}
 
 	fun hasPair(itemStack: ItemStack): Boolean {

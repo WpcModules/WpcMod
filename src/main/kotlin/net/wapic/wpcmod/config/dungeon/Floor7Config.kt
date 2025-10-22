@@ -9,6 +9,10 @@ class Floor7Config {
 	@ConfigEditorBoolean
 	var melodyMessage: Boolean = false
 
+	@ConfigOption(name = "Terminal Simulator Ping", desc = "Set emulated ping for terminal simulators")
+	@ConfigEditorSlider(minValue = 1f, maxValue = 300f, minStep = 1f)
+	var termSimPing: Float = 50f
+
 	@Accordion
 	@ConfigOption(name = "Arrow Align Solver", desc = "Solver for Arrow Device in P3")
 	var arrowAlign: ArrowAlignConfig = ArrowAlignConfig()

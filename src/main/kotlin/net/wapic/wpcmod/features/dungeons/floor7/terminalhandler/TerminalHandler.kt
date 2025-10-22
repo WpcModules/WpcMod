@@ -9,6 +9,7 @@ import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket
 import net.minecraft.screen.slot.SlotActionType
 import net.wapic.wpcmod.events.PacketEvents
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
+import net.wapic.wpcmod.features.dungeons.floor7.termsim.TermSimGUI
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 import java.util.concurrent.CopyOnWriteArrayList
@@ -42,11 +43,14 @@ open class TerminalHandler(val type: TerminalTypes) {
     open fun simulateClick(slotIndex: Int, clickType: Int) {}
 
     fun click(slotIndex: Int, button: Int, simulateClick: Boolean = true) {
+		if (MC.screen is TermSimGUI) {
+			(MC.screen as TermSimGUI).delaySlotClick((MC.screen as TermSimGUI).guiInventorySlots[slotIndex], button)
+			return
+		}
         if (simulateClick) simulateClick(slotIndex, button)
         isClicked = true
         val screenHandler = (MC.screen as? GenericContainerScreen)?.screenHandler ?: return
         MC.interactionManager?.clickSlot(screenHandler.syncId, slotIndex, button, SlotActionType.PICKUP, MC.player)
-    //PlayerUtils.windowClick(slotIndex, clickType)
     }
 
     fun canClick(slotIndex: Int, button: Int, needed: Int = solution.count { it == slotIndex }): Boolean = when {
