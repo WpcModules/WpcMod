@@ -198,6 +198,20 @@ object TerminalSolver {
 
         when (type) {
             TerminalTypes.PANES -> drawContext.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, config.panesColor.getEffectiveColourRGB())
+			TerminalTypes.SELECT -> drawContext.fill(
+				slot.x,
+				slot.y,
+				slot.x + 16,
+				slot.y + 16,
+				config.selectColor.getEffectiveColourRGB()
+			)
+			TerminalTypes.STARTS_WITH -> drawContext.fill(
+				slot.x,
+				slot.y,
+				slot.x + 16,
+				slot.y + 16,
+				config.startsWithColor.getEffectiveColourRGB()
+			)
 
             TerminalTypes.NUMBERS -> {
                 val index = solution.indexOf(slot.index)
@@ -238,14 +252,7 @@ object TerminalSolver {
                 }
             }
 
-			// Select & StartsWith
-			else -> drawContext.fill(
-				slot.x,
-				slot.y,
-				slot.x + 16,
-				slot.y + 16,
-				config.startsWithColor.getEffectiveColourRGB()
-			)
+			else -> return@with
 		}
     }
 

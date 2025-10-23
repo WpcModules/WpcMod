@@ -18,11 +18,25 @@ class SelectAllHandler(private val colorName: String): TerminalHandler(TerminalT
     }
 
     private fun solveSelectAll(items: Array<ItemStack?>, color: String): List<Int> {
+		items.forEach { itemStack ->
+			println("${itemStack?.name?.string} $color")
+		}
         return items.mapIndexedNotNull { index, item ->
             if (item?.hasGlint() == false &&
-                item.item != Items.BLACK_STAINED_GLASS_PANE &&
-                item.name?.string?.replace("light blue", "aqua", true)?.replace("light gray", "silver", true)?.contains(color, true) == true
-                ) index else null
+				item.item != Items.BLACK_STAINED_GLASS_PANE &&
+				item.name?.string
+					?.replace("light blue", "aqua", true)
+					?.replace("light gray", "silver", true)
+					?.replace("cocoa bean", "brown", true)
+					?.replace("ink sac", "black", true)
+					?.replace("bone meal", "white", true)
+					?.replace("lapis lazuli", "blue", true)
+					?.contains(color, true) == true
+			) {
+				index
+			} else {
+				null
+			}
         }
     }
 }
