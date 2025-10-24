@@ -67,7 +67,7 @@ open class TermSimGUI(
 		}
     }
 
-    fun onTerminalSolved(terminalHandler: TerminalHandler) {
+	private fun onTerminalSolved(terminalHandler: TerminalHandler) {
         if (MC.screen !== this) return
 		PacketEvents.RECEIVE.invoker().onPacketReceive(CloseScreenS2CPacket(-2))
         StartGUI.open(ping)
@@ -84,14 +84,14 @@ open class TermSimGUI(
         super.init()
     }
 
-    fun onPacketSend(packet: Packet<out PacketListener>, callbackInfo: CallbackInfo) {
+	private fun onPacketSend(packet: Packet<out PacketListener>, callbackInfo: CallbackInfo) {
         val packet = packet as? ClickSlotC2SPacket ?: return
         if (MC.screen !== this) return
         delaySlotClick(guiInventorySlots.getOrNull(packet.slot.toInt()) ?: return, packet.button.toInt())
         callbackInfo.cancel()
     }
 
-	fun delaySlotClick(slot: Slot, button: Int) = WpcMod.coroutineScope.launch {
+	private fun delaySlotClick(slot: Slot, button: Int) = WpcMod.coroutineScope.launch {
 		if (MC.screen == StartGUI) return@launch slotClick(slot, button)
 		if (!doesAcceptClick || slot.inventory != inv || slot.stack?.item == Items.BLACK_STAINED_GLASS_PANE) return@launch
         doesAcceptClick = false

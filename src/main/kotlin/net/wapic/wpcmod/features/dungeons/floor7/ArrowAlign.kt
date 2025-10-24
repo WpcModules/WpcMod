@@ -32,7 +32,7 @@ object ArrowAlign {
     private var targetSolution: List<Int>? = null
 
 	fun init() {
-		PacketEvents.SEND.register(::onPacket)
+		PacketEvents.SEND.register(::onPacketSend)
 		ClientTickEvents.END_CLIENT_TICK.register(::onTick)
 		WorldRenderEvents.END.register(::onRenderWorld)
     }
@@ -61,7 +61,7 @@ object ArrowAlign {
 		}
 	}
 
-    fun onPacket(packet: Packet<out PacketListener>, ci: CallbackInfo) {
+	fun onPacketSend(packet: Packet<out PacketListener>, ci: CallbackInfo) {
 		if (DungeonUtils.getF7Phase() != F7Phase.GOLDOR || !config.enabled) return
 
         val packet = packet as? PlayerInteractEntityC2SPacket ?: return

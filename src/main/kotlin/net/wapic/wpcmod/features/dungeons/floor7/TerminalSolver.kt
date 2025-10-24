@@ -30,6 +30,7 @@ import net.wapic.wpcmod.features.dungeons.floor7.termsim.TermSimGUI
 import net.wapic.wpcmod.mixin.accessors.HandledScreenAccessor
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.MC
+import org.lwjgl.glfw.GLFW
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
 
@@ -81,8 +82,6 @@ object TerminalSolver {
                     TerminalTypes.SELECT ->
 						SelectAllHandler(
 							selectAllRegex.find(windowName)?.groupValues?.get(1)
-								?.replace("light blue", "aqua", true)
-								?.replace("light gray", "silver", true)
 								?.replace("_", " ")
 								?: return ChatUtils.sendMessage("Failed to find color, please report this!")
 						)
@@ -151,7 +150,7 @@ object TerminalSolver {
         }
 
         if (config.middleClickGUI) {
-            click(slotIndex, button, config.hideClicked && !isClicked)
+			click(slotIndex, if (button == 0) GLFW.GLFW_MOUSE_BUTTON_3 else button, config.hideClicked && !isClicked)
 			callbackInfoReturnable.cancel()
             return
         }
