@@ -231,6 +231,9 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 		princeKilled = false
 		crypts = 0
 
+		mimicOpenTime = 0L
+		mimicPos = null
+
 		sent270Message = false
 		sent300Message = false
 		sentMimicMessage = false
@@ -245,11 +248,15 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 
 		val isMimicDead = client.world?.entities?.none { it is ZombieEntity && it.isBaby }
 		if (isMimicDead == true) {
-			mimicKilled = true
-			if (config.mimicMessage && !sentMimicMessage) {
-				Utils.runCommand("/pc Mimic Killed!")
-				sentMimicMessage = true
-			}
+			setMimicDead(false)
+		}
+	}
+
+	private fun setMimicDead(withMessage: Boolean) {
+		mimicKilled = true
+		if (withMessage && config.mimicMessage && !sentMimicMessage) {
+			Utils.runCommand("/pc Mimic Killed!")
+			sentMimicMessage = true
 		}
 	}
 
@@ -269,11 +276,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 	private fun onEntityDespawn(entity: Entity) {
 		if (!isActive) return
 		if (entity is ZombieEntity && entity.isBaby && entity.headTexture == HeadTextures.MIMIC) {
-			mimicKilled = true
-			if (config.mimicMessage && !sentMimicMessage) {
-				Utils.runCommand("/pc Mimic Killed!")
-				sentMimicMessage = true
-			}
+			setMimicDead(true)
 		}
 	}
 
@@ -364,7 +367,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 
 		if (message.startsWith("§9Party §8>")) {
 			if (message.contains(skytilsMimicMessage) || message.contains(mimicMessage)) {
-				mimicKilled = true
+				setMimicDead(false)
 			} else if (message.contains(princeMessage)) {
 				princeKilled = true
 			}
