@@ -28,5 +28,8 @@ object MC {
 		set(value) = instance.setScreen(value)
 		get() = instance.currentScreen
 	inline val screenName: String? get() = screen?.title?.string
+	inline val textureManager get() = instance.textureManager
 	inline val resourceManager: ResourceManager get() = instance.resourceManager
+	inline val interactionManager get() = instance.interactionManager
+	inline val mouse get() = instance.mouse
 }

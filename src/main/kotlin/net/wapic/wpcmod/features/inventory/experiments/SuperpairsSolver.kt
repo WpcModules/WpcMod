@@ -2,6 +2,7 @@ package net.wapic.wpcmod.features.inventory.experiments
 
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
+import net.minecraft.client.gui.screen.Screen
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
@@ -75,17 +76,25 @@ class SuperpairsSolver {
 		callbackInfoReturnable.returnValue = replacementItem
 	}
 
-	fun onMouseClick(slot: Slot, slotId: Int, button: Int, slotActionType: SlotActionType, callbackInfo: CallbackInfo) {
-		if (slot.inventory is PlayerInventory || !inSuperpairs || !config.superpairsSolver || slot.stack.item in ignoredItems) return
+	fun onMouseClick(
+		slot: Slot?,
+		slotId: Int,
+		button: Int,
+		slotActionType: SlotActionType,
+		callbackInfo: CallbackInfo
+	) {
+		if (slot?.inventory is PlayerInventory || !inSuperpairs || !config.superpairsSolver || slot?.stack?.item in ignoredItems) return
 
-		if (slotId !in superpairsMap.keys) {
-			if (skyHanniRegex.matches(slot.stack.name.string)) {
-				slotsToRead.add(slot)
-				return
+		slot?.let { slot ->
+			if (slotId !in superpairsMap.keys) {
+				if (skyHanniRegex.matches(slot.stack.name.string)) {
+					slotsToRead.add(slot)
+					return
+				}
+				superpairsMap[slotId] = slot.stack
 			}
-			superpairsMap[slotId] = slot.stack
+			if (lastClickedSlot?.index != slotId) checkForPair(slot)
 		}
-		if (lastClickedSlot?.index != slotId) checkForPair(slot)
 	}
 
 	fun hasPair(itemStack: ItemStack): Boolean {
@@ -147,7 +156,7 @@ class SuperpairsSolver {
 		}
 	}
 
-	fun onDrawSlot(drawContext: DrawContext, slot: Slot, callbackInfo: CallbackInfo) {
+	fun onDrawSlot(drawContext: DrawContext, screen: Screen, slot: Slot, callbackInfo: CallbackInfo) {
 		if (slot.inventory is PlayerInventory || !inSuperpairs || !config.superpairsSolver) return
 		if (slot.stack.item in ignoredItems || skyHanniRegex.matches(slot.stack.name.string)) return
 

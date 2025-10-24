@@ -16,6 +16,12 @@ class ESPConfig {
 	class StarMobConfig(): GlowableESPConfig()
 
 	@Accordion
+	@ConfigOption(name = "Dungeon Keys", desc = "Wither and blood keys")
+	var doorKeys = DoorKeysConfig()
+
+	class DoorKeysConfig() : GlowableESPConfig()
+
+	@Accordion
 	@ConfigOption(name = "Bats", desc = "Any Bat entity even non secret ones")
 	var bat = BatConfig()
 
@@ -39,10 +45,10 @@ class ESPConfig {
 
 		@ConfigOption(name = "Has Key Color", desc = "Color for when you have the key")
 		@ConfigEditorColour
-		var hasKeyColor = ChromaColour.fromRGB(0, 255, 0, 0, 1)
+		var hasKeyColor = ChromaColour.fromRGB(0, 255, 0, 0, 128)
 
 		@ConfigOption(name = "No Key Color", desc = "Color for when you don't have a key")
 		@ConfigEditorColour
-		var noKeyColor = ChromaColour.fromRGB(255, 0, 0, 0, 1)
+		var noKeyColor = ChromaColour.fromRGB(255, 0, 0, 0, 128)
 	}
 }

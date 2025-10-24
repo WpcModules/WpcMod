@@ -1,6 +1,7 @@
 package net.wapic.wpcmod.mixin;
 
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
@@ -23,28 +24,40 @@ public abstract class HandledScreenMixin {
 
 	@Inject(at = @At("HEAD"), method = "drawSlot", cancellable = true)
 	protected void drawSlot$Before(DrawContext context, Slot slot, CallbackInfo ci) {
-		GuiEvents.DRAW_SLOT_BACKGROUND.invoker().onDrawSlot(context, slot, ci);
+		GuiEvents.DRAW_SLOT_BACKGROUND.invoker().onDrawSlot(context, (Screen) (Object) this, slot, ci);
 	}
 
-	@Inject(at = @At("TAIL"), method = "drawSlot")
-	protected void drawSlot$After(DrawContext context, Slot slot, CallbackInfo ci) {
-		GuiEvents.DRAW_SLOT_FOREGROUND.invoker().onDrawSlot(context, slot);
-	}
-
-	@Inject(at = @At("HEAD"), method = "onMouseClick(Lnet/minecraft/screen/slot/Slot;IILnet/minecraft/screen/slot/SlotActionType;)V")
+	@Inject(at = @At("HEAD"), method = "onMouseClick(Lnet/minecraft/screen/slot/Slot;IILnet/minecraft/screen/slot/SlotActionType;)V", cancellable = true)
 	private void mouseClicked(Slot slot, int slotId, int button, SlotActionType slotActionType, CallbackInfo ci) {
-		if (slot != null) {
-			GuiEvents.SLOT_CLICKED.invoker().onSlotClick(slot, slotId, button, slotActionType, ci);
-		}
+		GuiEvents.SLOT_CLICKED.invoker().onSlotClick(slot, slotId, button, slotActionType, ci);
+	}
+
+	@Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
+	private void onMouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
+		GuiEvents.MOUSE_CLICK.invoker().onMouseClick((Screen) (Object) this, (int) mouseX, (int) mouseY, button, cir);
 	}
 
 	@Inject(at = @At("HEAD"), method = "mouseScrolled")
-	public void mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount, CallbackInfoReturnable<Boolean> cir) {
+	private void mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount, CallbackInfoReturnable<Boolean> cir) {
 		GuiEvents.MOUSE_SCROLL.invoker().onMouseScroll(mouseX, mouseY, verticalAmount, horizontalAmount, focusedSlot);
 	}
 
 	@Inject(at = @At("HEAD"), method = "resetTooltipSubmenus")
-	public void resetTooltipSubmenus(Slot slot, CallbackInfo ci) {
+	private void resetTooltipSubmenus(Slot slot, CallbackInfo ci) {
 		TooltipEvents.RESET.invoker().onTooltipReset();
+	}
+
+	@Inject(at = @At("HEAD"), method = "drawMouseoverTooltip", cancellable = true)
+	private void drawMouseOverTooltip(DrawContext drawContext, int x, int y, CallbackInfo ci) {
+		TooltipEvents.RENDER.invoker().onRenderTooltip((Screen) (Object) this, x, y, drawContext, ci);
+	}
+	@Inject(method = "render", at = @At("HEAD"), cancellable = true)
+	private void render(DrawContext context, int mouseX, int mouseY, float deltaTicks, CallbackInfo ci) {
+		GuiEvents.RENDER.invoker().onRender((Screen) (Object) this, context, mouseX, mouseY, deltaTicks, ci);
+	}
+
+	@Inject(method = "renderBackground", at = @At("HEAD"), cancellable = true)
+	private void renderBackground(DrawContext context, int mouseX, int mouseY, float deltaTicks, CallbackInfo ci) {
+		GuiEvents.DRAW_BACKGROUND.invoker().onDrawBackground((Screen) (Object) this, context, ci);
 	}
 }

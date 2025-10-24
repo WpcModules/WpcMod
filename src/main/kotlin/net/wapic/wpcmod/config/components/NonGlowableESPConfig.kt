@@ -9,7 +9,7 @@ abstract class NonGlowableESPConfig {
 
 	@ConfigOption(name = "Color", desc = "The color to use for glow, box, and tracer.")
 	@ConfigEditorColour
-	var color = ChromaColour(1f, 1f, 1f, 0, 0)
+	var color = ChromaColour(1f, 1f, 1f, 0, 255)
 
 	@ConfigOption(name = "Box", desc = "Draw a box around the object")
 	@ConfigEditorBoolean

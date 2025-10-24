@@ -11,6 +11,7 @@ import net.minecraft.util.math.ChunkPos
 import net.minecraft.world.chunk.EmptyChunk
 import net.minecraft.world.chunk.WorldChunk
 import net.wapic.wpcmod.WpcMod
+import java.util.Locale
 import kotlin.math.max
 
 object Utils {
@@ -22,6 +23,7 @@ object Utils {
 	private var location: Island? = null
 
 	fun init() {
+
 		ClientTickEvents.END_CLIENT_TICK.register { onTick() }
 		HypixelModAPI.getInstance().subscribeToEventPacket(ClientboundLocationPacket::class.java)
 		HypixelModAPI.getInstance().createHandler(ClientboundLocationPacket::class.java, ::onHypixelLocationPacket)
@@ -30,6 +32,7 @@ object Utils {
 	fun Any?.equalsOneOf(vararg other: Any): Boolean = other.any { this == it }
 	fun modIdentifier(path: String): Identifier = Identifier.of(WpcMod.MOD_ID, path)
 	fun copyToClipboard(string: String) = Clipboard().setClipboard(MC.window.handle, string)
+	fun Number.toFixed(decimals: Int = 2): String = "%.${decimals}f".format(Locale.ENGLISH, this)
 
 	fun addToCommandQueue(command: String) {
 		if (Util.getMeasuringTimeMs() - lastCommand < MIN_DELAY || commandQueue.isNotEmpty()) {

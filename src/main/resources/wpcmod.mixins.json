@@ -9,8 +9,10 @@
   },
   "client": [
     "BackgroundRendererMixin",
+    "ButtonBlockMixin",
     "CameraMixin",
     "ChatHudMixin",
+    "ClientConnectionMixin",
     "ClientPlayerEntityMixin",
     "ClientPlayNetworkHandlerMixin",
     "DimensionTypeMixin",
@@ -19,6 +21,7 @@
     "HandledScreenMixin",
     "HoveredTooltipPositionerMixin",
     "KeyboardMixin",
+    "LeverBlockMixin",
     "MinecraftClientMixin",
     "MouseMixin",
     "NetworkThreadUtilsMixin",
@@ -26,7 +29,9 @@
     "SimpleInventoryMixin",
     "WorldChunkMixin",
     "WorldRendererMixin",
+    "accessors.HandledScreenAccessor",
     "accessors.MinecraftClientAccessor",
+    "accessors.PlayerInteractEntityC2SPacketAccessor",
     "devenv.DisableCommonPacketWarnings",
     "devenv.ScoreboardIgnoreExistingTeam",
     "devenv.YggdrasilIgnoreSignature"

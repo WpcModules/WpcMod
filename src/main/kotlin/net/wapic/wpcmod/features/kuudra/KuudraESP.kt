@@ -16,7 +16,7 @@ class KuudraESP : MobGlowCache() {
 	private val config get() = WpcMod.config.kuudra.esp
 
 	init {
-		WorldRenderEvents.LAST.register(::onRenderWorld)
+		WorldRenderEvents.END.register(::onRenderWorld)
 	}
 
 	fun onRenderWorld(worldRenderContext: WorldRenderContext) {

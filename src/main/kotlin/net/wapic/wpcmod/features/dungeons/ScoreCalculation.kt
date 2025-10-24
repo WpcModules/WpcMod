@@ -7,9 +7,7 @@ import net.minecraft.block.Blocks
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.render.RenderTickCounter
-import net.minecraft.client.world.ClientWorld
 import net.minecraft.entity.Entity
-import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.mob.ZombieEntity
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket
 import net.minecraft.sound.SoundEvents
@@ -18,7 +16,8 @@ import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 import net.minecraft.util.math.BlockPos
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.config.dungeon.DungeonConfig.ScoreCalculationConfig.ScoreHudType
+import net.wapic.wpcmod.config.dungeon.ScoreCalculationConfig.ScoreHudType
+import net.wapic.wpcmod.config.dungeon.ScoreCalculationConfig.ScoreMessageType
 import net.wapic.wpcmod.events.*
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
@@ -26,7 +25,10 @@ import net.wapic.wpcmod.jarvis.SimpleHudElement
 import net.wapic.wpcmod.util.*
 import net.wapic.wpcmod.util.DungeonUtils.DungeonFloor
 import net.wapic.wpcmod.util.DungeonUtils.isMimicFloor
-import net.wapic.wpcmod.util.ItemUtils.headTexture
+import net.wapic.wpcmod.util.EntityUtils.headTexture
+import net.wapic.wpcmod.util.Utils.equalsOneOf
+import net.wapic.wpcmod.util.render.drawText
+import java.awt.Color
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.roundToInt
@@ -137,36 +139,21 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 		}
 
 	// Bonus
-	var mimicFound = false
+	var mimicKilled = false
 	private var isPaul = false
 		get() = if(config.assumePaul) true else field
 	private var princeKilled = false
 	private var crypts = 0
 
 	private val calcBonusScore
-		get() = crypts.coerceAtMost(5) + isPaul.ifTrue(10) + mimicFound.ifTrue(2) + princeKilled.ifTrue(1)
+		get() = crypts.coerceAtMost(5) + isPaul.ifTrue(10) + mimicKilled.ifTrue(2) + princeKilled.ifTrue(1)
 	private val bonusScore get() = if (isEntrance) ceil(calcBonusScore * 0.7).toInt() else calcBonusScore
 
 	private var sent300Message = false
 	private var sent270Message = false
+	private var sentMimicMessage = false
 
-	private val totalScore: Int
-		get() {
-			val total = skillScore + exploreScore + speedScore + bonusScore
-
-			if (config.scoreAlert) {
-				if (total >= 300 && !sent300Message) {
-					sendScoreMessage(300)
-					sent300Message = true
-					sent270Message = true
-				} else if (total >= 270 && !sent270Message) {
-					sendScoreMessage(270)
-					sent270Message = true
-				}
-			}
-
-			return total
-		}
+	private val totalScore: Int get() = skillScore + exploreScore + speedScore + bonusScore
 
 	private val rank
 		get() = when {
@@ -183,14 +170,14 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 
 	fun init() {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
-		WorldChangeEvent.BEFORE.register(::onWorldChange)
 		PlayerListChangeEvent.EVENT.register(::onPlayerListChange)
 		ScoreboardChangeEvent.EVENT.register(::onScoreboardChange)
 		EntityEvents.DESPAWN.register(::onEntityDespawn)
 		DungeonEvents.PUZZLE_RESET.register(::onPuzzleReset)
 		BlockEvents.CHANGE.register(::onBlockChange)
+		ClientTickEvents.START_CLIENT_TICK.register(::onTick)
 		DungeonEvents.START.register { isPaul = APIUtils.hasBonusPaulScore() }
-		ClientTickEvents.START_CLIENT_TICK.register { if(isMimicFloor) checkMimicDead() }
+		WorldChangeEvent.BEFORE.register { onWorldChange() }
 	}
 
 	private fun Boolean.ifTrue(num: Int) = if (this) num else 0
@@ -208,13 +195,21 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 		return 0
 	}
 
-	private fun sendScoreMessage(score: Int) {
-		ChatUtils.sendAlert(Text.literal("$score").setStyle(Style.EMPTY.withColor(Formatting.GOLD)))
-		Utils.runCommand("/pc $score Score Reached!")
-		MC.player?.playSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1f)
+	private fun sendScoreMessage(score: Int, messageType: ScoreMessageType) {
+		val shouldSendMessage = messageType.equalsOneOf(ScoreMessageType.MESSAGE_AND_TITLE, ScoreMessageType.MESSAGE)
+		val shouldSendTitle = messageType.equalsOneOf(ScoreMessageType.MESSAGE_AND_TITLE, ScoreMessageType.TITLE)
+
+		if (shouldSendMessage) {
+			Utils.runCommand("/pc $score Score Reached!")
+		}
+
+		if (shouldSendTitle) {
+			ChatUtils.sendAlert(Text.literal("$score").setStyle(Style.EMPTY.withColor(Formatting.GOLD)))
+			MC.player?.playSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP)
+		}
 	}
 
-	private fun onWorldChange(world: ClientWorld) {
+	private fun onWorldChange() {
 		bloodCleared = false
 		completedRooms = 0
 		clearedPercentage = 0
@@ -231,29 +226,41 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 
 		secondsElapsed = 0.0
 
-		mimicFound = false
+		mimicKilled = false
 		isPaul = false
 		princeKilled = false
 		crypts = 0
 
+		mimicOpenTime = 0L
+		mimicPos = null
+
 		sent270Message = false
 		sent300Message = false
+		sentMimicMessage = false
 	}
 
-	fun checkMimicDead() {
-		if (mimicOpenTime == 0L || mimicFound) return
+	private fun checkMimicDead(client: MinecraftClient) {
+		if (mimicOpenTime == 0L || mimicKilled) return
 		if (System.currentTimeMillis() - mimicOpenTime < 750) return
 
-		val playerDistanceFromMimic = MC.player?.squaredDistanceTo(mimicPos?.toCenterPos()) ?: return
+		val playerDistanceFromMimic = client.player?.squaredDistanceTo(mimicPos?.toCenterPos()) ?: return
+		if (playerDistanceFromMimic >= 400.0) return
 
-		if (playerDistanceFromMimic < 400.0) {
-			val isMimicDead = MC.world?.entities?.none { it is ZombieEntity && it.isBaby }
-			if (isMimicDead == true)
-				mimicFound = true
+		val isMimicDead = client.world?.entities?.none { it is ZombieEntity && it.isBaby }
+		if (isMimicDead == true) {
+			setMimicDead(false)
 		}
 	}
 
-	fun onBlockChange(pos: BlockPos, old: BlockState, new: BlockState) {
+	private fun setMimicDead(withMessage: Boolean) {
+		mimicKilled = true
+		if (withMessage && config.mimicMessage && !sentMimicMessage) {
+			Utils.runCommand("/pc Mimic Killed!")
+			sentMimicMessage = true
+		}
+	}
+
+	private fun onBlockChange(pos: BlockPos, old: BlockState, new: BlockState) {
 		if (old.block == Blocks.TRAPPED_CHEST && new.block == Blocks.AIR) {
 			mimicOpenTime = System.currentTimeMillis()
 			mimicPos = pos
@@ -268,9 +275,8 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 
 	private fun onEntityDespawn(entity: Entity) {
 		if (!isActive) return
-		if (entity is ZombieEntity && entity.isBaby && entity.getEquippedStack(EquipmentSlot.HEAD).headTexture == HeadTextures.MIMIC) {
-			mimicFound = true
-			if (config.mimicMessage) Utils.runCommand("/pc Mimic Killed!")
+		if (entity is ZombieEntity && entity.isBaby && entity.headTexture == HeadTextures.MIMIC) {
+			setMimicDead(true)
 		}
 	}
 
@@ -356,67 +362,87 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 
 		if (message == "A Prince falls. +1 Bonus Score") {
 			princeKilled = true
-			Utils.runCommand("/pc Prince Killed!")
+			if (config.princeMessage) Utils.runCommand("/pc Prince Killed!")
 		}
 
 		if (message.startsWith("§9Party §8>")) {
 			if (message.contains(skytilsMimicMessage) || message.contains(mimicMessage)) {
-				mimicFound = true
+				setMimicDead(false)
 			} else if (message.contains(princeMessage)) {
 				princeKilled = true
 			}
 		}
 	}
 
+	private fun onTick(client: MinecraftClient) {
+		if (isMimicFloor) checkMimicDead(client)
+
+		if (config.scoreMessage300 != ScoreMessageType.DISABLED && config.scoreMessage270 != ScoreMessageType.DISABLED) {
+			when {
+				totalScore >= 300 && !sent300Message -> {
+					sendScoreMessage(300, config.scoreMessage300)
+					sent300Message = true
+					sent270Message = true
+				}
+
+				totalScore >= 270 && !sent270Message -> {
+					sendScoreMessage(270, config.scoreMessage270)
+					sent270Message = true
+				}
+			}
+		}
+	}
 
 	override fun render(drawContext: DrawContext, renderTickCounter: RenderTickCounter) {
-		if (!isActive) return
-		val tr = MinecraftClient.getInstance().textRenderer
-
+		if (!isActive || config.scoreHudType == ScoreHudType.DISABLED) return
 		drawContext.matrices.push()
 		applyTransformations(drawContext.matrices)
 
-		val minimizedLine = setOf<Text>(Text.literal("§eScore: §a$totalScore §7($rank§7)"))
+		if (config.scoreHudType == ScoreHudType.FULL) {
 
-		var statusLines = setOf<Text>(
-			Text.literal("§9Dungeon Status"),
-			Text.literal("§f* §eDeaths: §c$deaths"),
-			Text.literal("§f* §eMissing Puzzles: §c$missingPuzzles"),
-			Text.literal("§f* §eFailed Puzzles: §c$failedPuzzles"),
-			Text.literal("§f* §eSecrets: §a$foundSecrets§7/§a$secretsNeeded §7(§6Total: $totalSecrets§7)"),
-			Text.literal("§f* §eCrypts: §a$crypts"),
-			Text.literal("§f* §ePrince: ${if(princeKilled) "§a✔" else "§c✖"}"),
-		)
+			val status = setOf(
+				"§9Dungeon Status",
+				"§f* §eDeaths: §c$deaths",
+				"§f* §eMissing Puzzles: §c$missingPuzzles",
+				"§f* §eFailed Puzzles: §c$failedPuzzles",
+				"§f* §eSecrets: §a$foundSecrets§7/§a$secretsNeeded §7(§6Total: $totalSecrets§7)",
+				"§f* §eCrypts: §a$crypts",
+				"§f* §ePrince: ${if (princeKilled) "§a✔" else "§c✖"}",
+			)
 
-		val mimicLine = Text.literal("§f* §eMimic: ${if (mimicFound) "§a✔" else "§c✖"}")
+			val score = setOf(
+				"§9Score",
+				"§f* §eSkill Score: §a$skillScore",
+				"§f* §eExplore Score: §a$exploreScore §7(§e$roomClearScore §7+ §6$secretScore§7)",
+				"§f* §eSpeed Score: §a$speedScore",
+				"§f* §eBonus Score: §a$bonusScore",
+				"§f* §eTotal Score: §a$totalScore",
+				"§f* §eRank: $rank",
+			)
 
-		if(isMimicFloor) statusLines = statusLines + mimicLine
+			val lines = buildList {
+				addAll(status)
+				if (isMimicFloor) add("§f* §eMimic: ${if (mimicKilled) "§a✔" else "§c✖"}")
+				add("")
+				addAll(score)
+			}
 
-		val scoreLines = setOf<Text>(
-			Text.literal(""),
-			Text.literal("§9Score"),
-			Text.literal("§f* §eSkill Score: §a$skillScore"),
-			Text.literal("§f* §eExplore Score: §a$exploreScore §7(§e$roomClearScore §7+ §6$secretScore§7)"),
-			Text.literal("§f* §eSpeed Score: §a$speedScore"),
-			Text.literal("§f* §eBonus Score: §a$bonusScore"),
-			Text.literal("§f* §eTotal Score: §a$totalScore"),
-			Text.literal("§f* §eRank: $rank")
-		)
+			for ((index, line) in lines.withIndex()) {
+				drawContext.drawText(line, x.toInt(), y.toInt() + (index * 10), 0xffffff, true)
+			}
 
-		val lines = if(config.scoreEstimate == ScoreHudType.MINIMIZED) minimizedLine else statusLines + scoreLines
-
-		for ((index, line) in lines.withIndex()) {
-			drawContext.drawText(tr, line, x.toInt(), y.toInt() + (index * 10), 0xffffff, true)
+		} else {
+			drawContext.drawText("§eScore: §a$totalScore §7($rank§7)", x.toInt(), y.toInt(), Color.WHITE.rgb, true)
 		}
 
 		drawContext.matrices.pop()
 	}
 
 	override fun isEnabled(): Boolean {
-		return config.scoreEstimate != ScoreHudType.DISABLED
+		return config.enabled
 	}
 
 	override fun isActive(): Boolean {
-		return config.scoreEstimate != ScoreHudType.DISABLED && DungeonUtils.inDungeons
+		return isEnabled && DungeonUtils.inDungeons
 	}
 }

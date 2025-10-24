@@ -21,9 +21,7 @@ class ScrollableTooltips {
 		TooltipEvents.POSITION.register(::onPositionTooltip)
 	}
 
-	private fun onMouseScroll(
-		mouseX: Double, mouseY: Double, verticalAmount: Double, horizontalAmount: Double, focusedSlot: Slot?
-	) {
+	private fun onMouseScroll(mouseX: Double, mouseY: Double, verticalAmount: Double, horizontalAmount: Double, focusedSlot: Slot?) {
 		val scrollAmount = verticalAmount * config.scrollSpeed
 		scrolledAmount += scrollAmount.toInt()
 	}

@@ -2,8 +2,9 @@ package net.wapic.wpcmod.events
 
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
-import net.minecraft.entity.Entity
+import net.minecraft.network.listener.PacketListener
 import net.minecraft.network.packet.Packet
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 
 object PacketEvents {
 
@@ -22,14 +23,14 @@ object PacketEvents {
 
 	@JvmField
 	val SEND: Event<PacketSend> = EventFactory.createArrayBacked(PacketSend::class.java) { listeners ->
-		PacketSend { entity ->
+		PacketSend { entity, callbackInfo ->
 			for (listener in listeners) {
-				listener.onPacketSend(entity)
+				listener.onPacketSend(entity, callbackInfo)
 			}
 		}
 	}
 
 	fun interface PacketSend {
-		fun onPacketSend(entity: Entity)
+		fun onPacketSend(packet: Packet<out PacketListener>, callbackInfo: CallbackInfo)
 	}
 }

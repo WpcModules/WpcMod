@@ -3,38 +3,26 @@ package net.wapic.wpcmod.events
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
 import net.minecraft.client.gui.DrawContext
+import net.minecraft.client.gui.screen.Screen
 import net.minecraft.screen.slot.Slot
 import net.minecraft.screen.slot.SlotActionType
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
 
 object GuiEvents {
 
 	@JvmField
 	val DRAW_SLOT_BACKGROUND: Event<DrawSlotBefore> =
 		EventFactory.createArrayBacked(DrawSlotBefore::class.java) { listeners ->
-			DrawSlotBefore { drawContext, slot, callbackInfo ->
+			DrawSlotBefore { drawContext, screen, slot, callbackInfo ->
 				for (listener in listeners) {
-					listener.onDrawSlot(drawContext, slot, callbackInfo)
+					listener.onDrawSlot(drawContext, screen, slot, callbackInfo)
 				}
 			}
 		}
 
 	fun interface DrawSlotBefore {
-		fun onDrawSlot(drawContext: DrawContext, slot: Slot, ci: CallbackInfo)
-	}
-
-	@JvmField
-	val DRAW_SLOT_FOREGROUND: Event<DrawSlotAfter> =
-		EventFactory.createArrayBacked(DrawSlotAfter::class.java) { listeners ->
-			DrawSlotAfter { drawContext, slot ->
-				for (listener in listeners) {
-					listener.onDrawSlot(drawContext, slot)
-				}
-			}
-		}
-
-	fun interface DrawSlotAfter {
-		fun onDrawSlot(drawContext: DrawContext, slot: Slot)
+		fun onDrawSlot(drawContext: DrawContext, screen: Screen, slot: Slot, ci: CallbackInfo)
 	}
 
 	@JvmField
@@ -48,7 +36,7 @@ object GuiEvents {
 
 	fun interface SlotClick {
 		fun onSlotClick(
-			slot: Slot, slotId: Int, button: Int, slotActionType: SlotActionType, callbackInfo: CallbackInfo
+			slot: Slot?, slotId: Int, button: Int, slotActionType: SlotActionType, callbackInfo: CallbackInfo
 		)
 	}
 
@@ -67,4 +55,42 @@ object GuiEvents {
 		)
 	}
 
+	@JvmField
+	val MOUSE_CLICK: Event<MouseClick> = EventFactory.createArrayBacked(MouseClick::class.java) { listeners ->
+		MouseClick { screen, mouseX, mouseY, button, cir ->
+			for (listener in listeners) {
+				listener.onMouseClick(screen, mouseX, mouseY, button, cir)
+			}
+		}
+	}
+
+	fun interface MouseClick {
+		fun onMouseClick(screen: Screen, mouseX: Int, mouseY: Int, button: Int, cir: CallbackInfoReturnable<Boolean>)
+	}
+
+	@JvmField
+	val RENDER: Event<Render> = EventFactory.createArrayBacked(Render::class.java) { listeners ->
+		Render { screen, context, mouseX, mouseY, deltaTicks, cir ->
+			for (listener in listeners) {
+				listener.onRender(screen, context, mouseX, mouseY, deltaTicks, cir)
+			}
+		}
+	}
+
+	fun interface Render {
+		fun onRender(screen: Screen, drawContext: DrawContext, mouseX: Int, mouseY: Int, deltaTicks: Float, cir: CallbackInfo)
+	}
+
+	@JvmField
+	val DRAW_BACKGROUND: Event<DrawBackground> = EventFactory.createArrayBacked(DrawBackground::class.java) { listeners ->
+		DrawBackground { screen, context, callbackInfo ->
+			for (listener in listeners) {
+				listener.onDrawBackground(screen, context, callbackInfo)
+			}
+		}
+	}
+
+	fun interface DrawBackground {
+		fun onDrawBackground(screen: Screen, drawContext: DrawContext, callbackInfo: CallbackInfo)
+	}
 }

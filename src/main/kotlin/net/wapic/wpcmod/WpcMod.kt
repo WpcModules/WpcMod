@@ -27,6 +27,7 @@ import net.wapic.wpcmod.config.WpcConfig
 import net.wapic.wpcmod.features.chat.SpamFilter
 import net.wapic.wpcmod.features.dev.SkyBlockID
 import net.wapic.wpcmod.features.dungeons.*
+import net.wapic.wpcmod.features.dungeons.floor7.*
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
 import net.wapic.wpcmod.features.end.EndESP
 import net.wapic.wpcmod.features.entity.MobGlow
@@ -92,6 +93,7 @@ object WpcMod : ModInitializer {
 					.then(ShortcutsCommand.getCommand())
 					.then(TagCommand.getCommand())
 					.then(FreecamCommand.getCommand())
+					.then(TermSimCommand.getCommand())
 					.then(FunnyMapCommands.getCommand())
 			)
 
@@ -142,8 +144,14 @@ object WpcMod : ModInitializer {
 		DungeonAutoGFS()
 		ScoreCalculation.init()
 		DungeonESP()
+		TickTimers.init()
+		TerminalSolver.init()
+		MelodyMessage.init()
+		InactiveWaypoints.init()
+		ArrowAlign.init()
 		FunnyMap.init()
 		SpiritBearTimer.init()
+		DungeonBreaker.init()
 
 		// Kuudra
 		KuudraDisplay()
