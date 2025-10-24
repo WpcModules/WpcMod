@@ -18,7 +18,7 @@ import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 import net.wapic.wpcmod.util.render.drawBeaconBeam
-import net.wapic.wpcmod.util.render.drawBoundingBox
+import net.wapic.wpcmod.util.render.drawFilledBoxWithOutline
 import net.wapic.wpcmod.util.render.drawText
 
 object InactiveWaypoints : SimpleHudElement("Term Info", w = 60, h = 30) {
@@ -152,9 +152,10 @@ object InactiveWaypoints : SimpleHudElement("Term Info", w = 60, h = 30) {
             if ((name == "Inactive Terminal" && config.showTerminals) || (name == "Inactive" && config.showDevices) || (name == "Not Activated" && config.showLevers)) {
                 val customName = Text.of(if (name == "Inactive Terminal") "Terminal" else if (name == "Inactive") "Device" else "Lever").asOrderedText()
                 if (config.renderBox)
-					worldRenderContext.drawBoundingBox(
+					worldRenderContext.drawFilledBoxWithOutline(
 						Box.from(it.pos.add(-0.5, 0.0, -0.5)),
-						config.color.getEffectiveColour()
+						config.color.getEffectiveColour().darker(),
+						config.color.getEffectiveColour().brighter()
 					)
                 if (config.renderText)
 					worldRenderContext.drawText(customName, it.pos.add(0.0, 2.0, 0.0), 1.5f, true)
