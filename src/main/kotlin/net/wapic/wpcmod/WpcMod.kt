@@ -43,7 +43,6 @@ import net.wapic.wpcmod.features.inventory.ScrollableTooltips
 import net.wapic.wpcmod.features.inventory.experiments.AutoExperiments
 import net.wapic.wpcmod.features.inventory.experiments.SuperpairsSolver
 import net.wapic.wpcmod.features.kuudra.KuudraAutoGFS
-import net.wapic.wpcmod.features.kuudra.KuudraDisplay
 import net.wapic.wpcmod.features.kuudra.KuudraESP
 import net.wapic.wpcmod.features.mining.ChestESP
 import net.wapic.wpcmod.features.mining.PigeonSwapper
@@ -129,21 +128,21 @@ object WpcMod : ModInitializer {
 		MobGlow.init()
 
 		// General
-		ShortcutHandler()
-		PreventPlacingItems()
+		ShortcutHandler.init()
+		PreventPlacingItems.init()
 		Freecam()
-		RatESP()
+		RatESP.init()
 		TagESP.init()
 
 		//Experiments
-		AutoExperiments()
-		SuperpairsSolver()
+		AutoExperiments.init()
+		SuperpairsSolver.init()
 
 		// Dungeons
-		AutoCloseChests()
-		DungeonAutoGFS()
+		AutoCloseChests.init()
+		DungeonAutoGFS.init()
 		ScoreCalculation.init()
-		DungeonESP()
+		DungeonESP.init()
 		TickTimers.init()
 		TerminalSolver.init()
 		MelodyMessage.init()
@@ -155,30 +154,30 @@ object WpcMod : ModInitializer {
 		InvincibilityTimer.init()
 
 		// Kuudra
-		KuudraESP()
-		KuudraAutoGFS()
+		KuudraESP.init()
+		KuudraAutoGFS.init()
 
 		// Galatea
-		GalateaESP()
+		GalateaESP.init()
 
 		// End
-		EndESP()
+		EndESP.init()
 
 		// Fishing
-		AutoFish()
+		AutoFish.init()
 		
 		// Mining
-		PigeonSwapper()
-		ChestESP()
+		PigeonSwapper.init()
+		ChestESP.init()
 
 		// Chat
-		SpamFilter()
+		SpamFilter.init()
 
 		// Inventory
-		ArmorSwapper()
-		ScrollableTooltips()
+		ArmorSwapper.init()
+		ScrollableTooltips.init()
 
 		// Dev
-		SkyBlockID()
+		SkyBlockID.init()
 	}
 }

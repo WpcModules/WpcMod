@@ -10,12 +10,12 @@ import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.MC
 
-class AutoCloseChests {
+object AutoCloseChests {
 
 	private val config get() = WpcMod.config.dungeon
 	private val defaultTitles = listOf("Chest", "Large Chest")
 
-	init {
+	fun init() {
 		ScreenEvents.AFTER_INIT.register { _, screen, _, _ -> onScreenInit(screen) }
 	}
 

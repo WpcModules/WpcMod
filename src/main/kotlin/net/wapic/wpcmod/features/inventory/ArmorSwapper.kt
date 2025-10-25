@@ -12,7 +12,7 @@ import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.Utils
 import org.lwjgl.glfw.GLFW
 
-class ArmorSwapper {
+object ArmorSwapper {
 
 	private val config get() = WpcMod.config.inventory
 
@@ -25,7 +25,7 @@ class ArmorSwapper {
 	private var sorrowSlot: Int? = null
 	private var lastArmorSlot: Int? = null
 
-	init {
+	fun init() {
 		ClientTickEvents.END_CLIENT_TICK.register(::onTick)
 	}
 

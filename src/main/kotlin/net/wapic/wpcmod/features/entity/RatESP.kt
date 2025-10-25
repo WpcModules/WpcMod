@@ -12,11 +12,11 @@ import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.render.drawBoundingBox
 import net.wapic.wpcmod.util.render.drawTracer
 
-class RatESP : MobGlowCache() {
+object RatESP : MobGlowCache() {
 
 	private val config get() = WpcMod.config.general.esp.rat
 
-	init {
+	fun init() {
 		WorldRenderEvents.END.register(::onRenderWorld)
 	}
 

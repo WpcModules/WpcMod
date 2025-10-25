@@ -15,7 +15,7 @@ import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.Utils
 import org.lwjgl.glfw.GLFW
 
-class AutoExperiments {
+object AutoExperiments {
 
 	private val config get() = WpcMod.config.inventory.experiments
 
@@ -53,7 +53,7 @@ class AutoExperiments {
 		Items.YELLOW_DYE
 	)
 
-	init {
+	fun init() {
 		ScreenEvents.AFTER_INIT.register { _, screen, _, _ -> onScreenInit(screen) }
 	}
 

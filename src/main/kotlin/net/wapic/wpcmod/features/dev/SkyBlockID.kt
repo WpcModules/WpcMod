@@ -8,15 +8,15 @@ import net.minecraft.text.Text
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.ItemUtils.skyBlockID
 
-class SkyBlockID {
+object SkyBlockID {
 
 	private val config get() = WpcMod.config.dev
 
-	init {
+	fun init() {
 		ItemTooltipCallback.EVENT.register(::onToolTipRender)
 	}
 
-	fun onToolTipRender(
+	private fun onToolTipRender(
 		stack: ItemStack, tooltipContext: Item.TooltipContext, type: TooltipType, lines: MutableList<Text>
 	) {
 		if (!config.showSkyBlockID) return

@@ -21,12 +21,12 @@ import net.wapic.wpcmod.util.render.drawBoundingBox
 import net.wapic.wpcmod.util.render.drawFilledBoxWithOutline
 import net.wapic.wpcmod.util.render.drawTracer
 
-class DungeonESP : MobGlowCache() {
+object DungeonESP : MobGlowCache() {
 
 	private val config get() = WpcMod.config.dungeon.esp
 	private val miniBosses: List<String> = listOf("Lost Adventurer", "Shadow Assassin", "Diamond Guy")
 
-	init {
+	fun init() {
 		WorldRenderEvents.END.register(::renderWorld)
 	}
 
@@ -72,7 +72,7 @@ class DungeonESP : MobGlowCache() {
 
 	override fun compute(entity: Entity): Int {
 		return when {
-			(config.doorKeys.glow && entity is ArmorStandEntity) && entity.headTexture.equalsOneOf(
+			config.doorKeys.glow && entity is ArmorStandEntity && entity.headTexture.equalsOneOf(
 				HeadTextures.WITHER_KEY,
 				HeadTextures.BLOOD_KEY
 			) -> config.doorKeys.color.getEffectiveColourRGB()

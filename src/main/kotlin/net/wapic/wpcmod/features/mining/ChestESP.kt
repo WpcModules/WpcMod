@@ -10,11 +10,11 @@ import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.render.drawBoundingBox
 import net.wapic.wpcmod.util.render.drawTracer
 
-class ChestESP {
+object ChestESP {
 
 	private val config get() = WpcMod.config.mining.esp.chest
 
-	init {
+	fun init() {
 		WorldRenderEvents.END.register(::renderWorld)
 	}
 

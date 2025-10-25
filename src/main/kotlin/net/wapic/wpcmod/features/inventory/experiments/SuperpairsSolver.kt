@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
 import java.awt.Color
 
-class SuperpairsSolver {
+object SuperpairsSolver {
 
 	private val config get() = WpcMod.config.inventory.experiments
 
@@ -41,7 +41,7 @@ class SuperpairsSolver {
 
 	private val skyHanniRegex = "\\?|(?:Click a(?: seco)?n[dy]|Next) button(?: is instantly rewarded)?!?".toRegex()
 
-	init {
+	fun init() {
 		GuiEvents.SLOT_CLICKED.register(::onMouseClick)
 		GuiEvents.DRAW_SLOT_BACKGROUND.register(::onDrawSlot)
 

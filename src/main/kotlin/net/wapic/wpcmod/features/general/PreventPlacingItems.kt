@@ -12,7 +12,7 @@ import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.ItemUtils.skyBlockID
 
-class PreventPlacingItems {
+object PreventPlacingItems {
 
 	private val config get() = WpcMod.config.general
 
@@ -35,7 +35,7 @@ class PreventPlacingItems {
 		"PLASMAFLUX_POWER_ORB",
 	)
 
-	val interactables = setOf(
+	private val interactables = setOf(
 		Blocks.ACACIA_DOOR,
 		Blocks.ANVIL,
 		Blocks.BEACON,
@@ -69,11 +69,11 @@ class PreventPlacingItems {
 		Blocks.OAK_SIGN,
 	)
 
-	init {
+	fun init() {
 		UseBlockCallback.EVENT.register(::onUseBlock)
 	}
 
-	fun onUseBlock(player: PlayerEntity, world: World, hand: Hand, hitResult: BlockHitResult): ActionResult {
+	private fun onUseBlock(player: PlayerEntity, world: World, hand: Hand, hitResult: BlockHitResult): ActionResult {
 		if (!config.preventPlacing || player.mainHandStack.isEmpty) return ActionResult.PASS
 		val item = player.mainHandStack.skyBlockID ?: return ActionResult.PASS
 

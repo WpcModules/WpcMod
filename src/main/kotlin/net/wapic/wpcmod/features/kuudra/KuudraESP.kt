@@ -12,10 +12,10 @@ import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.render.drawBoundingBox
 import net.wapic.wpcmod.util.render.drawTracer
 
-class KuudraESP : MobGlowCache() {
+object KuudraESP : MobGlowCache() {
 	private val config get() = WpcMod.config.kuudra.esp
 
-	init {
+	fun init() {
 		WorldRenderEvents.END.register(::onRenderWorld)
 	}
 

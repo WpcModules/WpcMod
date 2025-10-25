@@ -10,15 +10,13 @@ import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.ItemUtils.skyBlockID
 import net.wapic.wpcmod.util.Utils
-import kotlin.collections.find
 
-
-class PigeonSwapper {
+object PigeonSwapper {
 
 	private val config get() = WpcMod.config.mining
 	private val allowedAreas: List<Island> = listOf(Island.DWARVEN_MINES, Island.CRYSTAL_HOLLOWS)
 
-	init {
+	fun init() {
 		UseItemCallback.EVENT.register { player, world, hand -> onUse(player, world, hand) }
 		UseBlockCallback.EVENT.register { player, world, hand, _ -> onUse(player, world, hand)}
 	}

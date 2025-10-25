@@ -14,11 +14,12 @@ object MelodyMessage {
     private const val MELODY_STARTED_MESSAGE = "Melody Terminal start!"
 
 	fun init() {
-		DungeonEvents.TERMINAL_OPENED.register(::onTermLoad)
+		DungeonEvents.TERMINAL_OPENED.register(::onTerminalOpen)
 	}
 
-    fun onTermLoad(terminal: TerminalHandler) {
-        if (DungeonUtils.getF7Phase() != DungeonUtils.F7Phase.GOLDOR || terminal.type != TerminalTypes.MELODY || MC.screen is TermSimGUI) return
-        if (config.melodyMessage) Utils.runCommand("pc $MELODY_STARTED_MESSAGE")
+	fun onTerminalOpen(terminal: TerminalHandler) {
+		if (DungeonUtils.getF7Phase() != DungeonUtils.F7Phase.GOLDOR) return
+		if (terminal.type != TerminalTypes.MELODY || MC.screen is TermSimGUI || !config.melodyMessage) return
+		Utils.runCommand("pc $MELODY_STARTED_MESSAGE")
     }
 }

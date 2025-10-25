@@ -14,6 +14,7 @@ import net.minecraft.sound.SoundEvents
 import net.minecraft.text.Style
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
+import net.minecraft.util.Util
 import net.minecraft.util.math.BlockPos
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.dungeon.ScoreCalculationConfig.ScoreHudType
@@ -239,31 +240,38 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 		sentMimicMessage = false
 	}
 
+	private fun onBlockChange(pos: BlockPos, old: BlockState, new: BlockState) {
+		if (!isActive) return
+		if (old.block == Blocks.TRAPPED_CHEST && new.block == Blocks.AIR) {
+			mimicOpenTime = Util.getMeasuringTimeMs()
+			mimicPos = pos
+		}
+	}
+
 	private fun checkMimicDead(client: MinecraftClient) {
 		if (mimicOpenTime == 0L || mimicKilled) return
-		if (System.currentTimeMillis() - mimicOpenTime < 750) return
+		if (Util.getMeasuringTimeMs() - mimicOpenTime < 750) return
 
 		val playerDistanceFromMimic = client.player?.squaredDistanceTo(mimicPos?.toCenterPos()) ?: return
 		if (playerDistanceFromMimic >= 400.0) return
 
 		val isMimicDead = client.world?.entities?.none { it is ZombieEntity && it.isBaby }
-		if (isMimicDead == true) {
-			setMimicDead(false)
+		if (isMimicDead == true)
+			setMimicDead(config.mimicMessage)
+	}
+
+	private fun onEntityDespawn(entity: Entity) {
+		if (!isActive) return
+		if (entity is ZombieEntity && entity.isBaby && entity.headTexture == HeadTextures.MIMIC) {
+			setMimicDead(config.mimicMessage)
 		}
 	}
 
 	private fun setMimicDead(withMessage: Boolean) {
 		mimicKilled = true
-		if (withMessage && config.mimicMessage && !sentMimicMessage) {
+		if (withMessage && !sentMimicMessage) {
 			Utils.runCommand("/pc Mimic Killed!")
 			sentMimicMessage = true
-		}
-	}
-
-	private fun onBlockChange(pos: BlockPos, old: BlockState, new: BlockState) {
-		if (old.block == Blocks.TRAPPED_CHEST && new.block == Blocks.AIR) {
-			mimicOpenTime = System.currentTimeMillis()
-			mimicPos = pos
 		}
 	}
 
@@ -271,13 +279,6 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 		if(!isActive) return
 		missingPuzzles = (missingPuzzles + 1)
 		failedPuzzles = (failedPuzzles - 1).coerceAtLeast(0)
-	}
-
-	private fun onEntityDespawn(entity: Entity) {
-		if (!isActive) return
-		if (entity is ZombieEntity && entity.isBaby && entity.headTexture == HeadTextures.MIMIC) {
-			setMimicDead(true)
-		}
 	}
 
 	private fun onScoreboardChange(line: String) {
@@ -375,6 +376,8 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 	}
 
 	private fun onTick(client: MinecraftClient) {
+		if (!isActive) return
+
 		if (isMimicFloor) checkMimicDead(client)
 
 		if (config.scoreMessage300 != ScoreMessageType.DISABLED && config.scoreMessage270 != ScoreMessageType.DISABLED) {

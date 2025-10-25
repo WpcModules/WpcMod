@@ -10,11 +10,12 @@ import org.joml.Vector2i
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 import kotlin.math.max
 
-class ScrollableTooltips {
+object ScrollableTooltips {
 
 	private val config get() = WpcMod.config.inventory.scrollableTooltips
+	private var scrolledAmount: Int = 0
 
-	init {
+	fun init() {
 		GuiEvents.MOUSE_SCROLL.register(::onMouseScroll)
 		InventoryEvents.CLOSE.register(::reset)
 		TooltipEvents.RESET.register(::reset)
@@ -48,10 +49,5 @@ class ScrollableTooltips {
 
 	private fun reset() {
 		scrolledAmount = 0
-	}
-
-	companion object {
-
-		var scrolledAmount: Int = 0
 	}
 }

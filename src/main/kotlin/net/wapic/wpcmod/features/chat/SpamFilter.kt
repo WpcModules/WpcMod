@@ -13,7 +13,7 @@ import net.minecraft.util.math.MathHelper
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.chat.SpamConfig
 
-class SpamFilter {
+object SpamFilter {
 
 	private val config get() = WpcMod.config.chat.spam
 
@@ -30,7 +30,7 @@ class SpamFilter {
 		var x = MinecraftClient.getInstance().textRenderer.getWidth(text.string)
 	}
 
-	init {
+	fun init() {
 		ClientReceiveMessageEvents.ALLOW_GAME.register(::onMessageReceived)
 		ClientTickEvents.END_CLIENT_TICK.register(::onTick)
 		HudLayerRegistrationCallback.EVENT.register { layeredDrawer ->

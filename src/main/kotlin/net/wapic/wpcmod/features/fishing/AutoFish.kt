@@ -13,13 +13,13 @@ import net.wapic.wpcmod.util.EntityUtils.getArmorStandsByEntity
 import net.wapic.wpcmod.util.MC
 import kotlin.random.Random
 
-class AutoFish {
+object AutoFish {
 
 	private val config get() = WpcMod.config.fishing.autofish
 	private var preventFutureRodUse: Boolean = false
 	private val slugDelayInTicks: Int get() = 20 * if (config.slugPet) 10 else 20
 
-	init {
+	fun init() {
 		ClientTickEvents.END_CLIENT_TICK.register(::onTick)
 	}
 

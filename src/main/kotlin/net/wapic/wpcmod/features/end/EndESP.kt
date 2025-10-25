@@ -18,13 +18,12 @@ import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.render.drawBoundingBox
 import net.wapic.wpcmod.util.render.drawTracer
 
-class EndESP : MobGlowCache() {
+object EndESP : MobGlowCache() {
 
 	private var endNodes: MutableSet<Box> = mutableSetOf()
 	private val config get() = WpcMod.config.end.esp
 
-
-	init {
+	fun init() {
 		WorldRenderEvents.END.register(::renderWorld)
 		ClientTickEvents.END_WORLD_TICK.register(::worldTick)
 	}

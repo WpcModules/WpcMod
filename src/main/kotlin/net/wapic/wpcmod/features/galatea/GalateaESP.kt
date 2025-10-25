@@ -28,13 +28,12 @@ import net.wapic.wpcmod.util.render.drawBoundingBox
 import net.wapic.wpcmod.util.render.drawTracer
 import java.util.concurrent.CopyOnWriteArraySet
 
-class GalateaESP : MobGlowCache() {
+object GalateaESP : MobGlowCache() {
 
 	private var forestNodes = CopyOnWriteArraySet<Box>()
 	private val config get() = WpcMod.config.galatea.esp
 
-
-	init {
+	fun init() {
 		WorldRenderEvents.END.register(::renderWorld)
 
 		// Forest Nodes

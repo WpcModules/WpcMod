@@ -4,11 +4,11 @@ import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.util.SackUtils
 
-class DungeonAutoGFS {
+object DungeonAutoGFS {
 
 	private val config get() = WpcMod.config.dungeon.autoGFS
 
-	init {
+	fun init() {
 		DungeonEvents.START.register {
 			if (config.enderPearl) SackUtils.getFromSack("ENDER_PEARL", 16)
 			if (config.spiritLeap) SackUtils.getFromSack("SPIRIT_LEAP", 16)

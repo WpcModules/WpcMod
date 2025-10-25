@@ -5,11 +5,9 @@ import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.render.*
 import net.minecraft.client.render.block.entity.BeaconBlockEntityRenderer
 import net.minecraft.client.util.math.MatrixStack
-import net.minecraft.entity.Entity
 import net.minecraft.text.OrderedText
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
-import net.minecraft.util.math.MathHelper
 import net.minecraft.util.math.Vec3d
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.VecUtils.unaryMinus
@@ -61,6 +59,27 @@ fun WorldRenderContext.drawBeaconBeam(position: BlockPos, color: Color) {
 }
 
 fun WorldRenderContext.drawBoundingBox(
+	pos: Vec3d,
+	width: Float,
+	height: Float,
+	color: Color = Color(255, 255, 255),
+	lineWidth: Double = 2.0
+) {
+	val width = width / 2.0
+	val height = height / 2.0
+	drawBox(
+		pos.x - width,
+		pos.y - height,
+		pos.z - width,
+		pos.x + width,
+		pos.y + height,
+		pos.z + width,
+		color,
+		lineWidth,
+	)
+}
+
+fun WorldRenderContext.drawBoundingBox(
 	boundingBox: Box,
 	color: Color = Color(255, 255, 255),
 	lineWidth: Double = 2.0
@@ -75,6 +94,22 @@ fun WorldRenderContext.drawBoundingBox(
 		color,
 		lineWidth,
 	)
+}
+
+fun WorldRenderContext.drawFilledBoxWithOutline(
+	pos: Vec3d,
+	width: Double,
+	height: Double,
+	color: Color = Color(255, 255, 255),
+	outlineColor: Color = Color(255, 255, 255),
+	lineWidth: Double = 2.0
+) {
+	val width = width / 2
+	val height = height / 2
+	with(pos) {
+		drawFilledBox(x - width, y - height, z - width, x + width, y + height, z + width, color)
+		drawBox(x - width, y - height, z - width, x + width, y + height, z + width, outlineColor, lineWidth)
+	}
 }
 
 fun WorldRenderContext.drawFilledBoxWithOutline(
@@ -200,20 +235,6 @@ fun WorldRenderContext.drawBox(
 
 	vertexConsumerProvider.draw(layer)
 	matrixStack.pop()
-}
-
-fun WorldRenderContext.drawTracer(
-	entity: Entity,
-	color: Color = Color(255, 255, 255),
-	lineWidth: Double = 2.0
-) {
-	val tickProgress = tickCounter().dynamicDeltaTicks
-
-	val x = MathHelper.lerp(tickProgress.toDouble(), entity.lastRenderX, entity.x)
-	val y = MathHelper.lerp(tickProgress.toDouble(), entity.lastRenderY, entity.eyeY)
-	val z = MathHelper.lerp(tickProgress.toDouble(), entity.lastRenderZ, entity.z)
-
-	drawTracer(x, y, z, color, lineWidth)
 }
 
 fun WorldRenderContext.drawTracer(
