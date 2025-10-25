@@ -1,6 +1,7 @@
 package net.wapic.wpcmod.listeners
 
 import net.minecraft.network.packet.Packet
+import net.minecraft.network.packet.s2c.common.CommonPingS2CPacket
 import net.minecraft.network.packet.s2c.play.EntitiesDestroyS2CPacket
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket
 import net.minecraft.network.packet.s2c.play.MapUpdateS2CPacket
@@ -8,6 +9,7 @@ import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket
 import net.wapic.wpcmod.events.EntityEvents
 import net.wapic.wpcmod.events.PacketEvents
 import net.wapic.wpcmod.events.PlayerListChangeEvent
+import net.wapic.wpcmod.events.ServerTickEvent
 import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils
 import net.wapic.wpcmod.util.MC
 
@@ -23,6 +25,7 @@ object NetworkListener {
 			is EntitiesDestroyS2CPacket -> onEntityDespawn(packet)
 			is EntitySpawnS2CPacket -> onEntitySpawn(packet)
 			is MapUpdateS2CPacket -> MapUtils.updateMapData(packet)
+			is CommonPingS2CPacket -> onPingPacket()
 		}
 	}
 
@@ -48,5 +51,9 @@ object NetworkListener {
 		val world = MC.world ?: return
 		val entity = world.getEntity(packet.uuid) ?: return
 		EntityEvents.SPAWN.invoker().onSpawn(entity)
+	}
+
+	private fun onPingPacket() {
+		ServerTickEvent.EVENT.invoker().onServerTick()
 	}
 }

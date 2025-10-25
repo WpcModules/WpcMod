@@ -12,38 +12,46 @@ import net.wapic.wpcmod.util.KuudraUtils.Phase
 import net.wapic.wpcmod.util.KuudraUtils.kuudraEntity
 import net.wapic.wpcmod.util.Utils
 
-class KuudraDisplay : SimpleHudElement("Kuudra Display", 75, 11) {
+object KuudraDisplay : SimpleHudElement("Kuudra Display", 75, 11) {
 
 	private val config get() = WpcMod.config.kuudra
 
 	private val mc = MinecraftClient.getInstance()
 
 	override fun render(drawContext: DrawContext, renderTickCounter: RenderTickCounter) {
-		if (Utils.getLocation() != Island.KUUDRA || !config.healthDisplay) return
+		if (!isActive) return
+
+		val matrixStack = drawContext.matrices
+		matrixStack.push()
+		applyTransformations(matrixStack)
 
 		kuudraEntity?.let {
 			if (KuudraUtils.phase == Phase.KILL) {
-				val x = (drawContext.scaledWindowWidth / 2) - (mc.textRenderer.getWidth(getHealthDisplay()) / 2)
+				val formatting = when {
+					it.health > 99000f -> Formatting.GREEN
+					it.health > 75000f -> Formatting.DARK_GREEN
+					it.health > 50000f -> Formatting.YELLOW
+					it.health > 25000f -> Formatting.GOLD
+					it.health > 10000f -> Formatting.RED
+					else -> Formatting.DARK_RED
+				}
+
+				val health = "$formatting${it.health / 1000}K / §a100K §cHP"
+
+				val x = (drawContext.scaledWindowWidth / 2) - (mc.textRenderer.getWidth(health) / 2)
 				val y = (drawContext.scaledWindowHeight / 2) - (mc.textRenderer.fontHeight / 2)
-				drawContext.drawTextWithShadow(mc.textRenderer, getHealthDisplay(), x, y, 0xffffffff.toInt())
+				drawContext.drawTextWithShadow(mc.textRenderer, health, x, y, 0xffffffff.toInt())
 			}
 		}
+
+		matrixStack.pop()
 	}
 
-	fun getHealthDisplay(): String {
-		kuudraEntity?.let {
-			val formatting = when {
-				it.health > 99000f -> Formatting.GREEN
-				it.health > 75000f -> Formatting.DARK_GREEN
-				it.health > 50000f -> Formatting.YELLOW
-				it.health > 25000f -> Formatting.GOLD
-				it.health > 10000f -> Formatting.RED
-				else -> Formatting.DARK_RED
-			}
+	override fun isActive(): Boolean {
+		return isEnabled && Utils.getLocation() == Island.KUUDRA
+	}
 
-			return "$formatting${it.health / 1000}K / §a100K §cHP"
-		}
-
-		return "NO ENTITY FOUND"
+	override fun isEnabled(): Boolean {
+		return config.healthDisplay
 	}
 }

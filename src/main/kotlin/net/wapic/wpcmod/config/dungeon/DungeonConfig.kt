@@ -57,6 +57,27 @@ class DungeonConfig {
 		var spiritLeap = false
 	}
 
+	@Accordion
+	@ConfigOption(
+		name = "Invincibility Items",
+		desc = "Cooldown timers and alerts for items which give you invincibility"
+	)
+	var invincibilityTimer: InvincibilityTimerConfig = InvincibilityTimerConfig()
+
+	class InvincibilityTimerConfig {
+		@ConfigOption(name = "Show Hud", desc = "Show cooldown in a HUD element")
+		@ConfigEditorBoolean
+		var hud = false
+
+		@ConfigOption(name = "Send Chat Message", desc = "Send a Chat message when items proc")
+		@ConfigEditorBoolean
+		var message = false
+
+		@ConfigOption(name = "Show Title", desc = "Show a title when items proc")
+		@ConfigEditorBoolean
+		var title = false
+	}
+
 	@Category(name = "ESP", desc = "Configure ESP on Dungeon mobs")
 	var esp: ESPConfig = ESPConfig()
 

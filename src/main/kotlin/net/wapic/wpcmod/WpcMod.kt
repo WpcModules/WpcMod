@@ -152,9 +152,9 @@ object WpcMod : ModInitializer {
 		FunnyMap.init()
 		SpiritBearTimer.init()
 		DungeonBreaker.init()
+		InvincibilityTimer.init()
 
 		// Kuudra
-		KuudraDisplay()
 		KuudraESP()
 		KuudraAutoGFS()
 

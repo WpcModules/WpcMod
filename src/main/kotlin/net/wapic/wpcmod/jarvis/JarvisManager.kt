@@ -5,10 +5,12 @@ import com.google.gson.GsonBuilder
 import moe.nea.jarvis.api.JarvisScalable
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.features.dungeons.ScoreCalculation
-import net.wapic.wpcmod.features.dungeons.floor7.InactiveWaypoints
-import net.wapic.wpcmod.features.dungeons.floor7.TickTimers
 import net.wapic.wpcmod.features.dungeons.SpiritBearTimer
+import net.wapic.wpcmod.features.dungeons.floor7.InactiveWaypoints
+import net.wapic.wpcmod.features.dungeons.floor7.InvincibilityTimer
+import net.wapic.wpcmod.features.dungeons.floor7.TickTimers
 import net.wapic.wpcmod.features.dungeons.funnymap.ui.MapElement
+import net.wapic.wpcmod.features.kuudra.KuudraDisplay
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
@@ -27,7 +29,9 @@ object JarvisManager {
 		MapElement,
 		SpiritBearTimer,
 		InactiveWaypoints,
-		TickTimers
+		TickTimers,
+		InvincibilityTimer,
+		KuudraDisplay,
 	)
 
 	private fun readFile(): String = try {
