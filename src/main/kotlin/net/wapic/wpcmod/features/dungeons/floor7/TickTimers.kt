@@ -4,13 +4,10 @@ import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.render.RenderTickCounter
 import net.minecraft.client.world.ClientWorld
-import net.minecraft.network.listener.PacketListener
-import net.minecraft.network.packet.Packet
-import net.minecraft.network.packet.s2c.common.CommonPingS2CPacket
 import net.minecraft.text.Text
 import net.minecraft.util.Colors
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.events.PacketEvents
+import net.wapic.wpcmod.events.ServerTickEvent
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.jarvis.SimpleHudElement
 import net.wapic.wpcmod.util.DungeonUtils
@@ -34,38 +31,39 @@ object TickTimers : SimpleHudElement("Tick Timers", h = 12, w = 120) {
     private var padTickTime: Int = -1
 
 	fun init() {
-		PacketEvents.RECEIVE.register(::onPacketReceive)
+		ServerTickEvent.EVENT.register(::onServerTick)
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 		WorldChangeEvent.BEFORE.register(::onWorldChange)
 	}
 
-    fun onPacketReceive(packet: Packet<out PacketListener>) {
-		if (!DungeonUtils.bossSpawned) return
-        if (packet !is CommonPingS2CPacket) return
+	fun onServerTick() {
+		if (!isActive) return
 
-		if (goldorTickTime == 0 && goldorStartTime <= 0 && isActive) goldorTickTime = 60
-		if (goldorStartTime >= 0 && isActive) goldorStartTime--
-		if (goldorTickTime >= 0 && isActive) goldorTickTime--
-		if (padTickTime == 0 && isActive) padTickTime = 20
-		if (padTickTime >= 0 && isActive) padTickTime--
-		if (necronTime >= 0 && isActive) necronTime--
+		if (goldorTickTime == 0 && goldorStartTime <= 0) goldorTickTime = 60
+		if (goldorStartTime >= 0) goldorStartTime--
+		if (goldorTickTime >= 0) goldorTickTime--
+		if (padTickTime == 0) padTickTime = 20
+		if (padTickTime >= 0) padTickTime--
+		if (necronTime >= 0) necronTime--
     }
 
 	fun onMessageReceived(text: Text, actionBar: Boolean) {
-		if(actionBar) return
+		if (actionBar || !isActive) return
 
 		when {
-			isActive && text.string.matches(necronRegex) -> necronTime = 60
-			isActive && text.string.matches(goldorRegex) -> goldorTickTime = 60
-			isActive && text.string.matches(coreOpeningRegex) -> {
+			text.string.matches(necronRegex) -> necronTime = 60
+			text.string.matches(goldorRegex) -> goldorTickTime = 60
+
+			text.string.matches(coreOpeningRegex) -> {
 				goldorStartTime = -1
 				goldorTickTime = -1
 			}
 			text.string.matches(stormStartRegex) -> {
-				if (isActive) goldorStartTime = 104
-				if (isActive) padTickTime = -1
+				goldorStartTime = 104
+				padTickTime = -1
 			}
-			isActive && text.string.matches(stormPadRegex) -> padTickTime = 20
+
+			text.string.matches(stormPadRegex) -> padTickTime = 20
 		}
 	}
 
@@ -88,9 +86,11 @@ object TickTimers : SimpleHudElement("Tick Timers", h = 12, w = 120) {
 
 	override fun render(drawContext: DrawContext, renderTickCounter: RenderTickCounter) {
 		if(!isActive) return
+
 		val matrixStack = drawContext.matrices
 		matrixStack.push()
 		applyTransformations(matrixStack)
+
 		val (prefix, time, max) =
 			if(goldorStartTime >= 0 && config.startTimer)
 				Triple("§aStart:", goldorStartTime, 104)
@@ -105,12 +105,12 @@ object TickTimers : SimpleHudElement("Tick Timers", h = 12, w = 120) {
 			necronTime >= 0 ->
 				drawContext.drawText(MC.textRenderer, formatTimer(necronTime.toInt(), 60, "§4Necron dropping in"), 1, 1, Colors.RED, true)
 		}
+
 		matrixStack.pop()
 	}
 
 	override fun isActive(): Boolean {
-		if(DungeonUtils.getF7Phase() == DungeonUtils.F7Phase.UNKNOWN) return false
-		return super.isEnabled()
+		return isEnabled && DungeonUtils.getF7Phase() != DungeonUtils.F7Phase.UNKNOWN
 	}
 
 	override fun isEnabled(): Boolean {

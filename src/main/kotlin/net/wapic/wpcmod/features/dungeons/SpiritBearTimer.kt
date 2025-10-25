@@ -6,10 +6,10 @@ import net.minecraft.block.Blocks
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.render.RenderTickCounter
 import net.minecraft.text.Text
-import net.minecraft.util.Util
 import net.minecraft.util.math.BlockPos
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.BlockEvents
+import net.wapic.wpcmod.events.ServerTickEvent
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.jarvis.SimpleHudElement
 import net.wapic.wpcmod.util.DungeonUtils.DungeonFloor
@@ -23,29 +23,32 @@ object SpiritBearTimer : SimpleHudElement("Spirit Bear Timer", 90, 12) {
 
 	private val config get() = WpcMod.config.dungeon
 
+	private const val SPAWN_TIME_IN_TICKS: Int = 68 // Ticks
+
 	private val lastBlockPos = BlockPos(7, 77, 34)
 	private val isThornFloor get() = currentFloor.equalsOneOf(DungeonFloor.FLOOR_4, DungeonFloor.MASTER_MODE_FLOOR_4)
-	private var lastLitUpTime: Long = 0L
+
+	private var lastLitUpTime: Int = 0
 
 	fun init() {
 		BlockEvents.CHANGE.register(::onBlockChange)
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
+		ServerTickEvent.EVENT.register {
+			if (lastLitUpTime > 0 && isActive) lastLitUpTime--
+		}
 		WorldChangeEvent.BEFORE.register {
-			lastLitUpTime = 0L
+			lastLitUpTime = 0
 		}
 	}
 
 	override fun render(drawContext: DrawContext, renderTickCounter: RenderTickCounter) {
-		if (!isActive || lastLitUpTime == 0L) return
+		if (!isActive || lastLitUpTime <= 0) return
 		val matrixStack = drawContext.matrices
 		matrixStack.push()
 		applyTransformations(matrixStack)
 
-		val spawnTime = lastLitUpTime + 3400L
-		val diff = (spawnTime - Util.getMeasuringTimeMs()) / 1000f
-
 		drawContext.drawText(
-			"Spirit Bear: ${String.format("%.2f", diff)}s",
+			"Spirit Bear: ${String.format("%.2f", lastLitUpTime / 20f)}s",
 			x = 2, y = 2,
 			Color.MAGENTA.rgb,
 			shadow = true
@@ -58,16 +61,13 @@ object SpiritBearTimer : SimpleHudElement("Spirit Bear Timer", 90, 12) {
 		if (!isActive) return
 
 		if (pos == lastBlockPos && newState.block == Blocks.SEA_LANTERN) {
-			lastLitUpTime = Util.getMeasuringTimeMs()
+			lastLitUpTime = SPAWN_TIME_IN_TICKS
 		}
 	}
 
 	fun onMessageReceived(text: Text, actionBar: Boolean) {
-		if (actionBar) return
-
-		if (text.string == "A Spirit Bear has appeared!") {
-			lastLitUpTime = 0L
-		}
+		if (!isActive || actionBar) return
+		if (text.string == "A Spirit Bear has appeared!") lastLitUpTime = 0
 	}
 
 	override fun isActive(): Boolean {

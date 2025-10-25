@@ -58,7 +58,7 @@ object DungeonUtils {
 			DungeonEvents.START.invoker().onStart()
 			if (currentFloor == DungeonFloor.NONE) {
 				WpcMod.logger.error("Current dungeon floor was not found!")
-				ChatUtils.sendMessage("Current dungeon floor could not be detected, score calculation might be incorrect")
+				ChatUtils.sendMessage("Current dungeon floor could not be detected, some features may not work properly")
 			}
 		}
 
@@ -144,7 +144,12 @@ object DungeonUtils {
 	}
 
 	fun getF7Phase(): F7Phase {
-		if ((!currentFloor.equalsOneOf(DungeonFloor.FLOOR_7, DungeonFloor.MASTER_MODE_FLOOR_7) || !bossSpawned) && Utils.getLocation() == Island.DUNGEON) return F7Phase.UNKNOWN
+		if (!inDungeons) return F7Phase.UNKNOWN
+		if (!currentFloor.equalsOneOf(
+				DungeonFloor.FLOOR_7,
+				DungeonFloor.MASTER_MODE_FLOOR_7
+			) || !bossSpawned
+		) return F7Phase.UNKNOWN
 
 		with(MC.player ?: return F7Phase.UNKNOWN) {
 			return when {
