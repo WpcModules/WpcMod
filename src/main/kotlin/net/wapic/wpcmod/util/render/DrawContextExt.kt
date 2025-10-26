@@ -18,7 +18,7 @@ fun DrawContext.drawTexture(
 	textureWidth: Int,
 	textureHeight: Int
 ) =
-	this.drawTexture(RenderLayer::getGuiTextured, sprite, x, y, u, v, width, height, textureWidth, textureHeight)
+	this.drawTexture(RenderLayelabelr::getGuiTextured, sprite, x, y, u, v, width, height, textureWidth, textureHeight)
 
 fun DrawContext.drawGuiTexture(sprite: Identifier, x: Int, y: Int, width: Int, height: Int) =
 	this.drawGuiTexture(RenderLayer::getGuiTextured, sprite, x, y, width, height)

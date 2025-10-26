@@ -7,7 +7,7 @@ import net.minecraft.text.Text
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.ServerTickEvent
 import net.wapic.wpcmod.events.WorldChangeEvent
-import net.wapic.wpcmod.jarvis.SimpleHudElement
+import net.wapic.wpcmod.hud.SimpleHudElement
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.Utils

@@ -11,7 +11,7 @@ import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.BlockEvents
 import net.wapic.wpcmod.events.ServerTickEvent
 import net.wapic.wpcmod.events.WorldChangeEvent
-import net.wapic.wpcmod.jarvis.SimpleHudElement
+import net.wapic.wpcmod.hud.SimpleHudElement
 import net.wapic.wpcmod.util.DungeonUtils.DungeonFloor
 import net.wapic.wpcmod.util.DungeonUtils.bossSpawned
 import net.wapic.wpcmod.util.DungeonUtils.currentFloor

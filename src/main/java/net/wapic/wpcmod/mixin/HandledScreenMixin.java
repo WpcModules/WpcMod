@@ -1,5 +1,6 @@
 package net.wapic.wpcmod.mixin;
 
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -33,8 +34,8 @@ public abstract class HandledScreenMixin {
 	}
 
 	@Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
-	private void onMouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
-		GuiEvents.MOUSE_CLICK.invoker().onMouseClick((Screen) (Object) this, (int) mouseX, (int) mouseY, button, cir);
+	private void onMouseClicked(Click click, boolean doubled, CallbackInfoReturnable<Boolean> cir) {
+		GuiEvents.MOUSE_CLICK.invoker().onMouseClick((Screen) (Object) this, (int) click.x(), (int) click.y(), click.button(), cir);
 	}
 
 	@Inject(at = @At("HEAD"), method = "mouseScrolled")

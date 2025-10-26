@@ -1,8 +1,11 @@
-package net.wapic.wpcmod.jarvis
+package net.wapic.wpcmod.hud
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import moe.nea.jarvis.api.JarvisScalable
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
+import net.minecraft.client.option.KeyBinding
+import net.minecraft.client.util.InputUtil
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.features.dungeons.ScoreCalculation
 import net.wapic.wpcmod.features.dungeons.SpiritBearTimer
@@ -11,20 +14,30 @@ import net.wapic.wpcmod.features.dungeons.floor7.InvincibilityTimer
 import net.wapic.wpcmod.features.dungeons.floor7.TickTimers
 import net.wapic.wpcmod.features.dungeons.funnymap.ui.MapElement
 import net.wapic.wpcmod.features.kuudra.KuudraDisplay
+import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.Utils.modIdentifier
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
-object JarvisManager {
+object HudManager {
 
 	private val file = File(WpcMod.configDir, "hud-locations.json")
 	private val backupFile = File(file.parentFile, "${file.name}.bak")
 	private val tempFile = File(file.parentFile, "${file.name}.tmp")
 	private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
 
-	private data class HudObject(val label: String, val x: Double, val y: Double, val scale: Float)
+	private val hudKeyBind: KeyBinding = KeyBindingHelper.registerKeyBinding(
+		KeyBinding(
+			"Hud Manager",
+			InputUtil.GLFW_KEY_END,
+			KeyBinding.Category.create(modIdentifier("hud"))
+		)
+	)
 
-	val hudElements = listOf<JarvisScalable>(
+	private data class HudObject(val label: String, val x: Int, val y: Int, val scale: Float)
+
+	val hudElements = listOf(
 		ScoreCalculation,
 		MapElement,
 		SpiritBearTimer,
@@ -33,6 +46,16 @@ object JarvisManager {
 		InvincibilityTimer,
 		KuudraDisplay,
 	)
+
+	init {
+		ClientTickEvents.END_CLIENT_TICK.register {
+			while (hudKeyBind.wasPressed()) {
+				MC.instance.send {
+					MC.screen = HudEditor()
+				}
+			}
+		}
+	}
 
 	private fun readFile(): String = try {
 		file.readText()
@@ -52,10 +75,9 @@ object JarvisManager {
 			val hudObjects = gson.fromJson(readFile(), Array<HudObject>::class.java).toList()
 
 			hudObjects.forEach { hudObject ->
-				val e = hudElements.find { it.label.string == hudObject.label }
+				val e = hudElements.find { it.label == hudObject.label }
 				e?.scale = hudObject.scale
-				e?.x = hudObject.x
-				e?.y = hudObject.y
+				e?.position = hudObject.x to hudObject.y
 			}
 
 			WpcMod.logger.info("Loaded hud locations successfully")
@@ -78,7 +100,8 @@ object JarvisManager {
 			}
 			WpcMod.logger.info("Saving hud locations file")
 
-			val huds = hudElements.map { return@map HudObject(it.label.string, it.x, it.y, it.scale) }
+			val huds =
+				hudElements.map { return@map HudObject(it.label, it.position.first, it.position.second, it.scale) }
 			tempFile.writeText(gson.toJson(huds))
 
 			if (file.exists()) file.copyTo(backupFile, overwrite = true)

@@ -22,7 +22,7 @@ import net.wapic.wpcmod.config.dungeon.ScoreCalculationConfig.ScoreMessageType
 import net.wapic.wpcmod.events.*
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
-import net.wapic.wpcmod.jarvis.SimpleHudElement
+import net.wapic.wpcmod.hud.SimpleHudElement
 import net.wapic.wpcmod.util.*
 import net.wapic.wpcmod.util.DungeonUtils.DungeonFloor
 import net.wapic.wpcmod.util.DungeonUtils.isMimicFloor

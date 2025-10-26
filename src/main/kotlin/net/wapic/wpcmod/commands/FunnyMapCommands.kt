@@ -6,8 +6,8 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.minecraft.text.Style
 import net.minecraft.util.Formatting
-import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.DungeonScan
+import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.ScanUtils
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.MC
@@ -16,7 +16,7 @@ import net.wapic.wpcmod.util.Utils
 object FunnyMapCommands : Command("dungeon") {
 
 	val getRoomData: LiteralArgumentBuilder<FabricClientCommandSource> = literal("room").executes{
-		val player = MC.player?.pos ?: return@executes 0
+		val player = MC.player?.entityPos ?: return@executes 0
 		val pos = ScanUtils.getRoomCentre(player.x.toInt(), player.z.toInt())
 		val data = ScanUtils.getRoomData(pos.first, pos.second)
 		if (data != null) {

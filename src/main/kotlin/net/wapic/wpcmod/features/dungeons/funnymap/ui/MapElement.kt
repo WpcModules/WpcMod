@@ -17,7 +17,7 @@ import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils
 import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils.CONNECTOR_SIZE
 import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils.halfRoomSize
 import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils.roomSize
-import net.wapic.wpcmod.jarvis.SimpleHudElement
+import net.wapic.wpcmod.hud.SimpleHudElement
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.equalsOneOf

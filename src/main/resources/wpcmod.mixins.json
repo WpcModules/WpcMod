@@ -8,7 +8,6 @@
     "defaultRequire": 1
   },
   "client": [
-    "BackgroundRendererMixin",
     "ButtonBlockMixin",
     "CameraMixin",
     "ChatHudMixin",
@@ -17,6 +16,8 @@
     "ClientPlayNetworkHandlerMixin",
     "DimensionTypeMixin",
     "EntityMixin",
+    "EntityRendererMixin",
+    "FogRendererMixin",
     "GameOptionsMixin",
     "HandledScreenMixin",
     "HoveredTooltipPositionerMixin",
@@ -28,7 +29,6 @@
     "PlayerEntityMixin",
     "SimpleInventoryMixin",
     "WorldChunkMixin",
-    "WorldRendererMixin",
     "accessors.HandledScreenAccessor",
     "accessors.MinecraftClientAccessor",
     "accessors.PlayerInteractEntityC2SPacketAccessor",

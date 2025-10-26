@@ -2,6 +2,7 @@ package net.wapic.wpcmod.mixin;
 
 import net.minecraft.client.Keyboard;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.client.util.InputUtil;
 import net.wapic.wpcmod.features.general.shortcut.Shortcut;
 import org.spongepowered.asm.mixin.Final;
@@ -19,13 +20,13 @@ public class KeyboardMixin {
 	private MinecraftClient client;
 
 	@Inject(at = @At("TAIL"), method = "onKey")
-	private void onKey(long window, int key, int scancode, int action, int modifiers, CallbackInfo ci) {
+	private void onKey(long window, int action, KeyInput input, CallbackInfo ci) {
 		if (this.client.currentScreen == null) {
 			if (action == 0) {
-				Shortcut.Companion.setKeyPressed(InputUtil.Type.KEYSYM.createFromCode(key), false);
+				Shortcut.Companion.setKeyPressed(InputUtil.Type.KEYSYM.createFromCode(input.key()), false);
 			} else {
-				Shortcut.Companion.setKeyPressed(InputUtil.Type.KEYSYM.createFromCode(key), true);
-				Shortcut.Companion.onKeyPressed(InputUtil.Type.KEYSYM.createFromCode(key));
+				Shortcut.Companion.setKeyPressed(InputUtil.Type.KEYSYM.createFromCode(input.key()), true);
+				Shortcut.Companion.onKeyPressed(InputUtil.Type.KEYSYM.createFromCode(input.key()));
 			}
 		}
 	}

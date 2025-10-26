@@ -4,6 +4,7 @@ import io.github.notenoughupdates.moulconfig.Config
 import io.github.notenoughupdates.moulconfig.Social
 import io.github.notenoughupdates.moulconfig.annotations.Category
 import io.github.notenoughupdates.moulconfig.common.MyResourceLocation
+import io.github.notenoughupdates.moulconfig.common.text.StructuredText
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.chat.ChatConfig
 import net.wapic.wpcmod.config.dev.DevConfig
@@ -19,13 +20,13 @@ import net.wapic.wpcmod.config.render.RenderConfig
 
 class WpcConfig : Config() {
 
-	override fun getTitle(): String {
-		return "§bWpcMod ${WpcMod.version}§r"
+	override fun getTitle(): StructuredText {
+		return StructuredText.of("§bWpcMod ${WpcMod.version}§r")
 	}
 
 	override fun getSocials(): List<Social> {
 		val github = Social.forLink(
-			"WpcMod GitHub Page",
+			StructuredText.of("WpcMod GitHub Page"),
 			MyResourceLocation.parse("wpcmod:github-mark-white.png"),
 			"https://github.com/WpcModules/WpcMod"
 		)

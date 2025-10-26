@@ -13,7 +13,8 @@ import net.minecraft.util.Colors
 import net.minecraft.util.math.Box
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldChangeEvent
-import net.wapic.wpcmod.jarvis.SimpleHudElement
+import net.wapic.wpcmod.hud.HudManager
+import net.wapic.wpcmod.hud.SimpleHudElement
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.equalsOneOf
@@ -57,8 +58,8 @@ object InactiveWaypoints : SimpleHudElement("Term Info", w = 60, h = 30) {
 	override fun render(drawContext: DrawContext, renderTickCounter: RenderTickCounter) {
 		if (!DungeonUtils.bossSpawned || !shouldRender || !config.enabled) return
 		val matrixStack = drawContext.matrices
-		matrixStack.push()
-		applyTransformations(matrixStack)
+		matrixStack.pushMatrix()
+		applyTransformations(HudManager.jarvis, matrixStack)
 
 		val lines = setOf(
 			"§6Terms ${if ((section == 2 && terminals == 5) || (section != 2 && terminals == 4)) "§a" else "§c"}${terminals}§8/§a${if (section == 2) 5 else 4}",
