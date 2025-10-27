@@ -4,7 +4,6 @@ import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.block.BlockState
 import net.minecraft.block.Blocks
 import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.render.RenderTickCounter
 import net.minecraft.text.Text
 import net.minecraft.util.math.BlockPos
 import net.wapic.wpcmod.WpcMod

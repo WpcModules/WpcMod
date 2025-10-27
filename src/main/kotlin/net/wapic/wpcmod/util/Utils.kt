@@ -4,7 +4,6 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.hypixel.modapi.HypixelModAPI
 import net.hypixel.modapi.packet.impl.clientbound.event.ClientboundLocationPacket
 import net.minecraft.block.entity.BlockEntity
-import net.minecraft.client.util.Clipboard
 import net.minecraft.util.Identifier
 import net.minecraft.util.Util
 import net.minecraft.util.math.ChunkPos

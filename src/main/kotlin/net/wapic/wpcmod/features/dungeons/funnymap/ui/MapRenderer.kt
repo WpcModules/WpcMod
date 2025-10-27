@@ -2,7 +2,6 @@ package net.wapic.wpcmod.features.dungeons.funnymap.ui
 
 import net.minecraft.client.gl.RenderPipelines
 import net.minecraft.client.gui.DrawContext
-import net.minecraft.util.math.RotationAxis
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.dungeon.FunnyConfig
 import net.wapic.wpcmod.features.dungeons.funnymap.core.DungeonPlayer
@@ -26,8 +25,6 @@ object MapRenderer {
 	private val questionResource = Utils.modIdentifier("dungeon/question.png")
 	private val whiteResource = Utils.modIdentifier("dungeon/white_check.png")
 	private val mapIcons = Utils.modIdentifier("dungeon/marker.png")
-
-	val axis: RotationAxis = RotationAxis.POSITIVE_Z
 
 	fun renderCenteredText(drawContext: DrawContext, text: List<String>, x: Int, y: Int, color: Int) {
 		if (text.isEmpty()) return

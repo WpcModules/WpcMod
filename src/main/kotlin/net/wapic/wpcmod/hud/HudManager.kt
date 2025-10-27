@@ -16,7 +16,6 @@ import net.wapic.wpcmod.features.dungeons.funnymap.ui.MapElement
 import net.wapic.wpcmod.features.kuudra.KuudraDisplay
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.modIdentifier
-import java.awt.Point
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption

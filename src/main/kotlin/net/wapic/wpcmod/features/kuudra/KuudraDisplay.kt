@@ -2,7 +2,6 @@ package net.wapic.wpcmod.features.kuudra
 
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.render.RenderTickCounter
 import net.minecraft.util.Formatting
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.hud.SimpleHudElement

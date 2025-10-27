@@ -3,7 +3,6 @@ package net.wapic.wpcmod.features.dungeons.floor7
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.render.RenderTickCounter
 import net.minecraft.client.world.ClientWorld
 import net.minecraft.entity.decoration.ArmorStandEntity
 import net.minecraft.text.Text
@@ -12,7 +11,6 @@ import net.minecraft.util.math.Box
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.events.WorldRenderEvent
-import net.wapic.wpcmod.hud.HudManager
 import net.wapic.wpcmod.hud.SimpleHudElement
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.MC

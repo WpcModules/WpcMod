@@ -6,7 +6,6 @@ import net.minecraft.block.BlockState
 import net.minecraft.block.Blocks
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.render.RenderTickCounter
 import net.minecraft.entity.Entity
 import net.minecraft.entity.mob.ZombieEntity
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket
