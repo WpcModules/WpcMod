@@ -34,17 +34,17 @@ object SpiritBearTimer : SimpleHudElement("Spirit Bear Timer", 90, 12) {
 		BlockEvents.CHANGE.register(::onBlockChange)
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 		ServerTickEvent.EVENT.register {
-			if (lastLitUpTime > 0 && isActive) lastLitUpTime--
+			if (lastLitUpTime > 0 && isActive()) lastLitUpTime--
 		}
 		WorldChangeEvent.BEFORE.register {
 			lastLitUpTime = 0
 		}
 	}
 
-	override fun render(drawContext: DrawContext, renderTickCounter: RenderTickCounter) {
-		if (!isActive || lastLitUpTime <= 0) return
+	override fun render(drawContext: DrawContext, deltaTicks: Float) {
+		if (!isActive() || lastLitUpTime <= 0) return
 		val matrixStack = drawContext.matrices
-		matrixStack.push()
+		matrixStack.pushMatrix()
 		applyTransformations(matrixStack)
 
 		drawContext.drawText(
@@ -54,11 +54,11 @@ object SpiritBearTimer : SimpleHudElement("Spirit Bear Timer", 90, 12) {
 			shadow = true
 		)
 
-		matrixStack.pop()
+		matrixStack.popMatrix()
 	}
 
 	fun onBlockChange(pos: BlockPos, oldState: BlockState, newState: BlockState) {
-		if (!isActive) return
+		if (!isActive()) return
 
 		if (pos == lastBlockPos && newState.block == Blocks.SEA_LANTERN) {
 			lastLitUpTime = SPAWN_TIME_IN_TICKS
@@ -66,15 +66,15 @@ object SpiritBearTimer : SimpleHudElement("Spirit Bear Timer", 90, 12) {
 	}
 
 	fun onMessageReceived(text: Text, actionBar: Boolean) {
-		if (!isActive || actionBar) return
+		if (!isActive() || actionBar) return
 		if (text.string == "A Spirit Bear has appeared!") lastLitUpTime = 0
 	}
 
-	override fun isActive(): Boolean {
-		return isEnabled && isThornFloor && bossSpawned
+	fun isActive(): Boolean {
+		return isEnabled() && isThornFloor && bossSpawned
 	}
 
-	override fun isEnabled(): Boolean {
+	fun isEnabled(): Boolean {
 		return config.spiritBear
 	}
 }

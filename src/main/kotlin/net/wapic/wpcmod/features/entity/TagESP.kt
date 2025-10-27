@@ -3,14 +3,12 @@ package net.wapic.wpcmod.features.entity
 import com.mojang.brigadier.arguments.StringArgumentType.getString
 import com.mojang.brigadier.context.CommandContext
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
 import net.minecraft.entity.Entity
 import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.events.WorldRenderEvent
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.EntityUtils.getArmorStandsByEntity
-import net.wapic.wpcmod.util.render.drawBoundingBox
-import net.wapic.wpcmod.util.render.drawTracer
+import net.wapic.wpcmod.util.render.WorldRenderContext
 import java.util.*
 
 object TagESP : MobGlowCache() {
@@ -19,7 +17,7 @@ object TagESP : MobGlowCache() {
 	private val taggedEntities = hashSetOf<String>()
 
 	fun init() {
-		WorldRenderEvents.END.register(::onRenderWorld)
+		WorldRenderEvent.EVENT.register(::onRenderWorld)
 	}
 
 	private fun onRenderWorld(worldRenderContext: WorldRenderContext) {

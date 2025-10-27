@@ -31,8 +31,11 @@ object Utils {
 
 	fun Any?.equalsOneOf(vararg other: Any): Boolean = other.any { this == it }
 	fun modIdentifier(path: String): Identifier = Identifier.of(WpcMod.MOD_ID, path)
-	fun copyToClipboard(string: String) = Clipboard().setClipboard(MC.window.handle, string)
 	fun Number.toFixed(decimals: Int = 2): String = "%.${decimals}f".format(Locale.ENGLISH, this)
+
+	fun copyToClipboard(string: String) {
+		MC.keyboard.clipboard = string
+	}
 
 	fun addToCommandQueue(command: String) {
 		if (Util.getMeasuringTimeMs() - lastCommand < MIN_DELAY || commandQueue.isNotEmpty()) {
@@ -43,7 +46,7 @@ object Utils {
 	}
 
 	fun runCommand(command: String) {
-		MC.networkHandler?.sendCommand(command.removePrefix("/"))
+		MC.networkHandler?.sendChatCommand(command.removePrefix("/"))
 	}
 
 	private fun onTick() {

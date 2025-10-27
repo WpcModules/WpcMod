@@ -2,8 +2,6 @@ package net.wapic.wpcmod.features.dungeons.floor7
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.render.RenderTickCounter
 import net.minecraft.client.world.ClientWorld
@@ -13,16 +11,16 @@ import net.minecraft.util.Colors
 import net.minecraft.util.math.Box
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldChangeEvent
+import net.wapic.wpcmod.events.WorldRenderEvent
 import net.wapic.wpcmod.hud.HudManager
 import net.wapic.wpcmod.hud.SimpleHudElement
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.equalsOneOf
-import net.wapic.wpcmod.util.render.drawBeaconBeam
-import net.wapic.wpcmod.util.render.drawFilledBoxWithOutline
+import net.wapic.wpcmod.util.render.WorldRenderContext
 import net.wapic.wpcmod.util.render.drawText
 
-object InactiveWaypoints : SimpleHudElement("Term Info", w = 60, h = 30) {
+object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
 
 	private val config get() = WpcMod.config.dungeon.floor7.inactiveWaypoints
 
@@ -45,7 +43,7 @@ object InactiveWaypoints : SimpleHudElement("Term Info", w = 60, h = 30) {
     fun init() {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 		WorldChangeEvent.BEFORE.register(::onWorldLoad)
-		WorldRenderEvents.END.register(::onRenderWorld)
+		WorldRenderEvent.EVENT.register(::onRenderWorld)
 
 		ClientTickEvents.END_WORLD_TICK.register {
 			if (DungeonUtils.getF7Phase() != DungeonUtils.F7Phase.GOLDOR || !config.enabled) return@register
@@ -55,11 +53,11 @@ object InactiveWaypoints : SimpleHudElement("Term Info", w = 60, h = 30) {
 		}
     }
 
-	override fun render(drawContext: DrawContext, renderTickCounter: RenderTickCounter) {
+	override fun render(drawContext: DrawContext, deltaTicks: Float) {
 		if (!DungeonUtils.bossSpawned || !shouldRender || !config.enabled) return
 		val matrixStack = drawContext.matrices
 		matrixStack.pushMatrix()
-		applyTransformations(HudManager.jarvis, matrixStack)
+		applyTransformations(matrixStack)
 
 		val lines = setOf(
 			"§6Terms ${if ((section == 2 && terminals == 5) || (section != 2 && terminals == 4)) "§a" else "§c"}${terminals}§8/§a${if (section == 2) 5 else 4}",
@@ -76,7 +74,7 @@ object InactiveWaypoints : SimpleHudElement("Term Info", w = 60, h = 30) {
 			)
 		}
 
-		matrixStack.pop()
+		matrixStack.popMatrix()
 	}
 
     fun onMessageReceived(text: Text, actionBar: Boolean) {
@@ -154,14 +152,14 @@ object InactiveWaypoints : SimpleHudElement("Term Info", w = 60, h = 30) {
                 val customName = Text.of(if (name == "Inactive Terminal") "Terminal" else if (name == "Inactive") "Device" else "Lever").asOrderedText()
                 if (config.renderBox)
 					worldRenderContext.drawFilledBoxWithOutline(
-						Box.from(it.pos.add(-0.5, 0.0, -0.5)),
+						Box.from(it.entityPos.add(-0.5, 0.0, -0.5)),
 						config.color.getEffectiveColour().darker(),
 						config.color.getEffectiveColour().brighter()
 					)
                 if (config.renderText)
-					worldRenderContext.drawText(customName, it.pos.add(0.0, 2.0, 0.0), 1.5f, true)
-                if (config.renderBeacon)
-					worldRenderContext.drawBeaconBeam(it.blockPos, config.color.getEffectiveColour())
+					worldRenderContext.drawText(customName, it.entityPos.add(0.0, 2.0, 0.0), 1.5f, true)
+//                if (config.renderBeacon)
+//					worldRenderContext.drawBeaconBeam(it.blockPos, config.color.getEffectiveColour())
             }
             it.isCustomNameVisible = !config.hideDefault
         }

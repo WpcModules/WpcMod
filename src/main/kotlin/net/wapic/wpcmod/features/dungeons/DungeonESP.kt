@@ -1,13 +1,12 @@
 package net.wapic.wpcmod.features.dungeons
 
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
 import net.minecraft.entity.Entity
 import net.minecraft.entity.decoration.ArmorStandEntity
 import net.minecraft.entity.passive.BatEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.math.Box
 import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.events.WorldRenderEvent
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.RoomState
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
 import net.wapic.wpcmod.features.entity.MobGlow
@@ -17,9 +16,7 @@ import net.wapic.wpcmod.util.EntityUtils.getArmorStandsByEntity
 import net.wapic.wpcmod.util.EntityUtils.headTexture
 import net.wapic.wpcmod.util.HeadTextures
 import net.wapic.wpcmod.util.Utils.equalsOneOf
-import net.wapic.wpcmod.util.render.drawBoundingBox
-import net.wapic.wpcmod.util.render.drawFilledBoxWithOutline
-import net.wapic.wpcmod.util.render.drawTracer
+import net.wapic.wpcmod.util.render.WorldRenderContext
 
 object DungeonESP : MobGlowCache() {
 
@@ -27,7 +24,7 @@ object DungeonESP : MobGlowCache() {
 	private val miniBosses: List<String> = listOf("Lost Adventurer", "Shadow Assassin", "Diamond Guy")
 
 	fun init() {
-		WorldRenderEvents.END.register(::renderWorld)
+		WorldRenderEvent.EVENT.register(::renderWorld)
 	}
 
 	private fun renderWorld(worldRenderContext: WorldRenderContext) {

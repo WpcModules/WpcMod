@@ -1,68 +1,59 @@
 package net.wapic.wpcmod.hud
 
+import net.minecraft.client.gl.RenderPipelines
 import net.minecraft.client.gui.Click
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.text.Text
-import net.wapic.wpcmod.util.MC
 import org.lwjgl.glfw.GLFW
-import kotlin.math.pow
-import kotlin.math.sqrt
+import java.awt.Point
 
-class HudEditor : Screen(Text.of { "Hud Editor" }) {
+class HudEditor : Screen {
+	val elements: List<SimpleHudElement>
 
-	var clickedElement: SimpleHudElement? = null
-	val clickPos: Pair<Double, Double>? = null
+	constructor(elements: List<SimpleHudElement>) : super(Text.of("Hud Editor")) {
+		this.elements = elements
+	}
 
 	override fun render(context: DrawContext, mouseX: Int, mouseY: Int, deltaTicks: Float) {
-		HudManager.hudElements.forEach { hudElement ->
-			context.fill(0, 0, hudElement.getUnscaledWidth(), hudElement.getUnscaledHeight(), 0x800000)
+		super.render(context, mouseX, mouseY, deltaTicks)
+
+		elements.forEach {
+			context.matrices.pushMatrix()
+			it.applyTransformations(context.matrices)
+			context.fill(0, 0, it.getUnscaledWidth(), it.getUnscaledHeight(), 0xffffff)
 			context.drawCenteredTextWithShadow(
-				MC.textRenderer,
-				hudElement.label,
-				hudElement.position.first + hudElement.getUnscaledWidth() / 2,
-				hudElement.position.second + hudElement.getUnscaledHeight() / 2,
+				this.textRenderer,
+				it.label,
+				it.getUnscaledWidth() / 2,
+				it.getUnscaledHeight() / 2,
 				0xffffff
 			)
+			context.matrices.popMatrix()
 		}
-	}
-
-	override fun mouseClicked(click: Click, doubled: Boolean): Boolean {
-		HudManager.hudElements.forEach { hud ->
-			val x = hud.position.first.toDouble()
-			val y = hud.position.second.toDouble()
-			val width = hud.getEffectiveWidth().toDouble()
-			val height = hud.getEffectiveHeight().toDouble()
-
-			if (click.x in x..width && click.y in y..height) {
-				clickedElement = hud
-				return true
-			}
-		}
-		return false
-	}
-
-	override fun mouseReleased(click: Click): Boolean {
-		clickedElement = null
-		return true
 	}
 
 	override fun mouseDragged(click: Click, offsetX: Double, offsetY: Double): Boolean {
-		clickedElement?.let {
-			if (click.button() == GLFW.GLFW_MOUSE_BUTTON_1) {
-				it.position = click.x.toInt() to click.y.toInt()
-				return true
-			} else if (click.button() == GLFW.GLFW_MOUSE_BUTTON_2) {
-				clickPos?.let { click ->
-					it.scale = getDistance(
-						click.first,
-						it.position.first.toDouble(),
-						click.second,
-						it.position.second.toDouble()
-					).toFloat()
-					return true
-				}
-			}
+		val mousePos = Point(offsetX.toInt(), offsetY.toInt())
+		val element = elements.find {
+			click.x.toInt() in it.position.x..it.getEffectiveWidth() &&
+			click.y.toInt() in it.position.y..it.getEffectiveHeight()
+		}
+
+		if (click.button() == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+			element?.position = mousePos
+			return false
+		}
+
+		if (click.button() == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+			val distance = mousePos.distanceSq(click.x, click.y)
+
+			val newScale = distance * 0.2
+			if(newScale < 0.2)
+				return false
+
+			element?.scale = newScale.toFloat()
+			return true
 		}
 		return false
 	}
@@ -71,9 +62,4 @@ class HudEditor : Screen(Text.of { "Hud Editor" }) {
 		HudManager.saveLocations()
 		super.close()
 	}
-
-	fun getDistance(x: Double, y: Double, x2: Double, y2: Double): Double {
-		return sqrt((x - x2).pow(2) + (y - y2).pow(2))
-	}
-
 }

@@ -16,7 +16,7 @@ object EntityUtils {
 	val LivingEntity.headTexture: String get() = this.getEquippedStack(EquipmentSlot.HEAD).headTexture
 
 	fun getArmorStandsByEntity(entity: Entity): List<ArmorStandEntity> {
-		return entity.world.getEntitiesByClass(
+		return entity.entityWorld.getEntitiesByClass(
 			ArmorStandEntity::class.java,
 			entity.boundingBox.expand(0.0, 2.0, 0.0),
 			EntityPredicates.NOT_MOUNTED

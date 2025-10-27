@@ -14,7 +14,7 @@ import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.toFixed
 
-object TickTimers : SimpleHudElement("Tick Timers", h = 12, w = 120) {
+object TickTimers : SimpleHudElement("Tick Timers", 12, 120) {
 	private val config get() = WpcMod.config.dungeon.floor7.tickTimers
 
     private val necronRegex = Regex("^\\[BOSS] Necron: I'm afraid, your journey ends now\\.$")
@@ -37,7 +37,7 @@ object TickTimers : SimpleHudElement("Tick Timers", h = 12, w = 120) {
 	}
 
 	fun onServerTick() {
-		if (!isActive) return
+		if (!isActive()) return
 
 		if (goldorTickTime == 0 && goldorStartTime <= 0) goldorTickTime = 60
 		if (goldorStartTime >= 0) goldorStartTime--
@@ -48,7 +48,7 @@ object TickTimers : SimpleHudElement("Tick Timers", h = 12, w = 120) {
     }
 
 	fun onMessageReceived(text: Text, actionBar: Boolean) {
-		if (actionBar || !isActive) return
+		if (actionBar || !isActive()) return
 
 		when {
 			text.string.matches(necronRegex) -> necronTime = 60
@@ -84,11 +84,11 @@ object TickTimers : SimpleHudElement("Tick Timers", h = 12, w = 120) {
         return "${if (config.showPrefix) "$prefix " else ""}$color$timeDisplay"
     }
 
-	override fun render(drawContext: DrawContext, renderTickCounter: RenderTickCounter) {
-		if(!isActive) return
+	override fun render(drawContext: DrawContext, deltaTicks: Float) {
+		if(!isActive()) return
 
 		val matrixStack = drawContext.matrices
-		matrixStack.push()
+		matrixStack.pushMatrix()
 		applyTransformations(matrixStack)
 
 		val (prefix, time, max) =
@@ -106,14 +106,14 @@ object TickTimers : SimpleHudElement("Tick Timers", h = 12, w = 120) {
 				drawContext.drawText(MC.textRenderer, formatTimer(necronTime.toInt(), 60, "§4Necron dropping in"), 1, 1, Colors.RED, true)
 		}
 
-		matrixStack.pop()
+		matrixStack.popMatrix()
 	}
 
-	override fun isActive(): Boolean {
-		return isEnabled && DungeonUtils.getF7Phase() != DungeonUtils.F7Phase.UNKNOWN
+	fun isActive(): Boolean {
+		return isEnabled() && DungeonUtils.getF7Phase() != DungeonUtils.F7Phase.UNKNOWN
 	}
 
-	override fun isEnabled(): Boolean {
+	fun isEnabled(): Boolean {
 		return config.enabled
 	}
 }

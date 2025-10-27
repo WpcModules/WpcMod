@@ -10,6 +10,7 @@ import net.minecraft.entity.Entity
 import net.minecraft.util.ActionResult
 import net.minecraft.util.math.MathHelper
 import net.minecraft.util.math.Vec3d
+import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.freecam.CameraEntity
@@ -17,7 +18,7 @@ import net.wapic.wpcmod.util.freecam.CameraEntity.Companion.createCameraEntity
 
 class Freecam {
 	private val bind: KeyBinding =
-		KeyBindingHelper.registerKeyBinding(KeyBinding("Freecam", InputUtil.GLFW_KEY_B, "WpcMod"))
+		KeyBindingHelper.registerKeyBinding(KeyBinding("Freecam", InputUtil.GLFW_KEY_B, WpcMod.category))
 	private var cameraMotion: Vec3d = Vec3d.ZERO
 
 	init {

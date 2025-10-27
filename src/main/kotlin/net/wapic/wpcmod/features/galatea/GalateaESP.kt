@@ -1,8 +1,6 @@
 package net.wapic.wpcmod.features.galatea
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback
 import net.fabricmc.fabric.api.event.player.UseBlockCallback
 import net.minecraft.client.world.ClientWorld
@@ -20,12 +18,12 @@ import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec3d
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.ParticleEvents
+import net.wapic.wpcmod.events.WorldRenderEvent
 import net.wapic.wpcmod.features.entity.MobGlow
 import net.wapic.wpcmod.features.entity.MobGlowCache
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.Utils
-import net.wapic.wpcmod.util.render.drawBoundingBox
-import net.wapic.wpcmod.util.render.drawTracer
+import net.wapic.wpcmod.util.render.WorldRenderContext
 import java.util.concurrent.CopyOnWriteArraySet
 
 object GalateaESP : MobGlowCache() {
@@ -34,7 +32,7 @@ object GalateaESP : MobGlowCache() {
 	private val config get() = WpcMod.config.galatea.esp
 
 	fun init() {
-		WorldRenderEvents.END.register(::renderWorld)
+		WorldRenderEvent.EVENT.register(::renderWorld)
 
 		// Forest Nodes
 		ParticleEvents.SPAWN.register(::onParticle)
@@ -78,7 +76,7 @@ object GalateaESP : MobGlowCache() {
 
 
 	private fun renderWorld(worldRenderContext: WorldRenderContext) {
-		if (!isEnabled()) return
+		//if (!isEnabled()) return
 
 		for (entity in worldRenderContext.world().entities) {
 			var boundingBox = entity.boundingBox

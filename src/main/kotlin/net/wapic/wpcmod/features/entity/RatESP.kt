@@ -1,23 +1,21 @@
 package net.wapic.wpcmod.features.entity
 
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
 import net.minecraft.entity.Entity
 import net.minecraft.entity.decoration.ArmorStandEntity
 import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.events.WorldRenderEvent
 import net.wapic.wpcmod.util.EntityUtils.headTexture
 import net.wapic.wpcmod.util.HeadTextures
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.Utils
-import net.wapic.wpcmod.util.render.drawBoundingBox
-import net.wapic.wpcmod.util.render.drawTracer
+import net.wapic.wpcmod.util.render.WorldRenderContext
 
 object RatESP : MobGlowCache() {
 
 	private val config get() = WpcMod.config.general.esp.rat
 
 	fun init() {
-		WorldRenderEvents.END.register(::onRenderWorld)
+		WorldRenderEvent.EVENT.register(::onRenderWorld)
 	}
 
 	private fun isRat(entity: Entity): Boolean = entity is ArmorStandEntity && entity.headTexture == HeadTextures.RAT

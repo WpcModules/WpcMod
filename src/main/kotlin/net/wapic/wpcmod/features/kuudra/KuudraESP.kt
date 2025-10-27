@@ -1,22 +1,20 @@
 package net.wapic.wpcmod.features.kuudra
 
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
 import net.minecraft.entity.Entity
 import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.events.WorldRenderEvent
 import net.wapic.wpcmod.features.entity.MobGlow
 import net.wapic.wpcmod.features.entity.MobGlowCache
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.KuudraUtils
 import net.wapic.wpcmod.util.Utils
-import net.wapic.wpcmod.util.render.drawBoundingBox
-import net.wapic.wpcmod.util.render.drawTracer
+import net.wapic.wpcmod.util.render.WorldRenderContext
 
 object KuudraESP : MobGlowCache() {
 	private val config get() = WpcMod.config.kuudra.esp
 
 	fun init() {
-		WorldRenderEvents.END.register(::onRenderWorld)
+		WorldRenderEvent.EVENT.register(::onRenderWorld)
 	}
 
 	fun onRenderWorld(worldRenderContext: WorldRenderContext) {

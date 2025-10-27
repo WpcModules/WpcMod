@@ -32,4 +32,5 @@ object MC {
 	inline val resourceManager: ResourceManager get() = instance.resourceManager
 	inline val interactionManager get() = instance.interactionManager
 	inline val mouse get() = instance.mouse
+	inline val keyboard get() = instance.keyboard
 }

@@ -16,6 +16,7 @@ import net.wapic.wpcmod.features.dungeons.funnymap.ui.MapElement
 import net.wapic.wpcmod.features.kuudra.KuudraDisplay
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.modIdentifier
+import java.awt.Point
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
@@ -25,7 +26,7 @@ object HudManager {
 	private val file = File(WpcMod.configDir, "hud-locations.json")
 	private val backupFile = File(file.parentFile, "${file.name}.bak")
 	private val tempFile = File(file.parentFile, "${file.name}.tmp")
-	private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
+	private val gson: Gson = GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().create()
 
 	private val hudKeyBind: KeyBinding = KeyBindingHelper.registerKeyBinding(
 		KeyBinding(
@@ -35,9 +36,7 @@ object HudManager {
 		)
 	)
 
-	private data class HudObject(val label: String, val x: Int, val y: Int, val scale: Float)
-
-	val hudElements = listOf(
+	private val hudElements = listOf(
 		ScoreCalculation,
 		MapElement,
 		SpiritBearTimer,
@@ -51,7 +50,7 @@ object HudManager {
 		ClientTickEvents.END_CLIENT_TICK.register {
 			while (hudKeyBind.wasPressed()) {
 				MC.instance.send {
-					MC.screen = HudEditor()
+					MC.screen = HudEditor(hudElements)
 				}
 			}
 		}
@@ -72,12 +71,12 @@ object HudManager {
 
 		try {
 			WpcMod.logger.info("Loading hud locations file")
-			val hudObjects = gson.fromJson(readFile(), Array<HudObject>::class.java).toList()
+			val loadedElements = gson.fromJson(readFile(), Array<SimpleHudElement>::class.java).toList()
 
-			hudObjects.forEach { hudObject ->
-				val e = hudElements.find { it.label == hudObject.label }
-				e?.scale = hudObject.scale
-				e?.position = hudObject.x to hudObject.y
+			loadedElements.forEach {
+				val element = hudElements.find { element -> element.label == it.label }
+				element?.position = it.position
+				element?.scale = it.scale
 			}
 
 			WpcMod.logger.info("Loaded hud locations successfully")
@@ -100,9 +99,7 @@ object HudManager {
 			}
 			WpcMod.logger.info("Saving hud locations file")
 
-			val huds =
-				hudElements.map { return@map HudObject(it.label, it.position.first, it.position.second, it.scale) }
-			tempFile.writeText(gson.toJson(huds))
+			tempFile.writeText(gson.toJson(hudElements))
 
 			if (file.exists()) file.copyTo(backupFile, overwrite = true)
 

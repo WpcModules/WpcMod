@@ -1,22 +1,26 @@
 package net.wapic.wpcmod.hud
 
-import moe.nea.jarvis.api.Jarvis
+import com.google.gson.annotations.Expose
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.text.Text
 import net.wapic.wpcmod.util.Utils.modIdentifier
 import org.joml.Matrix3x2f
+import java.awt.Point
 import java.util.*
 
-abstract class SimpleHudElement(
+open class SimpleHudElement(
+	@Expose
 	var label: String,
 	var width: Int,
 	var height: Int,
-	var scaleable: Boolean = true,
+	var canScale: Boolean = true,
 ) {
+	@Expose
 	var scale = 1f
-	var position = 0 to 0
+	@Expose
+	var position = Point(0, 0)
 
 	init {
 		val identifier = modIdentifier(label.lowercase(Locale.US).replace(" ", "_"))
@@ -25,7 +29,7 @@ abstract class SimpleHudElement(
 		}
 	}
 
-	abstract fun render(drawContext: DrawContext, deltaTicks: Float)
+	open fun render(drawContext: DrawContext, deltaTicks: Float) {}
 
 	fun getLabel(): Text {
 		return Text.of(label)
@@ -40,29 +44,29 @@ abstract class SimpleHudElement(
 	}
 
 	fun getEffectiveWidth(): Int {
-		if (scaleable) {
+		if (canScale) {
 			return (getUnscaledWidth() * scale).toInt()
 		}
 		return getUnscaledWidth()
 	}
 
 	fun getEffectiveHeight(): Int {
-		if (scaleable) {
+		if (canScale) {
 			return (getUnscaledHeight() * scale).toInt()
 		}
 		return getUnscaledHeight()
 	}
 
-	fun getEffectivePosition(): Pair<Int, Int> {
+	fun getEffectivePosition(): Point {
 		return position
 	}
 
 	fun setEffectivePosition(newX: Int, newY: Int) {
-		position = newX to newY
+		position = Point(newX, newY)
 	}
 
-	fun applyTransformations(jarvis: Jarvis?, matrices: Matrix3x2f) {
-		matrices.translate(position.first.toFloat(), position.second.toFloat())
-		if (scaleable) matrices.scale(scale)
+	fun applyTransformations(matrices: Matrix3x2f) {
+		matrices.translate(position.x.toFloat(), position.y.toFloat())
+		if (canScale) matrices.scale(scale)
 	}
 }

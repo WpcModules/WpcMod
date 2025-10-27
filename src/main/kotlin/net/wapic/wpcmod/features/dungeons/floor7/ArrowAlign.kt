@@ -1,8 +1,6 @@
 package net.wapic.wpcmod.features.dungeons.floor7
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
 import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.decoration.ItemFrameEntity
 import net.minecraft.item.Items
@@ -15,11 +13,12 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.PacketEvents
+import net.wapic.wpcmod.events.WorldRenderEvent
 import net.wapic.wpcmod.mixin.accessors.PlayerInteractEntityC2SPacketAccessor
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.DungeonUtils.F7Phase
 import net.wapic.wpcmod.util.MC
-import net.wapic.wpcmod.util.render.drawText
+import net.wapic.wpcmod.util.render.WorldRenderContext
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 
 object ArrowAlign {
@@ -34,13 +33,13 @@ object ArrowAlign {
 	fun init() {
 		PacketEvents.SEND.register(::onPacketSend)
 		ClientTickEvents.END_CLIENT_TICK.register(::onTick)
-		WorldRenderEvents.END.register(::onRenderWorld)
+		WorldRenderEvent.EVENT.register(::onRenderWorld)
     }
 
 	fun onTick(client: MinecraftClient) {
 		if (DungeonUtils.getF7Phase() != F7Phase.GOLDOR || !config.enabled) return
 		clicksRemaining.clear()
-		if ((MC.player?.pos?.distanceTo(Vec3d(0.0, 120.0, 77.0)) ?: return) > 200) {
+		if ((MC.player?.entityPos?.distanceTo(Vec3d(0.0, 120.0, 77.0)) ?: return) > 200) {
 			currentFrameRotations = null
 			targetSolution = null
 			return

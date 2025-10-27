@@ -79,18 +79,7 @@ class ShortcutListWidget : ElementListWidget<Entry> {
 			this.update()
 		}
 
-		override fun render(
-			context: DrawContext,
-			index: Int,
-			y: Int,
-			x: Int,
-			entryWidth: Int,
-			entryHeight: Int,
-			mouseX: Int,
-			mouseY: Int,
-			hovered: Boolean,
-			tickProgress: Float
-		) {
+		override fun render(context: DrawContext, mouseX: Int, mouseY: Int, hovered: Boolean, tickProgress: Float) {
 			val i: Int = this@ShortcutListWidget.scrollbarX - this.deleteButton.width - 10
 			val j = y - 2
 			this.deleteButton.setPosition(i, j)
@@ -104,7 +93,7 @@ class ShortcutListWidget : ElementListWidget<Entry> {
 
 			if (this.duplicate) {
 				val m = this.editButton.x - 6
-				context.fill(m, y - 1, m + 3, y + entryHeight, -65536)
+				context.fill(m, y - 1, m + 3, y + contentHeight, -65536)
 			}
 		}
 

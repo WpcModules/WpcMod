@@ -1,9 +1,11 @@
 package net.wapic.wpcmod.features.general.shortcut
 
 import net.minecraft.client.MinecraftClient
+import net.minecraft.client.gui.Click
 import net.minecraft.client.gui.screen.option.GameOptionsScreen
 import net.minecraft.client.gui.widget.ButtonWidget
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget
+import net.minecraft.client.input.KeyInput
 import net.minecraft.client.util.InputUtil
 import net.minecraft.screen.ScreenTexts
 import net.minecraft.text.Text
@@ -46,24 +48,24 @@ class ShortcutScreen : GameOptionsScreen(null, MinecraftClient.getInstance().opt
 		directionalLayoutWidget.add(close)
 	}
 
-	override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
+	override fun mouseClicked(click: Click, doubled: Boolean): Boolean {
 		if (this.selectedShortcut != null) {
-			this.selectedShortcut?.setBoundKey(InputUtil.Type.MOUSE.createFromCode(button))
+			this.selectedShortcut?.setBoundKey(InputUtil.Type.MOUSE.createFromCode(click.button()))
 			this.selectedShortcut = null
 			this.shortcutsList?.update()
 			return true
 		} else {
-			return super.mouseClicked(mouseX, mouseY, button)
+			return super.mouseClicked(click, doubled)
 		}
 
 	}
 
-	override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
+	override fun keyPressed(input: KeyInput): Boolean {
 		if (this.selectedShortcut != null) {
-			if (keyCode == 256) {
+			if (input.keycode == 256) {
 				this.selectedShortcut?.setBoundKey(InputUtil.UNKNOWN_KEY)
 			} else {
-				this.selectedShortcut?.setBoundKey(InputUtil.fromKeyCode(keyCode, scanCode))
+				this.selectedShortcut?.setBoundKey(InputUtil.fromKeyCode(input))
 			}
 
 			this.selectedShortcut = null
@@ -71,7 +73,7 @@ class ShortcutScreen : GameOptionsScreen(null, MinecraftClient.getInstance().opt
 			this.shortcutsList?.update()
 			return true
 		} else {
-			return super.keyPressed(keyCode, scanCode, modifiers)
+			return super.keyPressed(input)
 		}
 	}
 }

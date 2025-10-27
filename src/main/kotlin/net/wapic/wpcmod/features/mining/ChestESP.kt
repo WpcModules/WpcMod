@@ -1,36 +1,30 @@
 package net.wapic.wpcmod.features.mining
 
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
-import net.minecraft.block.entity.ChestBlockEntity
 import net.minecraft.util.math.Box
 import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.events.WorldRenderEvent
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.Utils
-import net.wapic.wpcmod.util.render.drawBoundingBox
-import net.wapic.wpcmod.util.render.drawTracer
+import net.wapic.wpcmod.util.render.WorldRenderContext
 
 object ChestESP {
 
 	private val config get() = WpcMod.config.mining.esp.chest
 
 	fun init() {
-		WorldRenderEvents.END.register(::renderWorld)
+		WorldRenderEvent.EVENT.register(::renderWorld)
 	}
 
 	private fun renderWorld(worldRenderContext: WorldRenderContext) {
 		if (Utils.getLocation() != Island.CRYSTAL_HOLLOWS) return
 		if (!config.tracer && !config.box) return
 
-		val blockEntities = Utils.getLoadedBlockEntities().filterIsInstance<ChestBlockEntity>()
-		val tickProgress: Float = worldRenderContext.tickCounter().dynamicDeltaTicks
 		val playerPos = worldRenderContext.camera().pos
 
-		for (block in blockEntities) {
-			if (playerPos.distanceTo(block.pos.toCenterPos()) >= config.radius) continue
-			if (block.getAnimationProgress(tickProgress) > 0) continue
+		worldRenderContext.world().blockEntities.forEach {
+			if(playerPos.distanceTo(it.pos.toCenterPos()) >= config.radius) return@forEach
 
-			val chest = Box.of(block.pos.toCenterPos(), 1.0, 1.0, 1.0)
+			val chest = Box.of(it.pos.toCenterPos(), 1.0, 1.0, 1.0)
 
 			if (config.box)
 				worldRenderContext.drawBoundingBox(chest, config.color.getEffectiveColour())

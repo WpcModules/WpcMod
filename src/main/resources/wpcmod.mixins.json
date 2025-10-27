@@ -29,6 +29,7 @@
     "PlayerEntityMixin",
     "SimpleInventoryMixin",
     "WorldChunkMixin",
+    "WorldRendererMixin",
     "accessors.HandledScreenAccessor",
     "accessors.MinecraftClientAccessor",
     "accessors.PlayerInteractEntityC2SPacketAccessor",

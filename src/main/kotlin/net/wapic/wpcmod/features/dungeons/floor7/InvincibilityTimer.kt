@@ -25,14 +25,14 @@ object InvincibilityTimer : SimpleHudElement("Invincibility Timer", 80, 33) {
 	}
 
 	fun onMessageReceived(text: Text, actionBar: Boolean) {
-		if (!isActive || actionBar) return
+		if (!isActive() || actionBar) return
 		InvincibilityType.entries.firstOrNull { it.regex.matches(text.string) }?.proc()
 	}
 
-	override fun render(drawContext: DrawContext, renderTickCounter: RenderTickCounter) {
-		if (!isActive) return
+	override fun render(drawContext: DrawContext, deltaTicks: Float) {
+		if (!isActive()) return
 		val matrixStack = drawContext.matrices
-		matrixStack.push()
+		matrixStack.pushMatrix()
 		applyTransformations(matrixStack)
 
 		InvincibilityType.entries.filter { it.currentCooldown > 0 || it.activeTime > 0 }.forEachIndexed { index, type ->
@@ -41,14 +41,14 @@ object InvincibilityTimer : SimpleHudElement("Invincibility Timer", 80, 33) {
 			drawContext.drawText("§6${type} ${time}§6s", 2, 2 + index * 10, 0xffffff, true)
 		}
 
-		matrixStack.pop()
+		matrixStack.popMatrix()
 	}
 
-	override fun isActive(): Boolean {
-		return DungeonUtils.inDungeons && isEnabled
+	fun isActive(): Boolean {
+		return DungeonUtils.inDungeons && isEnabled()
 	}
 
-	override fun isEnabled(): Boolean {
+	fun isEnabled(): Boolean {
 		return config.hud
 	}
 

@@ -241,7 +241,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 	}
 
 	private fun onBlockChange(pos: BlockPos, old: BlockState, new: BlockState) {
-		if (!isActive) return
+		if (!isActive()) return
 		if (old.block == Blocks.TRAPPED_CHEST && new.block == Blocks.AIR) {
 			mimicOpenTime = Util.getMeasuringTimeMs()
 			mimicPos = pos
@@ -261,7 +261,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 	}
 
 	private fun onEntityDespawn(entity: Entity) {
-		if (!isActive) return
+		if (!isActive()) return
 		if (entity is ZombieEntity && entity.isBaby && entity.headTexture == HeadTextures.MIMIC) {
 			setMimicDead(config.mimicMessage)
 		}
@@ -276,13 +276,13 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 	}
 
 	private fun onPuzzleReset() {
-		if(!isActive) return
+		if(!isActive()) return
 		missingPuzzles = (missingPuzzles + 1)
 		failedPuzzles = (failedPuzzles - 1).coerceAtLeast(0)
 	}
 
 	private fun onScoreboardChange(line: String) {
-		if(!isActive) return
+		if(!isActive()) return
 
 		if (line.startsWith("Cleared: ")) {
 			val matcher = dungeonClearedPattern.find(line)
@@ -294,7 +294,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 	}
 
 	private fun onPlayerListChange(entries: List<PlayerListS2CPacket.Entry>) {
-		if(!isActive) return
+		if(!isActive()) return
 
 		entries.forEach { playerData ->
 			val name = playerData.displayName?.string ?: playerData.profile?.name ?: return@forEach
@@ -358,7 +358,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 	}
 
 	private fun onMessageReceived(text: Text, actionBar: Boolean) {
-		if (!isActive || actionBar) return
+		if (!isActive() || actionBar) return
 		val message = text.string
 
 		if (message == "A Prince falls. +1 Bonus Score") {
@@ -376,7 +376,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 	}
 
 	private fun onTick(client: MinecraftClient) {
-		if (!isActive) return
+		if (!isActive()) return
 
 		if (isMimicFloor) checkMimicDead(client)
 
@@ -396,9 +396,9 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 		}
 	}
 
-	override fun render(drawContext: DrawContext, renderTickCounter: RenderTickCounter) {
-		if (!isActive || config.scoreHudType == ScoreHudType.DISABLED) return
-		drawContext.matrices.push()
+	override fun render(drawContext: DrawContext, deltaTicks: Float) {
+		if (!isActive() || config.scoreHudType == ScoreHudType.DISABLED) return
+		drawContext.matrices.pushMatrix()
 		applyTransformations(drawContext.matrices)
 
 		if (config.scoreHudType == ScoreHudType.FULL) {
@@ -431,21 +431,21 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 			}
 
 			for ((index, line) in lines.withIndex()) {
-				drawContext.drawText(line, x.toInt(), y.toInt() + (index * 10), 0xffffff, true)
+				drawContext.drawText(line, 2, 2 + (index * 10), 0xffffff, true)
 			}
 
 		} else {
-			drawContext.drawText("§eScore: §a$totalScore §7($rank§7)", x.toInt(), y.toInt(), Color.WHITE.rgb, true)
+			drawContext.drawText("§eScore: §a$totalScore §7($rank§7)", 2, 2, Color.WHITE.rgb, true)
 		}
 
-		drawContext.matrices.pop()
+		drawContext.matrices.popMatrix()
 	}
 
-	override fun isEnabled(): Boolean {
+	fun isEnabled(): Boolean {
 		return config.enabled
 	}
 
-	override fun isActive(): Boolean {
-		return isEnabled && DungeonUtils.inDungeons
+	fun isActive(): Boolean {
+		return isEnabled() && DungeonUtils.inDungeons
 	}
 }

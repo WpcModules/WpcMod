@@ -1,7 +1,7 @@
 package net.wapic.wpcmod.features.dungeons.funnymap.ui
 
+import net.minecraft.client.gl.RenderPipelines
 import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.render.RenderLayer
 import net.minecraft.util.math.RotationAxis
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.dungeon.FunnyConfig
@@ -34,12 +34,12 @@ object MapRenderer {
 		val player = MC.player ?: return
 		val matrixStack = drawContext.matrices
 
-		matrixStack.push()
-		matrixStack.translate(x.toFloat(), y.toFloat(), 0f)
-		matrixStack.scale(config.textScale, config.textScale, 1f)
+		matrixStack.pushMatrix()
+		matrixStack.translate(x.toFloat(), y.toFloat())
+		matrixStack.scale(config.textScale, config.textScale)
 
 		if (config.mapRotate) {
-			matrixStack.multiply(axis.rotationDegrees(player.yaw + 180f))
+			matrixStack.rotation(player.yaw + 180f)
 		}
 
 		val tr = MC.textRenderer
@@ -57,7 +57,7 @@ object MapRenderer {
 			)
 		}
 
-		matrixStack.pop()
+		matrixStack.popMatrix()
 	}
 
 	fun drawCheckmark(drawContext: DrawContext, x: Float, y: Float, state: RoomState) {
@@ -71,12 +71,14 @@ object MapRenderer {
 		}
 
 		checkmark?.let {
-			drawContext.drawTexture(
-				RenderLayer::getGuiTextured, it,
+			drawContext.drawGuiTexture(
+				RenderPipelines.GUI_TEXTURED,
+				it,
+				10, 10,
+				0, 0,
 				x.toInt() + (MapUtils.roomSize - 10) / 2,
 				y.toInt() + (MapUtils.roomSize - 10) / 2,
-				0f, 0f,
-				10, 10, 10, 10,
+				10, 10,
 				Color.white.rgb
 			)
 		}
@@ -84,29 +86,28 @@ object MapRenderer {
 
 	fun drawPlayerHead(drawContext: DrawContext, name: String, player: DungeonPlayer) {
 		val matrixStack = drawContext.matrices
-		matrixStack.push()
+		matrixStack.pushMatrix()
 		try {
 			// Translates to the player's location which is updated every tick.
 			if (player.isPlayer || name == MC.player?.name?.string) {
 				MC.player?.let {
 					matrixStack.translate(
-						(it.pos.x - DungeonScan.START_X + 13) * MapUtils.coordMultiplier + MapUtils.startCorner.first,
-						(it.pos.z - DungeonScan.START_Z + 13) * MapUtils.coordMultiplier + MapUtils.startCorner.second,
-						0.0
+						((it.entityPos.x - DungeonScan.START_X + 13) * MapUtils.coordMultiplier + MapUtils.startCorner.first).toFloat(),
+						((it.entityPos.z - DungeonScan.START_Z + 13) * MapUtils.coordMultiplier + MapUtils.startCorner.second).toFloat(),
 					)
 				}
 			} else {
-				matrixStack.translate(player.mapX.toFloat(), player.mapZ.toFloat(), 0f)
+				matrixStack.translate(player.mapX.toFloat(), player.mapZ.toFloat())
 			}
 
-			matrixStack.scale(config.playerHeadScale, config.playerHeadScale, 1f)
-			matrixStack.multiply(axis.rotationDegrees(player.yaw + 180))
+			matrixStack.scale(config.playerHeadScale, config.playerHeadScale)
+			matrixStack.rotation(player.yaw + 180)
 
 			if (config.mapVanillaMarker && (player.isPlayer || name == MC.player?.name?.string)) {
 				drawContext.drawTexture(mapIcons, -4, -4, 0f, 0f, 8, 8, 8, 8)
 			} else {
-				drawContext.drawTexture(player.skin.texture, -4, -4, 8f, 8f, 8, 8, 64, 64)
-				drawContext.drawBorder(-4, -4, 8, 8, Color.black.rgb)
+				drawContext.drawTexture(player.skin.body.texturePath(), -4, -4, 8f, 8f, 8, 8, 64, 64)
+				//drawContext.drawBorder(-4, -4, 8, 8, Color.black.rgb)
 			}
 
 
@@ -115,10 +116,10 @@ object MapRenderer {
 				(config.playerHeads == FunnyConfig.PlayerNameType.HOLDING_LEAP && MC.heldItem.skyBlockID.equalsOneOf("SPIRIT_LEAP", "INFINITE_SPIRIT_LEAP", "HAUNT_ABILITY"))
 				) {
 				if(!config.mapRotate) {
-					matrixStack.multiply(axis.rotationDegrees(-player.yaw + 180f))
+					matrixStack.rotation(-player.yaw + 180f)
 				}
-				matrixStack.translate(0f, config.playerHeadScale * 4f, 0f)
-				matrixStack.scale(config.playerNameScale, config.playerNameScale, 1f)
+				matrixStack.translate(0f, config.playerHeadScale * 4f)
+				matrixStack.scale(config.playerNameScale, config.playerNameScale)
 				drawContext.drawText(
 					MC.textRenderer,
 					name,
@@ -132,7 +133,7 @@ object MapRenderer {
 		} catch (e: Exception) {
 			e.printStackTrace()
 		}
-		matrixStack.pop()
+		matrixStack.popMatrix()
 	}
 
 	fun Color.grayScale(): Color {

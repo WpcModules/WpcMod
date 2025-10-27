@@ -18,11 +18,11 @@ object KuudraDisplay : SimpleHudElement("Kuudra Display", 75, 11) {
 
 	private val mc = MinecraftClient.getInstance()
 
-	override fun render(drawContext: DrawContext, renderTickCounter: RenderTickCounter) {
-		if (!isActive) return
+	override fun render(drawContext: DrawContext, deltaTicks: Float) {
+		if (!isActive()) return
 
 		val matrixStack = drawContext.matrices
-		matrixStack.push()
+		matrixStack.pushMatrix()
 		applyTransformations(matrixStack)
 
 		kuudraEntity?.let {
@@ -44,14 +44,14 @@ object KuudraDisplay : SimpleHudElement("Kuudra Display", 75, 11) {
 			}
 		}
 
-		matrixStack.pop()
+		matrixStack.popMatrix()
 	}
 
-	override fun isActive(): Boolean {
-		return isEnabled && Utils.getLocation() == Island.KUUDRA
+	fun isActive(): Boolean {
+		return isEnabled() && Utils.getLocation() == Island.KUUDRA
 	}
 
-	override fun isEnabled(): Boolean {
+	fun isEnabled(): Boolean {
 		return config.healthDisplay
 	}
 }

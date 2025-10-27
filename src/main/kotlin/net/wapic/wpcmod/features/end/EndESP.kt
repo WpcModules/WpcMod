@@ -1,8 +1,6 @@
 package net.wapic.wpcmod.features.end
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
 import net.minecraft.block.Blocks
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.world.ClientWorld
@@ -11,12 +9,13 @@ import net.minecraft.entity.boss.dragon.EnderDragonEntity
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.events.WorldRenderEvent
 import net.wapic.wpcmod.features.entity.MobGlow
 import net.wapic.wpcmod.features.entity.MobGlowCache
 import net.wapic.wpcmod.util.Island
+import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils
-import net.wapic.wpcmod.util.render.drawBoundingBox
-import net.wapic.wpcmod.util.render.drawTracer
+import net.wapic.wpcmod.util.render.WorldRenderContext
 
 object EndESP : MobGlowCache() {
 
@@ -24,7 +23,7 @@ object EndESP : MobGlowCache() {
 	private val config get() = WpcMod.config.end.esp
 
 	fun init() {
-		WorldRenderEvents.END.register(::renderWorld)
+		WorldRenderEvent.EVENT.register(::renderWorld)
 		ClientTickEvents.END_WORLD_TICK.register(::worldTick)
 	}
 
@@ -42,7 +41,7 @@ object EndESP : MobGlowCache() {
 		lock = true
 
 		player?.let {
-			val pos = it.pos
+			val pos = it.entityPos
 			val box = Box.from(pos).expand(radius)
 
 			BlockPos.iterate(box).forEach { blockPos ->
@@ -58,11 +57,10 @@ object EndESP : MobGlowCache() {
 
 	private fun renderWorld(worldRenderContext: WorldRenderContext) {
 		if (Utils.getLocation() != Island.END) return
-
-		for (entity in worldRenderContext.world().entities) {
+		MC.world?.entities?.forEach { entity ->
 			val settings = when (entity) {
 				is EnderDragonEntity -> config.dragon
-				else -> continue
+				else -> return@forEach
 			}
 
 			if (settings.box)
