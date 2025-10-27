@@ -1,8 +1,6 @@
 package net.wapic.wpcmod.util.render
 
 import net.minecraft.client.font.TextRenderer
-import net.minecraft.client.gl.RenderPipelines
-import net.minecraft.client.render.BufferBuilder
 import net.minecraft.client.render.LightmapTextureManager
 import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.render.RenderTickCounter
@@ -63,6 +61,10 @@ class WorldRenderContext {
 
 	fun camera(): CameraRenderState {
 		return camera
+	}
+
+	fun profiler(): Profiler {
+		return profiler
 	}
 
 	fun drawText(text: OrderedText, pos: Vec3d, scale: Float, depth: Boolean) {
@@ -258,12 +260,10 @@ class WorldRenderContext {
 	) {
 		matrixStack.push()
 		matrixStack.translate(-camera.pos)
-		//matrixStack.multiplyPositionMatrix(positionMatrix())
 
 		val layer: RenderLayer = RenderLayers.getLines(lineWidth)
 		WpcModRenderPipelines.LINES
 		val bufferBuilder: VertexConsumer = consumer.getBuffer(layer)
-		val bufferBuilder: BufferBuilder = BufferBuilder()
 
 		VertexRendering.drawBox(
 			matrixStack.peek(),
@@ -299,7 +299,7 @@ class WorldRenderContext {
 		val viewBobbing = MC.options.bobView.value
 		MC.options.bobView.value = false
 
-		val cameraPoint: Vec3d = camera.pos.add(Vec3d.fromPolar(camera.orientation.x, camera.orientation.y))
+		val cameraPoint: Vec3d = camera.pos.add(Vec3d.fromPolar(MC.player?.pitch ?: 0f, MC.player?.yaw ?: 0f))
 		drawLine(cameraPoint.x, cameraPoint.y, cameraPoint.z, x, y, z, color, lineWidth)
 
 		MC.options.bobView.value = viewBobbing

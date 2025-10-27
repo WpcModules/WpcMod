@@ -21,6 +21,8 @@ object TagESP : MobGlowCache() {
 	}
 
 	private fun onRenderWorld(worldRenderContext: WorldRenderContext) {
+		val profiler = worldRenderContext.profiler()
+		profiler.push("tag-esp")
 		for (entity in worldRenderContext.world().entities) {
 			if (!isTagged(entity)) continue
 
@@ -29,6 +31,7 @@ object TagESP : MobGlowCache() {
 			if (config.tracer)
 				worldRenderContext.drawTracer(entity.boundingBox.center, config.color.getEffectiveColour())
 		}
+		profiler.pop()
 	}
 
 	fun modifyTagList(context: CommandContext<FabricClientCommandSource>) {

@@ -29,6 +29,8 @@ object DungeonESP : MobGlowCache() {
 
 	private fun renderWorld(worldRenderContext: WorldRenderContext) {
 		if(!isEnabled()) return
+		val profiler = worldRenderContext.profiler()
+		profiler.push("dungeon-esp")
 
 		for(entity in worldRenderContext.world().entities) {
 			val entityConfig = when {
@@ -60,6 +62,7 @@ object DungeonESP : MobGlowCache() {
 				worldRenderContext.drawFilledBoxWithOutline(box, color.darker(), color.brighter(), 4.0)
 			}
 		}
+		profiler.pop()
 	}
 
 	fun isStarredMob(entity: Entity): Boolean {

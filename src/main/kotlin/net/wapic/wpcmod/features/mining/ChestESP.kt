@@ -18,10 +18,13 @@ object ChestESP {
 	private fun renderWorld(worldRenderContext: WorldRenderContext) {
 		if (Utils.getLocation() != Island.CRYSTAL_HOLLOWS) return
 		if (!config.tracer && !config.box) return
+		val profiler = worldRenderContext.profiler()
+		val blockEntities = worldRenderContext.world().blockEntities
+		profiler.push("chest-esp")
 
 		val playerPos = worldRenderContext.camera().pos
 
-		worldRenderContext.world().blockEntities.forEach {
+		blockEntities.forEach {
 			if(playerPos.distanceTo(it.pos.toCenterPos()) >= config.radius) return@forEach
 
 			val chest = Box.of(it.pos.toCenterPos(), 1.0, 1.0, 1.0)
@@ -31,5 +34,6 @@ object ChestESP {
 			if (config.tracer)
 				worldRenderContext.drawTracer(chest.center, config.color.getEffectiveColour())
 		}
+		profiler.pop()
 	}
 }

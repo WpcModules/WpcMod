@@ -76,8 +76,10 @@ object GalateaESP : MobGlowCache() {
 
 
 	private fun renderWorld(worldRenderContext: WorldRenderContext) {
-		//if (!isEnabled()) return
+		if (!isEnabled()) return
+		val profiler = worldRenderContext.profiler()
 
+		profiler.push("galatea-esp")
 		for (entity in worldRenderContext.world().entities) {
 			var boundingBox = entity.boundingBox
 
@@ -102,6 +104,7 @@ object GalateaESP : MobGlowCache() {
 				worldRenderContext.drawTracer(boundingBox.center, settings.color.getEffectiveColour())
 		}
 
+		profiler.swap("forest-nodes")
 		if(config.forestNode.box || config.forestNode.tracer) {
 			for (node in forestNodes) {
 				if (config.forestNode.box) {
@@ -118,6 +121,7 @@ object GalateaESP : MobGlowCache() {
 				}
 			}
 		}
+		profiler.pop()
 	}
 
 	override fun compute(entity: Entity): Int {

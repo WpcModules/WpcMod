@@ -18,12 +18,16 @@ object KuudraESP : MobGlowCache() {
 	}
 
 	fun onRenderWorld(worldRenderContext: WorldRenderContext) {
+		val profiler = worldRenderContext.profiler()
+		profiler.push("kuudra-esp")
+
 		KuudraUtils.kuudraEntity?.let {
 			if (config.kuudra.box)
 				worldRenderContext.drawBoundingBox(it.boundingBox, config.kuudra.color.getEffectiveColour())
 			if (config.kuudra.tracer)
 				worldRenderContext.drawTracer(it.boundingBox.center, config.kuudra.color.getEffectiveColour())
 		}
+		profiler.pop()
 	}
 
 	override fun compute(entity: Entity): Int {
