@@ -21,6 +21,7 @@ import net.wapic.wpcmod.util.render.drawText
 object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
 
 	private val config get() = WpcMod.config.dungeon.floor7.inactiveWaypoints
+	override val isEnabled: Boolean get() = config.enabled
 
     private var inactiveList = setOf<ArmorStandEntity>()
     private var firstInSection = false
@@ -51,8 +52,12 @@ object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
 		}
     }
 
+	fun isActive(): Boolean {
+		return isEnabled && DungeonUtils.bossSpawned && shouldRender
+	}
+
 	override fun render(drawContext: DrawContext, deltaTicks: Float) {
-		if (!DungeonUtils.bossSpawned || !shouldRender || !config.enabled) return
+		if (!isActive()) return
 		val matrixStack = drawContext.matrices
 		matrixStack.pushMatrix()
 		applyTransformations(matrixStack)

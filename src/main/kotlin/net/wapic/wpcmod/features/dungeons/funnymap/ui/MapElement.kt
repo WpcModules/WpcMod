@@ -24,7 +24,8 @@ import java.awt.Color
 object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 
 	private val legitPeekBind: KeyBinding = KeyBindingHelper.registerKeyBinding(KeyBinding("Legit Peek", InputUtil.GLFW_KEY_J, WpcMod.category))
-	val config get() = WpcMod.config.dungeon.funnyMap
+	private val config get() = WpcMod.config.dungeon.funnyMap
+	override val isEnabled: Boolean get() = config.mapEnabled
 
 	val legitRender: Boolean get() = config.legitMode && !legitPeekBind.isPressed
 
@@ -187,12 +188,9 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 	}
 
 	fun isActive(): Boolean {
-		if (!isEnabled() || !DungeonUtils.inDungeons) return false
+		if (!isEnabled || !DungeonUtils.inDungeons) return false
 		if (DungeonUtils.bossSpawned && config.mapHideInBoss) return false
 		return true
 	}
 
-	fun isEnabled(): Boolean {
-		return config.mapEnabled
-	}
 }

@@ -16,6 +16,7 @@ import net.wapic.wpcmod.util.render.drawText
 object InvincibilityTimer : SimpleHudElement("Invincibility Timer", 80, 33) {
 
 	private val config get() = WpcMod.config.dungeon.invincibilityTimer
+	override val isEnabled: Boolean get() = config.hud
 
 	fun init() {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
@@ -44,11 +45,7 @@ object InvincibilityTimer : SimpleHudElement("Invincibility Timer", 80, 33) {
 	}
 
 	fun isActive(): Boolean {
-		return DungeonUtils.inDungeons && isEnabled()
-	}
-
-	fun isEnabled(): Boolean {
-		return config.hud
+		return DungeonUtils.inDungeons && isEnabled
 	}
 
 	private enum class InvincibilityType(

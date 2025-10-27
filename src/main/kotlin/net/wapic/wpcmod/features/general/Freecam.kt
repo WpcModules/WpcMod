@@ -18,7 +18,7 @@ import net.wapic.wpcmod.util.freecam.CameraEntity.Companion.createCameraEntity
 
 class Freecam {
 	private val bind: KeyBinding =
-		KeyBindingHelper.registerKeyBinding(KeyBinding("Freecam", InputUtil.GLFW_KEY_B, WpcMod.category))
+		KeyBindingHelper.registerKeyBinding(KeyBinding("freecam", InputUtil.GLFW_KEY_B, WpcMod.category))
 	private var cameraMotion: Vec3d = Vec3d.ZERO
 
 	init {

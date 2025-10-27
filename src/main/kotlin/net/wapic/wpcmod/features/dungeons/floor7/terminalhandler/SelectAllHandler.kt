@@ -32,7 +32,7 @@ class SelectAllHandler(private val colorName: String): TerminalHandler(TerminalT
 
 			if (itemStack?.hasGlint() == false &&
 				itemStack.item != Items.BLACK_STAINED_GLASS_PANE &&
-				itemName?.contains(Regex("(?i)^$color")) == true
+				itemName?.replace("light gray", "silver", true)?.replace("light blue", "auqa", true)?.contains(color, true) == true
 			) {
 				index
 			} else {

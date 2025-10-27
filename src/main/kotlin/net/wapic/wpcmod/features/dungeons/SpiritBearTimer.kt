@@ -21,6 +21,7 @@ import java.awt.Color
 object SpiritBearTimer : SimpleHudElement("Spirit Bear Timer", 90, 12) {
 
 	private val config get() = WpcMod.config.dungeon
+	override val isEnabled: Boolean get() = config.spiritBear
 
 	private const val SPAWN_TIME_IN_TICKS: Int = 68 // Ticks
 
@@ -70,10 +71,6 @@ object SpiritBearTimer : SimpleHudElement("Spirit Bear Timer", 90, 12) {
 	}
 
 	fun isActive(): Boolean {
-		return isEnabled() && isThornFloor && bossSpawned
-	}
-
-	fun isEnabled(): Boolean {
-		return config.spiritBear
+		return isEnabled && isThornFloor && bossSpawned
 	}
 }

@@ -35,6 +35,7 @@ import kotlin.math.roundToInt
 
 object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 
+	override val isEnabled: Boolean get() = config.enabled
 	private val config get() = WpcMod.config.dungeon.scoreCalculation
 
 	private val deathsTabPattern = Regex("Team Deaths: (?<deaths>\\d+)")
@@ -440,11 +441,8 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 		drawContext.matrices.popMatrix()
 	}
 
-	fun isEnabled(): Boolean {
-		return config.enabled
-	}
 
 	fun isActive(): Boolean {
-		return isEnabled() && DungeonUtils.inDungeons
+		return isEnabled && DungeonUtils.inDungeons
 	}
 }

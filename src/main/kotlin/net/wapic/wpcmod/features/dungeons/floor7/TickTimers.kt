@@ -13,15 +13,15 @@ import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.toFixed
 
-object TickTimers : SimpleHudElement("Tick Timers", 12, 120) {
+object TickTimers : SimpleHudElement("Tick Timers", 120, 12) {
 	private val config get() = WpcMod.config.dungeon.floor7.tickTimers
+	override val isEnabled: Boolean get() = config.enabled
 
     private val necronRegex = Regex("^\\[BOSS] Necron: I'm afraid, your journey ends now\\.$")
     private val goldorRegex = Regex("^\\[BOSS] Goldor: Who dares trespass into my domain\\?$")
     private val coreOpeningRegex = Regex("^The Core entrance is opening!$")
     private val stormStartRegex = Regex("^\\[BOSS] Storm: I should have known that I stood no chance\\.$")
     private val stormPadRegex = Regex("^\\[BOSS] Storm: Pathetic Maxor, just like expected\\.$")
-
 
     private var necronTime: Byte = -1
     private var goldorTickTime: Int = -1
@@ -109,10 +109,7 @@ object TickTimers : SimpleHudElement("Tick Timers", 12, 120) {
 	}
 
 	fun isActive(): Boolean {
-		return isEnabled() && DungeonUtils.getF7Phase() != DungeonUtils.F7Phase.UNKNOWN
+		return isEnabled && DungeonUtils.getF7Phase() != DungeonUtils.F7Phase.UNKNOWN
 	}
 
-	fun isEnabled(): Boolean {
-		return config.enabled
-	}
 }

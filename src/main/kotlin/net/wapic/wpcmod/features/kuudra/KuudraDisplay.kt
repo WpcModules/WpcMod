@@ -1,6 +1,5 @@
 package net.wapic.wpcmod.features.kuudra
 
-import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.util.Formatting
 import net.wapic.wpcmod.WpcMod
@@ -9,13 +8,13 @@ import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.KuudraUtils
 import net.wapic.wpcmod.util.KuudraUtils.Phase
 import net.wapic.wpcmod.util.KuudraUtils.kuudraEntity
+import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils
 
 object KuudraDisplay : SimpleHudElement("Kuudra Display", 75, 11) {
 
 	private val config get() = WpcMod.config.kuudra
-
-	private val mc = MinecraftClient.getInstance()
+	override val isEnabled: Boolean get() = config.healthDisplay
 
 	override fun render(drawContext: DrawContext, deltaTicks: Float) {
 		if (!isActive()) return
@@ -37,9 +36,9 @@ object KuudraDisplay : SimpleHudElement("Kuudra Display", 75, 11) {
 
 				val health = "$formatting${it.health / 1000}K / §a100K §cHP"
 
-				val x = (drawContext.scaledWindowWidth / 2) - (mc.textRenderer.getWidth(health) / 2)
-				val y = (drawContext.scaledWindowHeight / 2) - (mc.textRenderer.fontHeight / 2)
-				drawContext.drawTextWithShadow(mc.textRenderer, health, x, y, 0xffffffff.toInt())
+				val x = (drawContext.scaledWindowWidth / 2) - (MC.textRenderer.getWidth(health) / 2)
+				val y = (drawContext.scaledWindowHeight / 2) - (MC.textRenderer.fontHeight / 2)
+				drawContext.drawTextWithShadow(MC.textRenderer, health, x, y, 0xffffffff.toInt())
 			}
 		}
 
@@ -47,10 +46,7 @@ object KuudraDisplay : SimpleHudElement("Kuudra Display", 75, 11) {
 	}
 
 	fun isActive(): Boolean {
-		return isEnabled() && Utils.getLocation() == Island.KUUDRA
+		return isEnabled && Utils.getLocation() == Island.KUUDRA
 	}
 
-	fun isEnabled(): Boolean {
-		return config.healthDisplay
-	}
 }

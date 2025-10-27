@@ -104,7 +104,7 @@ object MapRenderer {
 				drawContext.drawTexture(mapIcons, -4, -4, 0f, 0f, 8, 8, 8, 8)
 			} else {
 				drawContext.drawTexture(player.skin.body.texturePath(), -4, -4, 8f, 8f, 8, 8, 64, 64)
-				//drawContext.drawBorder(-4, -4, 8, 8, Color.black.rgb)
+				//drawContext.drawStrokedRectangle(-4, -4, 8, 8, Color.black.rgb)
 			}
 
 

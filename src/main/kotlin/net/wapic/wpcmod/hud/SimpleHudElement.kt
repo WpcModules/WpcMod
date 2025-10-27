@@ -7,7 +7,6 @@ import net.minecraft.client.gui.DrawContext
 import net.minecraft.text.Text
 import net.wapic.wpcmod.util.Utils.modIdentifier
 import org.joml.Matrix3x2f
-import java.awt.Point
 import java.util.*
 
 open class SimpleHudElement(
@@ -17,10 +16,10 @@ open class SimpleHudElement(
 	var height: Int,
 	var canScale: Boolean = true,
 ) {
-	@Expose
-	var scale = 1f
-	@Expose
-	var position = Point(0, 0)
+	@Expose var scale = 1f
+	@Expose var x = 0f
+	@Expose var y = 0f
+	open val isEnabled = false
 
 	init {
 		val identifier = modIdentifier(label.lowercase(Locale.US).replace(" ", "_"))
@@ -57,16 +56,8 @@ open class SimpleHudElement(
 		return getUnscaledHeight()
 	}
 
-	fun getEffectivePosition(): Point {
-		return position
-	}
-
-	fun setEffectivePosition(newX: Int, newY: Int) {
-		position = Point(newX, newY)
-	}
-
 	fun applyTransformations(matrices: Matrix3x2f) {
-		matrices.translate(position.x.toFloat(), position.y.toFloat())
+		matrices.translate(x, y)
 		if (canScale) matrices.scale(scale)
 	}
 }

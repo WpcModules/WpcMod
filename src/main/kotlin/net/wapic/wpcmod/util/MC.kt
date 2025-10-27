@@ -1,11 +1,14 @@
 package net.wapic.wpcmod.util
 
+import net.minecraft.client.Keyboard
 import net.minecraft.client.MinecraftClient
+import net.minecraft.client.Mouse
 import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.gui.hud.InGameHud
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.network.ClientPlayerEntity
 import net.minecraft.client.option.GameOptions
+import net.minecraft.client.texture.TextureManager
 import net.minecraft.client.util.Window
 import net.minecraft.client.world.ClientWorld
 import net.minecraft.item.ItemStack
@@ -28,9 +31,9 @@ object MC {
 		set(value) = instance.setScreen(value)
 		get() = instance.currentScreen
 	inline val screenName: String? get() = screen?.title?.string
-	inline val textureManager get() = instance.textureManager
+	inline val textureManager: TextureManager get() = instance.textureManager
 	inline val resourceManager: ResourceManager get() = instance.resourceManager
 	inline val interactionManager get() = instance.interactionManager
-	inline val mouse get() = instance.mouse
-	inline val keyboard get() = instance.keyboard
+	inline val mouse: Mouse get() = instance.mouse
+	inline val keyboard: Keyboard get() = instance.keyboard
 }

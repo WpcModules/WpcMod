@@ -122,7 +122,6 @@ object WpcMod : ModInitializer {
 			HudManager.saveLocations()
 			globalJob.cancel()
 		}
-		HudManager.loadLocations()
 
 		/* Initialize */
 		Utils.init()
@@ -131,6 +130,7 @@ object WpcMod : ModInitializer {
 		DungeonUtils.init()
 		NetworkListener.init()
 		MobGlow.init()
+		HudManager.init()
 
 		// General
 		ShortcutHandler.init()

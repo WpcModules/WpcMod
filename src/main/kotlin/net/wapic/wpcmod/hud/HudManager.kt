@@ -15,7 +15,6 @@ import net.wapic.wpcmod.features.dungeons.floor7.TickTimers
 import net.wapic.wpcmod.features.dungeons.funnymap.ui.MapElement
 import net.wapic.wpcmod.features.kuudra.KuudraDisplay
 import net.wapic.wpcmod.util.MC
-import net.wapic.wpcmod.util.Utils.modIdentifier
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
@@ -29,9 +28,9 @@ object HudManager {
 
 	private val hudKeyBind: KeyBinding = KeyBindingHelper.registerKeyBinding(
 		KeyBinding(
-			"Hud Manager",
+			"hud",
 			InputUtil.GLFW_KEY_END,
-			KeyBinding.Category.create(modIdentifier("hud"))
+			WpcMod.category
 		)
 	)
 
@@ -45,7 +44,7 @@ object HudManager {
 		KuudraDisplay,
 	)
 
-	init {
+	fun init() {
 		ClientTickEvents.END_CLIENT_TICK.register {
 			while (hudKeyBind.wasPressed()) {
 				MC.instance.send {
@@ -53,6 +52,8 @@ object HudManager {
 				}
 			}
 		}
+
+		loadLocations()
 	}
 
 	private fun readFile(): String = try {
@@ -74,7 +75,8 @@ object HudManager {
 
 			loadedElements.forEach {
 				val element = hudElements.find { element -> element.label == it.label }
-				element?.position = it.position
+				element?.x = it.x
+				element?.y = it.y
 				element?.scale = it.scale
 			}
 
