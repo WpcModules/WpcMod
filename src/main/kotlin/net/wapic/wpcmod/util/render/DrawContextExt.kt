@@ -17,9 +17,6 @@ fun DrawContext.drawTexture(
 	textureHeight: Int
 ) = this.drawTexture(RenderPipelines.GUI_TEXTURED, sprite, x, y, u, v, width, height, textureWidth, textureHeight)
 
-fun DrawContext.drawGuiTexture(sprite: Identifier, x: Int, y: Int, width: Int, height: Int) =
-	this.drawGuiTexture(RenderPipelines.GUI_TEXTURED, sprite, x, y, width, height)
-
 fun DrawContext.drawText(text: String, x: Int, y: Int, color: Int, shadow: Boolean) =
 	this.drawText(MC.textRenderer, text, x, y, color, shadow)
 

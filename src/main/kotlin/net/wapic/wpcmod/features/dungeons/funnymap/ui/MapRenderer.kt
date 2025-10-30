@@ -1,6 +1,5 @@
 package net.wapic.wpcmod.features.dungeons.funnymap.ui
 
-import net.minecraft.client.gl.RenderPipelines
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.util.Colors
 import net.wapic.wpcmod.WpcMod
@@ -71,14 +70,12 @@ object MapRenderer {
 
 		checkmark?.let {
 			drawContext.drawTexture(
-				RenderPipelines.GUI_TEXTURED,
 				it,
 				x.toInt() + (MapUtils.roomSize - 10) / 2,
 				y.toInt() + (MapUtils.roomSize - 10) / 2,
 				0f, 0f,
 				10, 10,
-				10, 10,
-				Colors.WHITE
+				10, 10
 			)
 		}
 	}
