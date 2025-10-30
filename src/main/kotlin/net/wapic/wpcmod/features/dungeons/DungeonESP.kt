@@ -53,6 +53,7 @@ object DungeonESP : MobGlowCache() {
 			}
 		}
 
+		profiler.swap("door esp")
 		if (config.witherDoor.box) {
 			val color = (if (FunnyMap.Info.keys > 0) config.witherDoor.hasKeyColor else config.witherDoor.noKeyColor).getEffectiveColour()
 

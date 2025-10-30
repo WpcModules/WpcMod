@@ -19,8 +19,9 @@ object ChestESP {
 		if (Utils.getLocation() != Island.CRYSTAL_HOLLOWS) return
 		if (!config.tracer && !config.box) return
 		val profiler = worldRenderContext.profiler()
-		val blockEntities = worldRenderContext.world().blockEntities
 		profiler.push("chest-esp")
+
+		val blockEntities = worldRenderContext.world().blockEntities
 
 		val playerPos = worldRenderContext.camera().pos
 
@@ -34,6 +35,7 @@ object ChestESP {
 			if (config.tracer)
 				worldRenderContext.drawTracer(chest.center, config.color.getEffectiveColour())
 		}
+
 		profiler.pop()
 	}
 }
