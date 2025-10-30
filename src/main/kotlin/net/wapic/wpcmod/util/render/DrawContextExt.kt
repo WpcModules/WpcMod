@@ -22,3 +22,11 @@ fun DrawContext.drawGuiTexture(sprite: Identifier, x: Int, y: Int, width: Int, h
 
 fun DrawContext.drawText(text: String, x: Int, y: Int, color: Int, shadow: Boolean) =
 	this.drawText(MC.textRenderer, text, x, y, color, shadow)
+
+fun DrawContext.fillWithOutline(x: Int, y: Int, width: Int, height: Int, color: Int, outlineColor: Int) {
+	fill(x, y, x + width, y + height, color)
+	fill(x, y, x + width, y + 1, outlineColor)
+	fill(x, y + height - 1, x + width, y + height, outlineColor)
+	fill(x, y + 1, x + 1, y + height - 1, outlineColor)
+	fill(x + width - 1, y + 1, x + width, y + height - 1, outlineColor)
+}
