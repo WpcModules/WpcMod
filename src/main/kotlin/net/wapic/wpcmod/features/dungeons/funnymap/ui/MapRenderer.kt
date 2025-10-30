@@ -89,8 +89,8 @@ object MapRenderer {
 			if (player.isPlayer || name == MC.player?.name?.string) {
 				MC.player?.let {
 					matrixStack.translate(
-						((it.entityPos.x - DungeonScan.START_X + 13) * MapUtils.coordMultiplier + MapUtils.startCorner.first).toFloat(),
-						((it.entityPos.z - DungeonScan.START_Z + 13) * MapUtils.coordMultiplier + MapUtils.startCorner.second).toFloat(),
+						((it.x - DungeonScan.START_X + 13) * MapUtils.coordMultiplier + MapUtils.startCorner.first).toFloat(),
+						((it.z - DungeonScan.START_Z + 13) * MapUtils.coordMultiplier + MapUtils.startCorner.second).toFloat(),
 					)
 				}
 			} else {

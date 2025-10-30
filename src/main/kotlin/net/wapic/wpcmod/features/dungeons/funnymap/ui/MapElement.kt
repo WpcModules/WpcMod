@@ -19,6 +19,7 @@ import net.wapic.wpcmod.hud.SimpleHudElement
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.equalsOneOf
+import net.wapic.wpcmod.util.render.fillWithOutline
 import java.awt.Color
 
 object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
@@ -37,8 +38,12 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 		matrixStack.pushMatrix()
 		applyTransformations(matrixStack)
 
-		drawContext.fill(0, 0, width, height, config.colors.mapBackground.getEffectiveColourRGB())
-		//drawContext.drawBorder(0, 0, width, height, config.colors.mapBorder.getEffectiveColourRGB())
+		drawContext.fillWithOutline(
+			0, 0,
+			width, height,
+			config.colors.mapBackground.getEffectiveColourRGB(),
+			config.colors.mapBorder.getEffectiveColourRGB()
+		)
 
 		if (config.mapRotate) {
 			matrixStack.pushMatrix()
@@ -49,8 +54,8 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 
 			if(config.mapCenter) {
 				matrixStack.translate(
-					-((player.entityPos.x - DungeonScan.START_X + 15) * MapUtils.coordMultiplier + MapUtils.startCorner.first - 2).toFloat(),
-					-((player.entityPos.z - DungeonScan.START_Z + 15) * MapUtils.coordMultiplier + MapUtils.startCorner.second - 2).toFloat(),
+					-((player.x - DungeonScan.START_X + 15) * MapUtils.coordMultiplier + MapUtils.startCorner.first - 2).toFloat(),
+					-((player.z - DungeonScan.START_Z + 15) * MapUtils.coordMultiplier + MapUtils.startCorner.second - 2).toFloat(),
 				)
 			} else {
 				matrixStack.translate(-64f, -64f)

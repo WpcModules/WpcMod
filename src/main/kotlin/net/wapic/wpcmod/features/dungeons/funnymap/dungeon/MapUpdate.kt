@@ -88,8 +88,8 @@ object MapUpdate {
 			if(player.isPlayer) {
 				MC.player?.let {
 					player.yaw = it.yaw
-					player.mapX = ((it.entityPos.x - DungeonScan.START_X + 15) * MapUtils.coordMultiplier + MapUtils.startCorner.first).roundToInt()
-					player.mapZ = ((it.entityPos.z - DungeonScan.START_Z + 15) * MapUtils.coordMultiplier + MapUtils.startCorner.second).roundToInt()
+					player.mapX = ((it.x - DungeonScan.START_X + 15) * MapUtils.coordMultiplier + MapUtils.startCorner.first).roundToInt()
+					player.mapZ = ((it.z - DungeonScan.START_Z + 15) * MapUtils.coordMultiplier + MapUtils.startCorner.second).roundToInt()
 					return@forEachIndexed
 				}
 			}
