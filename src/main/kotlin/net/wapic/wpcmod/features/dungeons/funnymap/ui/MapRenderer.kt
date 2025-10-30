@@ -2,6 +2,7 @@ package net.wapic.wpcmod.features.dungeons.funnymap.ui
 
 import net.minecraft.client.gl.RenderPipelines
 import net.minecraft.client.gui.DrawContext
+import net.minecraft.util.Colors
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.dungeon.FunnyConfig
 import net.wapic.wpcmod.features.dungeons.funnymap.core.DungeonPlayer
@@ -12,6 +13,7 @@ import net.wapic.wpcmod.util.ItemUtils.skyBlockID
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.Utils.equalsOneOf
+import net.wapic.wpcmod.util.render.drawBorder
 import net.wapic.wpcmod.util.render.drawTexture
 import java.awt.Color
 import kotlin.math.roundToInt
@@ -104,7 +106,7 @@ object MapRenderer {
 				drawContext.drawTexture(mapIcons, -4, -4, 0f, 0f, 8, 8, 8, 8)
 			} else {
 				drawContext.drawTexture(player.skin.body.texturePath(), -4, -4, 8f, 8f, 8, 8, 64, 64)
-				//drawContext.drawStrokedRectangle(-4, -4, 8, 8, Color.black.rgb)
+				drawContext.drawBorder(-4, -4, 8, 8, Colors.BLACK)
 			}
 
 
