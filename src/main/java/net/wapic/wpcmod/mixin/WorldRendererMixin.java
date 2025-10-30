@@ -35,16 +35,18 @@ public abstract class WorldRendererMixin {
 	@Shadow
 	@Final
 	private MinecraftClient client;
+
 	@Shadow
 	@Final
 	private WorldRenderState worldRenderState;
+
 	@Shadow
 	@Final
 	private DefaultFramebufferSet framebufferSet;
-	//@Unique
-	//private final DefaultFramebufferSet framebufferSet = new DefaultFramebufferSet();
-	@Unique
-	private final BufferBuilderStorage bufferBuilders = new BufferBuilderStorage(Runtime.getRuntime().availableProcessors());
+
+	@Shadow
+	@Final
+	private BufferBuilderStorage bufferBuilders;
 
 	@Inject(method = "renderMain", at = @At("TAIL"))
 	private void onRenderWorld(FrameGraphBuilder frameGraphBuilder, Frustum frustum, Matrix4f posMatrix, GpuBufferSlice fogBuffer, boolean renderBlockOutline, WorldRenderState state, RenderTickCounter tickCounter, Profiler profiler, CallbackInfo ci) {
