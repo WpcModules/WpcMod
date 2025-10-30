@@ -7,13 +7,6 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.minecraft.client.option.KeyBinding
 import net.minecraft.client.util.InputUtil
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.features.dungeons.ScoreCalculation
-import net.wapic.wpcmod.features.dungeons.SpiritBearTimer
-import net.wapic.wpcmod.features.dungeons.floor7.InactiveWaypoints
-import net.wapic.wpcmod.features.dungeons.floor7.InvincibilityTimer
-import net.wapic.wpcmod.features.dungeons.floor7.TickTimers
-import net.wapic.wpcmod.features.dungeons.funnymap.ui.MapElement
-import net.wapic.wpcmod.features.kuudra.KuudraDisplay
 import net.wapic.wpcmod.util.MC
 import java.io.File
 import java.nio.file.Files
@@ -34,15 +27,10 @@ object HudManager {
 		)
 	)
 
-	private val hudElements = listOf(
-		ScoreCalculation,
-		MapElement,
-		SpiritBearTimer,
-		InactiveWaypoints,
-		TickTimers,
-		InvincibilityTimer,
-		KuudraDisplay,
-	)
+	private val hudElements = mutableListOf<SimpleHudElement>()
+	fun registerElement(element: SimpleHudElement) {
+		hudElements.add(element)
+	}
 
 	fun init() {
 		ClientTickEvents.END_CLIENT_TICK.register {

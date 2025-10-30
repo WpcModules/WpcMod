@@ -27,6 +27,7 @@ open class SimpleHudElement(
 		HudElementRegistry.attachElementBefore(VanillaHudElements.DEMO_TIMER, identifier) { context, tickCounter ->
 			render(context, tickCounter.dynamicDeltaTicks)
 		}
+		HudManager.registerElement(this)
 	}
 
 	open fun render(drawContext: DrawContext, deltaTicks: Float) {}
