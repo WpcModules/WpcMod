@@ -50,7 +50,7 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 			drawContext.enableScissor(0, 0, width, height)
 
 			matrixStack.translate(64f, 64f)
-			matrixStack.rotation(player.yaw + 180f)
+			matrixStack.rotate(Math.toRadians(-player.yaw + 180.0).toFloat())
 
 			if(config.mapCenter) {
 				matrixStack.translate(

@@ -18,6 +18,7 @@ object KuudraESP : MobGlowCache() {
 	}
 
 	fun onRenderWorld(worldRenderContext: WorldRenderContext) {
+		if(!isEnabled()) return
 		val profiler = worldRenderContext.profiler()
 		profiler.push("kuudra-esp")
 

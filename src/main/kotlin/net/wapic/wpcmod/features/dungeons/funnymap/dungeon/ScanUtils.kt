@@ -6,10 +6,7 @@ import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
 import net.minecraft.block.Block
 import net.minecraft.block.Blocks
-import net.minecraft.block.SlabBlock
 import net.minecraft.block.entity.TrappedChestBlockEntity
-import net.minecraft.block.enums.SlabType
-import net.minecraft.state.property.Properties
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.Heightmap
@@ -22,6 +19,7 @@ import kotlin.math.roundToInt
 
 object ScanUtils {
 
+	// TODO: Adapt to modern versions
 	val legacyIds = hashMapOf<Block, Int>(
 		Blocks.AIR to 0,
 		Blocks.STONE to 1,
@@ -488,20 +486,27 @@ object ScanUtils {
 		var bedrock = 0
 		for (y in height downTo 12) {
 			val block = chunk.getBlockState(BlockPos(x, y, z))
-			var id = legacyIds[block.block]
-			if (block.block is SlabBlock && block.get(Properties.SLAB_TYPE) == SlabType.DOUBLE) {
-				id = id?.minus(1)
-			}
-			if (id == 0 && bedrock >= 2 && y < 69) {
+			val rawId = Block.getRawIdFromState(block)
+			val id = legacyIds[block.block]
+			if (block.isAir && bedrock >= 2 && y < 69) {
 				sb.append(CharArray(y - 11) { '0' })
 				break
 			}
 
-			if (id == 7) {
+			if (block.block == Blocks.BEDROCK) {
 				bedrock++
 			} else {
 				bedrock = 0
-				if (id.equalsOneOf(5, 54, 146)) {
+				if(block.block.equalsOneOf(
+						Blocks.OAK_PLANKS,
+						Blocks.SPRUCE_PLANKS,
+						Blocks.BIRCH_PLANKS,
+						Blocks.JUNGLE_PLANKS,
+						Blocks.ACACIA_PLANKS,
+						Blocks.DARK_OAK_PLANKS,
+						Blocks.CHEST,
+						Blocks.TRAPPED_CHEST
+				)) {
 					continue
 				}
 			}

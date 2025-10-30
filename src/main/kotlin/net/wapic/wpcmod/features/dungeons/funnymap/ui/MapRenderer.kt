@@ -38,7 +38,7 @@ object MapRenderer {
 		matrixStack.scale(config.textScale, config.textScale)
 
 		if (config.mapRotate) {
-			matrixStack.rotation(player.yaw + 180f)
+			matrixStack.rotate(Math.toRadians(player.yaw + 180.0).toFloat())
 		}
 
 		val tr = MC.textRenderer
@@ -70,15 +70,15 @@ object MapRenderer {
 		}
 
 		checkmark?.let {
-			drawContext.drawGuiTexture(
+			drawContext.drawTexture(
 				RenderPipelines.GUI_TEXTURED,
 				it,
-				10, 10,
-				0, 0,
 				x.toInt() + (MapUtils.roomSize - 10) / 2,
 				y.toInt() + (MapUtils.roomSize - 10) / 2,
+				0f, 0f,
 				10, 10,
-				Color.white.rgb
+				10, 10,
+				Colors.WHITE
 			)
 		}
 	}
@@ -100,7 +100,8 @@ object MapRenderer {
 			}
 
 			matrixStack.scale(config.playerHeadScale, config.playerHeadScale)
-			matrixStack.rotation(player.yaw + 180)
+
+			matrixStack.rotate(Math.toRadians(player.yaw + 180.0).toFloat())
 
 			if (config.mapVanillaMarker && (player.isPlayer || name == MC.player?.name?.string)) {
 				drawContext.drawTexture(mapIcons, -4, -4, 0f, 0f, 8, 8, 8, 8)
@@ -109,13 +110,12 @@ object MapRenderer {
 				drawContext.drawBorder(-4, -4, 8, 8, Colors.BLACK)
 			}
 
-
 			// Handle player names
 			if (config.playerHeads == FunnyConfig.PlayerNameType.ALWAYS ||
 				(config.playerHeads == FunnyConfig.PlayerNameType.HOLDING_LEAP && MC.heldItem.skyBlockID.equalsOneOf("SPIRIT_LEAP", "INFINITE_SPIRIT_LEAP", "HAUNT_ABILITY"))
 				) {
 				if(!config.mapRotate) {
-					matrixStack.rotation(-player.yaw + 180f)
+					matrixStack.rotate(-Math.toRadians(player.yaw + 180.0).toFloat())
 				}
 				matrixStack.translate(0f, config.playerHeadScale * 4f)
 				matrixStack.scale(config.playerNameScale, config.playerNameScale)
@@ -124,7 +124,7 @@ object MapRenderer {
 					name,
 					-MC.textRenderer.getWidth(name) / 2,
 					0,
-					0xffffff,
+					Colors.WHITE,
 					true
 				)
 			}

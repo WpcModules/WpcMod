@@ -21,6 +21,7 @@ object TagESP : MobGlowCache() {
 	}
 
 	private fun onRenderWorld(worldRenderContext: WorldRenderContext) {
+		if(!isEnabled()) return
 		val profiler = worldRenderContext.profiler()
 		profiler.push("tag-esp")
 		for (entity in worldRenderContext.world().entities) {
