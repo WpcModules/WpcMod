@@ -15,6 +15,7 @@ import net.wapic.wpcmod.util.DungeonUtils.DungeonFloor
 import net.wapic.wpcmod.util.DungeonUtils.bossSpawned
 import net.wapic.wpcmod.util.DungeonUtils.currentFloor
 import net.wapic.wpcmod.util.Utils.equalsOneOf
+import net.wapic.wpcmod.util.Utils.toFixed
 import net.wapic.wpcmod.util.render.drawText
 import java.awt.Color
 
@@ -28,27 +29,27 @@ object SpiritBearTimer : SimpleHudElement("Spirit Bear Timer", 90, 12) {
 	private val lastBlockPos = BlockPos(7, 77, 34)
 	private val isThornFloor get() = currentFloor.equalsOneOf(DungeonFloor.FLOOR_4, DungeonFloor.MASTER_MODE_FLOOR_4)
 
-	private var lastLitUpTime: Int = 0
+	private var spawnTime: Int = 0
 
 	fun init() {
 		BlockEvents.CHANGE.register(::onBlockChange)
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 		ServerTickEvent.EVENT.register {
-			if (lastLitUpTime > 0 && isActive()) lastLitUpTime--
+			if (spawnTime > 0 && isActive()) spawnTime--
 		}
 		WorldChangeEvent.BEFORE.register {
-			lastLitUpTime = 0
+			spawnTime = 0
 		}
 	}
 
 	override fun render(drawContext: DrawContext, deltaTicks: Float) {
-		if (!isActive() || lastLitUpTime <= 0) return
+		if (!isActive() || spawnTime <= 0) return
 		val matrixStack = drawContext.matrices
 		matrixStack.pushMatrix()
 		applyTransformations(matrixStack)
 
 		drawContext.drawText(
-			"Spirit Bear: ${String.format("%.2f", lastLitUpTime / 20f)}s",
+			"Spirit Bear: ${(spawnTime / 20f).toFixed()}s",
 			x = 2, y = 2,
 			Color.MAGENTA.rgb,
 			shadow = true
@@ -61,13 +62,13 @@ object SpiritBearTimer : SimpleHudElement("Spirit Bear Timer", 90, 12) {
 		if (!isActive()) return
 
 		if (pos == lastBlockPos && newState.block == Blocks.SEA_LANTERN) {
-			lastLitUpTime = SPAWN_TIME_IN_TICKS
+			spawnTime = SPAWN_TIME_IN_TICKS
 		}
 	}
 
 	fun onMessageReceived(text: Text, actionBar: Boolean) {
 		if (!isActive() || actionBar) return
-		if (text.string == "A Spirit Bear has appeared!") lastLitUpTime = 0
+		if (text.string == "A Spirit Bear has appeared!") spawnTime = 0
 	}
 
 	fun isActive(): Boolean {
