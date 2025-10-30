@@ -5,33 +5,34 @@ import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.text.Text
 import net.minecraft.util.Colors
+import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.render.fillWithOutline
 import org.lwjgl.glfw.GLFW
 import java.awt.Point
 import kotlin.math.abs
-import kotlin.math.ceil
-import kotlin.math.floor
 
 class HudEditor : Screen {
 	private val elements: List<SimpleHudElement>
-	private val backgroundColor: Int = 0x77121212
 	private var isScaling: Boolean = false
 	private var clickedElement: SimpleHudElement? = null
 	private var offsetX: Double = 0.0
 	private var offsetY: Double = 0.0
-	private var oppositeAnchor: Point = Point()
+	private var oppositeCorner: Point = Point()
 	private var scalePerDistance: Double = 0.0
+	val borderColour = 0xff666666.toInt()
+	val backgroundColour = 0x80000000.toInt()
 
 	constructor(elements: List<SimpleHudElement>) : super(Text.of("Hud Editor")) {
-		this.elements = elements
+		this.elements = elements.filter { it.isEnabled }
 	}
 
 	override fun render(context: DrawContext, mouseX: Int, mouseY: Int, deltaTicks: Float) {
 		super.render(context, mouseX, mouseY, deltaTicks)
 
-		elements.filter { it.isEnabled }.forEach {
+		elements.forEach {
 			context.matrices.pushMatrix()
 			it.applyTransformations(context.matrices)
-			context.fill(0, 0, it.getUnscaledWidth(), it.getUnscaledHeight(), backgroundColor)
+			context.fillWithOutline(0, 0, it.getUnscaledWidth(), it.getUnscaledHeight(), backgroundColour, borderColour)
 			context.drawCenteredTextWithShadow(
 				this.textRenderer,
 				it.label,
@@ -46,24 +47,25 @@ class HudEditor : Screen {
 	override fun renderBackground(context: DrawContext, mouseX: Int, mouseY: Int, deltaTicks: Float) { }
 
 	fun getHoveredElement(mouseX: Double, mouseY: Double): SimpleHudElement? {
-		return elements.filter { it.isEnabled }.find {
-			(mouseX > it.x && mouseX < it.x + it.getEffectiveWidth()) &&
-			(mouseY > it.y && mouseY < it.y + it.getEffectiveHeight())
+		return elements.find {
+			mouseX in it.getAbsoluteX()..it.getAbsoluteX() + it.getEffectiveWidth() &&
+			mouseY in it.getAbsoluteY()..it.getAbsoluteY() + it.getEffectiveHeight()
 		}
 	}
 
 	override fun mouseClicked(click: Click, doubled: Boolean): Boolean {
 		clickedElement = getHoveredElement(click.x, click.y)?.also {
+			offsetX = click.x - it.getAbsoluteX()
+			offsetY = click.y - it.getAbsoluteY()
+
 			if (click.button() == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-				offsetX = click.x - it.x
-				offsetY = click.y - it.y
 				isDragging = true
 				return@also
 			}
 
 			if (click.button() == GLFW.GLFW_MOUSE_BUTTON_RIGHT && it.canScale) {
-				oppositeAnchor = getOppositeAnchor(click.x, click.y, it.x, it.y, it.getEffectiveWidth(), it.getEffectiveHeight())
-				scalePerDistance = it.scale / oppositeAnchor.distance(click.x, click.y)
+				oppositeCorner = getOppositeCorner(click.x, click.y, it.getAbsoluteX(), it.getAbsoluteY(), it.getEffectiveWidth(), it.getEffectiveHeight())
+				scalePerDistance = it.scale / oppositeCorner.distance(click.x, click.y)
 				isScaling = true
 				return@also
 			}
@@ -72,7 +74,7 @@ class HudEditor : Screen {
 		return super.mouseClicked(click, doubled)
 	}
 
-	fun getOppositeAnchor(mouseX: Double, mouseY: Double, x: Float, y: Float, width: Int, height: Int): Point {
+	fun getOppositeCorner(mouseX: Double, mouseY: Double, x: Float, y: Float, width: Int, height: Int): Point {
 		return Point(
 			(if(abs(mouseX - x) > abs(x + width - mouseX)) x else x + width).toInt(),
 			(if(abs(mouseY - y) > abs(y + height - mouseY)) y else y + height).toInt()
@@ -82,22 +84,31 @@ class HudEditor : Screen {
 	override fun mouseMoved(mouseX: Double, mouseY: Double) {
 		clickedElement?.let {
 			if (isDragging) {
-				it.x = (mouseX - offsetX).toFloat()
-				it.y = (mouseY - offsetY).toFloat()
+				val x = (mouseX - offsetX).coerceIn(0.0, (MC.window.scaledWidth - it.getEffectiveWidth()).toDouble())
+				val y = (mouseY - offsetY).coerceIn(0.0, (MC.window.scaledHeight - it.getEffectiveHeight()).toDouble())
+
+				it.x = (x / (MC.window.scaledWidth - it.getEffectiveWidth())).toFloat()
+				it.y = (y / (MC.window.scaledHeight - it.getEffectiveHeight())).toFloat()
 				return
 			}
 
 			if (isScaling) {
-				val newScale = oppositeAnchor.distance(mouseX, mouseY) * scalePerDistance
-				if(newScale < 0.2f)  return
+				val newScale = oppositeCorner.distance(mouseX, mouseY) * scalePerDistance
+				if(newScale !in 0.2f..5f)  return
 
 				it.scale = newScale.toFloat()
-				it.x = (oppositeAnchor.x + it.getEffectiveWidth() * -ceil((floor(it.x).coerceAtLeast(1f) / oppositeAnchor.x) % 1))
-				it.y = (oppositeAnchor.y + it.getEffectiveHeight() * -ceil((floor(it.y).coerceAtLeast(1f) / oppositeAnchor.y) % 1))
+				val translatedPos = translate(oppositeCorner, it)
+				it.x = translatedPos.first.coerceIn(0f, (MC.window.scaledWidth - it.getEffectiveWidth()).toFloat()) / (MC.window.scaledWidth - it.getEffectiveWidth()).toFloat()
+				it.y = translatedPos.second.coerceIn(0f, (MC.window.scaledWidth - it.getEffectiveWidth()).toFloat()) / (MC.window.scaledHeight - it.getEffectiveHeight()).toFloat()
 			}
 		}
 
 		super.mouseMoved(mouseX, mouseY)
+	}
+
+	fun translate(pos: Point, element: SimpleHudElement): Pair<Float, Float> {
+		return (pos.x + element.getEffectiveWidth() * if(pos.x > element.getAbsoluteX() + element.getEffectiveWidth() / 2) -1f else 0f) to
+				(pos.y + element.getEffectiveHeight() * if(pos.y > element.getAbsoluteY() + element.getEffectiveHeight() / 2) -1f else 0f)
 	}
 
 	override fun mouseReleased(click: Click): Boolean {

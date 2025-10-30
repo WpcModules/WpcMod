@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.text.Text
+import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.modIdentifier
 import org.joml.Matrix3x2f
 import java.util.*
@@ -56,8 +57,16 @@ open class SimpleHudElement(
 		return getUnscaledHeight()
 	}
 
+	fun getAbsoluteX(): Float {
+		return x * (MC.window.scaledWidth - getEffectiveWidth())
+	}
+
+	fun getAbsoluteY(): Float {
+		return y * (MC.window.scaledHeight - getEffectiveHeight())
+	}
+
 	fun applyTransformations(matrices: Matrix3x2f) {
-		matrices.translate(x, y)
+		matrices.translate(getAbsoluteX(), getAbsoluteY())
 		if (canScale) matrices.scale(scale)
 	}
 }
