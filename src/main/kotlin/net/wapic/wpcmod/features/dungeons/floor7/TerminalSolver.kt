@@ -19,6 +19,7 @@ import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.screen.sync.ItemStackHash
 import net.minecraft.text.Text
 import net.minecraft.util.Colors
+import net.minecraft.util.DyeColor
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.dungeon.Floor7Config.TerminalSolverConfig.RenderType
 import net.wapic.wpcmod.events.GuiEvents
@@ -55,6 +56,7 @@ object TerminalSolver {
 		GuiEvents.MOUSE_CLICK.register(::onGuiClick)
 		TooltipEvents.RENDER.register(::onTooltipDraw)
 		GuiEvents.RENDER.register(::onGuiRender)
+		GuiEvents.DRAW_BACKGROUND.register(::onDrawBackground)
 	}
 
     fun onPacketReceive(packet: Packet<out PacketListener>) {
@@ -81,9 +83,9 @@ object TerminalSolver {
 
                     TerminalTypes.SELECT ->
 						SelectAllHandler(
-							selectAllRegex.find(windowName)?.groupValues?.get(1)
-								?.replace("_", " ")
-								?: return ChatUtils.sendMessage("Failed to find color, please report this!")
+							DyeColor.entries.find {
+								it.name.replace("_", " ").equals(selectAllRegex.find(windowName)?.groupValues?.get(1), true)
+							} ?: return ChatUtils.sendMessage("Failed to find color, please report this!")
 						)
 
                     TerminalTypes.MELODY -> MelodyHandler()
@@ -161,6 +163,12 @@ object TerminalSolver {
         }
     }
 
+	fun onDrawBackground(screen: Screen, drawContext: DrawContext, callbackInfo: CallbackInfo) {
+		if (!config.enabled || currentTerm == null || (currentTerm?.type == TerminalTypes.MELODY && config.cancelMelodySolver) || config.renderType != RenderType.CUSTOM) return
+		currentTerm?.type?.getGUI()?.render(drawContext)
+		callbackInfo.cancel()
+	}
+
 	fun onGuiRender(
 		screen: Screen,
 		drawContext: DrawContext,
@@ -171,7 +179,6 @@ object TerminalSolver {
 	) {
 		if (!config.enabled || currentTerm == null || (currentTerm?.type == TerminalTypes.MELODY && config.cancelMelodySolver)) return
 		if (config.renderType == RenderType.CUSTOM) {
-			currentTerm?.type?.getGUI()?.render(drawContext)
 			callbackInfo.cancel()
 			return
 		}

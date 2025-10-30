@@ -3,22 +3,14 @@ package net.wapic.wpcmod.features.dungeons.floor7.terminalhandler
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket
+import net.minecraft.util.DyeColor
 
-class SelectAllHandler(private val colorName: String): TerminalHandler(TerminalTypes.SELECT) {
-
-	// Hypixel uses legacy dyes to be compatible with 1.8.9 with this map we can get the modern equivalence of the item
-	private val legacyDyeMap = mapOf(
-		Items.COCOA_BEANS to Items.BROWN_DYE,
-		Items.BONE_MEAL to Items.WHITE_DYE,
-		Items.LAPIS_LAZULI to Items.BLUE_DYE,
-		Items.INK_SAC to Items.BLACK_DYE,
-		Items.WHITE_WOOL to Items.WHITE_DYE, // White wool has the Display name Wool. So we need to make it any other white item
-	)
+class SelectAllHandler(private val color: DyeColor): TerminalHandler(TerminalTypes.SELECT) {
 
     override fun handleSlotUpdate(packet: ScreenHandlerSlotUpdateS2CPacket): Boolean {
         if (packet.slot != type.windowSize - 1) return false
         solution.clear()
-        solution.addAll(solveSelectAll(items, colorName))
+        solution.addAll(solveSelectAll(items, color))
         return true
     }
 
@@ -26,13 +18,17 @@ class SelectAllHandler(private val colorName: String): TerminalHandler(TerminalT
         solution.removeAt(solution.indexOf(slotIndex).takeIf { it != -1 } ?: return)
     }
 
-    private fun solveSelectAll(items: Array<ItemStack?>, color: String): List<Int> {
+    private fun solveSelectAll(items: Array<ItemStack?>, color: DyeColor): List<Int> {
 		return items.mapIndexedNotNull { index, itemStack ->
-			val itemName = legacyDyeMap[itemStack?.item]?.defaultStack?.name?.string ?: itemStack?.name?.string
-
 			if (itemStack?.hasGlint() == false &&
 				itemStack.item != Items.BLACK_STAINED_GLASS_PANE &&
-				itemName?.replace("light gray", "silver", true)?.replace("light blue", "auqa", true)?.contains(color, true) == true
+				(itemStack.item.name.string.startsWith(color.id.replace("_", " "), true) || when(color) {
+					DyeColor.BLACK -> itemStack.item == Items.INK_SAC
+					DyeColor.BLUE -> itemStack.item == Items.LAPIS_LAZULI
+					DyeColor.WHITE -> itemStack.item == Items.BONE_MEAL
+					DyeColor.BROWN -> itemStack.item == Items.COCOA_BEANS
+					else -> false
+				})
 			) {
 				index
 			} else {
