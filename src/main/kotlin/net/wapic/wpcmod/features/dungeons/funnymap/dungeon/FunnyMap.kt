@@ -34,8 +34,10 @@ object FunnyMap {
 
 	fun onTick(client: MinecraftClient) {
 		if (!inDungeons) return
+		WpcMod.profiler.push("FunnyMap-tick")
 
 		if (shouldSearchMimic()) {
+			WpcMod.profiler.swap("findMimic")
 			ScanUtils.findMimic()?.let {
 				if (config.scanChatInfo) ChatUtils.sendMessage("§7Mimic Room: §c$it")
 				Info.mimicFound = true
@@ -43,21 +45,26 @@ object FunnyMap {
 		}
 
 		if (!MapUtils.calibrated) {
+			WpcMod.profiler.swap("calibrateMap")
 			MapUtils.calibrated = MapUtils.calibrateMap()
 		}
 
 		if (MapUtils.mapDataUpdated) {
+			WpcMod.profiler.swap("updateRooms")
 			MapUpdate.updateRooms()
 			MapUtils.mapDataUpdated = false
 		}
 
 		TabListUtil.getDungeonTabList()?.let {
+			WpcMod.profiler.swap("updatePlayers")
 			MapUpdate.updatePlayers(it)
 		}
 
 		if (DungeonScan.shouldScan) {
+			WpcMod.profiler.swap("scan")
 			DungeonScan.scan()
 		}
+		WpcMod.profiler.pop()
 	}
 
 	fun onDungeonEnd() {

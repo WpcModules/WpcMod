@@ -22,6 +22,8 @@ import net.minecraft.text.HoverEvent
 import net.minecraft.text.Style
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
+import net.minecraft.util.profiler.Profiler
+import net.minecraft.util.profiler.Profilers
 import net.wapic.wpcmod.commands.*
 import net.wapic.wpcmod.config.ConfigManager
 import net.wapic.wpcmod.config.WpcConfig
@@ -70,6 +72,8 @@ object WpcMod : ModInitializer {
 
 	val version: Version by lazy { metadata.version }
 	val logger: Logger = LoggerFactory.getLogger("WpcMod")
+
+	val profiler: Profiler = Profilers.get()
 
 	val globalJob = Job()
 	val coroutineScope = CoroutineScope(EmptyCoroutineContext + CoroutineName("WpcMod") + SupervisorJob(globalJob))

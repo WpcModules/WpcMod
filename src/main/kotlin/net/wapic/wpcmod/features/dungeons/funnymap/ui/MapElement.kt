@@ -32,6 +32,7 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 
 	override fun render(drawContext: DrawContext, deltaTicks: Float) {
 		if (!isActive()) return
+		WpcMod.profiler.push("FunnyMap-Render")
 		val player = MC.player ?: return
 		val matrixStack = drawContext.matrices
 
@@ -62,8 +63,11 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 			}
 		}
 
+		WpcMod.profiler.swap("rooms")
 		renderRooms(drawContext)
+		WpcMod.profiler.swap("text")
 		renderText(drawContext)
+		WpcMod.profiler.swap("players")
 		renderPlayerHeads(drawContext)
 
 		if (config.mapRotate) {
@@ -72,6 +76,7 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 		}
 
 		matrixStack.popMatrix()
+		WpcMod.profiler.pop()
 	}
 
 	private fun renderRooms(drawContext: DrawContext) {

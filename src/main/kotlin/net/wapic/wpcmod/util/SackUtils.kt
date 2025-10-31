@@ -3,6 +3,7 @@ package net.wapic.wpcmod.util
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.minecraft.client.MinecraftClient
 import net.minecraft.util.Util
+import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.ItemUtils.skyBlockID
 
 object SackUtils {
@@ -16,6 +17,7 @@ object SackUtils {
 	}
 
 	private fun onTick(client: MinecraftClient) {
+		WpcMod.profiler.push("sack-utils-tick")
 		if (gfsQueue.isEmpty()) return
 
 		if (Util.getMeasuringTimeMs() - lastCommand >= COMMAND_DELAY) {
@@ -24,6 +26,7 @@ object SackUtils {
 			gfsQueue.removeFirst()
 			lastCommand = Util.getMeasuringTimeMs()
 		}
+		WpcMod.profiler.pop()
 	}
 
 	fun getFromSack(item: String, maxStackSize: Int) {

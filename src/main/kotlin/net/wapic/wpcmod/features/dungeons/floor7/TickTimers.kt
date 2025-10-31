@@ -85,6 +85,7 @@ object TickTimers : SimpleHudElement("Tick Timers", 120, 12) {
 
 	override fun render(drawContext: DrawContext, deltaTicks: Float) {
 		if(!isActive()) return
+		WpcMod.profiler.push("TickTimers-render")
 
 		val matrixStack = drawContext.matrices
 		matrixStack.pushMatrix()
@@ -106,6 +107,7 @@ object TickTimers : SimpleHudElement("Tick Timers", 120, 12) {
 		}
 
 		matrixStack.popMatrix()
+		WpcMod.profiler.pop()
 	}
 
 	fun isActive(): Boolean {

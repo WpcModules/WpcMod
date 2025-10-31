@@ -40,9 +40,8 @@ object NetworkListener {
 	private fun onEntityDespawn(packet: EntitiesDestroyS2CPacket){
 		val world = MC.world ?: return
 
-		@Suppress("DEPRECATION")
-		for (entityId in packet.entityIds) {
-			val entity = world.getEntityById(entityId) ?: continue
+		packet.entityIds.forEach {
+			val entity = world.getEntityById(it) ?: return@forEach
 			EntityEvents.DESPAWN.invoker().onEntityDespawn(entity)
 		}
 	}

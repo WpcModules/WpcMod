@@ -41,10 +41,12 @@ object SpamFilter {
 	}
 
 	fun onTick(client: MinecraftClient) {
+		WpcMod.profiler.push("SpamFilter-tick")
 		notifyQueue.toList().forEach { notification ->
 			if (notification.delay == 0) notifyQueue.removeIf { it == notification }
 			notification.delay--
 		}
+		WpcMod.profiler.pop()
 	}
 
 	fun addToNotifyQueue(text: Text) {
@@ -64,6 +66,7 @@ object SpamFilter {
 	}
 
 	fun onRenderHud(drawContext: DrawContext, tickCounter: RenderTickCounter) {
+		WpcMod.profiler.push("SpamFilter-render")
 		val mc = MinecraftClient.getInstance()
 		var y = drawContext.scaledWindowHeight - 48
 
@@ -75,6 +78,7 @@ object SpamFilter {
 			y -= 12
 			notification.x = MathHelper.lerp(tickCounter.dynamicDeltaTicks, notification.x, -12)
 		}
+		WpcMod.profiler.pop()
 	}
 
 	fun onMessageReceived(text: Text, actionBar: Boolean): Boolean {

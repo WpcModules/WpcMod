@@ -82,6 +82,7 @@ object DungeonUtils {
 	}
 
 	fun onTick(client: MinecraftClient) {
+		WpcMod.profiler.push("dungeon-utils-tick")
 		if (!inDungeons) return
 		ScoreboardUtil.sidebarLines = ScoreboardUtil.fetchScoreboardLines().map { ScoreboardUtil.cleanSB(it) }
 
@@ -89,6 +90,7 @@ object DungeonUtils {
 			val floorShortName = it.substringAfter("(").substringBefore(")")
 			currentFloor = DungeonFloor.fromShortName(floorShortName)
 		}
+		WpcMod.profiler.pop()
 	}
 
 	private fun checkBossName(floor: DungeonFloor, bossName: String): Boolean {

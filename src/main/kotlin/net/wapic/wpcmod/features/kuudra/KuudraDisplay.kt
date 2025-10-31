@@ -17,6 +17,7 @@ object KuudraDisplay : SimpleHudElement("Kuudra Display", 75, 11) {
 	override val isEnabled: Boolean get() = config.healthDisplay
 
 	override fun render(drawContext: DrawContext, deltaTicks: Float) {
+		WpcMod.profiler.push("kuudra-display")
 		if (!isActive()) return
 
 		val matrixStack = drawContext.matrices
@@ -43,6 +44,7 @@ object KuudraDisplay : SimpleHudElement("Kuudra Display", 75, 11) {
 		}
 
 		matrixStack.popMatrix()
+		WpcMod.profiler.pop()
 	}
 
 	fun isActive(): Boolean {

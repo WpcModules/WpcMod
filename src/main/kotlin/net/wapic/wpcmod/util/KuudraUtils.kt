@@ -1,7 +1,6 @@
 package net.wapic.wpcmod.util
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.client.world.ClientWorld
 import net.minecraft.entity.mob.MagmaCubeEntity
@@ -36,6 +35,7 @@ object KuudraUtils {
 	}
 
 	private fun onTick(world: ClientWorld) {
+		WpcMod.profiler.push("kuudra-tick")
 		if (Utils.getLocation() != Island.KUUDRA) return
 
 		if (kuudraEntity == null) {
@@ -44,6 +44,7 @@ object KuudraUtils {
 				WpcMod.logger.debug("set KuudraEntity to {}", it)
 			}
 		}
+		WpcMod.profiler.pop()
 	}
 
 	private fun onMessageReceived(message: Text, actionBar: Boolean) {

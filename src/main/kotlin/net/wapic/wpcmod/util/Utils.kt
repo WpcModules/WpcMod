@@ -49,6 +49,7 @@ object Utils {
 	}
 
 	private fun onTick() {
+		WpcMod.profiler.push("utils-tick")
 		if (commandQueue.isEmpty()) return
 
 		if (Util.getMeasuringTimeMs() - lastCommand > MIN_DELAY) {
@@ -56,6 +57,7 @@ object Utils {
 			lastCommand = Util.getMeasuringTimeMs()
 			commandQueue.removeFirst()
 		}
+		WpcMod.profiler.pop()
 	}
 
 	fun getLocation(): Island? {
