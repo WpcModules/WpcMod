@@ -47,7 +47,7 @@ object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
 		ClientTickEvents.END_WORLD_TICK.register {
 			if (DungeonUtils.getF7Phase() != DungeonUtils.F7Phase.GOLDOR || !config.enabled) return@register
 			inactiveList = it.entities.filterIsInstance<ArmorStandEntity>().filter { entity ->
-				entity.name.string.equalsOneOf("Inactive", "Not Activated", "CLICK HERE")
+				entity.name.string.equalsOneOf("Inactive Terminal", "Inactive", "Not Activated", "CLICK HERE")
 			}.toSet()
 		}
     }
@@ -162,8 +162,6 @@ object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
 					)
                 if (config.renderText)
 					worldRenderContext.drawText(customName, it.entityPos.add(0.0, 2.0, 0.0), 1.5f, true)
-//                if (config.renderBeacon)
-//					worldRenderContext.drawBeaconBeam(it.blockPos, config.color.getEffectiveColour())
             }
             it.isCustomNameVisible = !config.hideDefault
         }
