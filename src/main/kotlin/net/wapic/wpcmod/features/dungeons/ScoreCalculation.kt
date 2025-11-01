@@ -12,6 +12,7 @@ import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket
 import net.minecraft.sound.SoundEvents
 import net.minecraft.text.Style
 import net.minecraft.text.Text
+import net.minecraft.util.Colors
 import net.minecraft.util.Formatting
 import net.minecraft.util.Util
 import net.minecraft.util.math.BlockPos
@@ -28,7 +29,6 @@ import net.wapic.wpcmod.util.DungeonUtils.isMimicFloor
 import net.wapic.wpcmod.util.EntityUtils.headTexture
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 import net.wapic.wpcmod.util.render.drawText
-import java.awt.Color
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.roundToInt
@@ -431,11 +431,11 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 			}
 
 			for ((index, line) in lines.withIndex()) {
-				drawContext.drawText(line, 2, 2 + (index * 10), 0xffffff, true)
+				drawContext.drawText(line, 2, 2 + (index * 10), Colors.WHITE, true)
 			}
 
 		} else {
-			drawContext.drawText("§eScore: §a$totalScore §7($rank§7)", 2, 2, Color.WHITE.rgb, true)
+			drawContext.drawText("§eScore: §a$totalScore §7($rank§7)", 2, 2, Colors.WHITE, true)
 		}
 
 		drawContext.matrices.popMatrix()
