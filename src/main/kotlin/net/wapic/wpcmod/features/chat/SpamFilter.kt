@@ -8,6 +8,7 @@ import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.render.RenderTickCounter
 import net.minecraft.text.Text
+import net.minecraft.util.Colors
 import net.minecraft.util.math.MathHelper
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.chat.SpamConfig
@@ -74,7 +75,7 @@ object SpamFilter {
 			val width = mc.textRenderer.getWidth(notification.text)
 			val x1 = (drawContext.scaledWindowWidth - width) + notification.x
 			drawContext.fill(x1, y - 2, x1 + width, y + 10, 0xaa121212.toInt())
-			drawContext.drawText(mc.textRenderer, notification.text, x1, y, 0xffffff, false)
+			drawContext.drawText(mc.textRenderer, notification.text, x1, y, Colors.WHITE, false)
 			y -= 12
 			notification.x = MathHelper.lerp(tickCounter.dynamicDeltaTicks, notification.x, -12)
 		}
