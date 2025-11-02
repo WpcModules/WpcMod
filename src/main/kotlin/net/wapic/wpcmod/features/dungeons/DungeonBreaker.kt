@@ -36,15 +36,18 @@ object DungeonBreaker {
 		if (player.mainHandStack.skyBlockID != DUNGEON_BREAKER_ID) return ActionResult.PASS
 
 		val block = world.getBlockState(pos).block
-		return when {
-			InteractableBlocks.CHEST in config.preventedDungeonbreakerBlocks && block is ChestBlock ||
-					InteractableBlocks.BUTTON in config.preventedDungeonbreakerBlocks && block is ButtonBlock ||
-					InteractableBlocks.LEVER in config.preventedDungeonbreakerBlocks && block is LeverBlock ||
-					InteractableBlocks.SKULL in config.preventedDungeonbreakerBlocks && block is PlayerSkullBlock -> {
-				ActionResult.FAIL
-			}
-
-			else -> ActionResult.PASS
+		val isPreventedBlock = when (block) {
+			is ChestBlock -> InteractableBlocks.CHEST in config.preventedDungeonbreakerBlocks
+			is ButtonBlock -> InteractableBlocks.BUTTON in config.preventedDungeonbreakerBlocks
+			is LeverBlock -> InteractableBlocks.LEVER in config.preventedDungeonbreakerBlocks
+			is PlayerSkullBlock -> InteractableBlocks.SKULL in config.preventedDungeonbreakerBlocks
+			else -> false
 		}
+
+		if (isPreventedBlock) {
+			ActionResult.FAIL
+		}
+
+		return ActionResult.PASS
 	}
 }
