@@ -2,6 +2,7 @@ package net.wapic.wpcmod.config.dungeon
 
 import io.github.notenoughupdates.moulconfig.ChromaColour
 import io.github.notenoughupdates.moulconfig.annotations.*
+import net.wapic.wpcmod.features.dungeons.floor7.termsim.StartGUI
 
 class Floor7Config {
 
@@ -12,6 +13,11 @@ class Floor7Config {
 	@ConfigOption(name = "Terminal Simulator Ping", desc = "Set emulated ping for terminal simulators")
 	@ConfigEditorSlider(minValue = 1f, maxValue = 300f, minStep = 1f)
 	var termSimPing: Float = 50f
+
+	@Transient
+	@ConfigOption(name = "Terminal Simulator", desc = "Open terminal simulator, can also be accessed with /wpc term.")
+	@ConfigEditorButton
+	var openTerminalSimulator: Runnable = Runnable { StartGUI.open(termSimPing.toLong()) }
 
 	@Accordion
 	@ConfigOption(name = "Arrow Align Solver", desc = "Solver for Arrow Device in P3")
