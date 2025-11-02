@@ -1,7 +1,10 @@
 package net.wapic.wpcmod.features.dungeons
 
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback
-import net.minecraft.block.Blocks
+import net.minecraft.block.ButtonBlock
+import net.minecraft.block.ChestBlock
+import net.minecraft.block.LeverBlock
+import net.minecraft.block.PlayerSkullBlock
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
@@ -9,9 +12,9 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
 import net.minecraft.world.World
 import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.config.dungeon.DungeonConfig.InteractableBlocks
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.ItemUtils.skyBlockID
-import net.wapic.wpcmod.util.Utils.equalsOneOf
 
 object DungeonBreaker {
 
@@ -29,10 +32,19 @@ object DungeonBreaker {
 		pos: BlockPos,
 		direction: Direction
 	): ActionResult {
-		if (!DungeonUtils.inDungeons || !config.preventBreakingChests) return ActionResult.PASS
+		if (!DungeonUtils.inDungeons) return ActionResult.PASS
+		if (player.mainHandStack.skyBlockID != DUNGEON_BREAKER_ID) return ActionResult.PASS
 
-		val isHoldingDungeonBreaker = player.mainHandStack.skyBlockID == DUNGEON_BREAKER_ID
-		val isChestBlock = world.getBlockState(pos).block.equalsOneOf(Blocks.CHEST, Blocks.TRAPPED_CHEST)
-		return if (isHoldingDungeonBreaker && isChestBlock) ActionResult.FAIL else ActionResult.PASS
+		val block = world.getBlockState(pos).block
+		return when {
+			InteractableBlocks.CHEST in config.preventedDungeonbreakerBlocks && block is ChestBlock ||
+					InteractableBlocks.BUTTON in config.preventedDungeonbreakerBlocks && block is ButtonBlock ||
+					InteractableBlocks.LEVER in config.preventedDungeonbreakerBlocks && block is LeverBlock ||
+					InteractableBlocks.SKULL in config.preventedDungeonbreakerBlocks && block is PlayerSkullBlock -> {
+				ActionResult.FAIL
+			}
+
+			else -> ActionResult.PASS
+		}
 	}
 }

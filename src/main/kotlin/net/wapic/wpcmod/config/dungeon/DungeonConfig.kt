@@ -1,9 +1,8 @@
 package net.wapic.wpcmod.config.dungeon
 
-import io.github.notenoughupdates.moulconfig.annotations.Accordion
-import io.github.notenoughupdates.moulconfig.annotations.Category
-import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorBoolean
-import io.github.notenoughupdates.moulconfig.annotations.ConfigOption
+import io.github.notenoughupdates.moulconfig.annotations.*
+import net.minecraft.block.Block
+import net.minecraft.block.Blocks
 
 class DungeonConfig {
 
@@ -19,27 +18,29 @@ class DungeonConfig {
 	@ConfigEditorBoolean
 	var spiritBear: Boolean = false
 
-	@ConfigOption(name = "Stop Breaking Chests", desc = "Prevents Dungeonbreaker from breaking chests")
-	@ConfigEditorBoolean
-	var preventBreakingChests: Boolean = false
+	@ConfigOption(
+		name = "Prevent Breaking Blocks",
+		desc = "Prevent Breaking the selected blocks with the Dungeonbreaker"
+	)
+	@ConfigEditorDraggableList
+	var preventedDungeonbreakerBlocks = mutableListOf(
+		InteractableBlocks.LEVER,
+		InteractableBlocks.BUTTON,
+		InteractableBlocks.CHEST,
+		InteractableBlocks.SKULL
+	)
+
+	@ConfigOption(name = "Bigger Hitboxes", desc = "Increase the hitbox of the selected blocks")
+	@ConfigEditorDraggableList
+	var biggerHitboxes = mutableListOf(
+		InteractableBlocks.LEVER,
+		InteractableBlocks.BUTTON,
+		InteractableBlocks.CHEST,
+		InteractableBlocks.SKULL
+	)
 
 	@Accordion
-	@ConfigOption(name = "Hitboxes", desc = "Enable bigger hitboxes on certain blocks")
-	var hitboxes: BiggerHitboxes = BiggerHitboxes()
-
-	class BiggerHitboxes {
-
-		@ConfigOption(name = "Lever", desc = "")
-		@ConfigEditorBoolean
-		var lever = false
-
-		@ConfigOption(name = "Button", desc = "")
-		@ConfigEditorBoolean
-		var button = false
-	}
-
-	@Accordion
-	@ConfigOption(name = "Auto GFS", desc = "Automatically run /getfromsack for these items on dungeon start")
+	@ConfigOption(name = "Auto GFS", desc = "")
 	var autoGFS: AutoGetFromSack = AutoGetFromSack()
 
 	class AutoGetFromSack {
@@ -76,6 +77,17 @@ class DungeonConfig {
 		@ConfigOption(name = "Show Title", desc = "Show a title when items proc")
 		@ConfigEditorBoolean
 		var title = false
+	}
+
+	enum class InteractableBlocks(val label: String, val block: Block) {
+		LEVER("Lever", Blocks.LEVER),
+		BUTTON("Button", Blocks.STONE_BUTTON),
+		CHEST("Chest", Blocks.CHEST),
+		SKULL("Skull", Blocks.PLAYER_HEAD);
+
+		override fun toString(): String {
+			return "§f$label"
+		}
 	}
 
 	@Category(name = "ESP", desc = "Configure ESP on Dungeon mobs")
