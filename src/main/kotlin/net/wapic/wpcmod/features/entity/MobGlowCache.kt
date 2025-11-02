@@ -1,5 +1,6 @@
 package net.wapic.wpcmod.features.entity
 
+import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.entity.Entity
 
 abstract class MobGlowCache {
@@ -8,7 +9,7 @@ abstract class MobGlowCache {
 		MobGlow.add(this)
 	}
 
-	abstract fun compute(entity: Entity): Int
+	abstract fun compute(entity: Entity): ChromaColour?
 
 	abstract fun isEnabled(): Boolean
 }

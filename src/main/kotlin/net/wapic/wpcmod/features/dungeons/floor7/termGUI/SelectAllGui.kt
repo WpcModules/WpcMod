@@ -13,7 +13,7 @@ object SelectAllGui : TermGui() {
             val inSolution = index in currentSolution
 			val startColor = if (inSolution) config.selectColor else config.backgroundColor
             if (inSolution)
-				renderSlot(drawContext, index, startColor.getEffectiveColour())
+				renderSlot(drawContext, index, startColor)
         }
     }
 }

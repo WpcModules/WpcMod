@@ -5,6 +5,7 @@ import net.minecraft.block.BlockState
 import net.minecraft.block.Blocks
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.text.Text
+import net.minecraft.util.Colors
 import net.minecraft.util.math.BlockPos
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.BlockEvents
@@ -17,7 +18,6 @@ import net.wapic.wpcmod.util.DungeonUtils.currentFloor
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 import net.wapic.wpcmod.util.Utils.toFixed
 import net.wapic.wpcmod.util.render.drawText
-import java.awt.Color
 
 object SpiritBearTimer : SimpleHudElement("Spirit Bear Timer", 90, 12) {
 
@@ -51,7 +51,7 @@ object SpiritBearTimer : SimpleHudElement("Spirit Bear Timer", 90, 12) {
 		drawContext.drawText(
 			"Spirit Bear: ${(spawnTime / 20f).toFixed()}s",
 			x = 2, y = 2,
-			Color.MAGENTA.rgb,
+			Colors.LIGHT_PINK,
 			shadow = true
 		)
 

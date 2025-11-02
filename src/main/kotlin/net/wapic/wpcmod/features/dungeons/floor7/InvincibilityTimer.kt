@@ -3,6 +3,7 @@ package net.wapic.wpcmod.features.dungeons.floor7
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.text.Text
+import net.minecraft.util.Colors
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.ServerTickEvent
 import net.wapic.wpcmod.events.WorldChangeEvent
@@ -39,7 +40,7 @@ object InvincibilityTimer : SimpleHudElement("Invincibility Timer", 80, 33) {
 		InvincibilityType.entries.filter { it.currentCooldown > 0 || it.activeTime > 0 }.forEachIndexed { index, type ->
 			val time =
 				if (type.activeTime > 0) "Immunity: ${(type.activeTime / 20f).toFixed()}" else "Cooldown: ${(type.currentCooldown / 20f).toFixed()}"
-			drawContext.drawText("§6${type} ${time}§6s", 2, 2 + index * 10, 0xffffff, true)
+			drawContext.drawText("§6${type} ${time}§6s", 2, 2 + index * 10, Colors.WHITE, true)
 		}
 
 		matrixStack.popMatrix()

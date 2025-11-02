@@ -1,5 +1,6 @@
 package net.wapic.wpcmod.hud
 
+import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.client.gui.Click
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
@@ -19,8 +20,8 @@ class HudEditor : Screen {
 	private var offsetY: Double = 0.0
 	private var oppositeCorner: Point = Point()
 	private var scalePerDistance: Double = 0.0
-	val borderColour = 0xff666666.toInt()
-	val backgroundColour = 0x80000000.toInt()
+	val borderColour = ChromaColour.fromStaticRGB(125, 125, 125, 255)
+	val backgroundColour = ChromaColour.fromStaticRGB(0, 0, 0, 125)
 
 	constructor(elements: List<SimpleHudElement>) : super(Text.of("Hud Editor")) {
 		this.elements = elements.filter { it.isEnabled }

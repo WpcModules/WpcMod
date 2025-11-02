@@ -1,5 +1,6 @@
 package net.wapic.wpcmod.features.end
 
+import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.minecraft.block.Blocks
 import net.minecraft.client.MinecraftClient
@@ -10,7 +11,6 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldRenderEvent
-import net.wapic.wpcmod.features.entity.MobGlow
 import net.wapic.wpcmod.features.entity.MobGlowCache
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.MC
@@ -68,11 +68,11 @@ object EndESP : MobGlowCache() {
 			}
 
 			if (settings.box)
-				worldRenderContext.drawBoundingBox(entity.boundingBox, settings.color.getEffectiveColour())
+				worldRenderContext.drawBoundingBox(entity.boundingBox, settings.color)
 			if (settings.tracer)
 				worldRenderContext.drawTracer(
 					entity.boundingBox.center,
-					settings.color.getEffectiveColour()
+					settings.color
 				)
 		}
 
@@ -80,18 +80,18 @@ object EndESP : MobGlowCache() {
 		if(config.endNode.box || config.endNode.tracer) {
 			for (node in endNodes) {
 				if (config.endNode.box)
-					worldRenderContext.drawBoundingBox(node, config.endNode.color.getEffectiveColour())
+					worldRenderContext.drawBoundingBox(node, config.endNode.color)
 				if (config.endNode.tracer)
-					worldRenderContext.drawTracer(node.center, config.endNode.color.getEffectiveColour())
+					worldRenderContext.drawTracer(node.center, config.endNode.color)
 			}
 		}
 		profiler.pop()
 	}
 
-	override fun compute(entity: Entity): Int {
+	override fun compute(entity: Entity): ChromaColour? {
 		return when {
-			config.dragon.glow && entity is EnderDragonEntity -> config.dragon.color.getEffectiveColourRGB()
-			else -> MobGlow.NO_GLOW
+			config.dragon.glow && entity is EnderDragonEntity -> config.dragon.color
+			else -> null
 		}
 	}
 

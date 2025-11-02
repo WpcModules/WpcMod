@@ -30,9 +30,9 @@ object ChestESP {
 			val chest = Box.of(it.pos.toCenterPos(), 1.0, 1.0, 1.0)
 
 			if (config.box)
-				worldRenderContext.drawBoundingBox(chest, config.color.getEffectiveColour())
+				worldRenderContext.drawBoundingBox(chest, config.color)
 			if (config.tracer)
-				worldRenderContext.drawTracer(chest.center, config.color.getEffectiveColour())
+				worldRenderContext.drawTracer(chest.center, config.color)
 		}
 
 		WpcMod.profiler.pop()

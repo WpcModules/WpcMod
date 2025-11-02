@@ -1,5 +1,6 @@
 package net.wapic.wpcmod.features.dungeons
 
+import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.entity.Entity
 import net.minecraft.entity.decoration.ArmorStandEntity
 import net.minecraft.entity.passive.BatEntity
@@ -9,7 +10,6 @@ import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldRenderEvent
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.RoomState
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
-import net.wapic.wpcmod.features.entity.MobGlow
 import net.wapic.wpcmod.features.entity.MobGlowCache
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.EntityUtils.getArmorStandsByEntity
@@ -17,6 +17,8 @@ import net.wapic.wpcmod.util.EntityUtils.headTexture
 import net.wapic.wpcmod.util.HeadTextures
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 import net.wapic.wpcmod.util.render.WorldRenderContext
+import net.wapic.wpcmod.util.render.brighter
+import net.wapic.wpcmod.util.render.darker
 
 object DungeonESP : MobGlowCache() {
 
@@ -45,17 +47,17 @@ object DungeonESP : MobGlowCache() {
 			}
 
 			if(entityConfig.box) {
-				worldRenderContext.drawBoundingBox(entity.boundingBox, entityConfig.color.getEffectiveColour())
+				worldRenderContext.drawBoundingBox(entity.boundingBox, entityConfig.color)
 			}
 			if(entityConfig.tracer) {
 				val pos = if (entity is ArmorStandEntity) entity.eyePos else entity.boundingBox.center
-				worldRenderContext.drawTracer(pos, entityConfig.color.getEffectiveColour())
+				worldRenderContext.drawTracer(pos, entityConfig.color)
 			}
 		}
 
 		profiler.swap("door esp")
 		if (config.witherDoor.box) {
-			val color = (if (FunnyMap.Info.keys > 0) config.witherDoor.hasKeyColor else config.witherDoor.noKeyColor).getEffectiveColour()
+			val color = (if (FunnyMap.Info.keys > 0) config.witherDoor.hasKeyColor else config.witherDoor.noKeyColor)
 
 			FunnyMap.espDoors.forEach { door ->
 				if (door.state == RoomState.UNDISCOVERED) return@forEach
@@ -71,16 +73,16 @@ object DungeonESP : MobGlowCache() {
 		return armorStands.isNotEmpty() && armorStands.first().name?.string?.contains("✯") ?: false
 	}
 
-	override fun compute(entity: Entity): Int {
+	override fun compute(entity: Entity): ChromaColour? {
 		return when {
 			config.doorKeys.glow && entity is ArmorStandEntity && entity.headTexture.equalsOneOf(
 				HeadTextures.WITHER_KEY,
 				HeadTextures.BLOOD_KEY
-			) -> config.doorKeys.color.getEffectiveColourRGB()
-			config.starMob.glow && (isStarredMob(entity) || (entity is ArmorStandEntity && entity.headTexture == HeadTextures.FEL)) -> config.starMob.color.getEffectiveColourRGB()
-			config.miniboss.glow && entity.name.string in miniBosses -> config.miniboss.color.getEffectiveColourRGB()
-			config.bat.glow && entity is BatEntity -> config.bat.color.getEffectiveColourRGB()
-			else -> MobGlow.NO_GLOW
+			) -> config.doorKeys.color
+			config.starMob.glow && (isStarredMob(entity) || (entity is ArmorStandEntity && entity.headTexture == HeadTextures.FEL)) -> config.starMob.color
+			config.miniboss.glow && entity.name.string in miniBosses -> config.miniboss.color
+			config.bat.glow && entity is BatEntity -> config.bat.color
+			else -> null
 		}
 	}
 

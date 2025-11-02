@@ -1,12 +1,12 @@
 package net.wapic.wpcmod.features.dungeons.floor7.termGUI
 
+import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.dungeons.floor7.TerminalSolver
 import net.wapic.wpcmod.util.MC
-import java.awt.Color
 import kotlin.math.ceil
 import kotlin.math.floor
 
@@ -31,7 +31,7 @@ abstract class TermGui {
         drawContext.fill(backgroundStartX, backgroundStartY, backgroundStartX + backgroundWidth,backgroundStartY + backgroundHeight, config.backgroundColor.getEffectiveColourRGB())
     }
 
-	protected fun renderSlot(drawContext: DrawContext, index: Int, color: Color): Pair<Float, Float> {
+	protected fun renderSlot(drawContext: DrawContext, index: Int, color: ChromaColour): Pair<Float, Float> {
 		val slotSize = 40f * config.customTermSize
         val totalSlotSpace = slotSize + config.gap * config.customTermSize
 
@@ -45,7 +45,7 @@ abstract class TermGui {
 			floor(y).toInt(),
 			floor(x).toInt() + ceil(slotSize).toInt(),
 			floor(y).toInt() + ceil(slotSize).toInt(),
-			color.rgb
+			color.getEffectiveColourRGB()
 		)
         return x to y
     }

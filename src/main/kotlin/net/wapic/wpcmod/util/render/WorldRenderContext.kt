@@ -1,12 +1,8 @@
 package net.wapic.wpcmod.util.render
 
+import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.client.font.TextRenderer
-import net.minecraft.client.render.LightmapTextureManager
-import net.minecraft.client.render.RenderLayer
-import net.minecraft.client.render.RenderTickCounter
-import net.minecraft.client.render.VertexConsumer
-import net.minecraft.client.render.VertexConsumerProvider
-import net.minecraft.client.render.VertexRendering
+import net.minecraft.client.render.*
 import net.minecraft.client.render.state.CameraRenderState
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.client.world.ClientWorld
@@ -17,7 +13,6 @@ import net.minecraft.util.profiler.Profiler
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.VecUtils.unaryMinus
 import org.joml.Matrix4f
-import java.awt.Color
 
 class WorldRenderContext {
 	private val matrixStack: MatrixStack
@@ -113,9 +108,8 @@ class WorldRenderContext {
 
 	fun drawBoundingBox(
 		pos: Vec3d,
-		width: Float,
-		height: Float,
-		color: Color = Color(255, 255, 255),
+		width: Float, height: Float,
+		color: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255),
 		lineWidth: Double = 2.0
 	) {
 		val width = width / 2.0
@@ -134,7 +128,7 @@ class WorldRenderContext {
 
 	fun drawBoundingBox(
 		boundingBox: Box,
-		color: Color = Color(255, 255, 255),
+		color: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255),
 		lineWidth: Double = 2.0
 	) {
 		drawBox(
@@ -151,10 +145,9 @@ class WorldRenderContext {
 
 	fun drawFilledBoxWithOutline(
 		pos: Vec3d,
-		width: Double,
-		height: Double,
-		color: Color = Color(255, 255, 255),
-		outlineColor: Color = Color(255, 255, 255),
+		width: Double, height: Double,
+		color: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255),
+		outlineColor: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255),
 		lineWidth: Double = 2.0
 	) {
 		val width = width / 2
@@ -172,8 +165,8 @@ class WorldRenderContext {
 		maxX: Double,
 		maxY: Double,
 		maxZ: Double,
-		color: Color = Color(255, 255, 255),
-		outlineColor: Color = Color(255, 255, 255),
+		color: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255),
+		outlineColor: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255),
 		lineWidth: Double = 2.0
 	) {
 		drawFilledBox(minX, minY, minZ, maxX, maxY, maxZ, color)
@@ -182,45 +175,33 @@ class WorldRenderContext {
 
 	fun drawFilledBoxWithOutline(
 		boundingBox: Box,
-		color: Color = Color(255, 255, 255),
-		outlineColor: Color = Color(255, 255, 255),
+		color: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255),
+		outlineColor: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255),
 		lineWidth: Double = 2.0
 	) {
 		drawFilledBoxWithOutline(
-			boundingBox.minX,
-			boundingBox.minY,
-			boundingBox.minZ,
-			boundingBox.maxX,
-			boundingBox.maxY,
-			boundingBox.maxZ,
-			color,
-			outlineColor,
+			boundingBox.minX, boundingBox.minY, boundingBox.minZ,
+			boundingBox.maxX, boundingBox.maxY, boundingBox.maxZ,
+			color, outlineColor,
 			lineWidth
 		)
 	}
 
 	fun drawFilledBoundingBox(
 		boundingBox: Box,
-		color: Color = Color(255, 255, 255),
+		color: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255)
 	) {
 		drawFilledBox(
-			boundingBox.minX,
-			boundingBox.minY,
-			boundingBox.minZ,
-			boundingBox.maxX,
-			boundingBox.maxY,
-			boundingBox.maxZ,
+			boundingBox.minX, boundingBox.minY, boundingBox.minZ,
+			boundingBox.maxX, boundingBox.maxY, boundingBox.maxZ,
 			color,
 		)
 	}
 
 	fun drawFilledBox(
-		minX: Double,
-		minY: Double,
-		minZ: Double,
-		maxX: Double,
-		maxY: Double,
-		maxZ: Double, color: Color = Color(255, 255, 255)
+		minX: Double, minY: Double, minZ: Double,
+		maxX: Double, maxY: Double, maxZ: Double,
+		color: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255)
 	) {
 
 		matrixStack.push()
@@ -229,16 +210,13 @@ class WorldRenderContext {
 
 		val layer: RenderLayer = RenderLayers.FILLED_BOX
 		val bufferBuilder = consumer.getBuffer(layer)
+		val color = color.getEffectiveColour()
 
 		VertexRendering.drawFilledBox(
 			matrixStack,
 			bufferBuilder,
-			minX,
-			minY,
-			minZ,
-			maxX,
-			maxY,
-			maxZ,
+			minX, minY, minZ,
+			maxX, maxY, maxZ,
 			color.red * 255f,
 			color.green * 255f,
 			color.blue * 255f,
@@ -251,12 +229,10 @@ class WorldRenderContext {
 	}
 
 	fun drawBox(
-		minX: Double,
-		minY: Double,
-		minZ: Double,
-		maxX: Double,
-		maxY: Double,
-		maxZ: Double, color: Color = Color(255, 255, 255), lineWidth: Double = 2.0
+		minX: Double, minY: Double, minZ: Double,
+		maxX: Double, maxY: Double, maxZ: Double,
+		color: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255),
+		lineWidth: Double = 2.0
 	) {
 		matrixStack.push()
 		matrixStack.translate(-camera.pos)
@@ -264,6 +240,7 @@ class WorldRenderContext {
 		val layer: RenderLayer = RenderLayers.getLines(lineWidth)
 		WpcModRenderPipelines.LINES
 		val bufferBuilder: VertexConsumer = consumer.getBuffer(layer)
+		val color = color.getEffectiveColour()
 
 		VertexRendering.drawBox(
 			matrixStack.peek(),
@@ -285,16 +262,16 @@ class WorldRenderContext {
 
 	fun drawTracer(
 		pos: Vec3d,
-		color: Color = Color(255, 255, 255),
+		color: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255),
 		lineWidth: Double = 2.0
 	) {
 		drawTracer(pos.x, pos.y, pos.z, color, lineWidth)
 	}
 
 	fun drawTracer(
-		x: Double,
-		y: Double,
-		z: Double, color: Color = Color(255, 255, 255), lineWidth: Double = 2.0
+		x: Double, y: Double, z: Double,
+		color: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255),
+		lineWidth: Double = 2.0
 	) {
 		val viewBobbing = MC.options.bobView.value
 		MC.options.bobView.value = false
@@ -306,13 +283,9 @@ class WorldRenderContext {
 	}
 
 	fun drawLine(
-		x1: Double,
-		y1: Double,
-		z1: Double,
-		x2: Double,
-		y2: Double,
-		z2: Double,
-		color: Color = Color(255, 255, 255),
+		x1: Double, y1: Double, z1: Double,
+		x2: Double, y2: Double, z2: Double,
+		color: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255),
 		lineWidth: Double = 2.0
 	) {
 
@@ -326,6 +299,7 @@ class WorldRenderContext {
 		val bufferBuilder: VertexConsumer = consumer.getBuffer(layer)
 
 		val normal = Vec3d(x2, y2, z2).toVector3f().sub(x1.toFloat(), y1.toFloat(), z1.toFloat()).normalize()
+		val color = color.getEffectiveColour()
 
 		bufferBuilder.vertex(entry, x1.toFloat(), y1.toFloat(), z1.toFloat())
 			.color(color.red, color.green, color.blue, color.alpha).normal(entry, normal)

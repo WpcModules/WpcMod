@@ -16,6 +16,8 @@ import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 import net.wapic.wpcmod.util.render.WorldRenderContext
+import net.wapic.wpcmod.util.render.brighter
+import net.wapic.wpcmod.util.render.darker
 import net.wapic.wpcmod.util.render.drawText
 
 object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
@@ -157,8 +159,8 @@ object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
                 if (config.renderBox)
 					worldRenderContext.drawFilledBoxWithOutline(
 						Box.from(it.entityPos.add(-0.5, 0.0, -0.5)),
-						config.color.getEffectiveColour().darker(),
-						config.color.getEffectiveColour().brighter()
+						config.color.darker(),
+						config.color.brighter()
 					)
                 if (config.renderText)
 					worldRenderContext.drawText(customName, it.entityPos.add(0.0, 2.0, 0.0), 1.5f, true)

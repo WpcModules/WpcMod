@@ -1,6 +1,7 @@
 package net.wapic.wpcmod.features.kuudra
 
 import net.minecraft.client.gui.DrawContext
+import net.minecraft.util.Colors
 import net.minecraft.util.Formatting
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.hud.SimpleHudElement
@@ -39,7 +40,7 @@ object KuudraDisplay : SimpleHudElement("Kuudra Display", 75, 11) {
 
 				val x = (drawContext.scaledWindowWidth / 2) - (MC.textRenderer.getWidth(health) / 2)
 				val y = (drawContext.scaledWindowHeight / 2) - (MC.textRenderer.fontHeight / 2)
-				drawContext.drawTextWithShadow(MC.textRenderer, health, x, y, 0xffffffff.toInt())
+				drawContext.drawTextWithShadow(MC.textRenderer, health, x, y, Colors.WHITE)
 			}
 		}
 

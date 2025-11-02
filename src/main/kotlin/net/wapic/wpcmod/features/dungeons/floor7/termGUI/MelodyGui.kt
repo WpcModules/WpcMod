@@ -35,7 +35,7 @@ object MelodyGui : TermGui() {
                 else -> ChromaColour(1f, 0.1f, 1f, 0, 255)
             }
 
-            renderSlot(drawContext, index, color.getEffectiveColour())
+			renderSlot(drawContext, index, color)
         }
     }
 }

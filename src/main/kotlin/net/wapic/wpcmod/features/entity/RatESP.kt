@@ -1,5 +1,6 @@
 package net.wapic.wpcmod.features.entity
 
+import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.entity.Entity
 import net.minecraft.entity.decoration.ArmorStandEntity
 import net.wapic.wpcmod.WpcMod
@@ -28,16 +29,16 @@ object RatESP : MobGlowCache() {
 			if(!isRat(entity)) continue
 
 			val box = entity.boundingBox.withMinY(entity.boundingBox.minY + 1.4)
-			if (config.box) worldRenderContext.drawBoundingBox(box, config.color.getEffectiveColour())
-			if (config.tracer) worldRenderContext.drawTracer(box.center, config.color.getEffectiveColour())
+			if (config.box) worldRenderContext.drawBoundingBox(box, config.color)
+			if (config.tracer) worldRenderContext.drawTracer(box.center, config.color)
 		}
 		profiler.pop()
 	}
 
-	override fun compute(entity: Entity): Int {
+	override fun compute(entity: Entity): ChromaColour? {
 		return when {
-			config.glow && isRat(entity) -> config.color.getEffectiveColourRGB()
-			else -> MobGlow.NO_GLOW
+			config.glow && isRat(entity) -> config.color
+			else -> null
 		}
 	}
 

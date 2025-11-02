@@ -1,9 +1,9 @@
 package net.wapic.wpcmod.features.kuudra
 
+import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.entity.Entity
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldRenderEvent
-import net.wapic.wpcmod.features.entity.MobGlow
 import net.wapic.wpcmod.features.entity.MobGlowCache
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.KuudraUtils
@@ -24,18 +24,18 @@ object KuudraESP : MobGlowCache() {
 
 		KuudraUtils.kuudraEntity?.let {
 			if (config.kuudra.box)
-				worldRenderContext.drawBoundingBox(it.boundingBox, config.kuudra.color.getEffectiveColour())
+				worldRenderContext.drawBoundingBox(it.boundingBox, config.kuudra.color)
 			if (config.kuudra.tracer)
-				worldRenderContext.drawTracer(it.boundingBox.center, config.kuudra.color.getEffectiveColour())
+				worldRenderContext.drawTracer(it.boundingBox.center, config.kuudra.color)
 		}
 		profiler.pop()
 	}
 
-	override fun compute(entity: Entity): Int {
+	override fun compute(entity: Entity): ChromaColour? {
 		if (config.kuudra.glow && entity == KuudraUtils.kuudraEntity) {
-			return config.kuudra.color.getEffectiveColourRGB()
+			return config.kuudra.color
 		}
-		return MobGlow.NO_GLOW
+		return null
 	}
 
 	override fun isEnabled(): Boolean {

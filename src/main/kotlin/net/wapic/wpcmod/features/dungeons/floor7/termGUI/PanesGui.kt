@@ -13,7 +13,7 @@ object PanesGui : TermGui() {
             val inSolution = index in currentSolution
 
 			val startColor = if (inSolution) config.panesColor else config.backgroundColor
-            renderSlot(drawContext, index, startColor.getEffectiveColour())
+			renderSlot(drawContext, index, startColor)
         }
     }
 }

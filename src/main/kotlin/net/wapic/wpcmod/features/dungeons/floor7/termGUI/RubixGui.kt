@@ -1,5 +1,6 @@
 package net.wapic.wpcmod.features.dungeons.floor7.termGUI
 
+import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.client.gui.DrawContext
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.render.drawText
@@ -26,10 +27,10 @@ object RubixGui : TermGui() {
         }
     }
 
-    private fun getColor(clicksRequired: Int): Color = when (clicksRequired) {
+	private fun getColor(clicksRequired: Int): ChromaColour = when (clicksRequired) {
         1 -> config.rubixColor1
         2 -> config.rubixColor2
         -1 -> config.oppositeRubixColor1
         else -> config.oppositeRubixColor2
-    }.getEffectiveColour()
+	}
 }

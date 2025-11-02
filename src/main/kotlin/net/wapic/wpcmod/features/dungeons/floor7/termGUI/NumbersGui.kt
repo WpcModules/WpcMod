@@ -2,11 +2,11 @@ package net.wapic.wpcmod.features.dungeons.floor7.termGUI
 
 import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.client.gui.DrawContext
+import net.minecraft.util.Colors
 import net.wapic.wpcmod.features.dungeons.floor7.TerminalSolver
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 import net.wapic.wpcmod.util.render.drawText
-import java.awt.Color
 
 object NumbersGui : TermGui() {
 
@@ -26,14 +26,14 @@ object NumbersGui : TermGui() {
                 else -> ChromaColour(1f, 0f, 0.2f, 0, 125)
             }
 
-            val (slotX, slotY) = renderSlot(drawContext, index, color.getEffectiveColour())
+			val (slotX, slotY) = renderSlot(drawContext, index, color)
 			val slotSize = 40f * config.customTermSize
 
             val textX = slotX + (slotSize / 2 - MC.textRenderer.getWidth(amount.toString()) / 2)
             val textY = slotY + (slotSize / 2 - MC.textRenderer.fontHeight / 2)
 
             if (config.showNumbers && solutionIndex != -1)
-				drawContext.drawText(amount.toString(), textX.toInt(), textY.toInt(), Color.WHITE.rgb, true)
+				drawContext.drawText(amount.toString(), textX.toInt(), textY.toInt(), Colors.WHITE, true)
         }
     }
 }

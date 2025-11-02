@@ -1,5 +1,6 @@
 package net.wapic.wpcmod.util.render
 
+import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.client.gl.RenderPipelines
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.util.Identifier
@@ -20,7 +21,16 @@ fun DrawContext.drawTexture(
 fun DrawContext.drawText(text: String, x: Int, y: Int, color: Int, shadow: Boolean) =
 	this.drawText(MC.textRenderer, text, x, y, color, shadow)
 
-fun DrawContext.fillWithOutline(x: Int, y: Int, width: Int, height: Int, color: Int, outlineColor: Int) {
+fun DrawContext.fillWithOutline(
+	x: Int,
+	y: Int,
+	width: Int,
+	height: Int,
+	color: ChromaColour,
+	outlineColor: ChromaColour
+) {
+	val color = color.getEffectiveColourRGB()
+	val outlineColor = outlineColor.getEffectiveColourRGB()
 	fill(x, y, x + width, y + height, color)
 	fill(x, y, x + width, y + 1, outlineColor)
 	fill(x, y + height - 1, x + width, y + height, outlineColor)
@@ -28,7 +38,8 @@ fun DrawContext.fillWithOutline(x: Int, y: Int, width: Int, height: Int, color: 
 	fill(x + width - 1, y + 1, x + width, y + height - 1, outlineColor)
 }
 
-fun DrawContext.drawBorder(x: Int, y: Int, width: Int, height: Int, color: Int) {
+fun DrawContext.drawBorder(x: Int, y: Int, width: Int, height: Int, color: ChromaColour) {
+	val color = color.getEffectiveColourRGB()
 	fill(x, y, x + width, y + 1, color)
 	fill(x, y + height - 1, x + width, y + height, color)
 	fill(x, y + 1, x + 1, y + height - 1, color)

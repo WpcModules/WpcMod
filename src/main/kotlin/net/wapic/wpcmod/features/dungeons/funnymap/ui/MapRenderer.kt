@@ -1,5 +1,6 @@
 package net.wapic.wpcmod.features.dungeons.funnymap.ui
 
+import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.util.Colors
 import net.wapic.wpcmod.WpcMod
@@ -12,6 +13,7 @@ import net.wapic.wpcmod.util.ItemUtils.skyBlockID
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.Utils.equalsOneOf
+import net.wapic.wpcmod.util.render.BLACK
 import net.wapic.wpcmod.util.render.drawBorder
 import net.wapic.wpcmod.util.render.drawTexture
 import java.awt.Color
@@ -104,7 +106,7 @@ object MapRenderer {
 				drawContext.drawTexture(mapIcons, -4, -4, 0f, 0f, 8, 8, 8, 8)
 			} else {
 				drawContext.drawTexture(player.skin.body.texturePath(), -4, -4, 8f, 8f, 8, 8, 64, 64)
-				drawContext.drawBorder(-4, -4, 8, 8, Colors.BLACK)
+				drawContext.drawBorder(-4, -4, 8, 8, ChromaColour.BLACK)
 			}
 
 			// Handle player names

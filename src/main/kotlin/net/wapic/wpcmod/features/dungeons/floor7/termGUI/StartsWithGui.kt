@@ -13,7 +13,7 @@ object StartsWithGui : TermGui() {
             val inSolution = index in currentSolution
 			val startColor = if (inSolution) config.startsWithColor else config.backgroundColor
             if (inSolution)
-				renderSlot(drawContext, index, startColor.getEffectiveColour())
+				renderSlot(drawContext, index, startColor)
         }
     }
 }

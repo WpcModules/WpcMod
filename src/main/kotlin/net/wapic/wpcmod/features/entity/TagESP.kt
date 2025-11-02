@@ -2,6 +2,7 @@ package net.wapic.wpcmod.features.entity
 
 import com.mojang.brigadier.arguments.StringArgumentType.getString
 import com.mojang.brigadier.context.CommandContext
+import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.minecraft.entity.Entity
 import net.wapic.wpcmod.WpcMod
@@ -28,9 +29,9 @@ object TagESP : MobGlowCache() {
 			if (!isTagged(entity)) continue
 
 			if (config.box)
-				worldRenderContext.drawBoundingBox(entity.boundingBox, config.color.getEffectiveColour())
+				worldRenderContext.drawBoundingBox(entity.boundingBox, config.color)
 			if (config.tracer)
-				worldRenderContext.drawTracer(entity.boundingBox.center, config.color.getEffectiveColour())
+				worldRenderContext.drawTracer(entity.boundingBox.center, config.color)
 		}
 		profiler.pop()
 	}
@@ -63,10 +64,10 @@ object TagESP : MobGlowCache() {
 		return taggedEntities.any { armorStands.first().name.string.lowercase(Locale.ENGLISH).contains(it) }
 	}
 
-	override fun compute(entity: Entity): Int {
+	override fun compute(entity: Entity): ChromaColour? {
 		return when {
-			config.glow && isTagged(entity) -> config.color.getEffectiveColourRGB()
-			else -> MobGlow.NO_GLOW
+			config.glow && isTagged(entity) -> config.color
+			else -> null
 		}
 	}
 

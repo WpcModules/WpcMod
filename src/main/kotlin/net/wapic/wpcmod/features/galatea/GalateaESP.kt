@@ -1,6 +1,6 @@
 package net.wapic.wpcmod.features.galatea
 
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents
+import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback
 import net.fabricmc.fabric.api.event.player.UseBlockCallback
 import net.minecraft.client.world.ClientWorld
@@ -18,8 +18,8 @@ import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec3d
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.ParticleEvents
+import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.events.WorldRenderEvent
-import net.wapic.wpcmod.features.entity.MobGlow
 import net.wapic.wpcmod.features.entity.MobGlowCache
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.Utils
@@ -38,7 +38,7 @@ object GalateaESP : MobGlowCache() {
 		ParticleEvents.SPAWN.register(::onParticle)
 		AttackBlockCallback.EVENT.register { _, _, _, pos, _ -> onBlockInteract(pos) }
 		UseBlockCallback.EVENT.register { _, _, _, hitResult -> onBlockInteract(hitResult.blockPos) }
-		ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register { _, _ -> forestNodes.clear() }
+		WorldChangeEvent.AFTER.register { _ -> forestNodes.clear() }
 	}
 
 	private fun stringCount(entity: DisplayEntity.ItemDisplayEntity): Boolean {
@@ -98,10 +98,10 @@ object GalateaESP : MobGlowCache() {
 			}
 
 			if (settings.box)
-				worldRenderContext.drawBoundingBox(boundingBox, settings.color.getEffectiveColour())
+				worldRenderContext.drawBoundingBox(entity.boundingBox, settings.color)
 
 			if (settings.tracer)
-				worldRenderContext.drawTracer(boundingBox.center, settings.color.getEffectiveColour())
+				worldRenderContext.drawTracer(boundingBox.center, settings.color)
 		}
 
 		profiler.swap("forest-nodes")
@@ -110,13 +110,13 @@ object GalateaESP : MobGlowCache() {
 				if (config.forestNode.box) {
 					worldRenderContext.drawBoundingBox(
 						node.withMinY(node.maxY),
-						config.forestNode.color.getEffectiveColour()
+						config.forestNode.color
 					)
 				}
 				if (config.forestNode.tracer) {
 					worldRenderContext.drawTracer(
 						node.withMinY(node.maxY).center,
-						config.forestNode.color.getEffectiveColour()
+						config.forestNode.color
 					)
 				}
 			}
@@ -124,15 +124,15 @@ object GalateaESP : MobGlowCache() {
 		profiler.pop()
 	}
 
-	override fun compute(entity: Entity): Int {
+	override fun compute(entity: Entity): ChromaColour? {
 		return when {
-			entity is ShulkerEntity && config.shulker.glow -> config.shulker.color.getEffectiveColourRGB()
-			entity is AxolotlEntity && config.axolotl.glow -> config.axolotl.color.getEffectiveColourRGB()
-			entity is FrogEntity && config.frog.glow -> config.frog.color.getEffectiveColourRGB()
-			entity is PandaEntity && config.panda.glow -> config.panda.color.getEffectiveColourRGB()
-			entity is PufferfishEntity && config.pufferfish.glow -> config.pufferfish.color.getEffectiveColourRGB()
-			entity is TurtleEntity && config.shellwise.glow -> config.shellwise.color.getEffectiveColourRGB()
-			else -> MobGlow.NO_GLOW
+			entity is ShulkerEntity && config.shulker.glow -> config.shulker.color
+			entity is AxolotlEntity && config.axolotl.glow -> config.axolotl.color
+			entity is FrogEntity && config.frog.glow -> config.frog.color
+			entity is PandaEntity && config.panda.glow -> config.panda.color
+			entity is PufferfishEntity && config.pufferfish.glow -> config.pufferfish.color
+			entity is TurtleEntity && config.shellwise.glow -> config.shellwise.color
+			else -> null
 		}
 	}
 

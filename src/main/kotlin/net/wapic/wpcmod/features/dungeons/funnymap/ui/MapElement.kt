@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.option.KeyBinding
 import net.minecraft.client.util.InputUtil
+import net.minecraft.util.Colors
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.features.dungeons.funnymap.core.DungeonPlayer
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.*
@@ -20,7 +21,6 @@ import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 import net.wapic.wpcmod.util.render.fillWithOutline
-import java.awt.Color
 
 object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 
@@ -42,8 +42,8 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 		drawContext.fillWithOutline(
 			0, 0,
 			width, height,
-			config.colors.mapBackground.getEffectiveColourRGB(),
-			config.colors.mapBorder.getEffectiveColourRGB()
+			config.colors.mapBackground,
+			config.colors.mapBorder
 		)
 
 		if (config.mapRotate) {
@@ -168,7 +168,7 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 				name,
 				xOffsetName.toInt() + halfRoomSize,
 				yOffsetName.toInt() + halfRoomSize,
-				Color.white.rgb
+				Colors.WHITE
 			)
 
 			if (config.mapCheckmark) {
