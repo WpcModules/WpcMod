@@ -14,10 +14,10 @@ import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.Utils.toFixed
 import net.wapic.wpcmod.util.render.drawText
 
-object InvincibilityTimer : SimpleHudElement("Invincibility Timer", 80, 33) {
+object InvincibilityTimer : SimpleHudElement("Invincibility Timer", 160, 33) {
 
 	private val config get() = WpcMod.config.dungeon.invincibilityTimer
-	override val isEnabled: Boolean get() = config.hud
+	override val isEnabled: Boolean get() = config.enabled
 
 	fun init() {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
@@ -40,7 +40,7 @@ object InvincibilityTimer : SimpleHudElement("Invincibility Timer", 80, 33) {
 		InvincibilityType.entries.filter { it.currentCooldown > 0 || it.activeTime > 0 }.forEachIndexed { index, type ->
 			val time =
 				if (type.activeTime > 0) "Immunity: ${(type.activeTime / 20f).toFixed()}" else "Cooldown: ${(type.currentCooldown / 20f).toFixed()}"
-			drawContext.drawText("§6${type} ${time}§6s", 2, 2 + index * 10, Colors.WHITE, true)
+			drawContext.drawText("§6${type} ${time}s", 2, 2 + index * 10, Colors.WHITE, true)
 		}
 
 		matrixStack.popMatrix()
@@ -58,7 +58,7 @@ object InvincibilityTimer : SimpleHudElement("Invincibility Timer", 80, 33) {
 	) {
 		SPIRIT(Regex("^Second Wind Activated! Your Spirit Mask saved your life!$"), 30, 600),
 		BONZO(Regex("^Your (?:. )?Bonzo's Mask saved your life!$"), 60, 3600),
-		PHOENIX(Regex("^Your Phoenix Pet saved you from certain death!$"), 80, 1200);
+		PHOENIX(Regex("^Your Phoenix Pet saved you from certain death!$"), 40, 1200);
 
 		var activeTime: Int = 0
 			private set
@@ -66,13 +66,15 @@ object InvincibilityTimer : SimpleHudElement("Invincibility Timer", 80, 33) {
 			private set
 
 		fun proc() {
-			if (config.title) ChatUtils.sendAlert(Text.literal("$name Procced"))
-			if (config.message) Utils.runCommand("pc $name Procced")
+			if (!isActive()) return
+			if (config.title) ChatUtils.sendAlert(Text.literal("${toString()} Procced"))
+			if (config.message) Utils.runCommand("pc ${toString()} Procced")
 			activeTime = maxInvincibilityTicks
 			currentCooldown = maxCooldownTicks
 		}
 
 		fun tick() {
+			if (!isEnabled) return
 			if (currentCooldown > 0) currentCooldown--
 			if (activeTime > 0) activeTime--
 		}

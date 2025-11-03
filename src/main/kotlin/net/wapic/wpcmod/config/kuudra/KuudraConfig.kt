@@ -6,7 +6,7 @@ import io.github.notenoughupdates.moulconfig.annotations.ConfigOption
 
 class KuudraConfig {
 
-	@ConfigOption(name = "Auto GFS", desc = "Automatically retrieve ender pearls from sack using /gfs")
+	@ConfigOption(name = "Auto GFS Ender Pearls", desc = "Automatically retrieve ender pearls from sack using /gfs")
 	@ConfigEditorBoolean
 	var autoGfs: Boolean = false
 

@@ -18,7 +18,7 @@ import net.wapic.wpcmod.util.ItemUtils.skyBlockID
 
 object DungeonBreaker {
 
-	private val config get() = WpcMod.config.dungeon
+	private val config get() = WpcMod.config.dungeon.dungeonbreaker
 	private const val DUNGEON_BREAKER_ID = "DUNGEONBREAKER"
 
 	fun init() {
@@ -32,7 +32,7 @@ object DungeonBreaker {
 		pos: BlockPos,
 		direction: Direction
 	): ActionResult {
-		if (!DungeonUtils.inDungeons) return ActionResult.PASS
+		if (!DungeonUtils.inDungeons || !config.enabled) return ActionResult.PASS
 		if (player.mainHandStack.skyBlockID != DUNGEON_BREAKER_ID) return ActionResult.PASS
 
 		val block = world.getBlockState(pos).block
@@ -45,7 +45,7 @@ object DungeonBreaker {
 		}
 
 		if (isPreventedBlock) {
-			ActionResult.FAIL
+			return ActionResult.FAIL
 		}
 
 		return ActionResult.PASS

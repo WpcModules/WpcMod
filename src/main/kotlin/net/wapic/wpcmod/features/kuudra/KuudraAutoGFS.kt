@@ -8,8 +8,10 @@ object KuudraAutoGFS {
 	private val config get() = WpcMod.config.kuudra
 
 	fun init() {
-		KuudraEvents.START.register {
-			if(config.autoGfs) SackUtils.getFromSack("ENDER_PEARL", 16)
-		}
+		KuudraEvents.START.register(::onKuudraStart)
+	}
+
+	fun onKuudraStart() {
+		if (config.autoGfs) SackUtils.getFromSack("ENDER_PEARL", 16)
 	}
 }

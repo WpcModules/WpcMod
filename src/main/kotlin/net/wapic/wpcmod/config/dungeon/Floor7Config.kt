@@ -16,7 +16,7 @@ class Floor7Config {
 
 	@Transient
 	@ConfigOption(name = "Terminal Simulator", desc = "Open terminal simulator, can also be accessed with /wpc term.")
-	@ConfigEditorButton
+	@ConfigEditorButton(buttonText = "Open")
 	var openTerminalSimulator: Runnable = Runnable { StartGUI.open(termSimPing.toLong()) }
 
 	@Accordion

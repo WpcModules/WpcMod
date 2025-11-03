@@ -1,8 +1,7 @@
 package net.wapic.wpcmod.config.dungeon
 
 import io.github.notenoughupdates.moulconfig.annotations.*
-import net.minecraft.block.Block
-import net.minecraft.block.Blocks
+import net.wapic.wpcmod.features.dungeons.DungeonAutoGFS
 
 class DungeonConfig {
 
@@ -18,44 +17,55 @@ class DungeonConfig {
 	@ConfigEditorBoolean
 	var spiritBear: Boolean = false
 
-	@ConfigOption(
-		name = "Prevent Breaking Blocks",
-		desc = "Prevent Breaking the selected blocks with the Dungeonbreaker"
-	)
-	@ConfigEditorDraggableList
-	var preventedDungeonbreakerBlocks = mutableListOf(
-		InteractableBlocks.LEVER,
-		InteractableBlocks.BUTTON,
-		InteractableBlocks.CHEST,
-		InteractableBlocks.SKULL
-	)
+	@Accordion
+	@ConfigOption(name = "Dungeonbreaker", desc = "")
+	var dungeonbreaker: DungeonbreakerConfig = DungeonbreakerConfig()
 
-	@ConfigOption(name = "Bigger Hitboxes", desc = "Increase the hitbox of the selected blocks")
-	@ConfigEditorDraggableList
-	var biggerHitboxes = mutableListOf(
-		InteractableBlocks.LEVER,
-		InteractableBlocks.BUTTON,
-		InteractableBlocks.CHEST,
-		InteractableBlocks.SKULL
-	)
+	class DungeonbreakerConfig {
+		@ConfigOption(
+			name = "Enable Prevent Breaking Blocks",
+			desc = "Prevents blocks in the list below from being broken with the Dungeonbreaker"
+		)
+		@ConfigEditorBoolean
+		var enabled = false
+
+		@ConfigOption(
+			name = "Prevent Breaking Blocks",
+			desc = "Prevent Breaking the selected blocks with the Dungeonbreaker"
+		)
+		@ConfigEditorDraggableList
+		var preventedDungeonbreakerBlocks = mutableListOf<InteractableBlocks>()
+	}
+
+	@Accordion
+	@ConfigOption(name = "Bigger Hitboxes", desc = "")
+	var hitboxes: HitBoxConfig = HitBoxConfig()
+
+	class HitBoxConfig {
+		@ConfigOption(name = "Enable Bigger Hitboxes", desc = "Enables bigger hitboxes on blocks selected below")
+		@ConfigEditorBoolean
+		var enabled = false
+
+		@ConfigOption(name = "Bigger Hitboxes", desc = "Increase the hitbox of the selected blocks")
+		@ConfigEditorDraggableList
+		var blocks = mutableListOf<InteractableBlocks>()
+	}
 
 	@Accordion
 	@ConfigOption(name = "Auto GFS", desc = "")
 	var autoGFS: AutoGetFromSack = AutoGetFromSack()
 
 	class AutoGetFromSack {
-
-		@ConfigOption(name = "Ender Pearls", desc = "")
+		@ConfigOption(
+			name = "Enable Auto GFS",
+			desc = "Enables automatically getting items from sack at the start of dungeon run"
+		)
 		@ConfigEditorBoolean
-		var enderPearl = false
+		var enabled = false
 
-		@ConfigOption(name = "Superboom TNT", desc = "")
-		@ConfigEditorBoolean
-		var superboomTNT = false
-
-		@ConfigOption(name = "Spirit Leaps", desc = "")
-		@ConfigEditorBoolean
-		var spiritLeap = false
+		@ConfigOption(name = "", desc = "Items to automatically get from sack")
+		@ConfigEditorDraggableList
+		var items = mutableListOf<DungeonAutoGFS.DungeonSackItems>()
 	}
 
 	@Accordion
@@ -66,24 +76,28 @@ class DungeonConfig {
 	var invincibilityTimer: InvincibilityTimerConfig = InvincibilityTimerConfig()
 
 	class InvincibilityTimerConfig {
+		@ConfigOption(name = "Enable Invincibility Timers", desc = "Enables Invincibility Timer features")
+		@ConfigEditorBoolean
+		var enabled = false
+
 		@ConfigOption(name = "Show Hud", desc = "Show cooldown in a HUD element")
 		@ConfigEditorBoolean
 		var hud = false
 
-		@ConfigOption(name = "Send Chat Message", desc = "Send a Chat message when items proc")
+		@ConfigOption(name = "Send Chat Message", desc = "Send a chat message when items activate")
 		@ConfigEditorBoolean
 		var message = false
 
-		@ConfigOption(name = "Show Title", desc = "Show a title when items proc")
+		@ConfigOption(name = "Show Title", desc = "Show a title when items activate")
 		@ConfigEditorBoolean
 		var title = false
 	}
 
-	enum class InteractableBlocks(val label: String, val block: Block) {
-		LEVER("Lever", Blocks.LEVER),
-		BUTTON("Button", Blocks.STONE_BUTTON),
-		CHEST("Chest", Blocks.CHEST),
-		SKULL("Skull", Blocks.PLAYER_HEAD);
+	enum class InteractableBlocks(val label: String) {
+		LEVER("Lever"),
+		BUTTON("Button"),
+		CHEST("Chest"),
+		SKULL("Skull");
 
 		override fun toString(): String {
 			return "§f$label"
