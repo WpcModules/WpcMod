@@ -31,10 +31,9 @@ object DungeonESP : MobGlowCache() {
 
 	private fun renderWorld(worldRenderContext: WorldRenderContext) {
 		if(!isEnabled()) return
-		val profiler = worldRenderContext.profiler()
-		profiler.push("dungeon-esp")
+		worldRenderContext.profiler.push("dungeon-esp")
 
-		for(entity in worldRenderContext.world().entities) {
+		for (entity in worldRenderContext.world.entities) {
 			val entityConfig = when {
 				entity is ArmorStandEntity && entity.headTexture.equalsOneOf(
 					HeadTextures.BLOOD_KEY,
@@ -55,7 +54,7 @@ object DungeonESP : MobGlowCache() {
 			}
 		}
 
-		profiler.swap("door esp")
+		worldRenderContext.profiler.swap("door esp")
 		if (config.witherDoor.box) {
 			val color = (if (FunnyMap.Info.keys > 0) config.witherDoor.hasKeyColor else config.witherDoor.noKeyColor)
 
@@ -65,7 +64,7 @@ object DungeonESP : MobGlowCache() {
 				worldRenderContext.drawFilledBoxWithOutline(box, color.darker(), color.brighter(), 4.0)
 			}
 		}
-		profiler.pop()
+		worldRenderContext.profiler.pop()
 	}
 
 	fun isStarredMob(entity: Entity): Boolean {

@@ -19,8 +19,7 @@ object KuudraESP : MobGlowCache() {
 
 	fun onRenderWorld(worldRenderContext: WorldRenderContext) {
 		if(!isEnabled()) return
-		val profiler = worldRenderContext.profiler()
-		profiler.push("kuudra-esp")
+		worldRenderContext.profiler.push("kuudra-esp")
 
 		KuudraUtils.kuudraEntity?.let {
 			if (config.kuudra.box)
@@ -28,7 +27,7 @@ object KuudraESP : MobGlowCache() {
 			if (config.kuudra.tracer)
 				worldRenderContext.drawTracer(it.boundingBox.center, config.kuudra.color)
 		}
-		profiler.pop()
+		worldRenderContext.profiler.pop()
 	}
 
 	override fun compute(entity: Entity): ChromaColour? {

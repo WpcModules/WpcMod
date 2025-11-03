@@ -17,7 +17,6 @@ import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -52,8 +51,7 @@ public abstract class WorldRendererMixin {
 	private void onRenderWorld(FrameGraphBuilder frameGraphBuilder, Frustum frustum, Matrix4f posMatrix, GpuBufferSlice fogBuffer, boolean renderBlockOutline, WorldRenderState state, RenderTickCounter tickCounter, Profiler profiler, CallbackInfo ci) {
 		if(world == null || client.player == null) return;
 
-		profiler.push("wpcmod_render_world");
-		FramePass framePass = frameGraphBuilder.createPass("wpcmod_render_world");
+		FramePass framePass = frameGraphBuilder.createPass("wpcmod:render_world");
 
 		this.framebufferSet.mainFramebuffer = framePass.transfer(this.framebufferSet.mainFramebuffer);
 
@@ -71,7 +69,5 @@ public abstract class WorldRendererMixin {
 			RenderSystem.outputDepthTextureOverride = null;
 			this.checkEmpty(matrixStack);
 		});
-
-		profiler.pop();
 	}
 }

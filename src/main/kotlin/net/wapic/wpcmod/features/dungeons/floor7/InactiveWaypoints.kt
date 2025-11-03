@@ -151,7 +151,7 @@ object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
 
     fun onRenderWorld(worldRenderContext: WorldRenderContext) {
         if (inactiveList.isEmpty() || DungeonUtils.getF7Phase() != DungeonUtils.F7Phase.GOLDOR || !config.enabled) return
-		WpcMod.profiler.push("InactiveWaypoints")
+		worldRenderContext.profiler.push("InactiveWaypoints")
         inactiveList.forEach {
             val name = it.name.string
             if ((name == "Inactive Terminal" && config.showTerminals) || (name == "Inactive" && config.showDevices) || (name == "Not Activated" && config.showLevers)) {
@@ -167,6 +167,6 @@ object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
             }
             it.isCustomNameVisible = !config.hideDefault
         }
-		WpcMod.profiler.pop()
+		worldRenderContext.profiler.pop()
     }
 }

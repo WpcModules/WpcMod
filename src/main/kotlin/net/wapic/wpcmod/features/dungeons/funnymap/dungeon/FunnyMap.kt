@@ -4,6 +4,8 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.client.MinecraftClient
 import net.minecraft.text.Text
+import net.minecraft.util.profiler.Profiler
+import net.minecraft.util.profiler.Profilers
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
@@ -34,37 +36,43 @@ object FunnyMap {
 
 	fun onTick(client: MinecraftClient) {
 		if (!inDungeons) return
-		WpcMod.profiler.push("FunnyMap-tick")
+		val profiler: Profiler = Profilers.get()
+		profiler.push("funnyMap")
 
+		profiler.push("findMimic")
 		if (shouldSearchMimic()) {
-			WpcMod.profiler.swap("findMimic")
 			ScanUtils.findMimic()?.let {
 				if (config.scanChatInfo) ChatUtils.sendMessage("§7Mimic Room: §c$it")
 				Info.mimicFound = true
 			}
 		}
+		profiler.pop()
 
+		profiler.push("calibrate map")
 		if (!MapUtils.calibrated) {
-			WpcMod.profiler.swap("calibrateMap")
 			MapUtils.calibrated = MapUtils.calibrateMap()
 		}
+		profiler.pop()
 
+		profiler.push("updateRooms")
 		if (MapUtils.mapDataUpdated) {
-			WpcMod.profiler.swap("updateRooms")
 			MapUpdate.updateRooms()
 			MapUtils.mapDataUpdated = false
 		}
+		profiler.pop()
 
+		profiler.push("updatePlayers")
 		TabListUtil.getDungeonTabList()?.let {
-			WpcMod.profiler.swap("updatePlayers")
 			MapUpdate.updatePlayers(it)
 		}
+		profiler.pop()
 
+		profiler.push("scan")
 		if (DungeonScan.shouldScan) {
-			WpcMod.profiler.swap("scan")
 			DungeonScan.scan()
 		}
-		WpcMod.profiler.pop()
+		profiler.pop()
+		profiler.pop()
 	}
 
 	fun onDungeonEnd() {

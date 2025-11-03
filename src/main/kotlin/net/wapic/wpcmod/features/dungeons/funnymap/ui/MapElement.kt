@@ -5,6 +5,7 @@ import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.option.KeyBinding
 import net.minecraft.client.util.InputUtil
 import net.minecraft.util.Colors
+import net.minecraft.util.profiler.Profilers
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.features.dungeons.funnymap.core.DungeonPlayer
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.*
@@ -32,9 +33,10 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 
 	override fun render(drawContext: DrawContext, deltaTicks: Float) {
 		if (!isActive()) return
-		WpcMod.profiler.push("FunnyMap-Render")
 		val player = MC.player ?: return
 		val matrixStack = drawContext.matrices
+		val profiler = Profilers.get()
+		profiler.push("funnyMap")
 
 		matrixStack.pushMatrix()
 		applyTransformations(matrixStack)
@@ -63,12 +65,13 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 			}
 		}
 
-		WpcMod.profiler.swap("rooms")
+		profiler.push("rooms")
 		renderRooms(drawContext)
-		WpcMod.profiler.swap("text")
+		profiler.swap("text")
 		renderText(drawContext)
-		WpcMod.profiler.swap("players")
+		profiler.swap("players")
 		renderPlayerHeads(drawContext)
+		profiler.pop()
 
 		if (config.mapRotate) {
 			drawContext.disableScissor()
@@ -76,7 +79,7 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 		}
 
 		matrixStack.popMatrix()
-		WpcMod.profiler.pop()
+		profiler.pop()
 	}
 
 	private fun renderRooms(drawContext: DrawContext) {

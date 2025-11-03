@@ -32,7 +32,6 @@ object InvincibilityTimer : SimpleHudElement("Invincibility Timer", 160, 33) {
 
 	override fun render(drawContext: DrawContext, deltaTicks: Float) {
 		if (!isActive()) return
-		WpcMod.profiler.push("InvincibilityTimer-render")
 		val matrixStack = drawContext.matrices
 		matrixStack.pushMatrix()
 		applyTransformations(matrixStack)
@@ -44,7 +43,6 @@ object InvincibilityTimer : SimpleHudElement("Invincibility Timer", 160, 33) {
 		}
 
 		matrixStack.popMatrix()
-		WpcMod.profiler.pop()
 	}
 
 	fun isActive(): Boolean {

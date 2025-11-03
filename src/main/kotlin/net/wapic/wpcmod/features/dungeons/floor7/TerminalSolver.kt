@@ -165,10 +165,8 @@ object TerminalSolver {
 
 	fun onDrawBackground(screen: Screen, drawContext: DrawContext, callbackInfo: CallbackInfo) {
 		if (!config.enabled || currentTerm == null || (currentTerm?.type == TerminalTypes.MELODY && config.cancelMelodySolver) || config.renderType != RenderType.CUSTOM) return
-		WpcMod.profiler.push("TerminalSolver-render-custom")
 		currentTerm?.type?.getGUI()?.render(drawContext)
 		callbackInfo.cancel()
-		WpcMod.profiler.pop()
 	}
 
 	fun onGuiRender(
@@ -197,7 +195,6 @@ object TerminalSolver {
 
 	fun drawSlot(drawContext: DrawContext, screen: Screen, slot: Slot, callbackInfo: CallbackInfo) = with(currentTerm) {
 		if (!config.enabled || config.renderType == RenderType.CUSTOM || this?.type == null || type == TerminalTypes.MELODY) return
-		WpcMod.profiler.push("TerminalSolver-render-normal")
 
         val slotIndex = slot.id
 		val inventorySize = (screen as? HandledScreen<*>)?.screenHandler?.slots?.size ?: return
@@ -263,7 +260,6 @@ object TerminalSolver {
 
 			else -> return@with
 		}
-		WpcMod.profiler.pop()
     }
 
     fun onTooltipDraw(screen: Screen, mouseX: Int, mouseY: Int, drawContext: DrawContext, callbackInfo: CallbackInfo) {

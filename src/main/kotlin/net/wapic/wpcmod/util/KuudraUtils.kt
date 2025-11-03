@@ -35,7 +35,6 @@ object KuudraUtils {
 	}
 
 	private fun onTick(world: ClientWorld) {
-		WpcMod.profiler.push("kuudra-tick")
 		if (Utils.getLocation() != Island.KUUDRA) return
 
 		if (kuudraEntity == null) {
@@ -44,7 +43,6 @@ object KuudraUtils {
 				WpcMod.logger.debug("set KuudraEntity to {}", it)
 			}
 		}
-		WpcMod.profiler.pop()
 	}
 
 	private fun onMessageReceived(message: Text, actionBar: Boolean) {

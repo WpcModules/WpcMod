@@ -12,15 +12,14 @@ import net.minecraft.util.math.Vec3d
 import net.minecraft.util.profiler.Profiler
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.VecUtils.unaryMinus
-import org.joml.Matrix4f
 
 class WorldRenderContext {
-	private val matrixStack: MatrixStack
-	private val world: ClientWorld
-	private val consumer: VertexConsumerProvider.Immediate
-	private val tickCounter: RenderTickCounter
-	private val camera: CameraRenderState
-	private val profiler: Profiler
+	val matrixStack: MatrixStack
+	val world: ClientWorld
+	val consumer: VertexConsumerProvider.Immediate
+	val tickCounter: RenderTickCounter
+	val camera: CameraRenderState
+	val profiler: Profiler
 
 	constructor(
 		matrixStack: MatrixStack,
@@ -38,41 +37,16 @@ class WorldRenderContext {
 		this.profiler = profiler
 	}
 
-	fun matrixStack(): MatrixStack {
-		return matrixStack
-	}
-
-	fun world(): ClientWorld {
-		return world
-	}
-
-	fun positionMatrix(): Matrix4f {
-		return matrixStack.peek().positionMatrix
-	}
-
-	fun tickCounter(): RenderTickCounter {
-		return tickCounter
-	}
-
-	fun camera(): CameraRenderState {
-		return camera
-	}
-
-	fun profiler(): Profiler {
-		return profiler
-	}
 
 	fun drawText(text: OrderedText, pos: Vec3d, scale: Float, depth: Boolean) {
-		val matrixStack = this.matrixStack()
-
 		matrixStack.push()
 		val scale = scale * 0.025f
 		val matrix = matrixStack.peek().positionMatrix
 
-		matrixStack.multiplyPositionMatrix(positionMatrix())
+		matrixStack.multiplyPositionMatrix(matrix)
 		matrixStack.translate(pos)
 		matrixStack.translate(-camera.pos)
-		matrixStack.multiply(camera().orientation)
+		matrixStack.multiply(camera.orientation)
 		matrixStack.scale(scale, -scale, scale)
 
 		MC.textRenderer.draw(
@@ -205,7 +179,7 @@ class WorldRenderContext {
 	) {
 
 		matrixStack.push()
-		matrixStack.multiplyPositionMatrix(positionMatrix())
+		matrixStack.multiplyPositionMatrix(matrixStack.peek().positionMatrix)
 		matrixStack.translate(-camera.pos)
 
 		val layer: RenderLayer = RenderLayers.FILLED_BOX
@@ -290,7 +264,7 @@ class WorldRenderContext {
 	) {
 
 		matrixStack.push()
-		matrixStack.multiplyPositionMatrix(positionMatrix())
+		matrixStack.multiplyPositionMatrix(matrixStack.peek().positionMatrix)
 		matrixStack.translate(-camera.pos)
 
 		val entry: MatrixStack.Entry = matrixStack.peek()

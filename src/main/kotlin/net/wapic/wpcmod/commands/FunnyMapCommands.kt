@@ -23,7 +23,7 @@ object FunnyMapCommands : Command("dungeon") {
 			Utils.copyToClipboard(data.toString())
 			ChatUtils.sendMessage("Copied room data to clipboard.", Style.EMPTY.withColor(Formatting.GREEN))
 		} else {
-			Utils.copyToClipboard(ScanUtils.getCore(pos.first, pos.second).toString())
+			Utils.copyToClipboard("${ScanUtils.getCore(pos.first, pos.second)}")
 			ChatUtils.sendMessage("§cExisting room data not found. §aCopied room core to clipboard.")
 		}
 	0

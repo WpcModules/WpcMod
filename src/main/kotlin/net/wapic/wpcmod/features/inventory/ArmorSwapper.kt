@@ -30,7 +30,6 @@ object ArmorSwapper {
 	}
 
 	private fun onTick(client: MinecraftClient) {
-		WpcMod.profiler.push("armor-swapper-tick")
 		if (armorSwapBind.wasPressed() && config.armorSwapper) {
 			Utils.addToCommandQueue("wardrobe")
 			shouldSwap = true
@@ -84,6 +83,5 @@ object ArmorSwapper {
 			shouldSwap = false
 			sorrowSlot = null
 		}
-		WpcMod.profiler.pop()
 	}
 }

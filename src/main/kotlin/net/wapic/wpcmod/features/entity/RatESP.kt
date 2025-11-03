@@ -23,16 +23,15 @@ object RatESP : MobGlowCache() {
 
 	private fun onRenderWorld(worldRenderContext: WorldRenderContext) {
 		if(!isEnabled()) return
-		val profiler = worldRenderContext.profiler()
-		profiler.push("rat-esp")
-		for (entity in worldRenderContext.world().entities) {
+		worldRenderContext.profiler.push("rat-esp")
+		for (entity in worldRenderContext.world.entities) {
 			if(!isRat(entity)) continue
 
 			val box = entity.boundingBox.withMinY(entity.boundingBox.minY + 1.4)
 			if (config.box) worldRenderContext.drawBoundingBox(box, config.color)
 			if (config.tracer) worldRenderContext.drawTracer(box.center, config.color)
 		}
-		profiler.pop()
+		worldRenderContext.profiler.pop()
 	}
 
 	override fun compute(entity: Entity): ChromaColour? {

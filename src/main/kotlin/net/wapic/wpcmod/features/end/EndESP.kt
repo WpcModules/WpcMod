@@ -58,8 +58,7 @@ object EndESP : MobGlowCache() {
 	private fun renderWorld(worldRenderContext: WorldRenderContext) {
 		if (Utils.getLocation() != Island.END) return
 
-		val profiler = worldRenderContext.profiler()
-		profiler.push("end-esp")
+		worldRenderContext.profiler.push("end-esp")
 
 		MC.world?.entities?.forEach { entity ->
 			val settings = when (entity) {
@@ -76,7 +75,7 @@ object EndESP : MobGlowCache() {
 				)
 		}
 
-		profiler.swap("end-nodes")
+		worldRenderContext.profiler.swap("end-nodes")
 		if(config.endNode.box || config.endNode.tracer) {
 			for (node in endNodes) {
 				if (config.endNode.box)
@@ -85,7 +84,7 @@ object EndESP : MobGlowCache() {
 					worldRenderContext.drawTracer(node.center, config.endNode.color)
 			}
 		}
-		profiler.pop()
+		worldRenderContext.profiler.pop()
 	}
 
 	override fun compute(entity: Entity): ChromaColour? {

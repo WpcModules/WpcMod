@@ -5,6 +5,7 @@ import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.world.ClientWorld
 import net.minecraft.text.Text
 import net.minecraft.util.Colors
+import net.minecraft.util.profiler.Profilers
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.ServerTickEvent
 import net.wapic.wpcmod.events.WorldChangeEvent
@@ -85,7 +86,8 @@ object TickTimers : SimpleHudElement("Tick Timers", 120, 12) {
 
 	override fun render(drawContext: DrawContext, deltaTicks: Float) {
 		if(!isActive()) return
-		WpcMod.profiler.push("TickTimers-render")
+		val profiler = Profilers.get()
+		profiler.push("TickTimers")
 
 		val matrixStack = drawContext.matrices
 		matrixStack.pushMatrix()
@@ -107,7 +109,7 @@ object TickTimers : SimpleHudElement("Tick Timers", 120, 12) {
 		}
 
 		matrixStack.popMatrix()
-		WpcMod.profiler.pop()
+		profiler.pop()
 	}
 
 	fun isActive(): Boolean {

@@ -53,7 +53,7 @@ object MapRenderer {
 				tr.getWidth(text[i]) / -2,
 				yTextOffset.toInt() + i * fontHeight,
 				color,
-				false
+				true
 			)
 		}
 

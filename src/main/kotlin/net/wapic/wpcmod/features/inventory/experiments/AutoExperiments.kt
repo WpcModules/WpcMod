@@ -82,7 +82,6 @@ object AutoExperiments {
 	}
 
 	private fun onScreenRender(screen: Screen) {
-		WpcMod.profiler.push("experiments-render")
 		if (Utils.getLocation() != Island.PRIVATE_ISLAND || !config.autoExperiments) return
 
 		(screen as? GenericContainerScreen)?.screenHandler?.inventory?.takeIf { it.size() >= 54 }?.let {
@@ -92,7 +91,6 @@ object AutoExperiments {
 				else -> return
 			}
 		}
-		WpcMod.profiler.pop()
 	}
 
 	private fun solveChronomatron(inventory: Inventory) {

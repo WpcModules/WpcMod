@@ -38,7 +38,7 @@ object ArrowAlign {
 
 	fun onTick(client: MinecraftClient) {
 		if (DungeonUtils.getF7Phase() != F7Phase.GOLDOR || !config.enabled) return
-		WpcMod.profiler.push("ArrowAlign-Tick")
+
 		clicksRemaining.clear()
 		if ((MC.player?.entityPos?.distanceTo(Vec3d(0.0, 120.0, 77.0)) ?: return) > 200) {
 			currentFrameRotations = null
@@ -59,7 +59,6 @@ object ArrowAlign {
 				clicksRemaining[i] = calculateClicksNeeded(currentFrameRotations?.get(i) ?: return@forEach, arr[i]).takeIf { it != 0 } ?: continue
 			}
 		}
-		WpcMod.profiler.pop()
 	}
 
 	fun onPacketSend(packet: Packet<out PacketListener>, ci: CallbackInfo) {
@@ -99,7 +98,7 @@ object ArrowAlign {
 
     fun onRenderWorld(worldRenderContext: WorldRenderContext) {
         if (clicksRemaining.isEmpty() || DungeonUtils.getF7Phase() != F7Phase.GOLDOR || !config.enabled) return
-		WpcMod.profiler.push("ArrowAlign")
+		worldRenderContext.profiler.push("ArrowAlign")
 
         clicksRemaining.forEach { (index, clickNeeded) ->
             val colorCode = when {
@@ -117,7 +116,7 @@ object ArrowAlign {
 				false
             )
         }
-		WpcMod.profiler.pop()
+		worldRenderContext.profiler.pop()
     }
 
     private fun getFrames(): List<Int> {
