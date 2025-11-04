@@ -57,7 +57,7 @@ object MapUtils {
 			halfRoomSize = roomSize / 2
 			startCorner = when (DungeonUtils.currentFloor) {
 				DungeonUtils.DungeonFloor.ENTRANCE -> Pair(22, 22)
-				DungeonUtils.DungeonFloor.FLOOR_1 -> Pair(22, 11)
+				DungeonUtils.DungeonFloor.FLOOR_1, DungeonUtils.DungeonFloor.MASTER_MODE_FLOOR_1 -> Pair(22, 11)
 				DungeonUtils.DungeonFloor.FLOOR_2, DungeonUtils.DungeonFloor.FLOOR_3 -> Pair(11, 11)
 
 				else -> {
