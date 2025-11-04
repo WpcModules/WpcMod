@@ -8,11 +8,13 @@
 		"Wapic"
 	],
   "contributors": [
-    "ValsCSGO"
+    "ValsCSGO",
+    "AZRockiesFan"
   ],
 	"contact": {
 		"homepage": "https://wpcmod.wapic.net/",
-		"sources": "https://github.com/WpcModules/WpcMod"
+      "sources": "https://github.com/WpcModules/WpcMod",
+      "issues": "https://github.com/WpcModules/WpcMod/issues"
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/wpcmod/icon.png",
@@ -30,7 +32,7 @@
 	],
 	"depends": {
       "fabricloader": ">=0.17.3",
-		"minecraft": "~1.21.5",
+      "minecraft": "~1.21.10",
 		"java": ">=21",
 		"fabric-api": "*",
       "fabric-language-kotlin": "*"
