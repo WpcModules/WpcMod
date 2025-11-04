@@ -7,25 +7,28 @@ import net.wapic.wpcmod.util.Utils
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-object AutoPartyAccept {
+object AutoAcceptPartyInvite {
 	private val config get() = WpcMod.config.chat.autoPartyAccept
 
 	private val invitePattern: Pattern = Pattern.compile(
 		"-----------------------------------------------------\n" +
-				"(\\[\\w+\\+?\\]\\s)?(?<name>\\w{3,16}) has invited you to join their party!\n" +
+				"(\\[(MVP|VIP)\\+{0,2}]\\s)?(?<name>\\w{3,16}) has invited you to join their party!\n" +
 				"You have 60 seconds to accept. Click here to join!\n" +
 				"-----------------------------------------------------")
 
 	fun init() {
-		ClientReceiveMessageEvents.GAME.register(this::onMessageReceived)
+		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 	}
 
 	private fun onMessageReceived(message: Text, actionBar: Boolean) {
-		val inviteMatcher: Matcher = invitePattern.matcher(message.string)
 		if(actionBar) return
-		if(inviteMatcher.find()) {
-			val players = config.split(',').map { it.trim().uppercase() }
-			if(!players.contains(inviteMatcher.group("name").uppercase())) return
+
+		val inviteMatcher: Matcher = invitePattern.matcher(message.string)
+		if (!inviteMatcher.matches()) return
+
+		val players = config.uppercase().split(',')
+
+		if (inviteMatcher.group("name").uppercase() in players) {
 			WpcMod.logger.info("Accepting invite from ${inviteMatcher.group("name")}")
 			Utils.addToCommandQueue("party accept " + inviteMatcher.group("name").trim())
 		}
