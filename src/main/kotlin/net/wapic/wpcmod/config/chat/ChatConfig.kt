@@ -19,6 +19,10 @@ class ChatConfig {
 	@ConfigEditorSlider(minStep = 1f, minValue = 1f, maxValue = 300f)
 	var compactTimeout: Float = 60f
 
+	@ConfigOption(name = "Chat Emotes", desc = "Replace emotes to be used in chat (i.e :skull:, :cute::, o/, o7)")
+	@ConfigEditorBoolean
+	var chatEmotes: Boolean = false
+
 	@Category(name = "Spam Filter", desc = "Configure how to handle chat spam")
 	var spam: SpamConfig = SpamConfig()
 }
