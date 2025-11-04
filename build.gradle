@@ -138,8 +138,8 @@ tasks.assemble.dependsOn(tasks.remapJar)
 publishing {
 	publications {
 		create("mavenJava", MavenPublication) {
-			artifactId = project.archives_base_name
-			groupId = project.maven_group
+            groupId = project.maven_group
+            artifactId = project.archives_base_name + "-mc-" + project.minecraft_version
 			version = project.mod_version + project.properties.getOrDefault("sha", "")
 			from components.java
 		}

@@ -77,7 +77,11 @@ object WpcMod : ModInitializer {
 	val coroutineScope = CoroutineScope(EmptyCoroutineContext + CoroutineName("WpcMod") + SupervisorJob(globalJob))
 
 	val updateContext = UpdateContext(
-		UpdateSource.mavenSource("https://maven.wapic.net/releases", "net.wapic.$MOD_ID", MOD_ID),
+		UpdateSource.mavenSource(
+			"https://maven.wapic.net/releases",
+			"net.wapic.$MOD_ID",
+			"$MOD_ID-mc-${FabricLoader.getInstance().rawGameVersion}"
+		),
 		UpdateTarget.deleteAndSaveInTheSameFolder(WpcMod::class.java),
 		CurrentVersion.ofTag(version.friendlyString),
 		MOD_ID
