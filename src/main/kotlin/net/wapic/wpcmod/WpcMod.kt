@@ -26,6 +26,7 @@ import net.wapic.wpcmod.commands.*
 import net.wapic.wpcmod.config.ConfigManager
 import net.wapic.wpcmod.config.WpcConfig
 import net.wapic.wpcmod.features.chat.ChatEmotes
+import net.wapic.wpcmod.features.chat.AutoPartyAccept
 import net.wapic.wpcmod.features.chat.SpamFilter
 import net.wapic.wpcmod.features.dev.SkyBlockID
 import net.wapic.wpcmod.features.dungeons.*
@@ -179,6 +180,7 @@ object WpcMod : ModInitializer {
 		// Chat
 		SpamFilter.init()
 		ChatEmotes.init()
+		AutoPartyAccept.init()
 
 		// Inventory
 		ArmorSwapper.init()
