@@ -10,8 +10,7 @@ import io.github.notenoughupdates.moulconfig.gui.KeyboardEvent
 import io.github.notenoughupdates.moulconfig.gui.MouseEvent
 import io.github.notenoughupdates.moulconfig.observer.GetSetter
 import net.minecraft.util.math.MathHelper.clamp
-import kotlin.math.max
-import kotlin.math.min
+import kotlin.math.round
 import kotlin.math.roundToInt
 
 class SliderComponentWithText(
@@ -71,11 +70,9 @@ class SliderComponentWithText(
 	}
 
 	fun setValueFromContext(context: GuiImmediateContext) {
-		var v: Float = context.mouseX * (maxValue - minValue) / (context.width) + minValue
-		v = min(v.toDouble(), maxValue.toDouble()).toFloat()
-		v = max(v.toDouble(), minValue.toDouble()).toFloat()
-		v = (v / minStep).roundToInt() * minStep
-		value.set(v)
+		val v: Float = context.mouseX * (maxValue - minValue) / (context.width) + minValue
+		val newValue = (clamp(v, minValue, maxValue) / minStep).roundToInt() * minStep
+		value.set(round(newValue * 100) / 100)
 	}
 
 	override fun mouseEvent(mouseEvent: MouseEvent, context: GuiImmediateContext): Boolean {
@@ -94,12 +91,14 @@ class SliderComponentWithText(
 		if (event is KeyboardEvent.KeyPressed && context.isHovered && event.pressed) {
 			when (event.keycode) {
 				KeyboardConstants.left -> {
-					value.set(clamp(value.get() - minStep, minValue, maxValue))
+					val newValue = clamp(value.get() - minStep, minValue, maxValue)
+					value.set(round(newValue * 100) / 100)
 					return true
 				}
 
 				KeyboardConstants.right -> {
-					value.set(clamp(value.get() + minStep, minValue, maxValue))
+					val newValue = clamp(value.get() + minStep, minValue, maxValue)
+					value.set(round(newValue * 100) / 100)
 					return true
 				}
 			}
