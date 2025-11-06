@@ -267,7 +267,8 @@
     "cores": [
       161968300,
       -1547514719,
-      -1679108141
+      -1679108141,
+      -1007032812
     ],
     "crypts": 0,
     "secrets": 8,
@@ -335,9 +336,10 @@
     "name": "Redstone Crypt",
     "type": "NORMAL",
     "cores": [
-      -1348779410
+      -1348779410,
+      -903058542
     ],
-    "crypts": 0,
+    "crypts": 1,
     "secrets": 3,
     "trappedChests": 0
   },

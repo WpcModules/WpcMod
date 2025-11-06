@@ -1,16 +1,21 @@
 package net.wapic.wpcmod.mixin;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.Framebuffer;
 import net.minecraft.client.render.*;
+import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.minecraft.client.render.state.WorldRenderState;
 import net.minecraft.client.util.Handle;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.profiler.Profiler;
 import net.wapic.wpcmod.events.WorldRenderEvent;
+import net.wapic.wpcmod.features.entity.MobGlow;
 import net.wapic.wpcmod.util.render.WorldRenderContext;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
@@ -69,5 +74,14 @@ public abstract class WorldRendererMixin {
 			RenderSystem.outputDepthTextureOverride = null;
 			this.checkEmpty(matrixStack);
 		});
+	}
+
+	@WrapOperation(method = "fillEntityRenderStates", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/WorldRenderer;getAndUpdateRenderState(Lnet/minecraft/entity/Entity;F)Lnet/minecraft/client/render/entity/state/EntityRenderState;"))
+	private EntityRenderState shouldMobGlow(WorldRenderer instance, Entity entity, float tickProgress, Operation<EntityRenderState> original) {
+		EntityRenderState renderState = original.call(instance, entity, tickProgress);
+		boolean shouldGlow = MobGlow.INSTANCE.hasOrCompute(entity);
+		if (shouldGlow)
+			renderState.outlineColor = MobGlow.INSTANCE.getMobGlowOrDefault(entity, renderState.outlineColor);
+		return renderState;
 	}
 }

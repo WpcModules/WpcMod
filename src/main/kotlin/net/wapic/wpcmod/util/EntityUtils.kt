@@ -18,7 +18,7 @@ object EntityUtils {
 	fun getArmorStandsByEntity(entity: Entity): List<ArmorStandEntity> {
 		return entity.entityWorld.getEntitiesByClass(
 			ArmorStandEntity::class.java,
-			entity.boundingBox.expand(0.0, 2.0, 0.0),
+			entity.boundingBox.expand(0.0, 1.0, 0.0),
 			EntityPredicates.NOT_MOUNTED
 		)
 	}

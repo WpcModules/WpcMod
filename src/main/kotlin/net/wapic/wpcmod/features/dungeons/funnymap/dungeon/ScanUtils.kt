@@ -96,7 +96,8 @@ object ScanUtils {
 						Blocks.ACACIA_PLANKS,
 						Blocks.DARK_OAK_PLANKS,
 						Blocks.CHEST,
-						Blocks.TRAPPED_CHEST
+						Blocks.TRAPPED_CHEST,
+						Blocks.LEVER,
 					)
 				) {
 					continue
