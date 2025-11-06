@@ -35,8 +35,9 @@ import kotlin.math.roundToInt
 
 object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 
-	override val isEnabled: Boolean get() = config.enabled
 	private val config get() = WpcMod.config.dungeon.scoreCalculation
+	override val isEnabled: Boolean get() = config.enabled
+	override val isActive: Boolean get() = isEnabled && DungeonUtils.inDungeons
 
 	private val deathsTabPattern = Regex("Team Deaths: (?<deaths>\\d+)")
 	private val missingPuzzlePattern = Regex("Puzzles: \\((?<count>\\d)\\)")
@@ -241,7 +242,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 	}
 
 	private fun onBlockChange(pos: BlockPos, old: BlockState, new: BlockState) {
-		if (!isActive()) return
+		if (!isActive) return
 		if (old.block == Blocks.TRAPPED_CHEST && new.block == Blocks.AIR) {
 			mimicOpenTime = Util.getMeasuringTimeMs()
 			mimicPos = pos
@@ -261,7 +262,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 	}
 
 	private fun onEntityDespawn(entity: Entity) {
-		if (!isActive()) return
+		if (!isActive) return
 		if (entity is ZombieEntity && entity.isBaby && entity.headTexture == HeadTextures.MIMIC) {
 			setMimicDead(config.mimicMessage)
 		}
@@ -276,13 +277,13 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 	}
 
 	private fun onPuzzleReset() {
-		if(!isActive()) return
+		if (!isActive) return
 		missingPuzzles = (missingPuzzles + 1)
 		failedPuzzles = (failedPuzzles - 1).coerceAtLeast(0)
 	}
 
 	private fun onScoreboardChange(line: String) {
-		if(!isActive()) return
+		if (!isActive) return
 
 		if (line.startsWith("Cleared: ")) {
 			val matcher = dungeonClearedPattern.find(line)
@@ -294,7 +295,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 	}
 
 	private fun onPlayerListChange(entries: List<PlayerListS2CPacket.Entry>) {
-		if(!isActive()) return
+		if (!isActive) return
 
 		entries.forEach { playerData ->
 			val name = playerData.displayName?.string ?: playerData.profile?.name ?: return@forEach
@@ -358,7 +359,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 	}
 
 	private fun onMessageReceived(text: Text, actionBar: Boolean) {
-		if (!isActive() || actionBar) return
+		if (!isActive || actionBar) return
 		val message = text.string
 
 		if (message == "A Prince falls. +1 Bonus Score") {
@@ -376,7 +377,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 	}
 
 	private fun onTick(client: MinecraftClient) {
-		if (!isActive()) return
+		if (!isActive) return
 
 		if (isMimicFloor) checkMimicDead(client)
 
@@ -397,7 +398,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 	}
 
 	override fun render(drawContext: DrawContext, deltaTicks: Float) {
-		if (!isActive() || config.scoreHudType == ScoreHudType.DISABLED) return
+		if (!isActive || config.scoreHudType == ScoreHudType.DISABLED) return
 		drawContext.matrices.pushMatrix()
 		applyTransformations(drawContext.matrices)
 
@@ -439,10 +440,5 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 		}
 
 		drawContext.matrices.popMatrix()
-	}
-
-
-	fun isActive(): Boolean {
-		return isEnabled && DungeonUtils.inDungeons
 	}
 }

@@ -17,8 +17,9 @@ import net.wapic.wpcmod.util.Utils.toFixed
 object TickTimers : SimpleHudElement("Tick Timers", 120, 12) {
 	private val config get() = WpcMod.config.dungeon.floor7.tickTimers
 	override val isEnabled: Boolean get() = config.enabled
+	override val isActive: Boolean get() = isEnabled && DungeonUtils.getF7Phase() != DungeonUtils.F7Phase.UNKNOWN
 
-    private val necronRegex = Regex("^\\[BOSS] Necron: I'm afraid, your journey ends now\\.$")
+	private val necronRegex = Regex("^\\[BOSS] Necron: I'm afraid, your journey ends now\\.$")
     private val goldorRegex = Regex("^\\[BOSS] Goldor: Who dares trespass into my domain\\?$")
     private val coreOpeningRegex = Regex("^The Core entrance is opening!$")
     private val stormStartRegex = Regex("^\\[BOSS] Storm: I should have known that I stood no chance\\.$")
@@ -37,7 +38,7 @@ object TickTimers : SimpleHudElement("Tick Timers", 120, 12) {
 	}
 
 	fun onServerTick() {
-		if (!isActive()) return
+		if (!isActive) return
 
 		if (goldorTickTime == 0 && goldorStartTime <= 0) goldorTickTime = 60
 		if (goldorStartTime >= 0) goldorStartTime--
@@ -48,7 +49,7 @@ object TickTimers : SimpleHudElement("Tick Timers", 120, 12) {
     }
 
 	fun onMessageReceived(text: Text, actionBar: Boolean) {
-		if (actionBar || !isActive()) return
+		if (actionBar || !isActive) return
 
 		when {
 			text.string.matches(necronRegex) -> necronTime = 60
@@ -85,7 +86,7 @@ object TickTimers : SimpleHudElement("Tick Timers", 120, 12) {
     }
 
 	override fun render(drawContext: DrawContext, deltaTicks: Float) {
-		if(!isActive()) return
+		if (!isActive) return
 		val profiler = Profilers.get()
 		profiler.push("TickTimers")
 
@@ -110,10 +111,6 @@ object TickTimers : SimpleHudElement("Tick Timers", 120, 12) {
 
 		matrixStack.popMatrix()
 		profiler.pop()
-	}
-
-	fun isActive(): Boolean {
-		return isEnabled && DungeonUtils.getF7Phase() != DungeonUtils.F7Phase.UNKNOWN
 	}
 
 }

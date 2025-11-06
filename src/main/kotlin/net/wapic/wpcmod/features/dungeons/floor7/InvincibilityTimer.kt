@@ -18,6 +18,7 @@ object InvincibilityTimer : SimpleHudElement("Invincibility Timer", 160, 33) {
 
 	private val config get() = WpcMod.config.dungeon.invincibilityTimer
 	override val isEnabled: Boolean get() = config.enabled
+	override val isActive: Boolean get() = DungeonUtils.inDungeons && isEnabled
 
 	fun init() {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
@@ -26,12 +27,12 @@ object InvincibilityTimer : SimpleHudElement("Invincibility Timer", 160, 33) {
 	}
 
 	fun onMessageReceived(text: Text, actionBar: Boolean) {
-		if (!isActive() || actionBar) return
+		if (!isActive || actionBar) return
 		InvincibilityType.entries.firstOrNull { it.regex.matches(text.string) }?.proc()
 	}
 
 	override fun render(drawContext: DrawContext, deltaTicks: Float) {
-		if (!isActive()) return
+		if (!isActive) return
 		val matrixStack = drawContext.matrices
 		matrixStack.pushMatrix()
 		applyTransformations(matrixStack)
@@ -43,10 +44,6 @@ object InvincibilityTimer : SimpleHudElement("Invincibility Timer", 160, 33) {
 		}
 
 		matrixStack.popMatrix()
-	}
-
-	fun isActive(): Boolean {
-		return DungeonUtils.inDungeons && isEnabled
 	}
 
 	private enum class InvincibilityType(
@@ -64,7 +61,7 @@ object InvincibilityTimer : SimpleHudElement("Invincibility Timer", 160, 33) {
 			private set
 
 		fun proc() {
-			if (!isActive()) return
+			if (!isActive) return
 			if (config.title) ChatUtils.sendAlert(Text.literal("${toString()} Procced"))
 			if (config.message) Utils.runCommand("pc ${toString()} Procced")
 			activeTime = maxInvincibilityTicks

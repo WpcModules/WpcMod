@@ -28,11 +28,12 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 	private val legitPeekBind: KeyBinding = KeyBindingHelper.registerKeyBinding(KeyBinding("Legit Peek", InputUtil.GLFW_KEY_J, WpcMod.category))
 	private val config get() = WpcMod.config.dungeon.funnyMap
 	override val isEnabled: Boolean get() = config.mapEnabled
+	override val isActive: Boolean get() = (isEnabled && DungeonUtils.inDungeons) && (config.mapHideInBoss && !DungeonUtils.bossSpawned)
 
 	val legitRender: Boolean get() = config.legitMode && !legitPeekBind.isPressed
 
 	override fun render(drawContext: DrawContext, deltaTicks: Float) {
-		if (!isActive()) return
+		if (!isActive) return
 		val player = MC.player ?: return
 		val matrixStack = drawContext.matrices
 		val profiler = Profilers.get()
@@ -200,10 +201,5 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 		}
 	}
 
-	fun isActive(): Boolean {
-		if (!isEnabled || !DungeonUtils.inDungeons) return false
-		if (DungeonUtils.bossSpawned && config.mapHideInBoss) return false
-		return true
-	}
 
 }

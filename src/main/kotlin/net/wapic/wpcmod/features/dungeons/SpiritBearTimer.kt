@@ -49,9 +49,9 @@ object SpiritBearTimer : SimpleHudElement("Spirit Bear Timer", 90, 12) {
 		applyTransformations(matrixStack)
 
 		drawContext.drawText(
-			"Spirit Bear: ${(spawnTime / 20f).toFixed()}s",
+			"§dSpirit Bear: ${(spawnTime / 20f).toFixed()}s",
 			x = 2, y = 2,
-			Colors.LIGHT_PINK,
+			Colors.WHITE,
 			shadow = true
 		)
 

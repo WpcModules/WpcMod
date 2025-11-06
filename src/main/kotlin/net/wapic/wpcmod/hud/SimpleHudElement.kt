@@ -21,6 +21,7 @@ open class SimpleHudElement(
 	@Expose var x = 0f
 	@Expose var y = 0f
 	open val isEnabled = false
+	open val isActive = false
 
 	init {
 		val identifier = modIdentifier(label.lowercase(Locale.US).replace(" ", "_"))

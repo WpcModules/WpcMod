@@ -16,9 +16,10 @@ object KuudraDisplay : SimpleHudElement("Kuudra Display", 75, 11) {
 
 	private val config get() = WpcMod.config.kuudra
 	override val isEnabled: Boolean get() = config.healthDisplay
+	override val isActive: Boolean get() = isEnabled && Utils.getLocation() == Island.KUUDRA
 
 	override fun render(drawContext: DrawContext, deltaTicks: Float) {
-		if (!isActive()) return
+		if (!isActive) return
 
 		val matrixStack = drawContext.matrices
 		matrixStack.pushMatrix()
@@ -45,9 +46,4 @@ object KuudraDisplay : SimpleHudElement("Kuudra Display", 75, 11) {
 
 		matrixStack.popMatrix()
 	}
-
-	fun isActive(): Boolean {
-		return isEnabled && Utils.getLocation() == Island.KUUDRA
-	}
-
 }
