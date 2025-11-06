@@ -2,11 +2,16 @@ package net.wapic.wpcmod.features.entity
 
 import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
+import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey
 import net.minecraft.entity.Entity
 
 object MobGlow {
 
 	private val CACHE = hashMapOf<Entity, ChromaColour>()
+
+	@JvmField
+	val ENTITY_HAS_CUSTOM_GLOW: RenderStateDataKey<Boolean> =
+		RenderStateDataKey.create { "WpcMod entity has custom glow" }
 	val ADDERS = mutableListOf<MobGlowCache>()
 
 	fun init() {
