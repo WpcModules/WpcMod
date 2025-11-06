@@ -40,10 +40,12 @@ class FunnyConfig {
 	@ConfigEditorDropdown
 	var playerHeads: PlayerNameType = PlayerNameType.OFF
 
-	enum class PlayerNameType {
-		OFF,
-		HOLDING_LEAP,
-		ALWAYS;
+	enum class PlayerNameType(val label: String) {
+		OFF("Off"),
+		HOLDING_LEAP("Holding Leap"),
+		ALWAYS("Always");
+
+		override fun toString(): String = label
 	}
 
 	@ConfigOption(name = "Vanilla Head Marker", desc = "Uses the vanilla head marker for yourself.")

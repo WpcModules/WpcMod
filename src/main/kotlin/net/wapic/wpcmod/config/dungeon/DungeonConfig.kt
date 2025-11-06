@@ -99,9 +99,7 @@ class DungeonConfig {
 		CHEST("Chest"),
 		SKULL("Skull");
 
-		override fun toString(): String {
-			return "§f$label"
-		}
+		override fun toString(): String = "§f$label"
 	}
 
 	@Category(name = "ESP", desc = "Configure ESP on Dungeon mobs")

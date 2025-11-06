@@ -16,9 +16,7 @@ class GeneralConfig {
 	@Transient
 	@ConfigOption(name = "Command Keybind Editor", desc = "Open the screen to manage command keybinds")
 	@ConfigEditorButton(buttonText = "Open")
-	val shortcutEditor = Runnable {
-		MinecraftClient.getInstance().setScreen(ShortcutScreen())
-	}
+	val shortcutEditor = Runnable { MinecraftClient.getInstance().setScreen(ShortcutScreen()) }
 
 	@Category(name = "ESP", desc = "Configure ESP Features")
 	var esp: ESPConfig = ESPConfig()

@@ -26,8 +26,6 @@ class SpamConfig {
 		HIDE("Hide"),
 		NOTIFICATION("Notify");
 
-		override fun toString(): String {
-			return label
-		}
+		override fun toString(): String = label
 	}
 }

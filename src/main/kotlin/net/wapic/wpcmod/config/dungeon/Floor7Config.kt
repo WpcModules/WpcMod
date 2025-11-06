@@ -103,10 +103,7 @@ class Floor7Config {
 		@ConfigEditorBoolean
 		var showNumbers: Boolean = true
 
-		@ConfigOption(
-			name = "Reload Threshold",
-			desc = "The amount of time in milliseconds before the terminal reloads."
-		)
+		@ConfigOption(name = "Reload Threshold", desc = "Time in milliseconds before the terminal refreshes.")
 		@ConfigEditorSlider(minValue = 300f, maxValue = 1000f, minStep = 10f)
 		var terminalReloadThreshold: Float = 600f
 
@@ -174,9 +171,11 @@ class Floor7Config {
 		@ConfigEditorColour
 		var melodyPointerColor = ChromaColour.fromRGB(0, 255, 0, 0, 255)
 
-		enum class RenderType {
-			NORMAL,
-			CUSTOM
+		enum class RenderType(val label: String) {
+			NORMAL("Normal"),
+			CUSTOM("Custom");
+
+			override fun toString(): String = label
 		}
 	}
 
