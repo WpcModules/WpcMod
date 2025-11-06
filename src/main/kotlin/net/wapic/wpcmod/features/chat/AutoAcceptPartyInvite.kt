@@ -14,7 +14,8 @@ object AutoAcceptPartyInvite {
 		"-----------------------------------------------------\n" +
 				"(\\[(MVP|VIP)\\+{0,2}]\\s)?(?<name>\\w{3,16}) has invited you to join their party!\n" +
 				"You have 60 seconds to accept. Click here to join!\n" +
-				"-----------------------------------------------------")
+				"-----------------------------------------------------"
+	)
 
 	fun init() {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
