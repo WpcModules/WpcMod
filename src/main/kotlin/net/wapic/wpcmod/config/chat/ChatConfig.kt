@@ -1,10 +1,6 @@
 package net.wapic.wpcmod.config.chat
 
-import io.github.notenoughupdates.moulconfig.annotations.Category
-import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorBoolean
-import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorSlider
-import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorText
-import io.github.notenoughupdates.moulconfig.annotations.ConfigOption
+import io.github.notenoughupdates.moulconfig.annotations.*
 
 class ChatConfig {
 
@@ -24,10 +20,10 @@ class ChatConfig {
 	@ConfigEditorBoolean
 	var chatEmotes: Boolean = false
 
-	@Category(name = "Spam Filter", desc = "Configure how to handle chat spam")
-	var spam: SpamConfig = SpamConfig()
-
 	@ConfigOption(name = "Auto Party Accept", desc = "Auto accept party invites from people in list (comma separated)")
 	@ConfigEditorText
 	var autoPartyAccept: String = ""
+
+	@Category(name = "Spam Filter", desc = "Configure how to handle chat spam")
+	var spam: SpamConfig = SpamConfig()
 }
