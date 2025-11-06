@@ -23,6 +23,7 @@ object SpiritBearTimer : SimpleHudElement("Spirit Bear Timer", 90, 12) {
 
 	private val config get() = WpcMod.config.dungeon
 	override val isEnabled: Boolean get() = config.spiritBear
+	override val isActive: Boolean get() = isEnabled && isThornFloor && bossSpawned
 
 	private const val SPAWN_TIME_IN_TICKS: Int = 68 // Ticks
 
@@ -35,7 +36,7 @@ object SpiritBearTimer : SimpleHudElement("Spirit Bear Timer", 90, 12) {
 		BlockEvents.CHANGE.register(::onBlockChange)
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 		ServerTickEvent.EVENT.register {
-			if (spawnTime > 0 && isActive()) spawnTime--
+			if (spawnTime > 0 && isActive) spawnTime--
 		}
 		WorldChangeEvent.BEFORE.register {
 			spawnTime = 0
@@ -43,7 +44,7 @@ object SpiritBearTimer : SimpleHudElement("Spirit Bear Timer", 90, 12) {
 	}
 
 	override fun render(drawContext: DrawContext, deltaTicks: Float) {
-		if (!isActive() || spawnTime <= 0) return
+		if (!isActive || spawnTime <= 0) return
 		val matrixStack = drawContext.matrices
 		matrixStack.pushMatrix()
 		applyTransformations(matrixStack)
@@ -59,7 +60,7 @@ object SpiritBearTimer : SimpleHudElement("Spirit Bear Timer", 90, 12) {
 	}
 
 	fun onBlockChange(pos: BlockPos, oldState: BlockState, newState: BlockState) {
-		if (!isActive()) return
+		if (!isActive) return
 
 		if (pos == lastBlockPos && newState.block == Blocks.SEA_LANTERN) {
 			spawnTime = SPAWN_TIME_IN_TICKS
@@ -67,11 +68,7 @@ object SpiritBearTimer : SimpleHudElement("Spirit Bear Timer", 90, 12) {
 	}
 
 	fun onMessageReceived(text: Text, actionBar: Boolean) {
-		if (!isActive() || actionBar) return
+		if (!isActive || actionBar) return
 		if (text.string == "A Spirit Bear has appeared!") spawnTime = 0
-	}
-
-	fun isActive(): Boolean {
-		return isEnabled && isThornFloor && bossSpawned
 	}
 }
