@@ -99,7 +99,7 @@ class Floor7Config {
 		@ConfigEditorBoolean
 		var cancelMelodySolver: Boolean = false
 
-		@ConfigOption(name = "Show Numbers",	desc = "Shows numbers in the order terminal.")
+		@ConfigOption(name = "Show Numbers", desc = "Shows numbers in the order terminal.")
 		@ConfigEditorBoolean
 		var showNumbers: Boolean = true
 
@@ -110,13 +110,13 @@ class Floor7Config {
 		@ConfigEditorSlider(minValue = 300f, maxValue = 1000f, minStep = 10f)
 		var terminalReloadThreshold: Float = 600f
 
-		@ConfigOption(name = "Custom Term Size", desc = "The size of the custom terminal GUI.")
-		@ConfigEditorSlider(minValue = 0.5f, maxValue = 3f, minStep = 0.1f)
-		var customTermSize: Float = 1f
+		@ConfigOption(name = "Custom Term Scale", desc = "The scale of the custom terminal GUI")
+		@ConfigEditorSlider(minValue = 0.5f, maxValue = 6f, minStep = 0.1f)
+		var customTermSize: Float = 2f
 
 		@ConfigOption(name = "Gap",	desc = "The gap between the slots in the custom terminal gui.")
-		@ConfigEditorSlider(minValue = 0f, maxValue = 15f, minStep = 1f)
-		var gap: Float = 5f
+		@ConfigEditorSlider(minValue = 0f, maxValue = 8f, minStep = 1f)
+		var gap: Float = 2f
 
 		@ConfigOption(name = "Background", desc = "Background color of the terminal solver.")
 		@ConfigEditorColour

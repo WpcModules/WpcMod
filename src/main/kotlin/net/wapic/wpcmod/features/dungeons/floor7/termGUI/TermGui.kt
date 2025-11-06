@@ -7,46 +7,54 @@ import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.dungeons.floor7.TerminalSolver
 import net.wapic.wpcmod.util.MC
-import kotlin.math.ceil
-import kotlin.math.floor
 
 abstract class TermGui {
     protected val itemIndexMap: MutableMap<Int, Box> = mutableMapOf()
     inline val currentSolution get() = TerminalSolver.currentTerm?.solution.orEmpty()
 
 	val config get() = WpcMod.config.dungeon.floor7.terminalSolvers
+	val slotSize: Int = 16
 
     abstract fun renderTerminal(drawContext: DrawContext, slotCount: Int)
 
     protected fun renderBackground(drawContext: DrawContext, slotCount: Int, slotWidth: Int) {
-		val slotSize = 40f * config.customTermSize
-        val gap = config.gap * config.customTermSize
-        val totalSlotSpace = slotSize + gap
+		val matrixStack = drawContext.matrices
+		val totalSlotSpace = (slotSize + config.gap) * config.customTermSize
 
-        val backgroundStartX = (drawContext.scaledWindowWidth / 2f + -(slotWidth / 2f) * totalSlotSpace - 7.5f * config.customTermSize).toInt()
-        val backgroundStartY = (drawContext.scaledWindowHeight / 2f + ((-getRowOffset(slotCount) + 0.5f) * totalSlotSpace) - 7.5f * config.customTermSize).toInt()
-        val backgroundWidth = (slotWidth * totalSlotSpace + 15f * config.customTermSize).toInt()
-        val backgroundHeight = (((slotCount) / 9) * totalSlotSpace + 15f * config.customTermSize).toInt()
+		val width = (slotWidth + 1) * totalSlotSpace
+		val height = (slotCount / 9 + 1) * totalSlotSpace
+		val x = (drawContext.scaledWindowWidth - width) / 2
+		val y = (drawContext.scaledWindowHeight - height) / 2 + getRowOffset(slotCount) * config.customTermSize
 
-        drawContext.fill(backgroundStartX, backgroundStartY, backgroundStartX + backgroundWidth,backgroundStartY + backgroundHeight, config.backgroundColor.getEffectiveColourRGB())
+		matrixStack.pushMatrix()
+		matrixStack.translate(x, y)
+
+		drawContext.fill(0, 0, width.toInt(), height.toInt(), config.backgroundColor.getEffectiveColourRGB())
+
+		matrixStack.popMatrix()
     }
 
 	protected fun renderSlot(drawContext: DrawContext, index: Int, color: ChromaColour): Pair<Float, Float> {
-		val slotSize = 40f * config.customTermSize
-        val totalSlotSpace = slotSize + config.gap * config.customTermSize
+		val matrixStack = drawContext.matrices
+		val scaledSlotSize = slotSize * config.customTermSize
+		val totalSlotSpace = scaledSlotSize + config.gap * config.customTermSize
 
-        val x = (index % 9 - 4) * totalSlotSpace + drawContext.scaledWindowWidth / 2f - slotSize / 2
-        val y = (index / 9 - 2) * totalSlotSpace + drawContext.scaledWindowHeight / 2f - slotSize / 2
+		val x = (index % 9 - 4) * totalSlotSpace + (drawContext.scaledWindowWidth - scaledSlotSize) / 2
+		val y = (index / 9 - 2) * totalSlotSpace + (drawContext.scaledWindowHeight - scaledSlotSize) / 2
 
-        itemIndexMap[index] = Box(x, y, slotSize, slotSize)
+		itemIndexMap[index] = Box(x, y, scaledSlotSize, scaledSlotSize)
+
+		matrixStack.pushMatrix()
+		matrixStack.translate(x, y)
+		matrixStack.scale(config.customTermSize)
 
 		drawContext.fill(
-			floor(x).toInt(),
-			floor(y).toInt(),
-			floor(x).toInt() + ceil(slotSize).toInt(),
-			floor(y).toInt() + ceil(slotSize).toInt(),
+			0, 0,
+			slotSize, slotSize,
 			color.getEffectiveColourRGB()
 		)
+
+		matrixStack.popMatrix()
         return x to y
     }
 
@@ -72,14 +80,11 @@ abstract class TermGui {
         renderTerminal(drawContext, TerminalSolver.currentTerm?.type?.windowSize?.minus(10) ?: 0)
     }
 
-    private fun getRowOffset(slotCount: Int): Float {
+	private fun getRowOffset(slotCount: Int): Int {
         return when (slotCount) {
-            in 0..9 -> 0f
-            in 10..18 -> 1f
-            in 19..27 -> 2f
-            in 28..36 -> 2f
-            in 37..45 -> 2f
-            else -> 3f
+			26 -> -(slotSize / 2)
+			44, 54 -> slotSize / 2
+			else -> 0
         }
     }
 

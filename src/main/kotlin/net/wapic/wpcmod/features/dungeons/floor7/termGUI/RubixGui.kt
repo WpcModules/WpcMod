@@ -1,10 +1,9 @@
 package net.wapic.wpcmod.features.dungeons.floor7.termGUI
 
-import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.client.gui.DrawContext
+import net.minecraft.util.Colors
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.render.drawText
-import java.awt.Color
 
 object RubixGui : TermGui() {
 
@@ -16,21 +15,29 @@ object RubixGui : TermGui() {
             val clicksRequired = if (amount < 3) amount else amount - 5
             if (clicksRequired == 0) return@forEach
 
-            val (slotX, slotY) = renderSlot(drawContext, index, getColor(clicksRequired))
-			val slotSize = 40f * config.customTermSize
-			val fontSize = 10f * config.customTermSize
+			val color = when (clicksRequired) {
+				1 -> config.rubixColor1
+				2 -> config.rubixColor2
+				-1 -> config.oppositeRubixColor1
+				else -> config.oppositeRubixColor2
+			}
 
-            val textX = slotX + (slotSize - MC.textRenderer.getWidth(clicksRequired.toString())) / 2f
-            val textY = slotY + (slotSize + fontSize) / 2f - fontSize * 0.9f
+			val (slotX, slotY) = renderSlot(drawContext, index, color)
 
-			drawContext.drawText(clicksRequired.toString(), textX.toInt(), textY.toInt(), Color.WHITE.rgb, true)
+			val text = clicksRequired.toString()
+			val slotCenter = (slotSize / 2) * config.customTermSize
+			val textScale = config.customTermSize / 1.75f
+
+			val textX = slotX + slotCenter - MC.textRenderer.getWidth(text) * textScale / 2
+			val textY = slotY + slotCenter - MC.textRenderer.fontHeight * textScale / 2
+
+			val matrixStack = drawContext.matrices
+
+			matrixStack.pushMatrix()
+			matrixStack.translate(textX, textY)
+			matrixStack.scale(textScale)
+			drawContext.drawText(text, 0, 0, Colors.WHITE, true)
+			matrixStack.popMatrix()
         }
     }
-
-	private fun getColor(clicksRequired: Int): ChromaColour = when (clicksRequired) {
-        1 -> config.rubixColor1
-        2 -> config.rubixColor2
-        -1 -> config.oppositeRubixColor1
-        else -> config.oppositeRubixColor2
-	}
 }
