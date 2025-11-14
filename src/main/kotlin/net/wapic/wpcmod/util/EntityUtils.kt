@@ -3,15 +3,11 @@ package net.wapic.wpcmod.util
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.LivingEntity
-import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.entity.decoration.ArmorStandEntity
 import net.minecraft.predicate.entity.EntityPredicates
 import net.wapic.wpcmod.util.ItemUtils.headTexture
 
 object EntityUtils {
-
-	val LivingEntity?.skyBlockMaxHealth: Float
-		get() = this?.getAttributeBaseValue(EntityAttributes.MAX_HEALTH)?.toFloat() ?: 0f
 
 	val LivingEntity.headTexture: String get() = this.getEquippedStack(EquipmentSlot.HEAD).headTexture
 

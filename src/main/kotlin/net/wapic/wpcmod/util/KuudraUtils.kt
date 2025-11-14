@@ -8,7 +8,6 @@ import net.minecraft.text.Text
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.events.skyblock.KuudraEvents
-import net.wapic.wpcmod.util.EntityUtils.skyBlockMaxHealth
 
 object KuudraUtils {
 
@@ -38,7 +37,7 @@ object KuudraUtils {
 		if (Utils.getLocation() != Island.KUUDRA) return
 
 		if (kuudraEntity == null) {
-			world.entities.find { it is MagmaCubeEntity && it.size == 30 && it.skyBlockMaxHealth == 100000.0f }?.let {
+			world.entities.find { it is MagmaCubeEntity && it.size == 30 && it.maxHealth == 100000.0f }?.let {
 				kuudraEntity = it as MagmaCubeEntity
 				WpcMod.logger.debug("set KuudraEntity to {}", it)
 			}
