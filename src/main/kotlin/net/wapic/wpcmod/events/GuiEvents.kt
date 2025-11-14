@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
+import net.minecraft.client.input.KeyInput
 import net.minecraft.screen.slot.Slot
 import net.minecraft.screen.slot.SlotActionType
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
@@ -38,6 +39,19 @@ object GuiEvents {
 		fun onSlotClick(
 			slot: Slot?, slotId: Int, button: Int, slotActionType: SlotActionType, callbackInfo: CallbackInfo
 		)
+	}
+
+	@JvmField
+	val KEY_PRESSED: Event<KeyPressed> = EventFactory.createArrayBacked(KeyPressed::class.java) { listeners ->
+		KeyPressed { input, callbackInfo ->
+			for (listener in listeners) {
+				listener.onKeyPressed(input, callbackInfo)
+			}
+		}
+	}
+
+	fun interface KeyPressed {
+		fun onKeyPressed(input: KeyInput, callbackInfo: CallbackInfo)
 	}
 
 	@JvmField

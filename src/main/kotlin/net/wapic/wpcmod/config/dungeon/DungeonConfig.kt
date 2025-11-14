@@ -93,6 +93,22 @@ class DungeonConfig {
 		var title = false
 	}
 
+	var spiritLeapOverlay: SpiritLeapOverlayConfig = SpiritLeapOverlayConfig()
+
+	class SpiritLeapOverlayConfig {
+		@ConfigOption(name = "Enable Spirit Leap Overlay", desc = "Enables custom overlay for spirit leap and similar GUIs in dungeons")
+		@ConfigEditorBoolean
+		var enabled = false
+
+		@ConfigOption(name = "Enable Keybinds in Overlay", desc = "Enables leap keybinds in overlay")
+		@ConfigEditorBoolean
+		var keybinds = false
+
+		@ConfigOption(name = "Announce Leaps", desc = "Announce in chat who you're leaping to")
+		@ConfigEditorBoolean
+		var announce = false
+	}
+
 	enum class InteractableBlocks(val label: String) {
 		LEVER("Lever"),
 		BUTTON("Button"),

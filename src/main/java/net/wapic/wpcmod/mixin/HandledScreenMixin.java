@@ -4,6 +4,7 @@ import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import net.wapic.wpcmod.events.GuiEvents;
@@ -31,6 +32,11 @@ public abstract class HandledScreenMixin {
 	@Inject(at = @At("HEAD"), method = "onMouseClick(Lnet/minecraft/screen/slot/Slot;IILnet/minecraft/screen/slot/SlotActionType;)V", cancellable = true)
 	private void mouseClicked(Slot slot, int slotId, int button, SlotActionType slotActionType, CallbackInfo ci) {
 		GuiEvents.SLOT_CLICKED.invoker().onSlotClick(slot, slotId, button, slotActionType, ci);
+	}
+
+	@Inject(at = @At("HEAD"), method = "keyPressed", cancellable = true)
+	private void onKeyPressed(KeyInput input, CallbackInfoReturnable<Boolean> cir) {
+		GuiEvents.KEY_PRESSED.invoker().onKeyPressed(input, cir);
 	}
 
 	@Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
