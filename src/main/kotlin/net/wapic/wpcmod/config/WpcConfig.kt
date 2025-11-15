@@ -5,7 +5,6 @@ import io.github.notenoughupdates.moulconfig.Social
 import io.github.notenoughupdates.moulconfig.annotations.Category
 import io.github.notenoughupdates.moulconfig.common.MyResourceLocation
 import net.fabricmc.loader.api.FabricLoader
-import io.github.notenoughupdates.moulconfig.common.text.StructuredText
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.chat.ChatConfig
 import net.wapic.wpcmod.config.dev.DevConfig
@@ -21,19 +20,19 @@ import net.wapic.wpcmod.config.render.RenderConfig
 
 class WpcConfig : Config() {
 
-	override fun getTitle(): StructuredText {
-		return StructuredText.of("§bWpcMod ${WpcMod.version}§r mc-${FabricLoader.getInstance().rawGameVersion}")
+	override fun getTitle(): String {
+		return "§bWpcMod ${WpcMod.version}§r mc-${FabricLoader.getInstance().rawGameVersion}"
 	}
 
 	override fun getSocials(): List<Social> {
 		val github = Social.forLink(
-			StructuredText.of("WpcMod GitHub Page"),
+			"WpcMod GitHub Page",
 			MyResourceLocation.parse("wpcmod:github-mark-white.png"),
 			"https://github.com/WpcModules/WpcMod"
 		)
 
 		val gitea = Social.forLink(
-			StructuredText.of("WpcMod Gitea Page"),
+			"WpcMod Gitea Page",
 			MyResourceLocation.parse("wpcmod:gitea-logo.png"),
 			"https://git.wapic.net/wapic/WpcMod"
 		)

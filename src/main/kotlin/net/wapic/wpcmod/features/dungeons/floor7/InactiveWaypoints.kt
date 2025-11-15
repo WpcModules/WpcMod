@@ -3,6 +3,7 @@ package net.wapic.wpcmod.features.dungeons.floor7
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.client.gui.DrawContext
+import net.minecraft.client.render.RenderTickCounter
 import net.minecraft.client.world.ClientWorld
 import net.minecraft.entity.decoration.ArmorStandEntity
 import net.minecraft.text.Text
@@ -55,10 +56,10 @@ object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
 		}
     }
 
-	override fun render(drawContext: DrawContext, deltaTicks: Float) {
+	override fun render(drawContext: DrawContext, tickCounter: RenderTickCounter) {
 		if (!isActive) return
 		val matrixStack = drawContext.matrices
-		matrixStack.pushMatrix()
+		matrixStack.push()
 		applyTransformations(matrixStack)
 
 		val lines = setOf(
@@ -76,7 +77,7 @@ object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
 			)
 		}
 
-		matrixStack.popMatrix()
+		matrixStack.pop()
 	}
 
     fun onMessageReceived(text: Text, actionBar: Boolean) {
@@ -155,12 +156,12 @@ object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
                 val customName = Text.of(if (name == "Inactive Terminal") "Terminal" else if (name == "Inactive") "Device" else "Lever").asOrderedText()
                 if (config.renderBox)
 					worldRenderContext.drawFilledBoxWithOutline(
-						Box.from(it.entityPos.add(-0.5, 0.0, -0.5)),
+						Box.from(it.pos.add(-0.5, 0.0, -0.5)),
 						config.color.darker(),
 						config.color.brighter()
 					)
                 if (config.renderText)
-					worldRenderContext.drawText(customName, it.entityPos.add(0.0, 2.0, 0.0), 1.5f, true)
+					worldRenderContext.drawText(customName, it.pos.add(0.0, 2.0, 0.0), 1.5f, true)
             }
             it.isCustomNameVisible = !config.hideDefault
         }

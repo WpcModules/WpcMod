@@ -8,7 +8,7 @@
     "defaultRequire": 1
   },
   "client": [
-    "ArmorStandEntityRendererMixin",
+    "BackgroundRendererMixin",
     "ButtonBlockMixin",
     "CameraMixin",
     "ChatHudMixin",
@@ -18,8 +18,6 @@
     "ClientPlayNetworkHandlerMixin",
     "DimensionTypeMixin",
     "EntityMixin",
-    "EntityRendererMixin",
-    "FogRendererMixin",
     "GameOptionsMixin",
     "HandledScreenMixin",
     "HoveredTooltipPositionerMixin",
@@ -33,6 +31,7 @@
     "SkullBlockMixin",
     "WorldChunkMixin",
     "WorldRendererMixin",
+    "accessors.ChatHudAccessor",
     "accessors.HandledScreenAccessor",
     "accessors.MinecraftClientAccessor",
     "accessors.PlayerInteractEntityC2SPacketAccessor",

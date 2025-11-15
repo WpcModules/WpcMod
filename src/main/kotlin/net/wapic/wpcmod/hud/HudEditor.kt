@@ -1,7 +1,6 @@
 package net.wapic.wpcmod.hud
 
 import io.github.notenoughupdates.moulconfig.ChromaColour
-import net.minecraft.client.gui.Click
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.text.Text
@@ -31,7 +30,7 @@ class HudEditor : Screen {
 		super.render(context, mouseX, mouseY, deltaTicks)
 
 		elements.forEach {
-			context.matrices.pushMatrix()
+			context.matrices.push()
 			it.applyTransformations(context.matrices)
 			context.fillWithOutline(0, 0, it.getUnscaledWidth(), it.getUnscaledHeight(), backgroundColour, borderColour)
 			context.drawCenteredTextWithShadow(
@@ -41,7 +40,7 @@ class HudEditor : Screen {
 				it.getUnscaledHeight() / 2 - this.textRenderer.fontHeight / 2,
 				Colors.WHITE
 			)
-			context.matrices.popMatrix()
+			context.matrices.pop()
 		}
 	}
 
@@ -54,25 +53,32 @@ class HudEditor : Screen {
 		}
 	}
 
-	override fun mouseClicked(click: Click, doubled: Boolean): Boolean {
-		clickedElement = getHoveredElement(click.x, click.y)?.also {
-			offsetX = click.x - it.getAbsoluteX()
-			offsetY = click.y - it.getAbsoluteY()
+	override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
+		clickedElement = getHoveredElement(mouseX, mouseY)?.also {
+			offsetX = mouseX - it.getAbsoluteX()
+			offsetY = mouseY - it.getAbsoluteY()
 
-			if (click.button() == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+			if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
 				isDragging = true
 				return@also
 			}
 
-			if (click.button() == GLFW.GLFW_MOUSE_BUTTON_RIGHT && it.canScale) {
-				oppositeCorner = getOppositeCorner(click.x, click.y, it.getAbsoluteX(), it.getAbsoluteY(), it.getEffectiveWidth(), it.getEffectiveHeight())
-				scalePerDistance = it.scale / oppositeCorner.distance(click.x, click.y)
+			if (button == GLFW.GLFW_MOUSE_BUTTON_RIGHT && it.canScale) {
+				oppositeCorner = getOppositeCorner(
+					mouseX,
+					mouseY,
+					it.getAbsoluteX(),
+					it.getAbsoluteY(),
+					it.getEffectiveWidth(),
+					it.getEffectiveHeight()
+				)
+				scalePerDistance = it.scale / oppositeCorner.distance(mouseX, mouseY)
 				isScaling = true
 				return@also
 			}
 		}
 
-		return super.mouseClicked(click, doubled)
+		return super.mouseClicked(mouseX, mouseY, button)
 	}
 
 	fun getOppositeCorner(mouseX: Double, mouseY: Double, x: Float, y: Float, width: Int, height: Int): Point {
@@ -112,11 +118,11 @@ class HudEditor : Screen {
 				(pos.y + element.getEffectiveHeight() * if(pos.y > element.getAbsoluteY() + element.getEffectiveHeight() / 2) -1f else 0f)
 	}
 
-	override fun mouseReleased(click: Click): Boolean {
+	override fun mouseReleased(mouseX: Double, mouseY: Double, button: Int): Boolean {
 		clickedElement = null
 		isScaling = false
 		isDragging = false
-		return super.mouseReleased(click)
+		return super.mouseReleased(mouseX, mouseY, button)
 	}
 
 	override fun close() {

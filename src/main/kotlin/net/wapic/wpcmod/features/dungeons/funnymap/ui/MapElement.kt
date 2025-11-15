@@ -3,8 +3,10 @@ package net.wapic.wpcmod.features.dungeons.funnymap.ui
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.option.KeyBinding
+import net.minecraft.client.render.RenderTickCounter
 import net.minecraft.client.util.InputUtil
 import net.minecraft.util.Colors
+import net.minecraft.util.math.RotationAxis
 import net.minecraft.util.profiler.Profilers
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.features.dungeons.funnymap.core.DungeonPlayer
@@ -25,21 +27,22 @@ import net.wapic.wpcmod.util.render.fillWithOutline
 
 object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 
-	private val legitPeekBind: KeyBinding = KeyBindingHelper.registerKeyBinding(KeyBinding("Legit Peek", InputUtil.GLFW_KEY_J, WpcMod.category))
+	private val legitPeekBind: KeyBinding =
+		KeyBindingHelper.registerKeyBinding(KeyBinding("Legit Peek", InputUtil.GLFW_KEY_J, "WpcMod"))
 	private val config get() = WpcMod.config.dungeon.funnyMap
 	override val isEnabled: Boolean get() = config.mapEnabled
 	override val isActive: Boolean get() = (isEnabled && DungeonUtils.inDungeons) && (config.mapHideInBoss && !DungeonUtils.bossSpawned)
 
 	val legitRender: Boolean get() = config.legitMode && !legitPeekBind.isPressed
 
-	override fun render(drawContext: DrawContext, deltaTicks: Float) {
+	override fun render(drawContext: DrawContext, tickCounter: RenderTickCounter) {
 		if (!isActive) return
 		val player = MC.player ?: return
 		val matrixStack = drawContext.matrices
 		val profiler = Profilers.get()
 		profiler.push("funnyMap")
 
-		matrixStack.pushMatrix()
+		matrixStack.push()
 		applyTransformations(matrixStack)
 
 		drawContext.fillWithOutline(
@@ -50,19 +53,20 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 		)
 
 		if (config.mapRotate) {
-			matrixStack.pushMatrix()
+			matrixStack.push()
 			drawContext.enableScissor(0, 0, width, height)
 
-			matrixStack.translate(64f, 64f)
-			matrixStack.rotate(Math.toRadians(-player.yaw + 180.0).toFloat())
+			matrixStack.translate(64f, 64f, 0f)
+			matrixStack.multiply(RotationAxis.NEGATIVE_Z.rotationDegrees(player.yaw + 180f))
 
 			if(config.mapCenter) {
 				matrixStack.translate(
 					-((player.x - DungeonScan.START_X + 15) * MapUtils.coordMultiplier + MapUtils.startCorner.first - 2).toFloat(),
 					-((player.z - DungeonScan.START_Z + 15) * MapUtils.coordMultiplier + MapUtils.startCorner.second - 2).toFloat(),
+					0f
 				)
 			} else {
-				matrixStack.translate(-64f, -64f)
+				matrixStack.translate(-64f, -64f, 0f)
 			}
 		}
 
@@ -76,17 +80,17 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 
 		if (config.mapRotate) {
 			drawContext.disableScissor()
-			matrixStack.popMatrix()
+			matrixStack.pop()
 		}
 
-		matrixStack.popMatrix()
+		matrixStack.pop()
 		profiler.pop()
 	}
 
 	private fun renderRooms(drawContext: DrawContext) {
 		val matrixStack = drawContext.matrices
-		matrixStack.pushMatrix()
-		matrixStack.translate(MapUtils.startCorner.first.toFloat(), MapUtils.startCorner.second.toFloat())
+		matrixStack.push()
+		matrixStack.translate(MapUtils.startCorner.first.toFloat(), MapUtils.startCorner.second.toFloat(), 0f)
 
 		var yPos = 0
 		var yStep = 0
@@ -135,14 +139,14 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 				}
 			}
 		}
-		matrixStack.translate(-MapUtils.startCorner.first.toFloat(), -MapUtils.startCorner.second.toFloat())
-		matrixStack.popMatrix()
+		matrixStack.translate(-MapUtils.startCorner.first.toFloat(), -MapUtils.startCorner.second.toFloat(), 0f)
+		matrixStack.pop()
 	}
 
 	private fun renderText(drawContext: DrawContext) {
 		val matrixStack = drawContext.matrices
-		matrixStack.pushMatrix()
-		matrixStack.translate(MapUtils.startCorner.first.toFloat(), MapUtils.startCorner.second.toFloat())
+		matrixStack.push()
+		matrixStack.translate(MapUtils.startCorner.first.toFloat(), MapUtils.startCorner.second.toFloat(), 0f)
 
 		FunnyMap.Info.uniqueRooms.forEach { unique ->
 			val room = unique.mainRoom
@@ -179,14 +183,14 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 				MapRenderer.drawCheckmark(drawContext, xOffsetCheck, yOffsetCheck, room.state)
 			}
 		}
-		matrixStack.popMatrix()
+		matrixStack.pop()
 	}
 
 	fun renderPlayerHeads(drawContext: DrawContext) {
 		try {
 			if (FunnyMap.dungeonTeammates.isEmpty()) {
 				MC.player?.let {
-					MapRenderer.drawPlayerHead(drawContext, it.name.string, DungeonPlayer(it.skin).apply {
+					MapRenderer.drawPlayerHead(drawContext, it.name.string, DungeonPlayer(it.skinTextures).apply {
 						yaw = it.yaw
 					})
 				}

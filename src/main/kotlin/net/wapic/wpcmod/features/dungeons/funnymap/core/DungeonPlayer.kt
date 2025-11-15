@@ -1,7 +1,7 @@
 package net.wapic.wpcmod.features.dungeons.funnymap.core
 
+import net.minecraft.client.util.SkinTextures
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.entity.player.SkinTextures
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Room
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
 import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils

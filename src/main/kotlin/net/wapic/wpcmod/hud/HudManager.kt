@@ -28,9 +28,9 @@ object HudManager {
 
 	private val hudKeyBind: KeyBinding = KeyBindingHelper.registerKeyBinding(
 		KeyBinding(
-			"hud",
+			"Hud Editor",
 			InputUtil.GLFW_KEY_END,
-			WpcMod.category
+			"WpcMod"
 		)
 	)
 

@@ -6,6 +6,7 @@ import net.minecraft.block.BlockState
 import net.minecraft.block.Blocks
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
+import net.minecraft.client.render.RenderTickCounter
 import net.minecraft.entity.Entity
 import net.minecraft.entity.mob.ZombieEntity
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket
@@ -397,9 +398,9 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 		}
 	}
 
-	override fun render(drawContext: DrawContext, deltaTicks: Float) {
+	override fun render(drawContext: DrawContext, tickCounter: RenderTickCounter) {
 		if (!isActive || config.scoreHudType == ScoreHudType.DISABLED) return
-		drawContext.matrices.pushMatrix()
+		drawContext.matrices.push()
 		applyTransformations(drawContext.matrices)
 
 		if (config.scoreHudType == ScoreHudType.FULL) {
@@ -439,6 +440,6 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 			drawContext.drawText("§eScore: §a$totalScore §7($rank§7)", 2, 2, Colors.WHITE, true)
 		}
 
-		drawContext.matrices.popMatrix()
+		drawContext.matrices.pop()
 	}
 }

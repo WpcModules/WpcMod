@@ -16,7 +16,6 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents
 import net.fabricmc.loader.api.FabricLoader
 import net.fabricmc.loader.api.Version
 import net.fabricmc.loader.api.metadata.ModMetadata
-import net.minecraft.client.option.KeyBinding
 import net.minecraft.text.ClickEvent
 import net.minecraft.text.HoverEvent
 import net.minecraft.text.Style
@@ -52,7 +51,6 @@ import net.wapic.wpcmod.features.mining.PigeonSwapper
 import net.wapic.wpcmod.hud.HudManager
 import net.wapic.wpcmod.listeners.NetworkListener
 import net.wapic.wpcmod.util.*
-import net.wapic.wpcmod.util.Utils.modIdentifier
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -86,8 +84,6 @@ object WpcMod : ModInitializer {
 		CurrentVersion.ofTag(version.friendlyString),
 		MOD_ID
 	)
-
-	val category: KeyBinding.Category = KeyBinding.Category.create(modIdentifier(MOD_ID))
 
 	override fun onInitialize() {
 		ConfigManager.firstLoad()

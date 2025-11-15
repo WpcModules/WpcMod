@@ -2,6 +2,7 @@ package net.wapic.wpcmod.features.dungeons.floor7
 
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.client.gui.DrawContext
+import net.minecraft.client.render.RenderTickCounter
 import net.minecraft.text.Text
 import net.minecraft.util.Colors
 import net.wapic.wpcmod.WpcMod
@@ -31,10 +32,10 @@ object InvincibilityTimer : SimpleHudElement("Invincibility Timer", 160, 33) {
 		InvincibilityType.entries.firstOrNull { it.regex.matches(text.string) }?.proc()
 	}
 
-	override fun render(drawContext: DrawContext, deltaTicks: Float) {
+	override fun render(drawContext: DrawContext, tickCounter: RenderTickCounter) {
 		if (!isActive) return
 		val matrixStack = drawContext.matrices
-		matrixStack.pushMatrix()
+		matrixStack.push()
 		applyTransformations(matrixStack)
 
 		InvincibilityType.entries.filter { it.currentCooldown > 0 || it.activeTime > 0 }.forEachIndexed { index, type ->
@@ -43,7 +44,7 @@ object InvincibilityTimer : SimpleHudElement("Invincibility Timer", 160, 33) {
 			drawContext.drawText("§6${type} ${time}s", 2, 2 + index * 10, Colors.WHITE, true)
 		}
 
-		matrixStack.popMatrix()
+		matrixStack.pop()
 	}
 
 	private enum class InvincibilityType(

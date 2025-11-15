@@ -3,6 +3,7 @@ package net.wapic.wpcmod.features.dungeons.funnymap.ui
 import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.util.Colors
+import net.minecraft.util.math.RotationAxis
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.dungeon.FunnyConfig
 import net.wapic.wpcmod.features.dungeons.funnymap.core.DungeonPlayer
@@ -29,17 +30,19 @@ object MapRenderer {
 	private val whiteResource = Utils.modIdentifier("dungeon/white_check.png")
 	private val mapIcons = Utils.modIdentifier("dungeon/marker.png")
 
+	private val axis: RotationAxis = RotationAxis.POSITIVE_Z
+
 	fun renderCenteredText(drawContext: DrawContext, text: List<String>, x: Int, y: Int, color: Int) {
 		if (text.isEmpty()) return
 		val player = MC.player ?: return
 		val matrixStack = drawContext.matrices
 
-		matrixStack.pushMatrix()
-		matrixStack.translate(x.toFloat(), y.toFloat())
-		matrixStack.scale(config.textScale, config.textScale)
+		matrixStack.push()
+		matrixStack.translate(x.toFloat(), y.toFloat(), 0f)
+		matrixStack.scale(config.textScale, config.textScale, 0f)
 
 		if (config.mapRotate) {
-			matrixStack.rotate(Math.toRadians(player.yaw + 180.0).toFloat())
+			matrixStack.multiply(axis.rotationDegrees(player.yaw + 180f))
 		}
 
 		val tr = MC.textRenderer
@@ -57,7 +60,7 @@ object MapRenderer {
 			)
 		}
 
-		matrixStack.popMatrix()
+		matrixStack.pop()
 	}
 
 	fun drawCheckmark(drawContext: DrawContext, x: Float, y: Float, state: RoomState) {
@@ -84,28 +87,31 @@ object MapRenderer {
 
 	fun drawPlayerHead(drawContext: DrawContext, name: String, player: DungeonPlayer) {
 		val matrixStack = drawContext.matrices
-		matrixStack.pushMatrix()
+		matrixStack.push()
 		try {
 			// Translates to the player's location which is updated every tick.
 			if (player.isPlayer || name == MC.player?.name?.string) {
 				MC.player?.let {
+				}
+				MC.player?.let {
 					matrixStack.translate(
 						((it.x - DungeonScan.START_X + 13) * MapUtils.coordMultiplier + MapUtils.startCorner.first).toFloat(),
 						((it.z - DungeonScan.START_Z + 13) * MapUtils.coordMultiplier + MapUtils.startCorner.second).toFloat(),
+						0f
 					)
 				}
 			} else {
-				matrixStack.translate(player.mapX.toFloat(), player.mapZ.toFloat())
+				matrixStack.translate(player.mapX.toFloat(), player.mapZ.toFloat(), 0f)
 			}
 
-			matrixStack.scale(config.playerHeadScale, config.playerHeadScale)
+			matrixStack.scale(config.playerHeadScale, config.playerHeadScale, 0f)
 
-			matrixStack.rotate(Math.toRadians(player.yaw + 180.0).toFloat())
+			matrixStack.multiply(axis.rotationDegrees(player.yaw + 180f))
 
 			if (config.mapVanillaMarker && (player.isPlayer || name == MC.player?.name?.string)) {
 				drawContext.drawTexture(mapIcons, -4, -4, 0f, 0f, 8, 8, 8, 8)
 			} else {
-				drawContext.drawTexture(player.skin.body.texturePath(), -4, -4, 8f, 8f, 8, 8, 64, 64)
+				drawContext.drawTexture(player.skin.texture, -4, -4, 8f, 8f, 8, 8, 64, 64)
 				drawContext.drawBorder(-4, -4, 8, 8, ChromaColour.BLACK)
 			}
 
@@ -114,10 +120,10 @@ object MapRenderer {
 				(config.playerHeads == FunnyConfig.PlayerNameType.HOLDING_LEAP && MC.heldItem.skyBlockID.equalsOneOf("SPIRIT_LEAP", "INFINITE_SPIRIT_LEAP", "HAUNT_ABILITY"))
 				) {
 				if(!config.mapRotate) {
-					matrixStack.rotate(-Math.toRadians(player.yaw + 180.0).toFloat())
+					matrixStack.multiply(axis.rotationDegrees(-player.yaw + 180f))
 				}
-				matrixStack.translate(0f, config.playerHeadScale * 4f)
-				matrixStack.scale(config.playerNameScale, config.playerNameScale)
+				matrixStack.translate(0f, config.playerHeadScale * 4f, 0f)
+				matrixStack.scale(config.playerNameScale, config.playerNameScale, 0f)
 				drawContext.drawText(
 					MC.textRenderer,
 					name,
@@ -131,7 +137,7 @@ object MapRenderer {
 		} catch (e: Exception) {
 			e.printStackTrace()
 		}
-		matrixStack.popMatrix()
+		matrixStack.pop()
 	}
 
 	fun Color.grayScale(): Color {

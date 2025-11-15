@@ -2,7 +2,6 @@ package net.wapic.wpcmod.mixin;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
-import net.minecraft.client.input.MouseInput;
 import net.minecraft.client.util.InputUtil;
 import net.wapic.wpcmod.features.general.shortcut.Shortcut;
 import org.spongepowered.asm.mixin.Final;
@@ -20,12 +19,12 @@ public class MouseMixin {
 	private MinecraftClient client;
 
 	@Inject(at = @At("TAIL"), method = "onMouseButton")
-	private void onMouseButton(long window, MouseInput input, int action, CallbackInfo ci) {
+	private void onMouseButton(long window, int button, int action, int mods, CallbackInfo ci) {
 		if (this.client != null && this.client.currentScreen == null && this.client.getOverlay() == null) {
 			boolean bl = action == 1;
-			Shortcut.Companion.setKeyPressed(InputUtil.Type.MOUSE.createFromCode(input.button()), bl);
+			Shortcut.Companion.setKeyPressed(InputUtil.Type.MOUSE.createFromCode(button), bl);
 			if (bl) {
-				Shortcut.Companion.onKeyPressed(InputUtil.Type.MOUSE.createFromCode(input.button()));
+				Shortcut.Companion.onKeyPressed(InputUtil.Type.MOUSE.createFromCode(button));
 			}
 		}
 	}

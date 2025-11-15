@@ -1,5 +1,6 @@
 package net.wapic.wpcmod.features.mining
 
+import net.minecraft.block.entity.ChestBlockEntity
 import net.minecraft.util.math.Box
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldRenderEvent
@@ -18,16 +19,18 @@ object ChestESP {
 	private fun renderWorld(worldRenderContext: WorldRenderContext) {
 		if (Utils.getLocation() != Island.CRYSTAL_HOLLOWS) return
 		if (!config.tracer && !config.box) return
+
 		worldRenderContext.profiler.push("chest-esp")
 
-		val blockEntities = worldRenderContext.world.blockEntities
-
+		val blockEntities = Utils.getLoadedBlockEntities().filterIsInstance<ChestBlockEntity>()
+		val tickProgress: Float = worldRenderContext.tickCounter.dynamicDeltaTicks
 		val playerPos = worldRenderContext.camera.pos
 
-		blockEntities.forEach {
-			if(playerPos.distanceTo(it.pos.toCenterPos()) >= config.radius) return@forEach
+		for (block in blockEntities) {
+			if (playerPos.distanceTo(block.pos.toCenterPos()) >= config.radius) continue
+			if (block.getAnimationProgress(tickProgress) > 0) continue
 
-			val chest = Box.of(it.pos.toCenterPos(), 1.0, 1.0, 1.0)
+			val chest = Box.of(block.pos.toCenterPos(), 1.0, 1.0, 1.0)
 
 			if (config.box)
 				worldRenderContext.drawBoundingBox(chest, config.color)

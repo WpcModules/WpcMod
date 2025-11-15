@@ -33,11 +33,11 @@ object RubixGui : TermGui() {
 
 			val matrixStack = drawContext.matrices
 
-			matrixStack.pushMatrix()
-			matrixStack.translate(textX, textY)
-			matrixStack.scale(textScale)
+			matrixStack.push()
+			matrixStack.translate(textX, textY, 0f)
+			matrixStack.scale(textScale, textScale, 0f)
 			drawContext.drawText(text, 0, 0, Colors.WHITE, true)
-			matrixStack.popMatrix()
+			matrixStack.pop()
         }
     }
 }

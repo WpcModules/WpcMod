@@ -3,7 +3,6 @@ package net.wapic.wpcmod.config.components.slider
 import io.github.notenoughupdates.moulconfig.GuiTextures
 import io.github.notenoughupdates.moulconfig.common.IMinecraft
 import io.github.notenoughupdates.moulconfig.common.KeyboardConstants
-import io.github.notenoughupdates.moulconfig.common.text.StructuredText
 import io.github.notenoughupdates.moulconfig.gui.GuiComponent
 import io.github.notenoughupdates.moulconfig.gui.GuiImmediateContext
 import io.github.notenoughupdates.moulconfig.gui.KeyboardEvent
@@ -34,7 +33,7 @@ class SliderComponentWithText(
 			setValueFromContext(context)
 		}
 
-		val fr = IMinecraft.INSTANCE.defaultFontRenderer
+		val fr = IMinecraft.instance.defaultFontRenderer
 		val sliderHeight = (height / 2f) - 2f
 
 		context.renderContext.drawTexturedRect(
@@ -57,7 +56,7 @@ class SliderComponentWithText(
 			sliderHeight,
 		)
 
-		val text = StructuredText.of(value.toString().removeSuffix(".0"))
+		val text = value.toString().removeSuffix(".0")
 		context.renderContext.drawStringCenteredScaledMaxWidth(
 			text,
 			fr,

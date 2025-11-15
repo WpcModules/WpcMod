@@ -3,7 +3,6 @@ package net.wapic.wpcmod.util.render
 import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.render.*
-import net.minecraft.client.render.state.CameraRenderState
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.client.world.ClientWorld
 import net.minecraft.text.OrderedText
@@ -18,7 +17,7 @@ class WorldRenderContext {
 	val world: ClientWorld
 	val consumer: VertexConsumerProvider.Immediate
 	val tickCounter: RenderTickCounter
-	val camera: CameraRenderState
+	val camera: Camera
 	val profiler: Profiler
 
 	constructor(
@@ -26,7 +25,7 @@ class WorldRenderContext {
 		world: ClientWorld,
 		consumer: VertexConsumerProvider.Immediate,
 		tickCounter: RenderTickCounter,
-		camera: CameraRenderState,
+		camera: Camera,
 		profiler: Profiler
 	) {
 		this.matrixStack = matrixStack
@@ -46,7 +45,7 @@ class WorldRenderContext {
 		matrixStack.multiplyPositionMatrix(matrix)
 		matrixStack.translate(pos)
 		matrixStack.translate(-camera.pos)
-		matrixStack.multiply(camera.orientation)
+		matrixStack.multiply(camera.rotation)
 		matrixStack.scale(scale, -scale, scale)
 
 		MC.textRenderer.draw(
@@ -217,7 +216,7 @@ class WorldRenderContext {
 		val color = color.getEffectiveColour()
 
 		VertexRendering.drawBox(
-			matrixStack.peek(),
+			matrixStack,
 			bufferBuilder,
 			minX,
 			minY,

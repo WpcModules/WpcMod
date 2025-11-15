@@ -2,6 +2,7 @@ package net.wapic.wpcmod.features.dungeons.floor7
 
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.client.gui.DrawContext
+import net.minecraft.client.render.RenderTickCounter
 import net.minecraft.client.world.ClientWorld
 import net.minecraft.text.Text
 import net.minecraft.util.Colors
@@ -85,13 +86,13 @@ object TickTimers : SimpleHudElement("Tick Timers", 120, 12) {
         return "${if (config.showPrefix) "$prefix " else ""}$color$timeDisplay"
     }
 
-	override fun render(drawContext: DrawContext, deltaTicks: Float) {
+	override fun render(drawContext: DrawContext, tickCounter: RenderTickCounter) {
 		if (!isActive) return
 		val profiler = Profilers.get()
 		profiler.push("TickTimers")
 
 		val matrixStack = drawContext.matrices
-		matrixStack.pushMatrix()
+		matrixStack.push()
 		applyTransformations(matrixStack)
 
 		val (prefix, time, max) =
@@ -109,7 +110,7 @@ object TickTimers : SimpleHudElement("Tick Timers", 120, 12) {
 				drawContext.drawText(MC.textRenderer, formatTimer(necronTime.toInt(), 60, "§4Necron dropping in"), 1, 1, Colors.RED, true)
 		}
 
-		matrixStack.popMatrix()
+		matrixStack.pop()
 		profiler.pop()
 	}
 

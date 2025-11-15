@@ -1,10 +1,11 @@
 package net.wapic.wpcmod.features.chat
 
-import net.minecraft.client.gui.hud.ChatHudLine
 import net.minecraft.text.*
 import net.minecraft.util.Formatting
 import net.minecraft.util.Util
 import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.mixin.accessors.ChatHudAccessor
+import net.wapic.wpcmod.util.MC
 import java.util.*
 
 object CompactChat {
@@ -28,7 +29,7 @@ object CompactChat {
 		return !config.compactChat || message.isBlank() || separators.any(message::contains)
 	}
 
-	fun compactMessage(message: Text, chatHudLines: MutableList<ChatHudLine>): Text {
+	fun compactMessage(message: Text): Text {
 		if (shouldIgnore(message.string)) return message
 
 		val previousValue = messages.putIfAbsent(message.string, CompactedMessage())
@@ -38,23 +39,23 @@ object CompactChat {
 				compactedMessage.setValues(reset = true)
 				return message
 			}
+			val chatHud = (MC.inGameHud.chatHud as ChatHudAccessor)
 
 			compactedMessage.setValues()
 
-			val iterator = chatHudLines.iterator()
-			while (iterator.hasNext()) {
-				val chatLine = iterator.next()
-
-				val contentWithoutOccurrences = chatLine.content.copy()
+			chatHud.messages.removeIf { oldMessage ->
+				val contentWithoutOccurrences = oldMessage.content.copy()
 				contentWithoutOccurrences.siblings.removeIf { it.content is OccurrenceTextContent }
-
-				if (contentWithoutOccurrences.string == message.string) {
-					iterator.remove()
-				}
+				return@removeIf contentWithoutOccurrences.string == message.string
 			}
 
 			val occurrencesText = OccurrenceTextContent.create(compactedMessage.occurrences)
 				.setStyle(Style.EMPTY.withColor(Formatting.DARK_GRAY))
+
+			val scroll = chatHud.scrolledLines
+			chatHud.wpcmod_refresh()
+			MC.inGameHud.chatHud.scroll(scroll)
+
 			return message.copy().append(occurrencesText)
 		}
 

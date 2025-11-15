@@ -165,7 +165,6 @@ object TerminalSolver {
 
 	fun onDrawBackground(screen: Screen, drawContext: DrawContext, callbackInfo: CallbackInfo) {
 		if (!config.enabled || currentTerm == null || (currentTerm?.type == TerminalTypes.MELODY && config.cancelMelodySolver) || config.renderType != RenderType.CUSTOM) return
-		currentTerm?.type?.getGUI()?.render(drawContext)
 		callbackInfo.cancel()
 	}
 
@@ -179,6 +178,7 @@ object TerminalSolver {
 	) {
 		if (!config.enabled || currentTerm == null || (currentTerm?.type == TerminalTypes.MELODY && config.cancelMelodySolver)) return
 		if (config.renderType == RenderType.CUSTOM) {
+			currentTerm?.type?.getGUI()?.render(drawContext)
 			callbackInfo.cancel()
 			return
 		}

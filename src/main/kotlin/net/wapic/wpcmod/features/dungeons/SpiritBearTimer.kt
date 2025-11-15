@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.block.BlockState
 import net.minecraft.block.Blocks
 import net.minecraft.client.gui.DrawContext
+import net.minecraft.client.render.RenderTickCounter
 import net.minecraft.text.Text
 import net.minecraft.util.Colors
 import net.minecraft.util.math.BlockPos
@@ -43,10 +44,10 @@ object SpiritBearTimer : SimpleHudElement("Spirit Bear Timer", 90, 12) {
 		}
 	}
 
-	override fun render(drawContext: DrawContext, deltaTicks: Float) {
+	override fun render(drawContext: DrawContext, tickCounter: RenderTickCounter) {
 		if (!isActive || spawnTime <= 0) return
 		val matrixStack = drawContext.matrices
-		matrixStack.pushMatrix()
+		matrixStack.push()
 		applyTransformations(matrixStack)
 
 		drawContext.drawText(
@@ -56,7 +57,7 @@ object SpiritBearTimer : SimpleHudElement("Spirit Bear Timer", 90, 12) {
 			shadow = true
 		)
 
-		matrixStack.popMatrix()
+		matrixStack.pop()
 	}
 
 	fun onBlockChange(pos: BlockPos, oldState: BlockState, newState: BlockState) {

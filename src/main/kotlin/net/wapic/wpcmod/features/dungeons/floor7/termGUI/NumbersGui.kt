@@ -1,12 +1,10 @@
 package net.wapic.wpcmod.features.dungeons.floor7.termGUI
 
-import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.util.Colors
 import net.wapic.wpcmod.features.dungeons.floor7.TerminalSolver
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.equalsOneOf
-import net.wapic.wpcmod.util.render.BLACK
 import net.wapic.wpcmod.util.render.drawText
 
 object NumbersGui : TermGui() {
@@ -24,7 +22,7 @@ object NumbersGui : TermGui() {
                 0 -> config.orderColor
                 1 -> config.orderColor2
                 2 -> config.orderColor3
-				else -> ChromaColour.BLACK
+				else -> config.backgroundColor
             }
 
 			val (slotX, slotY) = renderSlot(drawContext, index, color)
@@ -39,11 +37,11 @@ object NumbersGui : TermGui() {
 				val textX = slotX + slotCenter - MC.textRenderer.getWidth(text) * textScale / 2
 				val textY = slotY + slotCenter - MC.textRenderer.fontHeight * textScale / 2
 
-				matrixStack.pushMatrix()
-				matrixStack.translate(textX, textY)
-				matrixStack.scale(textScale)
+				matrixStack.push()
+				matrixStack.translate(textX, textY, 0f)
+				matrixStack.scale(textScale, textScale, 0f)
 				drawContext.drawText(text, 0, 0, Colors.WHITE, true)
-				matrixStack.popMatrix()
+				matrixStack.pop()
 			}
         }
     }

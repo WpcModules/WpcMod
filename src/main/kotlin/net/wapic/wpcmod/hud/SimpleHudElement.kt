@@ -1,13 +1,14 @@
 package net.wapic.wpcmod.hud
 
 import com.google.gson.annotations.Expose
-import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
-import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements
+import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback
+import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer
 import net.minecraft.client.gui.DrawContext
+import net.minecraft.client.render.RenderTickCounter
+import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.text.Text
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.modIdentifier
-import org.joml.Matrix3x2f
 import java.util.*
 
 open class SimpleHudElement(
@@ -25,12 +26,12 @@ open class SimpleHudElement(
 
 	init {
 		val identifier = modIdentifier(label.lowercase(Locale.US).replace(" ", "_"))
-		HudElementRegistry.attachElementBefore(VanillaHudElements.DEMO_TIMER, identifier) { context, tickCounter ->
-			render(context, tickCounter.dynamicDeltaTicks)
+		HudLayerRegistrationCallback.EVENT.register { wrapper ->
+			wrapper.attachLayerBefore(IdentifiedLayer.DEMO_TIMER, IdentifiedLayer.of(identifier, ::render))
 		}
 	}
 
-	open fun render(drawContext: DrawContext, deltaTicks: Float) {}
+	open fun render(drawContext: DrawContext, tickCounter: RenderTickCounter) {}
 
 	fun getLabel(): Text {
 		return Text.of(label)
@@ -66,8 +67,8 @@ open class SimpleHudElement(
 		return y * (MC.window.scaledHeight - getEffectiveHeight())
 	}
 
-	fun applyTransformations(matrices: Matrix3x2f) {
-		matrices.translate(getAbsoluteX(), getAbsoluteY())
-		if (canScale) matrices.scale(scale)
+	fun applyTransformations(matrices: MatrixStack) {
+		matrices.translate(getAbsoluteX(), getAbsoluteY(), 0f)
+		if (canScale) matrices.scale(scale, scale, 0f)
 	}
 }

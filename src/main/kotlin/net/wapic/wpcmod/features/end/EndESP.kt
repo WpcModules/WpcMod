@@ -41,7 +41,7 @@ object EndESP : MobGlowCache() {
 		lock = true
 
 		player?.let {
-			val pos = it.entityPos
+			val pos = it.pos
 			val box = Box.from(pos).expand(radius)
 
 			BlockPos.iterate(box).forEach { blockPos ->

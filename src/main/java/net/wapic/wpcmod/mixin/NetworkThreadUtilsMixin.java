@@ -13,9 +13,9 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 public class NetworkThreadUtilsMixin {
 
 
-	@ModifyArg(method = "forceMainThread(Lnet/minecraft/network/packet/Packet;Lnet/minecraft/network/listener/PacketListener;Lnet/minecraft/network/PacketApplyBatcher;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/PacketApplyBatcher;add(Lnet/minecraft/network/listener/PacketListener;Lnet/minecraft/network/packet/Packet;)V"))
-	private static <T extends PacketListener> T processPacket(T listener, @Local(argsOnly = true) Packet<T> packet) {
+	@ModifyArg(method = "forceMainThread(Lnet/minecraft/network/packet/Packet;Lnet/minecraft/network/listener/PacketListener;Lnet/minecraft/util/thread/ThreadExecutor;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/thread/ThreadExecutor;executeSync(Ljava/lang/Runnable;)V"))
+	private static <T extends PacketListener> Runnable processPacket(Runnable runnable, @Local(argsOnly = true) Packet<T> packet) {
 		PacketEvents.RECEIVE.invoker().onPacketReceive(packet);
-		return listener;
+		return runnable;
 	}
 }

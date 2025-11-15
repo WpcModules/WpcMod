@@ -1,6 +1,7 @@
 package net.wapic.wpcmod.features.kuudra
 
 import net.minecraft.client.gui.DrawContext
+import net.minecraft.client.render.RenderTickCounter
 import net.minecraft.util.Colors
 import net.minecraft.util.Formatting
 import net.wapic.wpcmod.WpcMod
@@ -18,11 +19,11 @@ object KuudraDisplay : SimpleHudElement("Kuudra Display", 75, 11) {
 	override val isEnabled: Boolean get() = config.healthDisplay
 	override val isActive: Boolean get() = isEnabled && Utils.getLocation() == Island.KUUDRA
 
-	override fun render(drawContext: DrawContext, deltaTicks: Float) {
+	override fun render(drawContext: DrawContext, tickCounter: RenderTickCounter) {
 		if (!isActive) return
 
 		val matrixStack = drawContext.matrices
-		matrixStack.pushMatrix()
+		matrixStack.push()
 		applyTransformations(matrixStack)
 
 		kuudraEntity?.let {
@@ -44,6 +45,6 @@ object KuudraDisplay : SimpleHudElement("Kuudra Display", 75, 11) {
 			}
 		}
 
-		matrixStack.popMatrix()
+		matrixStack.pop()
 	}
 }

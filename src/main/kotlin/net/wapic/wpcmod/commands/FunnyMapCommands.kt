@@ -16,7 +16,7 @@ import net.wapic.wpcmod.util.Utils
 object FunnyMapCommands : Command("dungeon") {
 
 	val getRoomData: LiteralArgumentBuilder<FabricClientCommandSource> = literal("room").executes{
-		val player = MC.player?.entityPos ?: return@executes 0
+		val player = MC.player?.pos ?: return@executes 0
 		val pos = ScanUtils.getRoomCentre(player.x.toInt(), player.z.toInt())
 		val data = ScanUtils.getRoomData(pos.first, pos.second)
 		if (data != null) {

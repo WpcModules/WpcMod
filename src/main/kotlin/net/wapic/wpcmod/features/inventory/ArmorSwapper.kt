@@ -17,7 +17,7 @@ object ArmorSwapper {
 	private val config get() = WpcMod.config.inventory
 
 	private val armorSwapBind: KeyBinding =
-		KeyBindingHelper.registerKeyBinding(KeyBinding("Armor Swap", InputUtil.GLFW_KEY_V, WpcMod.category))
+		KeyBindingHelper.registerKeyBinding(KeyBinding("Armor Swap", InputUtil.GLFW_KEY_V, "WpcMod"))
 	private val wardrobeTitle = "Wardrobe \\((?<page>[1-2])/2\\)".toRegex()
 	private var sorrowPiece = "(?:Ancient|Renowned) Sorrow Boots".toRegex()
 	private var shouldSwap = false
