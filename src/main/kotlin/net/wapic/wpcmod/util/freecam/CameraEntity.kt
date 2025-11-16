@@ -7,6 +7,7 @@ import net.minecraft.client.recipebook.ClientRecipeBook
 import net.minecraft.client.world.ClientWorld
 import net.minecraft.entity.MovementType
 import net.minecraft.stat.StatHandler
+import net.minecraft.util.PlayerInput
 import net.minecraft.util.math.MathHelper
 import net.minecraft.util.math.Vec3d
 import net.wapic.wpcmod.features.general.Freecam
@@ -19,7 +20,7 @@ class CameraEntity(
 	netHandler: ClientPlayNetworkHandler,
 	statHandler: StatHandler,
 	recipeBook: ClientRecipeBook
-) : ClientPlayerEntity(mc, world, netHandler, statHandler, recipeBook, false, false) {
+) : ClientPlayerEntity(mc, world, netHandler, statHandler, recipeBook, PlayerInput.DEFAULT, false) {
 
 	override fun isSpectator(): Boolean {
 		return true

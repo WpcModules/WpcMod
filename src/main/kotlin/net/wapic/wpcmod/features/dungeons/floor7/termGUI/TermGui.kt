@@ -26,12 +26,12 @@ abstract class TermGui {
 		val x = (drawContext.scaledWindowWidth - width) / 2
 		val y = (drawContext.scaledWindowHeight - height) / 2 + getRowOffset(slotCount) * config.customTermSize
 
-		matrixStack.push()
-		matrixStack.translate(x, y, 0f)
+		matrixStack.pushMatrix()
+		matrixStack.translate(x, y)
 
 		drawContext.fill(0, 0, width.toInt(), height.toInt(), config.backgroundColor.getEffectiveColourRGB())
 
-		matrixStack.pop()
+		matrixStack.popMatrix()
     }
 
 	protected fun renderSlot(drawContext: DrawContext, index: Int, color: ChromaColour): Pair<Float, Float> {
@@ -44,9 +44,9 @@ abstract class TermGui {
 
 		itemIndexMap[index] = Box(x, y, scaledSlotSize, scaledSlotSize)
 
-		matrixStack.push()
-		matrixStack.translate(x, y, 0f)
-		matrixStack.scale(config.customTermSize, config.customTermSize, 0f)
+		matrixStack.pushMatrix()
+		matrixStack.translate(x, y)
+		matrixStack.scale(config.customTermSize)
 
 		drawContext.fill(
 			0, 0,
@@ -54,7 +54,7 @@ abstract class TermGui {
 			color.getEffectiveColourRGB()
 		)
 
-		matrixStack.pop()
+		matrixStack.popMatrix()
         return x to y
     }
 

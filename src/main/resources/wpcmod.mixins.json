@@ -8,7 +8,6 @@
     "defaultRequire": 1
   },
   "client": [
-    "BackgroundRendererMixin",
     "ButtonBlockMixin",
     "CameraMixin",
     "ChatHudMixin",
@@ -18,6 +17,7 @@
     "ClientPlayNetworkHandlerMixin",
     "DimensionTypeMixin",
     "EntityMixin",
+    "FogRendererMixin",
     "GameOptionsMixin",
     "HandledScreenMixin",
     "HoveredTooltipPositionerMixin",

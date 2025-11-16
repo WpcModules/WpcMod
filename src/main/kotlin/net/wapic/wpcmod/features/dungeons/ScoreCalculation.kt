@@ -400,7 +400,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 
 	override fun render(drawContext: DrawContext, tickCounter: RenderTickCounter) {
 		if (!isActive || config.scoreHudType == ScoreHudType.DISABLED) return
-		drawContext.matrices.push()
+		drawContext.matrices.pushMatrix()
 		applyTransformations(drawContext.matrices)
 
 		if (config.scoreHudType == ScoreHudType.FULL) {
@@ -440,6 +440,6 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 			drawContext.drawText("§eScore: §a$totalScore §7($rank§7)", 2, 2, Colors.WHITE, true)
 		}
 
-		drawContext.matrices.pop()
+		drawContext.matrices.popMatrix()
 	}
 }

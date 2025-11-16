@@ -92,7 +92,7 @@ object TickTimers : SimpleHudElement("Tick Timers", 120, 12) {
 		profiler.push("TickTimers")
 
 		val matrixStack = drawContext.matrices
-		matrixStack.push()
+		matrixStack.pushMatrix()
 		applyTransformations(matrixStack)
 
 		val (prefix, time, max) =
@@ -110,7 +110,7 @@ object TickTimers : SimpleHudElement("Tick Timers", 120, 12) {
 				drawContext.drawText(MC.textRenderer, formatTimer(necronTime.toInt(), 60, "§4Necron dropping in"), 1, 1, Colors.RED, true)
 		}
 
-		matrixStack.pop()
+		matrixStack.popMatrix()
 		profiler.pop()
 	}
 

@@ -6,7 +6,6 @@ import net.minecraft.client.option.KeyBinding
 import net.minecraft.client.render.RenderTickCounter
 import net.minecraft.client.util.InputUtil
 import net.minecraft.util.Colors
-import net.minecraft.util.math.RotationAxis
 import net.minecraft.util.profiler.Profilers
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.features.dungeons.funnymap.core.DungeonPlayer
@@ -42,7 +41,7 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 		val profiler = Profilers.get()
 		profiler.push("funnyMap")
 
-		matrixStack.push()
+		matrixStack.pushMatrix()
 		applyTransformations(matrixStack)
 
 		drawContext.fillWithOutline(
@@ -53,20 +52,19 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 		)
 
 		if (config.mapRotate) {
-			matrixStack.push()
+			matrixStack.pushMatrix()
 			drawContext.enableScissor(0, 0, width, height)
 
-			matrixStack.translate(64f, 64f, 0f)
-			matrixStack.multiply(RotationAxis.NEGATIVE_Z.rotationDegrees(player.yaw + 180f))
+			matrixStack.translate(64f, 64f)
+			matrixStack.rotate(player.yaw + 180f)
 
 			if(config.mapCenter) {
 				matrixStack.translate(
 					-((player.x - DungeonScan.START_X + 15) * MapUtils.coordMultiplier + MapUtils.startCorner.first - 2).toFloat(),
-					-((player.z - DungeonScan.START_Z + 15) * MapUtils.coordMultiplier + MapUtils.startCorner.second - 2).toFloat(),
-					0f
+					-((player.z - DungeonScan.START_Z + 15) * MapUtils.coordMultiplier + MapUtils.startCorner.second - 2).toFloat()
 				)
 			} else {
-				matrixStack.translate(-64f, -64f, 0f)
+				matrixStack.translate(-64f, -64f)
 			}
 		}
 
@@ -80,17 +78,17 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 
 		if (config.mapRotate) {
 			drawContext.disableScissor()
-			matrixStack.pop()
+			matrixStack.popMatrix()
 		}
 
-		matrixStack.pop()
+		matrixStack.popMatrix()
 		profiler.pop()
 	}
 
 	private fun renderRooms(drawContext: DrawContext) {
 		val matrixStack = drawContext.matrices
-		matrixStack.push()
-		matrixStack.translate(MapUtils.startCorner.first.toFloat(), MapUtils.startCorner.second.toFloat(), 0f)
+		matrixStack.pushMatrix()
+		matrixStack.translate(MapUtils.startCorner.first.toFloat(), MapUtils.startCorner.second.toFloat())
 
 		var yPos = 0
 		var yStep = 0
@@ -139,14 +137,14 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 				}
 			}
 		}
-		matrixStack.translate(-MapUtils.startCorner.first.toFloat(), -MapUtils.startCorner.second.toFloat(), 0f)
-		matrixStack.pop()
+		matrixStack.translate(-MapUtils.startCorner.first.toFloat(), -MapUtils.startCorner.second.toFloat())
+		matrixStack.popMatrix()
 	}
 
 	private fun renderText(drawContext: DrawContext) {
 		val matrixStack = drawContext.matrices
-		matrixStack.push()
-		matrixStack.translate(MapUtils.startCorner.first.toFloat(), MapUtils.startCorner.second.toFloat(), 0f)
+		matrixStack.pushMatrix()
+		matrixStack.translate(MapUtils.startCorner.first.toFloat(), MapUtils.startCorner.second.toFloat())
 
 		FunnyMap.Info.uniqueRooms.forEach { unique ->
 			val room = unique.mainRoom
@@ -183,7 +181,7 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 				MapRenderer.drawCheckmark(drawContext, xOffsetCheck, yOffsetCheck, room.state)
 			}
 		}
-		matrixStack.pop()
+		matrixStack.popMatrix()
 	}
 
 	fun renderPlayerHeads(drawContext: DrawContext) {
@@ -204,6 +202,4 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 		} catch (_: ConcurrentModificationException) {
 		}
 	}
-
-
 }

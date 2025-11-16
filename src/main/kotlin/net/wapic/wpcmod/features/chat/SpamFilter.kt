@@ -2,8 +2,8 @@ package net.wapic.wpcmod.features.chat
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
-import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback
-import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
+import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.render.RenderTickCounter
@@ -34,13 +34,11 @@ object SpamFilter {
 	fun init() {
 		ClientReceiveMessageEvents.ALLOW_GAME.register(::onMessageReceived)
 		ClientTickEvents.END_CLIENT_TICK.register(::onTick)
-		HudLayerRegistrationCallback.EVENT.register { wrapper ->
-			wrapper.attachLayerBefore(
-				IdentifiedLayer.DEMO_TIMER,
-				IdentifiedLayer.of(Utils.modIdentifier("spam_filter"), ::onRenderHud)
-			)
-
-		}
+		HudElementRegistry.attachElementBefore(
+			VanillaHudElements.DEMO_TIMER,
+			Utils.modIdentifier("spam_filter"),
+			::onRenderHud
+		)
 	}
 
 	fun onTick(client: MinecraftClient) {

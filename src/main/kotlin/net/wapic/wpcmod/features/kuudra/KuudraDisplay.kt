@@ -23,7 +23,7 @@ object KuudraDisplay : SimpleHudElement("Kuudra Display", 75, 11) {
 		if (!isActive) return
 
 		val matrixStack = drawContext.matrices
-		matrixStack.push()
+		matrixStack.pushMatrix()
 		applyTransformations(matrixStack)
 
 		kuudraEntity?.let {
@@ -45,6 +45,6 @@ object KuudraDisplay : SimpleHudElement("Kuudra Display", 75, 11) {
 			}
 		}
 
-		matrixStack.pop()
+		matrixStack.popMatrix()
 	}
 }

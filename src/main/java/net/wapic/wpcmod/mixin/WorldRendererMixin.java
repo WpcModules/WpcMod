@@ -2,6 +2,7 @@ package net.wapic.wpcmod.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.mojang.blaze3d.buffers.GpuBufferSlice;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.Framebuffer;
@@ -46,7 +47,7 @@ public abstract class WorldRendererMixin {
 	private BufferBuilderStorage bufferBuilders;
 
 	@Inject(method = "renderMain", at = @At("TAIL"))
-	private void onRenderWorld(FrameGraphBuilder frameGraphBuilder, Frustum frustum, Camera camera, Matrix4f positionMatrix, Matrix4f projectionMatrix, Fog fog, boolean renderBlockOutline, boolean renderEntityOutlines, RenderTickCounter renderTickCounter, Profiler profiler, CallbackInfo ci) {
+	private void onRenderWorld(FrameGraphBuilder frameGraphBuilder, Frustum frustum, Camera camera, Matrix4f positionMatrix, GpuBufferSlice fog, boolean renderBlockOutline, boolean renderEntityOutline, RenderTickCounter tickCounter, Profiler profiler, CallbackInfo ci) {
 		if(world == null || client.player == null) return;
 
 		FramePass framePass = frameGraphBuilder.createPass("wpcmod:render_world");
@@ -58,7 +59,7 @@ public abstract class WorldRendererMixin {
 			RenderSystem.setShaderFog(fog);
 			MatrixStack matrixStack = new MatrixStack();
 			VertexConsumerProvider.Immediate immediate = this.bufferBuilders.getEntityVertexConsumers();
-			WorldRenderContext worldRenderContext = new WorldRenderContext(matrixStack, world, immediate, renderTickCounter, camera, profiler);
+			WorldRenderContext worldRenderContext = new WorldRenderContext(matrixStack, world, immediate, tickCounter, camera, profiler);
 			WorldRenderEvent.EVENT.invoker().onRenderWorld(worldRenderContext);
 			immediate.draw();
 			this.checkEmpty(matrixStack);

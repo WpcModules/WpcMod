@@ -59,7 +59,7 @@ object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
 	override fun render(drawContext: DrawContext, tickCounter: RenderTickCounter) {
 		if (!isActive) return
 		val matrixStack = drawContext.matrices
-		matrixStack.push()
+		matrixStack.pushMatrix()
 		applyTransformations(matrixStack)
 
 		val lines = setOf(
@@ -77,7 +77,7 @@ object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
 			)
 		}
 
-		matrixStack.pop()
+		matrixStack.popMatrix()
 	}
 
     fun onMessageReceived(text: Text, actionBar: Boolean) {

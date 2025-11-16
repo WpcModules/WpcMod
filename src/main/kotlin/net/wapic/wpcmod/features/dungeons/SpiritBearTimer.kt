@@ -47,7 +47,7 @@ object SpiritBearTimer : SimpleHudElement("Spirit Bear Timer", 90, 12) {
 	override fun render(drawContext: DrawContext, tickCounter: RenderTickCounter) {
 		if (!isActive || spawnTime <= 0) return
 		val matrixStack = drawContext.matrices
-		matrixStack.push()
+		matrixStack.pushMatrix()
 		applyTransformations(matrixStack)
 
 		drawContext.drawText(
@@ -57,7 +57,7 @@ object SpiritBearTimer : SimpleHudElement("Spirit Bear Timer", 90, 12) {
 			shadow = true
 		)
 
-		matrixStack.pop()
+		matrixStack.popMatrix()
 	}
 
 	fun onBlockChange(pos: BlockPos, oldState: BlockState, newState: BlockState) {

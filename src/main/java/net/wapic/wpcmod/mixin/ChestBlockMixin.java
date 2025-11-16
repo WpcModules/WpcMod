@@ -1,6 +1,5 @@
 package net.wapic.wpcmod.mixin;
 
-
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ChestBlock;
 import net.minecraft.block.ShapeContext;

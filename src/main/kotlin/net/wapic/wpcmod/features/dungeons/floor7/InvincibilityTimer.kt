@@ -35,7 +35,7 @@ object InvincibilityTimer : SimpleHudElement("Invincibility Timer", 160, 33) {
 	override fun render(drawContext: DrawContext, tickCounter: RenderTickCounter) {
 		if (!isActive) return
 		val matrixStack = drawContext.matrices
-		matrixStack.push()
+		matrixStack.pushMatrix()
 		applyTransformations(matrixStack)
 
 		InvincibilityType.entries.filter { it.currentCooldown > 0 || it.activeTime > 0 }.forEachIndexed { index, type ->
@@ -44,7 +44,7 @@ object InvincibilityTimer : SimpleHudElement("Invincibility Timer", 160, 33) {
 			drawContext.drawText("§6${type} ${time}s", 2, 2 + index * 10, Colors.WHITE, true)
 		}
 
-		matrixStack.pop()
+		matrixStack.popMatrix()
 	}
 
 	private enum class InvincibilityType(

@@ -30,7 +30,7 @@ class HudEditor : Screen {
 		super.render(context, mouseX, mouseY, deltaTicks)
 
 		elements.forEach {
-			context.matrices.push()
+			context.matrices.pushMatrix()
 			it.applyTransformations(context.matrices)
 			context.fillWithOutline(0, 0, it.getUnscaledWidth(), it.getUnscaledHeight(), backgroundColour, borderColour)
 			context.drawCenteredTextWithShadow(
@@ -40,7 +40,7 @@ class HudEditor : Screen {
 				it.getUnscaledHeight() / 2 - this.textRenderer.fontHeight / 2,
 				Colors.WHITE
 			)
-			context.matrices.pop()
+			context.matrices.popMatrix()
 		}
 	}
 
