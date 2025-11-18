@@ -22,7 +22,7 @@ public class FogRendererMixin {
 		if (client.player != null) {
 			boolean isBlind = client.player.hasStatusEffect(StatusEffects.BLINDNESS);
 			if (WpcMod.config.getRender().getNoBlindness() && isBlind) {
-				cir.setReturnValue(new Vector4f(1f, 1f, 1f, 0f)); // TODO: Fix
+				cir.setReturnValue(new Vector4f(1f, 1f, 1f, 0f));
 			}
 		}
 	}
