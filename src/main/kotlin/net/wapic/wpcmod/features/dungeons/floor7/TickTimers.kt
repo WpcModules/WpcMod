@@ -104,7 +104,7 @@ object TickTimers : SimpleHudElement("Tick Timers", 120, 12) {
 		when {
 			padTickTime >= 0 ->
 				drawContext.drawText(MC.textRenderer, formatTimer(padTickTime, 20, "§bPad:"), 1, 1, Colors.RED, true)
-			goldorStartTime >= 0 ->
+			goldorStartTime >= 0 || goldorTickTime >= 0 ->
 				drawContext.drawText(MC.textRenderer, formatTimer(time, max, prefix), 1, 1, Colors.RED, true)
 			necronTime >= 0 ->
 				drawContext.drawText(MC.textRenderer, formatTimer(necronTime.toInt(), 60, "§4Necron dropping in"), 1, 1, Colors.RED, true)
