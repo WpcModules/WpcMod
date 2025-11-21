@@ -18,8 +18,8 @@ object ArmorSwapper {
 
 	private val armorSwapBind: KeyBinding =
 		KeyBindingHelper.registerKeyBinding(KeyBinding("Armor Swap", InputUtil.GLFW_KEY_V, WpcMod.category))
-	private val wardrobeTitle = "Wardrobe \\((?<page>[1-2])/2\\)".toRegex()
-	private var sorrowPiece = "(?:Ancient|Renowned) Sorrow Boots".toRegex()
+	private val wardrobeTitle = Regex("Wardrobe \\((?<page>\\d)/\\d\\)")
+	private var sorrowPiece = Regex("(?:Ancient|Renowned) Sorrow Boots")
 	private var shouldSwap = false
 
 	private var sorrowSlot: Int? = null
