@@ -26,6 +26,7 @@ import net.wapic.wpcmod.config.ConfigManager
 import net.wapic.wpcmod.config.WpcConfig
 import net.wapic.wpcmod.features.chat.AutoAcceptPartyInvite
 import net.wapic.wpcmod.features.chat.ChatEmotes
+import net.wapic.wpcmod.features.chat.CompactChat
 import net.wapic.wpcmod.features.chat.SpamFilter
 import net.wapic.wpcmod.features.dev.SkyBlockID
 import net.wapic.wpcmod.features.dungeons.*
@@ -178,6 +179,7 @@ object WpcMod : ModInitializer {
 		ChestESP.init()
 
 		// Chat
+		CompactChat.init()
 		SpamFilter.init()
 		ChatEmotes.init()
 		AutoAcceptPartyInvite.init()

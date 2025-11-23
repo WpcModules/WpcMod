@@ -8,6 +8,10 @@ class ChatConfig {
 	@ConfigEditorBoolean
 	var longerChatHistory: Boolean = false
 
+	@ConfigOption(name = "Remove Blank Messages", desc = "Removes blank messages from chat")
+	@ConfigEditorBoolean
+	var removeBlank: Boolean = false
+
 	@ConfigOption(name = "Compact Chat", desc = "Compact duplicate chat messages")
 	@ConfigEditorBoolean
 	var compactChat: Boolean = false
