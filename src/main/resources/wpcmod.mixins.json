@@ -33,6 +33,7 @@
     "SkullBlockMixin",
     "WorldChunkMixin",
     "WorldRendererMixin",
+    "accessors.ChatHudAccessor",
     "accessors.HandledScreenAccessor",
     "accessors.MinecraftClientAccessor",
     "accessors.PlayerInteractEntityC2SPacketAccessor",

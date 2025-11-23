@@ -1,92 +1,126 @@
 package net.wapic.wpcmod.features.chat
 
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
+import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
+import net.minecraft.SharedConstants
 import net.minecraft.client.gui.hud.ChatHudLine
-import net.minecraft.text.*
+import net.minecraft.text.MutableText
+import net.minecraft.text.Style
+import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 import net.minecraft.util.Util
 import net.wapic.wpcmod.WpcMod
-import java.util.*
+import net.wapic.wpcmod.mixin.accessors.ChatHudAccessor
+import net.wapic.wpcmod.util.MC
 
 object CompactChat {
 
 	private val config get() = WpcMod.config.chat
 
-	data class CompactedMessage(
-		var occurrences: Int = 1,
-		var lastCompacted: Long = Util.getMeasuringTimeMs()
-	) {
-		fun setValues(reset: Boolean = false) {
-			occurrences = if (reset) 1 else occurrences + 1
-			lastCompacted = Util.getMeasuringTimeMs()
+	private val messages = mutableMapOf<Text, Message>()
+	private var currentDividerSet: MutableList<Message>? = null
+	private var compactingTicks = 0
+
+	fun init() {
+		ClientTickEvents.END_CLIENT_TICK.register { _ -> prune() }
+		ClientReceiveMessageEvents.ALLOW_GAME.register { message, _ ->
+			return@register if (!config.removeBlank) true else (Formatting.strip(message.string)?.isBlank() == false)
 		}
 	}
 
-	private val messages = mutableMapOf<String, CompactedMessage>()
-	private val separators = listOf("-----", "======", "▬▬▬▬▬▬")
-
-	private fun shouldIgnore(message: String): Boolean {
-		return !config.compactChat || message.isBlank() || separators.any(message::contains)
+	private fun associateDividers(lastDivider: Message) {
+		val divided = currentDividerSet
+		check(divided != null)
+		if (divided.size < 2) return
+		divided[1].dividers.add(divided[0])
+		divided.last().dividers.add(lastDivider)
 	}
 
-	fun compactMessage(message: Text, chatHudLines: MutableList<ChatHudLine>): Text {
-		if (shouldIgnore(message.string)) return message
-
-		val previousValue = messages.putIfAbsent(message.string, CompactedMessage())
-
-		previousValue?.let { compactedMessage ->
-			if (Util.getMeasuringTimeMs() - compactedMessage.lastCompacted >= config.compactTimeout * 1000) {
-				compactedMessage.setValues(reset = true)
-				return message
+	private fun processDivider(message: Message) {
+		currentDividerSet?.let {
+			if (Util.getMeasuringTimeMs() > it.first().lastSeen + 5000) {
+				WpcMod.logger.warn("Second divider wasn't received after 5 seconds!")
+				currentDividerSet = null
 			}
-
-			compactedMessage.setValues()
-
-			val iterator = chatHudLines.iterator()
-			while (iterator.hasNext()) {
-				val chatLine = iterator.next()
-
-				val contentWithoutOccurrences = chatLine.content.copy()
-				contentWithoutOccurrences.siblings.removeIf { it.content is OccurrenceTextContent }
-
-				if (contentWithoutOccurrences.string == message.string) {
-					iterator.remove()
-				}
-			}
-
-			val occurrencesText = OccurrenceTextContent.create(compactedMessage.occurrences)
-				.setStyle(Style.EMPTY.withColor(Formatting.DARK_GRAY))
-			return message.copy().append(occurrencesText)
 		}
+		if (message.isDivider) {
+			if (currentDividerSet == null) {
+				currentDividerSet = mutableListOf()
+			} else {
+				associateDividers(message)
+				currentDividerSet = null
+			}
+		}
+		currentDividerSet?.add(message)
+	}
 
+	@JvmStatic
+	fun compact(text: Text): Message? {
+		if (!config.compactChat) return null
+
+		var message: Message? = messages[text]?.takeUnless { it.isOld() }
+		if (message == null) {
+			message = Message(text.copy())
+			if (!message.isDivider) messages[text] = message
+		}
+		processDivider(message)
+
+		message.timesSeen++
+		message.lastSeen = Util.getMeasuringTimeMs()
+
+		if (message.shouldCompact) message.remove()
 		return message
 	}
 
+	@JvmStatic
 	fun clear() {
 		messages.clear()
+		currentDividerSet = null
 	}
 
-	class OccurrenceTextContent(var occurrences: Int) : PlainTextContent {
+	@JvmStatic
+	fun prune() {
+		if (compactingTicks++ % (15 * SharedConstants.TICKS_PER_SECOND) == 0 && config.compactChat) {
+			messages.values.removeIf(Message::isOld)
+		}
+	}
 
-		override fun string(): String {
-			return " (" + this.occurrences + ")"
+	@JvmStatic
+	fun buildLineCache(): Map<ChatHudLine, Message> =
+		messages.entries.mapNotNull { (it.value.lastLine ?: return@mapNotNull null) to it.value }.toMap()
+
+	class Message(val text: MutableText) {
+		var lastLine: ChatHudLine? = null
+		val lastVisible: MutableList<ChatHudLine.Visible> = mutableListOf()
+		val dividers: MutableList<Message> = mutableListOf()
+
+		var timesSeen: Int = 0
+		var lastSeen: Long = Util.getMeasuringTimeMs()
+
+		val isDivider: Boolean by lazy {
+			val message = Formatting.strip(text.string)!!
+			message.length > 5 && message.all { it == '-' || it == '=' || it == '\u25AC' }
 		}
 
-		override fun <T : Any> visit(visitor: StringVisitable.Visitor<T>): Optional<T> {
-			return visitor.accept(this.string())
+		val textWithCounter: Text
+			get() = if (timesSeen == 1) text else {
+				text.copy().append(
+					Text.literal(" ($timesSeen)").setStyle(Style.EMPTY.withExclusiveFormatting(Formatting.DARK_GRAY))
+				)
 		}
 
-		override fun <T : Any> visit(visitor: StringVisitable.StyledVisitor<T>, style: Style): Optional<T> {
-			return visitor.accept(style, this.string())
-		}
+		@get:JvmName("shouldCompact")
+		val shouldCompact: Boolean get() = timesSeen > 1 && !isDivider
 
-		override fun toString(): String {
-			return "compactChatTextOccurrences{occurrences = " + this.occurrences + "}"
-		}
+		fun isOld(): Boolean = Util.getMeasuringTimeMs() >= lastSeen + config.compactTimeout * 1000
 
-		companion object {
-			fun create(occurrences: Int): MutableText {
-				return MutableText.of(OccurrenceTextContent(occurrences))
-			}
+		fun remove() {
+			val hud = MC.inGameHud.chatHud as ChatHudAccessor
+			lastLine?.let(hud.messages::remove)
+			lastVisible.forEach(hud.visibleMessages::remove)
+			lastVisible.clear()
+			dividers.forEach(Message::remove)
+			dividers.clear()
 		}
 	}
 }
