@@ -12,7 +12,7 @@ object AutoAcceptPartyInvite {
 
 	private val invitePattern: Pattern = Pattern.compile(
 		"-----------------------------------------------------\n" +
-				"(\\[[A-z]+\\+{0,2}])?(?<name>\\w{3,16}) has invited you to join their party!\n" +
+				"(\\[[A-z]+\\+{0,2}]\\s)?(?<name>\\w{3,16}) has invited you to join their party!\n" +
 				"You have 60 seconds to accept. Click here to join!\n" +
 				"-----------------------------------------------------"
 	)
