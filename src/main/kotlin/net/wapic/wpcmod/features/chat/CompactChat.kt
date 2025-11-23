@@ -20,6 +20,7 @@ object CompactChat {
 	private val messages = mutableMapOf<Text, Message>()
 	private var currentDividerSet: MutableList<Message>? = null
 	private var compactingTicks = 0
+	private const val PRUNE_TICK = (15 * SharedConstants.TICKS_PER_SECOND)
 
 	fun init() {
 		ClientTickEvents.END_CLIENT_TICK.register { _ -> prune() }
@@ -80,7 +81,7 @@ object CompactChat {
 
 	@JvmStatic
 	fun prune() {
-		if (compactingTicks++ % (15 * SharedConstants.TICKS_PER_SECOND) == 0 && config.compactChat) {
+		if (compactingTicks++ % PRUNE_TICK == 0 && config.compactChat) {
 			messages.values.removeIf(Message::isOld)
 		}
 	}
