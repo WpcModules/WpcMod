@@ -38,7 +38,7 @@ object DungeonESP : MobGlowCache() {
 				entity is ArmorStandEntity && entity.headTexture.equalsOneOf(
 					HeadTextures.BLOOD_KEY,
 					HeadTextures.WITHER_KEY
-				) -> config.doorKeys
+				) && !entity.isMarker -> config.doorKeys
 				isStarredMob(entity) || (entity is ArmorStandEntity && entity.headTexture == HeadTextures.FEL) -> config.starMob
 				entity is BatEntity && !entity.isInvisible -> config.bat
 				entity is PlayerEntity && entity.name.string in miniBosses -> config.miniboss
@@ -77,8 +77,8 @@ object DungeonESP : MobGlowCache() {
 			config.doorKeys.glow && entity is ArmorStandEntity && entity.headTexture.equalsOneOf(
 				HeadTextures.WITHER_KEY,
 				HeadTextures.BLOOD_KEY
-			) -> config.doorKeys.color
-			config.starMob.glow && isStarredMob(entity) -> config.starMob.color
+			) && !entity.isMarker -> config.doorKeys.color
+			config.starMob.glow && isStarredMob(entity) || (entity is ArmorStandEntity && entity.headTexture == HeadTextures.FEL) -> config.starMob.color
 			config.miniboss.glow && entity.name.string in miniBosses -> config.miniboss.color
 			config.bat.glow && entity is BatEntity -> config.bat.color
 			else -> null
