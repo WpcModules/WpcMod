@@ -5,6 +5,7 @@ import net.minecraft.client.gl.RenderPipelines
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.util.Identifier
 import net.wapic.wpcmod.util.MC
+import org.joml.Matrix3x2f
 
 fun DrawContext.drawTexture(
 	sprite: Identifier,
@@ -44,4 +45,20 @@ fun DrawContext.drawBorder(x: Int, y: Int, width: Int, height: Int, color: Chrom
 	fill(x, y + height - 1, x + width, y + height, color)
 	fill(x, y + 1, x + 1, y + height - 1, color)
 	fill(x + width - 1, y + 1, x + width, y + height - 1, color)
+}
+
+fun DrawContext.drawRoundedRect(x: Int, y: Int, width: Int, height: Int, radius: Float, color: ChromaColour) {
+	val matrix = Matrix3x2f(matrices)
+	this.state.addSimpleElement(
+		RoundedRectangleRenderState(
+			matrix,
+			x,
+			y,
+			width,
+			height,
+			radius,
+			color,
+			RoundedRectangleRenderState.createBounds(matrix, x, y, width, height)
+		)
+	)
 }
