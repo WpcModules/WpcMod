@@ -21,7 +21,7 @@ public abstract class LeverBlockMixin extends WallMountedBlock {
 	}
 
 	@Inject(method = "getOutlineShape", at = @At("HEAD"), cancellable = true)
-	public void onGetOutLineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context, CallbackInfoReturnable<VoxelShape> cir) {
+	public void onGetOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context, CallbackInfoReturnable<VoxelShape> cir) {
 		VoxelShape shape = BiggerHitboxes.INSTANCE.getHitbox(state);
 		if (shape != null) {
 			cir.setReturnValue(shape);
