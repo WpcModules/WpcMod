@@ -30,7 +30,7 @@ abstract class TermGui {
 		matrixStack.pushMatrix()
 		matrixStack.translate(x, y)
 
-		drawContext.drawRoundedRect(0, 0, width.toInt(), height.toInt(), 20f, config.backgroundColor)
+		drawContext.drawRoundedRect(0, 0, width.toInt(), height.toInt(), config.backgroundRoundness, config.backgroundColor)
 
 		matrixStack.popMatrix()
     }
@@ -49,7 +49,7 @@ abstract class TermGui {
 		matrixStack.translate(x, y)
 		matrixStack.scale(config.customTermSize)
 
-		drawContext.drawRoundedRect(0, 0, slotSize, slotSize, 4f, color)
+		drawContext.drawRoundedRect(0, 0, slotSize, slotSize, config.slotRoundness, color)
 
 		matrixStack.popMatrix()
         return x to y

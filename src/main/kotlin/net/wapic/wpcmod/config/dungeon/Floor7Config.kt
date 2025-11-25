@@ -119,6 +119,14 @@ class Floor7Config {
 		@ConfigEditorSlider(minValue = 0f, maxValue = 8f, minStep = 1f)
 		var gap: Float = 2f
 
+		@ConfigOption(name = "Background Roundness", desc = "The corner roundness of the terminal")
+		@ConfigEditorSlider(minValue = 0f, maxValue = 32f, minStep = 1f)
+		var backgroundRoundness: Float = 16f
+
+		@ConfigOption(name = "Slot Roundness", desc = "The slot corner roundness of the terminal")
+		@ConfigEditorSlider(minValue = 0f, maxValue = 8f, minStep = 1f)
+		var slotRoundness: Float = 4f
+
 		@ConfigOption(name = "Background", desc = "Background color of the terminal solver.")
 		@ConfigEditorColour
 		var backgroundColor = ChromaColour.fromRGB(0, 0, 0, 0, 125)
