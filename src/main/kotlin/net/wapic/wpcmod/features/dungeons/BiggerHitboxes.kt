@@ -15,8 +15,8 @@ object BiggerHitboxes {
 		VoxelShapes.createBlockFaceHorizontalFacingShapeMap(Block.createCuboidZShape(14.0, 14.0, 8.0, 16.0))
 	private val BUTTON_MAP =
 		VoxelShapes.createBlockFaceHorizontalFacingShapeMap(Block.createCuboidZShape(14.0, 14.0, 14.0, 16.0))
-	private val SKULL_SHAPE = Block.createColumnShape(12.0, 0.0, 8.0)
-	private val CHEST_SHAPE = Block.createColumnShape(16.0, 0.0, 16.0)
+	private val SKULL_SHAPE = Block.createColumnShape(16.0, 0.0, 16.0)
+	private val CHEST_SHAPE = VoxelShapes.fullCube()
 
 	fun getHitbox(blockState: BlockState): VoxelShape? {
 		if (!DungeonUtils.inDungeons || !config.enabled) return null
