@@ -7,6 +7,7 @@ import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.dungeons.floor7.TerminalSolver
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.render.drawRoundedRect
 
 abstract class TermGui {
     protected val itemIndexMap: MutableMap<Int, Box> = mutableMapOf()
@@ -29,7 +30,7 @@ abstract class TermGui {
 		matrixStack.pushMatrix()
 		matrixStack.translate(x, y)
 
-		drawContext.fill(0, 0, width.toInt(), height.toInt(), config.backgroundColor.getEffectiveColourRGB())
+		drawContext.drawRoundedRect(0, 0, width.toInt(), height.toInt(), config.backgroundRoundness, config.backgroundColor)
 
 		matrixStack.popMatrix()
     }
@@ -48,11 +49,7 @@ abstract class TermGui {
 		matrixStack.translate(x, y)
 		matrixStack.scale(config.customTermSize)
 
-		drawContext.fill(
-			0, 0,
-			slotSize, slotSize,
-			color.getEffectiveColourRGB()
-		)
+		drawContext.drawRoundedRect(0, 0, slotSize, slotSize, config.slotRoundness, color)
 
 		matrixStack.popMatrix()
         return x to y

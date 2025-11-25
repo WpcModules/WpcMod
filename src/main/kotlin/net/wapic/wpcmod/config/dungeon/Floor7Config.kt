@@ -103,6 +103,10 @@ class Floor7Config {
 		@ConfigEditorBoolean
 		var showNumbers: Boolean = true
 
+		@ConfigOption(name = "Show Entire Order Terminal", desc = "Show all numbers in the order terminal")
+		@ConfigEditorBoolean
+		var showAllOrder: Boolean = true
+
 		@ConfigOption(name = "Reload Threshold", desc = "Time in milliseconds before the terminal refreshes.")
 		@ConfigEditorSlider(minValue = 300f, maxValue = 1000f, minStep = 10f)
 		var terminalReloadThreshold: Float = 600f
@@ -114,6 +118,14 @@ class Floor7Config {
 		@ConfigOption(name = "Gap",	desc = "The gap between the slots in the custom terminal gui.")
 		@ConfigEditorSlider(minValue = 0f, maxValue = 8f, minStep = 1f)
 		var gap: Float = 2f
+
+		@ConfigOption(name = "Background Roundness", desc = "The corner roundness of the terminal")
+		@ConfigEditorSlider(minValue = 0f, maxValue = 32f, minStep = 1f)
+		var backgroundRoundness: Float = 16f
+
+		@ConfigOption(name = "Slot Roundness", desc = "The slot corner roundness of the terminal")
+		@ConfigEditorSlider(minValue = 0f, maxValue = 8f, minStep = 1f)
+		var slotRoundness: Float = 4f
 
 		@ConfigOption(name = "Background", desc = "Background color of the terminal solver.")
 		@ConfigEditorColour
