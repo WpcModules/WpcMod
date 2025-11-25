@@ -8,6 +8,7 @@
     "defaultRequire": 1
   },
   "client": [
+    "AbstractBlockMixin",
     "ButtonBlockMixin",
     "CameraMixin",
     "ChatHudMixin",
@@ -31,6 +32,7 @@
     "SkullBlockMixin",
     "WorldChunkMixin",
     "WorldRendererMixin",
+    "accessors.BufferBuilderAccessor",
     "accessors.ChatHudAccessor",
     "accessors.HandledScreenAccessor",
     "accessors.MinecraftClientAccessor",

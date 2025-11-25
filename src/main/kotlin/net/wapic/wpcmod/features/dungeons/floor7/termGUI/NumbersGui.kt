@@ -1,10 +1,12 @@
 package net.wapic.wpcmod.features.dungeons.floor7.termGUI
 
+import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.util.Colors
 import net.wapic.wpcmod.features.dungeons.floor7.TerminalSolver
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.equalsOneOf
+import net.wapic.wpcmod.util.render.BLACK
 import net.wapic.wpcmod.util.render.drawText
 
 object NumbersGui : TermGui() {
@@ -17,12 +19,13 @@ object NumbersGui : TermGui() {
 
             val amount = TerminalSolver.currentTerm?.items?.get(index)?.count?.takeIf { it > 0 } ?: continue
             val solutionIndex = currentSolution.indexOf(index)
+			if(!solutionIndex.equalsOneOf(0, 1, 2) && !config.showAllOrder) continue
 
             val color = when (solutionIndex) {
                 0 -> config.orderColor
                 1 -> config.orderColor2
                 2 -> config.orderColor3
-				else -> config.backgroundColor
+				else -> ChromaColour.fromStaticRGB(0, 0, 0, 0)
             }
 
 			val (slotX, slotY) = renderSlot(drawContext, index, color)
