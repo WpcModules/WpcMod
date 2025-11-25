@@ -103,6 +103,10 @@ class Floor7Config {
 		@ConfigEditorBoolean
 		var showNumbers: Boolean = true
 
+		@ConfigOption(name = "Show Entire Order Terminal", desc = "Show all numbers in the order terminal")
+		@ConfigEditorBoolean
+		var showAllOrder: Boolean = true
+
 		@ConfigOption(name = "Reload Threshold", desc = "Time in milliseconds before the terminal refreshes.")
 		@ConfigEditorSlider(minValue = 300f, maxValue = 1000f, minStep = 10f)
 		var terminalReloadThreshold: Float = 600f
