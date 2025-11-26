@@ -8,6 +8,7 @@ enum class Island(val displayName: String = "", val internalName: String = "") {
 	GOLD_MINE("Gold Mine", "mining_1"),
 	DEEP_CAVERNS("Deep Caverns", "mining_2"),
 	DWARVEN_MINES("Dwarven Mines", "mining_3"),
+	MINESHAFT("Mineshaft", "mineshaft"),
 	CRYSTAL_HOLLOWS("Crystal Hollows", "crystal_hollows"),
 	BACKWATER_BAYOU("Backwater Bayou", "fishing_1"),
 	SPIDER_DEN("Spider's Den", "combat_1"),

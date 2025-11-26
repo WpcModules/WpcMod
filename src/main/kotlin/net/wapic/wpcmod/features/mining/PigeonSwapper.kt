@@ -14,7 +14,7 @@ import net.wapic.wpcmod.util.Utils
 object PigeonSwapper {
 
 	private val config get() = WpcMod.config.mining
-	private val allowedAreas: List<Island> = listOf(Island.DWARVEN_MINES, Island.CRYSTAL_HOLLOWS)
+	private val allowedAreas: List<Island> = listOf(Island.DWARVEN_MINES, Island.CRYSTAL_HOLLOWS, Island.MINESHAFT)
 
 	fun init() {
 		UseItemCallback.EVENT.register { player, world, hand -> onUse(player, world, hand) }
