@@ -47,13 +47,15 @@ object HudManager {
 	fun init() {
 		ClientTickEvents.END_CLIENT_TICK.register {
 			while (hudKeyBind.wasPressed()) {
-				MC.instance.send {
-					MC.screen = HudEditor(hudElements)
-				}
+				openEditor()
 			}
 		}
 
 		loadLocations()
+	}
+
+	fun openEditor() {
+		MC.instance.send { MC.screen = HudEditor(hudElements) }
 	}
 
 	private fun readFile(): String = try {

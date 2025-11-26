@@ -6,12 +6,18 @@ import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorButton
 import io.github.notenoughupdates.moulconfig.annotations.ConfigOption
 import net.minecraft.client.MinecraftClient
 import net.wapic.wpcmod.features.general.shortcut.ShortcutScreen
+import net.wapic.wpcmod.hud.HudManager
 
 class GeneralConfig {
 
 	@ConfigOption(name = "Prevent Placing Items", desc = "Prevent placing items such as Weird Tuba and Flower of Truth")
 	@ConfigEditorBoolean
 	var preventPlacing: Boolean = false
+
+	@Transient
+	@ConfigOption(name = "Hud Editor", desc = "Open the Hud Editor")
+	@ConfigEditorButton(buttonText = "Open")
+	val hudEditor = Runnable { HudManager.openEditor() }
 
 	@Transient
 	@ConfigOption(name = "Command Keybind Editor", desc = "Open the screen to manage command keybinds")
