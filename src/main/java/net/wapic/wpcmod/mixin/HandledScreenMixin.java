@@ -4,11 +4,14 @@ import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.text.Text;
 import net.wapic.wpcmod.events.GuiEvents;
 import net.wapic.wpcmod.events.TooltipEvents;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -22,6 +25,10 @@ public abstract class HandledScreenMixin {
 	@Shadow
 	@Nullable
 	protected Slot focusedSlot;
+
+	@Shadow
+	@Final
+	protected Text playerInventoryTitle;
 
 	@Inject(at = @At("HEAD"), method = "drawSlot", cancellable = true)
 	protected void drawSlot$Before(DrawContext context, Slot slot, CallbackInfo ci) {
@@ -60,5 +67,10 @@ public abstract class HandledScreenMixin {
 	@Inject(method = "renderBackground", at = @At("HEAD"), cancellable = true)
 	private void renderBackground(DrawContext context, int mouseX, int mouseY, float deltaTicks, CallbackInfo ci) {
 		GuiEvents.DRAW_BACKGROUND.invoker().onDrawBackground((Screen) (Object) this, context, ci);
+	}
+
+	@Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
+	private void renderBackground(KeyInput input, CallbackInfoReturnable<Boolean> cir) {
+		GuiEvents.KEY_PRESSED.invoker().onKeyPressed(input, cir);
 	}
 }
