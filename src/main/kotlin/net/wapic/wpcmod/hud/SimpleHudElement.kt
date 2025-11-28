@@ -16,10 +16,13 @@ open class SimpleHudElement(
 	var width: Int,
 	var height: Int,
 	var canScale: Boolean = true,
+	var defaultScale: Float = 1f,
+	var defaultX: Float = 0f,
+	var defaultY: Float = 0f,
 ) {
-	@Expose var scale = 1f
-	@Expose var x = 0f
-	@Expose var y = 0f
+	@Expose var scale = defaultScale
+	@Expose var x = defaultX
+	@Expose var y = defaultY
 	open val isEnabled = false
 	open val isActive = false
 

@@ -105,6 +105,7 @@ object WpcMod : ModInitializer {
 					.then(FreecamCommand.getCommand())
 					.then(TermSimCommand.getCommand())
 					.then(FunnyMapCommands.getCommand())
+					.then(HudEditorCommand.getCommand())
 			)
 
 			dispatcher.register(ClientCommandManager.literal("wpcmod").redirect(mainCommand))

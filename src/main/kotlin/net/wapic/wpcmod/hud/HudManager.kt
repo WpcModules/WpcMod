@@ -65,6 +65,14 @@ object HudManager {
 		else throw e
 	}
 
+	fun resetLocations() {
+		hudElements.forEach {
+			it.x = it.defaultX
+			it.y = it.defaultY
+			it.scale = it.defaultScale
+		}
+	}
+
 	fun loadLocations() {
 		if (!file.exists()) {
 			WpcMod.logger.error("Could not find hud locations file. is this your first time launching?")
