@@ -86,7 +86,7 @@ object TerminalSolver {
 							DyeColor.entries.find {
 								it.name.replace("_", " ").equals(
 									selectAllRegex.find(windowName)?.groupValues?.get(1)
-										?.replace("SILVER", "light_gray"), true
+										?.replace("SILVER", "LIGHT GRAY"), true
 								)
 							} ?: return ChatUtils.sendMessage("Failed to find color, please report this!")
 						)
