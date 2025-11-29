@@ -46,6 +46,7 @@ import net.wapic.wpcmod.features.inventory.ArmorSwapper
 import net.wapic.wpcmod.features.inventory.ScrollableTooltips
 import net.wapic.wpcmod.features.inventory.experiments.AutoExperiments
 import net.wapic.wpcmod.features.inventory.experiments.SuperpairsSolver
+import net.wapic.wpcmod.features.inventory.inventorybinds.InventoryBindsHandler
 import net.wapic.wpcmod.features.kuudra.KuudraAutoGFS
 import net.wapic.wpcmod.features.kuudra.KuudraESP
 import net.wapic.wpcmod.features.mining.ChestESP
@@ -192,6 +193,7 @@ object WpcMod : ModInitializer {
 		// Inventory
 		ArmorSwapper.init()
 		ScrollableTooltips.init()
+		InventoryBindsHandler.init()
 
 		// Dev
 		SkyBlockID.init()

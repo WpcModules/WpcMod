@@ -1,12 +1,9 @@
 package net.wapic.wpcmod.features.inventory.inventorybinds
 
-import net.minecraft.client.gui.Click
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.input.KeyInput
-import net.minecraft.client.util.InputUtil
+import net.minecraft.client.gui.widget.ButtonWidget
 import net.minecraft.text.Text
-import net.minecraft.util.Util
 
 class InventoryBindsEditor : Screen(Text.of("Inventory Binds")) {
 
@@ -14,6 +11,21 @@ class InventoryBindsEditor : Screen(Text.of("Inventory Binds")) {
 	var lastKeyCodeUpdateTime: Long = 0
 
 	override fun init() {
+		InventoryBindsHandler.loadedInventoryBinds.keys.forEachIndexed { index, inventoryTitle ->
+			val widget = ButtonWidget.Builder(Text.of(inventoryTitle)) {
+				client?.setScreen(InventoryEditor(this, inventoryTitle))
+			}.dimensions(this.width / 2 - 80, 10 + 20 * index, 120, 20).build()
+			this.addDrawableChild(widget)
+
+			this.addDrawableChild(ButtonWidget.Builder(Text.of("Delete")) {
+				InventoryBindsHandler.loadedInventoryBinds.remove(inventoryTitle)
+				this.clearAndInit()
+			}.dimensions(this.width / 2 + 40, 10 + 20 * index, 40, 20).build())
+		}
+
+		this.addDrawableChild(ButtonWidget.Builder(Text.of("Add Inventory")) {
+			client?.setScreen(InventoryAdder(this))
+		}.dimensions(this.width / 2 - 60, this.height - 30, 120, 20).build())
 		super.init()
 	}
 
@@ -24,20 +36,5 @@ class InventoryBindsEditor : Screen(Text.of("Inventory Binds")) {
 
 	override fun render(context: DrawContext?, mouseX: Int, mouseY: Int, deltaTicks: Float) {
 		super.render(context, mouseX, mouseY, deltaTicks)
-	}
-
-	override fun mouseClicked(click: Click, doubled: Boolean): Boolean {
-		if (this.selectedInventoryBind == null) return super.mouseClicked(click, doubled)
-		this.selectedInventoryBind?.setBoundKey(InputUtil.Type.MOUSE.createFromCode(click.button()))
-		this.selectedInventoryBind = null
-		return true
-	}
-
-	override fun keyPressed(input: KeyInput): Boolean {
-		if (this.selectedInventoryBind == null) return super.keyPressed(input)
-		this.selectedInventoryBind?.setBoundKey(if(input.keycode == 256) InputUtil.UNKNOWN_KEY else InputUtil.fromKeyCode(input))
-		this.selectedInventoryBind = null
-		this.lastKeyCodeUpdateTime = Util.getMeasuringTimeMs()
-		return true
 	}
 }

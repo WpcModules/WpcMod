@@ -6,7 +6,6 @@ import net.minecraft.text.Text
 
 class InventoryBind(
 	@Expose var slot: Int,
-	@Expose var inventory: String,
 	var key: InputUtil.Key
 ) {
 

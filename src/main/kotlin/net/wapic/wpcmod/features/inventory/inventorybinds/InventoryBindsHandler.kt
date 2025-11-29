@@ -15,7 +15,7 @@ import java.io.File
 object InventoryBindsHandler {
 	private val saveFile = File(WpcMod.configDir, "inventory-binds.json")
 	private val gson: Gson = GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().create()
-	val loadedInventoryBinds = mutableListOf<InventoryBind>()
+	val loadedInventoryBinds = mutableMapOf<String, MutableList<InventoryBind>>()
 
 	fun init() {
 		GuiEvents.KEY_PRESSED.register(::onKeyPressed)
@@ -33,13 +33,17 @@ object InventoryBindsHandler {
 		val title = MC.screenName ?: return
 		val screenHandler = MC.instance.player?.currentScreenHandler ?: return
 
-		loadedInventoryBinds.forEach { inventoryBind ->
-			if (inventoryBind.inventory == title) return@forEach
-			if (inventoryBind.isUnbound()) return@forEach
-
-			if (input == inventoryBind.key) {
-				MC.interactionManager?.clickSlot(screenHandler.syncId, inventoryBind.slot, InputUtil.GLFW_MOUSE_BUTTON_LEFT, SlotActionType.PICKUP, MC.player)
-			}
+		loadedInventoryBinds.forEach { (inventory, binds) ->
+			if (inventory != title) return@forEach
+			val bind = binds.find { it.key.code == input.keycode } ?: return@forEach
+			println("$title ${bind.slot}")
+			MC.interactionManager?.clickSlot(
+				screenHandler.syncId,
+				bind.slot,
+				InputUtil.GLFW_MOUSE_BUTTON_LEFT,
+				SlotActionType.PICKUP,
+				MC.player
+			)
 		}
 	}
 
@@ -47,8 +51,7 @@ object InventoryBindsHandler {
 		if (saveFile.exists()) {
 			try {
 				WpcMod.logger.info("Loading Inventory Binds")
-
-				loadedInventoryBinds.addAll(gson.fromJson(saveFile.reader(), Array<InventoryBind>::class.java).toList())
+				//loadedInventoryBinds.addAll(gson.fromJson(saveFile.reader(), Map<String, List<InventoryBind>>::class.java).toList())
 			} catch (e: Throwable) {
 				WpcMod.logger.error("Failed to read inventory-binds", e)
 				val backup = saveFile.resolveSibling("inventory-binds-failed.json")
