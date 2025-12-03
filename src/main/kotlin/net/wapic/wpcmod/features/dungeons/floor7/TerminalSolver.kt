@@ -19,8 +19,7 @@ import net.minecraft.text.Text
 import net.minecraft.util.Colors
 import net.minecraft.util.DyeColor
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.compat.ReiCompatibility.isOverlayActive
-import net.wapic.wpcmod.compat.ReiCompatibility.setOverlayActive
+import net.wapic.wpcmod.compat.ReiCompatibility
 import net.wapic.wpcmod.config.dungeon.Floor7Config.TerminalSolverConfig.RenderType
 import net.wapic.wpcmod.events.GuiEvents
 import net.wapic.wpcmod.events.PacketEvents
@@ -46,7 +45,7 @@ object TerminalSolver {
     private val startsWithRegex = Regex("What starts with: '(\\w+)'?")
     private val selectAllRegex = Regex("Select all the (.+) items!")
     private var lastClickTime = 0L
-	private var wasREIOverlayEnabled = false
+	private var wasREIVisible = false
 
 	fun init() {
 		PacketEvents.RECEIVE.register(::onPacketReceive)
@@ -54,21 +53,18 @@ object TerminalSolver {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 		GuiEvents.DRAW_SLOT_BACKGROUND.register(::drawSlot)
 		GuiEvents.MOUSE_CLICK.register(::onGuiClick)
+		GuiEvents.SLOT_CLICKED.register(::onSlotClick)
 		TooltipEvents.RENDER.register(::onTooltipDraw)
 		GuiEvents.RENDER.register(::onGuiRender)
 		GuiEvents.DRAW_BACKGROUND.register(::onDrawBackground)
-
 		DungeonEvents.TERMINAL_OPENED.register {
-			if(!isOverlayActive()) return@register
-			wasREIOverlayEnabled = true
-			setOverlayActive(false)
+			ReiCompatibility.setOverlayVisible(false)
+			wasREIVisible = true
 		}
-
 		DungeonEvents.TERMINAL_CLOSED.register {
-			if(wasREIOverlayEnabled) {
-				setOverlayActive(true)
-				wasREIOverlayEnabled = false
-			}
+			if (!wasREIVisible) return@register
+			ReiCompatibility.setOverlayVisible(true)
+			wasREIVisible = false
 		}
 	}
 
@@ -110,6 +106,7 @@ object TerminalSolver {
                 currentTerm?.let {
 					WpcMod.logger.debug("§aNew terminal: §6${it.type.name}")
 					DungeonEvents.TERMINAL_OPENED.invoker().onOpen(it)
+					it.containerId = packet.syncId
                     lastTermOpened = it
                 }
             }
@@ -155,25 +152,34 @@ object TerminalSolver {
             callbackInfoReturnable.cancel()
             return
         }
-
-        val slotIndex = (MC.screen as HandledScreenAccessor).focusedSlot()?.id ?: return
-
-        if (config.blockIncorrectClicks && !canClick(slotIndex, button)) {
-			callbackInfoReturnable.cancel()
-            return
-        }
-
-        if (config.middleClickGUI) {
-			click(slotIndex, if (button == 0) GLFW.GLFW_MOUSE_BUTTON_3 else button, config.hideClicked && !isClicked)
-			callbackInfoReturnable.cancel()
-            return
-        }
-
-        if (config.hideClicked && !isClicked) {
-            simulateClick(slotIndex, button)
-            isClicked = true
-        }
     }
+
+	fun onSlotClick(slot: Slot?, slotId: Int, button: Int, slotActionType: SlotActionType, callbackInfo: CallbackInfo) =
+		with(currentTerm) {
+			if (!config.enabled || this == null) return
+
+			if (config.renderType == RenderType.CUSTOM && !(type == TerminalTypes.MELODY && config.cancelMelodySolver) || (config.blockIncorrectClicks && !canClick(
+					slotId,
+					button
+				))
+			) {
+				return callbackInfo.cancel()
+			}
+
+			if (config.middleClickGUI) {
+				click(
+					slotId,
+					if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) GLFW.GLFW_MOUSE_BUTTON_3 else button,
+					config.hideClicked && !isClicked
+				)
+				return callbackInfo.cancel()
+			}
+
+			if (config.hideClicked && !isClicked) {
+				simulateClick(slotId, button)
+				isClicked = true
+			}
+		}
 
 	fun onDrawBackground(screen: Screen, drawContext: DrawContext, callbackInfo: CallbackInfo) {
 		if (!config.enabled || currentTerm == null || (currentTerm?.type == TerminalTypes.MELODY && config.cancelMelodySolver) || config.renderType != RenderType.CUSTOM) return

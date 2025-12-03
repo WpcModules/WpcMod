@@ -9,11 +9,8 @@ object StartsWithGui : TermGui() {
         renderBackground(drawContext, slotCount, 7)
 
         for (index in 9..slotCount) {
-            if ((index % 9).equalsOneOf(0, 8)) continue
-            val inSolution = index in currentSolution
-			val startColor = if (inSolution) config.startsWithColor else config.backgroundColor
-            if (inSolution)
-				renderSlot(drawContext, index, startColor)
+			if ((index % 9).equalsOneOf(0, 8) || index !in currentSolution) continue
+			renderSlot(drawContext, index, config.startsWithColor)
         }
     }
 }

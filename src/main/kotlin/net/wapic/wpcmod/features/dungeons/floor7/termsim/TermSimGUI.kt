@@ -49,6 +49,7 @@ open class TermSimGUI(
     val guiInventorySlots get() = handler?.slots?.subList(0, size) ?: emptyList()
     private var doesAcceptClick = true
     protected var ping = 0L
+	private var syncId = 0
 
 	init {
 		PacketEvents.SEND.register(::onPacketSend)
@@ -69,7 +70,7 @@ open class TermSimGUI(
 
 	private fun onTerminalSolved(terminalHandler: TerminalHandler) {
         if (MC.screen !== this) return
-		PacketEvents.RECEIVE.invoker().onPacketReceive(CloseScreenS2CPacket(-2))
+		PacketEvents.RECEIVE.invoker().onPacketReceive(CloseScreenS2CPacket(handler.syncId))
         StartGUI.open(ping)
     }
 
@@ -80,13 +81,9 @@ open class TermSimGUI(
         super.close()
     }
 
-    override fun init() {
-        super.init()
-    }
-
 	private fun onPacketSend(packet: Packet<out PacketListener>, callbackInfo: CallbackInfo) {
         val packet = packet as? ClickSlotC2SPacket ?: return
-        if (MC.screen !== this) return
+		if (MC.screen !== this || packet.actionType == SlotActionType.PICKUP_ALL) return
         delaySlotClick(guiInventorySlots.getOrNull(packet.slot.toInt()) ?: return, packet.button.toInt())
         callbackInfo.cancel()
     }
@@ -107,7 +104,8 @@ open class TermSimGUI(
     }
 
     protected fun createNewGui(block: (Slot) -> ItemStack) {
-		PacketEvents.RECEIVE.invoker().onPacketReceive(OpenScreenS2CPacket(0, ScreenHandlerType.GENERIC_9X3, Text.literal(name)))
+		PacketEvents.RECEIVE.invoker()
+			.onPacketReceive(OpenScreenS2CPacket(syncId++, ScreenHandlerType.GENERIC_9X3, Text.literal(name)))
         guiInventorySlots.forEach { it.setSlot(block(it)) }
     }
 

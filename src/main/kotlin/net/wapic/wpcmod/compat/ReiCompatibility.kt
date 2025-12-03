@@ -6,9 +6,12 @@ import net.fabricmc.loader.api.FabricLoader
 object ReiCompatibility {
 
 	fun isModLoaded(): Boolean = FabricLoader.getInstance().isModLoaded("roughlyenoughitems")
-	fun isOverlayActive(): Boolean = ConfigManager.getInstance().config.isOverlayVisible
+	fun isOverlayVisible(): Boolean {
+		if (isModLoaded()) return ConfigManager.getInstance().config.isOverlayVisible
+		return false
+	}
 
-	fun setOverlayActive(value: Boolean) {
-		ConfigManager.getInstance().config.isOverlayVisible = value
+	fun setOverlayVisible(value: Boolean) {
+		if (isModLoaded()) ConfigManager.getInstance().config.isOverlayVisible = value
 	}
 }

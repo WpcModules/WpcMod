@@ -1,16 +1,30 @@
 package net.wapic.wpcmod.features.dungeons.floor7.termsim
 
-import net.wapic.wpcmod.features.dungeons.floor7.TerminalSolver
-import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalTypes
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.item.ItemStack
 import net.minecraft.registry.Registries
 import net.minecraft.screen.slot.Slot
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
+import net.wapic.wpcmod.features.dungeons.floor7.TerminalSolver
+import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalTypes
 import net.wapic.wpcmod.util.ChatUtils
 import kotlin.math.floor
 
-class StartsWithSim(private val letter: String = listOf("A", "B", "C", "G", "D", "M", "N", "R", "S", "T").random()) : TermSimGUI(
+class StartsWithSim(
+	private val letter: String = listOf(
+		"A",
+		"B",
+		"C",
+		"G",
+		"D",
+		"M",
+		"N",
+		"R",
+		"S",
+		"T",
+		"W"
+	).random()
+) : TermSimGUI(
     "What starts with: \'$letter\'?",
     TerminalTypes.STARTS_WITH.windowSize
 ) {
@@ -26,9 +40,20 @@ class StartsWithSim(private val letter: String = listOf("A", "B", "C", "G", "D",
     }
 
     override fun slotClick(slot: Slot, button: Int) = with(slot.stack) {
-        if (name.string?.startsWith(letter, true) == false || hasGlint()) return ChatUtils.sendMessage("§cThat item does not start with: \'$letter\'!")
+		if (name.string?.startsWith(
+				letter,
+				true
+			) == false || hasGlint()
+		) return ChatUtils.sendMessage("§cThat item does not start with: \'$letter\' ${slot.stack}!")
 
-        createNewGui { if (it == slot && it.stack != null) ItemStack(item).apply { set(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, true) } else it.stack }
+		createNewGui {
+			if (it == slot) apply {
+				set(
+					DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE,
+					true
+				)
+			} else it.stack
+		}
         playTermSimSound()
         if (guiInventorySlots.none { it?.stack?.name?.string?.startsWith(letter, true) == true && !it.stack.hasGlint() })
             TerminalSolver.lastTermOpened?.let { DungeonEvents.TERMINAL_SOLVED.invoker().onSolve(it) }
@@ -37,8 +62,8 @@ class StartsWithSim(private val letter: String = listOf("A", "B", "C", "G", "D",
     private fun getLetterItemStack(filterNot: Boolean = false): ItemStack {
         val matchingItem = Registries.ITEM
             .filter { item ->
-                val id = Registries.ITEM.getId(item).path // e.g. "blue_wool"
-                id.startsWith(letter, ignoreCase = true) != filterNot && !id.contains("pane", ignoreCase = true)
+				val id = item?.name?.string ?: return@filter false
+				id.startsWith(letter, true) != filterNot && !id.contains("pane", true)
             }.random()
 
         return ItemStack(matchingItem)

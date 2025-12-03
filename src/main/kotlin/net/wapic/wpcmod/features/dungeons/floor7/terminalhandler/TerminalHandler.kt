@@ -26,6 +26,7 @@ open class TerminalHandler(val type: TerminalTypes) {
     val items: Array<ItemStack?> = arrayOfNulls(type.windowSize)
     val timeOpened = System.currentTimeMillis()
     var isClicked = false
+	var containerId = -1
 
     fun onPacketReceive(packet: Packet<out PacketListener>) = with (packet) {
         when (this) {
@@ -34,7 +35,9 @@ open class TerminalHandler(val type: TerminalTypes) {
                 items[slot] = stack
                 if (handleSlotUpdate(this)) DungeonEvents.TERMINAL_UPDATED.invoker().onOpen(this@TerminalHandler)
             }
+
             is OpenScreenS2CPacket -> {
+				this@TerminalHandler.containerId = syncId
                 isClicked = false
                 items.fill(null)
             }
@@ -49,15 +52,16 @@ open class TerminalHandler(val type: TerminalTypes) {
 
     open fun simulateClick(slotIndex: Int, clickType: Int) {}
 
-    fun click(slotIndex: Int, button: Int, simulateClick: Boolean = true) {
+	open fun click(slotIndex: Int, button: Int, simulateClick: Boolean = true) {
+		val screenHandler = (MC.screen as? GenericContainerScreen)?.screenHandler ?: return
         if (simulateClick) simulateClick(slotIndex, button)
         isClicked = true
-        val screenHandler = (MC.screen as? GenericContainerScreen)?.screenHandler ?: return
+
 		if (MC.screen is TermSimGUI) {
 			PacketEvents.SEND.invoker().onPacketSend(
 				ClickSlotC2SPacket(
 					screenHandler.syncId,
-					screenHandler.revision,
+					MC.player?.currentScreenHandler?.revision ?: 0,
 					Shorts.checkedCast(slotIndex.toLong()), SignedBytes.checkedCast(button.toLong()),
 					if (button == GLFW.GLFW_MOUSE_BUTTON_3) SlotActionType.CLONE else SlotActionType.PICKUP,
 					Int2ObjectOpenHashMap(), ItemStackHash.EMPTY
