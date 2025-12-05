@@ -16,10 +16,8 @@ class StartsWithHandler(private val letter: String): TerminalHandler(TerminalTyp
     }
 
 	override fun click(slotIndex: Int, button: Int, simulateClick: Boolean) {
-		println("$lastContainerId $containerId")
 		if (canClick(slotIndex, button) && lastContainerId != containerId) {
 			clickedSlots.add(slotIndex)
-			println("added $slotIndex")
 			lastContainerId = containerId
 		}
 
