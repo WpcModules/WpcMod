@@ -3,7 +3,7 @@ package net.wapic.wpcmod.features.entity
 import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey
-import net.minecraft.entity.Entity
+import net.minecraft.world.entity.Entity
 
 object MobGlow {
 

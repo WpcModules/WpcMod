@@ -1,8 +1,8 @@
 package net.wapic.wpcmod.mixin;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.chunk.WorldChunk;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.wapic.wpcmod.events.BlockEvents;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -10,8 +10,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(WorldChunk.class)
-public abstract class WorldChunkMixin {
+@Mixin(LevelChunk.class)
+public abstract class LevelChunkMixin {
 
 	@Shadow
 	public abstract BlockState getBlockState(BlockPos pos);

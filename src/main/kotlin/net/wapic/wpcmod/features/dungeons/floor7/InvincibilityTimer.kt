@@ -1,9 +1,9 @@
 package net.wapic.wpcmod.features.dungeons.floor7
 
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.text.Text
-import net.minecraft.util.Colors
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.network.chat.Component
+import net.minecraft.util.CommonColors
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.ServerTickEvent
 import net.wapic.wpcmod.events.WorldChangeEvent
@@ -26,21 +26,21 @@ object InvincibilityTimer : SimpleHudElement("Invincibility Timer", 160, 33) {
 		WorldChangeEvent.AFTER.register { InvincibilityType.entries.forEach(InvincibilityType::reset) }
 	}
 
-	fun onMessageReceived(text: Text, actionBar: Boolean) {
+	fun onMessageReceived(text: Component, actionBar: Boolean) {
 		if (!isActive || actionBar) return
 		InvincibilityType.entries.firstOrNull { it.regex.matches(text.string) }?.proc()
 	}
 
-	override fun render(drawContext: DrawContext, deltaTicks: Float) {
+	override fun render(drawContext: GuiGraphics, deltaTicks: Float) {
 		if (!isActive) return
-		val matrixStack = drawContext.matrices
+		val matrixStack = drawContext.pose()
 		matrixStack.pushMatrix()
 		applyTransformations(matrixStack)
 
 		InvincibilityType.entries.filter { it.currentCooldown > 0 || it.activeTime > 0 }.forEachIndexed { index, type ->
 			val time =
 				if (type.activeTime > 0) "Immunity: ${(type.activeTime / 20f).toFixed()}" else "Cooldown: ${(type.currentCooldown / 20f).toFixed()}"
-			drawContext.drawText("§6${type} ${time}s", 2, 2 + index * 10, Colors.WHITE, true)
+			drawContext.drawText("§6${type} ${time}s", 2, 2 + index * 10, CommonColors.WHITE, true)
 		}
 
 		matrixStack.popMatrix()
@@ -62,7 +62,7 @@ object InvincibilityTimer : SimpleHudElement("Invincibility Timer", 160, 33) {
 
 		fun proc() {
 			if (!isActive) return
-			if (config.title) ChatUtils.sendAlert(Text.literal("${toString()} Procced"))
+			if (config.title) ChatUtils.sendAlert(Component.literal("${toString()} Procced"))
 			if (config.message) Utils.runCommand("pc ${toString()} Procced")
 			activeTime = maxInvincibilityTicks
 			currentCooldown = maxCooldownTicks

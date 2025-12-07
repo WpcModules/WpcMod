@@ -3,35 +3,35 @@ package net.wapic.wpcmod.util.render
 import it.unimi.dsi.fastutil.doubles.Double2ObjectFunctions
 import it.unimi.dsi.fastutil.doubles.Double2ObjectMap
 import it.unimi.dsi.fastutil.doubles.Double2ObjectOpenHashMap
-import net.minecraft.client.render.RenderLayer
-import net.minecraft.client.render.RenderPhase
+import net.minecraft.client.renderer.RenderType
+import net.minecraft.client.renderer.RenderStateShard
 import java.util.*
 import java.util.function.DoubleFunction
 
 object RenderLayers {
 
-	val LINES_LAYERS: Double2ObjectMap<RenderLayer.MultiPhase> = Double2ObjectOpenHashMap()
+	val LINES_LAYERS: Double2ObjectMap<RenderType.CompositeRenderType> = Double2ObjectOpenHashMap()
 
-	val LINES: DoubleFunction<RenderLayer.MultiPhase> = Double2ObjectFunctions.primitive { lineWidth ->
-		RenderLayer.of(
+	val LINES: DoubleFunction<RenderType.CompositeRenderType> = Double2ObjectFunctions.primitive { lineWidth ->
+		RenderType.create(
 			"wpcmod_lines",
-			RenderLayer.DEFAULT_BUFFER_SIZE,
+			RenderType.TRANSIENT_BUFFER_SIZE,
 			WpcModRenderPipelines.LINES,
-			RenderLayer.MultiPhaseParameters.builder()
-				.lineWidth(RenderPhase.LineWidth(OptionalDouble.of(lineWidth)))
-				.layering(RenderPhase.VIEW_OFFSET_Z_LAYERING).build(false)
+			RenderType.CompositeState.builder()
+				.setLineState(RenderStateShard.LineStateShard(OptionalDouble.of(lineWidth)))
+				.setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING).createCompositeState(false)
 		)
 	}
 
-	val FILLED_BOX: RenderLayer.MultiPhase = RenderLayer.of(
+	val FILLED_BOX: RenderType.CompositeRenderType = RenderType.create(
 		"wpcmod_filled_box",
-		RenderLayer.DEFAULT_BUFFER_SIZE,
+		RenderType.TRANSIENT_BUFFER_SIZE,
 		WpcModRenderPipelines.FILLED_BOX,
-		RenderLayer.MultiPhaseParameters.builder()
-				.layering(RenderPhase.VIEW_OFFSET_Z_LAYERING).build(false)
+		RenderType.CompositeState.builder()
+				.setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING).createCompositeState(false)
 		)
 
-	fun getLines(lineWidth: Double): RenderLayer.MultiPhase {
+	fun getLines(lineWidth: Double): RenderType.CompositeRenderType {
 		return LINES_LAYERS.computeIfAbsent(lineWidth, LINES)
 	}
 }

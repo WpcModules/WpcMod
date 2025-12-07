@@ -4,12 +4,12 @@ import com.google.gson.Gson
 import com.google.gson.JsonIOException
 import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
-import net.minecraft.block.Blocks
-import net.minecraft.block.entity.TrappedChestBlockEntity
-import net.minecraft.item.Item
-import net.minecraft.util.Identifier
-import net.minecraft.util.math.BlockPos
-import net.minecraft.world.Heightmap
+import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.level.block.entity.TrappedChestBlockEntity
+import net.minecraft.world.item.Item
+import net.minecraft.resources.ResourceLocation
+import net.minecraft.core.BlockPos
+import net.minecraft.world.level.levelgen.Heightmap
 import net.wapic.wpcmod.features.dungeons.funnymap.core.RoomData
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Room
 import net.wapic.wpcmod.util.MC
@@ -24,8 +24,8 @@ object ScanUtils {
 	init {
 		try {
 			roomList = Gson().fromJson(
-				MC.resourceManager.getResourceOrThrow(Identifier.of("wpcmod", "rooms.json"))
-				.inputStream.bufferedReader(),
+				MC.resourceManager.getResourceOrThrow(ResourceLocation.fromNamespaceAndPath("wpcmod", "rooms.json"))
+				.open().bufferedReader(),
 				object : TypeToken<Set<RoomData>>() {}.type)
 		} catch (e: JsonSyntaxException) {
 			println("Error parsing FunnyMap room data.")
@@ -38,7 +38,7 @@ object ScanUtils {
 
 	fun findMimic(): String? {
 		Utils.getLoadedBlockEntities().filterIsInstance<TrappedChestBlockEntity>()
-			.groupingBy { getRoomFromPos(it.pos)?.data?.name }.eachCount()
+			.groupingBy { getRoomFromPos(it.blockPos)?.data?.name }.eachCount()
 			.forEach { (room, trappedChests) ->
 				FunnyMap.Info.uniqueRooms.find { it.name == room && it.mainRoom.data.trappedChests < trappedChests }?.let {
 					it.hasMimic = true
@@ -72,12 +72,12 @@ object ScanUtils {
 	fun getCore(x: Int, z: Int): Int {
 		val sb = StringBuilder(150)
 		val chunk = MC.world?.getChunk(x shr 4, z shr 4) ?: return 0
-		val height = chunk.sampleHeightmap(Heightmap.Type.WORLD_SURFACE_WG, x, z).coerceIn(11..140)
+		val height = chunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z).coerceIn(11..140)
 		sb.append(CharArray(140 - height) { '0' })
 		var bedrock = 0
 		for (y in height downTo 12) {
 			val block = chunk.getBlockState(BlockPos(x, y, z)).block
-			val rawId = Item.getRawId(block.asItem())
+			val rawId = Item.getId(block.asItem())
 
 			if (block == Blocks.AIR && bedrock >= 2 && y < 69) {
 				sb.append(CharArray(y - 11) { '0' })

@@ -2,8 +2,8 @@ package net.wapic.wpcmod.events
 
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.screen.Screen
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.screens.Screen
 import org.joml.Vector2i
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 
@@ -47,6 +47,6 @@ object TooltipEvents {
 	}
 
 	fun interface RenderTooltip {
-		fun onRenderTooltip(screen: Screen, mouseX: Int, mouseY: Int, drawContext: DrawContext, callback: CallbackInfo)
+		fun onRenderTooltip(screen: Screen, mouseX: Int, mouseY: Int, drawContext: GuiGraphics, callback: CallbackInfo)
 	}
 }

@@ -2,10 +2,10 @@ package net.wapic.wpcmod.features.dungeons.funnymap.dungeon
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
-import net.minecraft.client.MinecraftClient
-import net.minecraft.text.Text
-import net.minecraft.util.profiler.Profiler
-import net.minecraft.util.profiler.Profilers
+import net.minecraft.client.Minecraft
+import net.minecraft.network.chat.Component
+import net.minecraft.util.profiling.ProfilerFiller
+import net.minecraft.util.profiling.Profiler
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
@@ -34,9 +34,9 @@ object FunnyMap {
 		WorldChangeEvent.BEFORE.register { _ -> reset() }
 	}
 
-	fun onTick(client: MinecraftClient) {
+	fun onTick(client: Minecraft) {
 		if (!inDungeons) return
-		val profiler: Profiler = Profilers.get()
+		val profiler: ProfilerFiller = Profiler.get()
 		profiler.push("funnyMap")
 
 		profiler.push("findMimic")
@@ -84,7 +84,7 @@ object FunnyMap {
 		Info.startTime = System.currentTimeMillis()
 	}
 
-	fun onMessageReceived(text: Text, isActionBar: Boolean) {
+	fun onMessageReceived(text: Component, isActionBar: Boolean) {
 		if (!inDungeons || isActionBar) return
 
 		if (keyPickupRegex.matches(text.string)) {

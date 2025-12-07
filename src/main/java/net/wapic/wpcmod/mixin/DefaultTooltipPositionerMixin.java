@@ -1,6 +1,6 @@
 package net.wapic.wpcmod.mixin;
 
-import net.minecraft.client.gui.tooltip.HoveredTooltipPositioner;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.wapic.wpcmod.events.TooltipEvents;
 import org.joml.Vector2i;
 import org.spongepowered.asm.mixin.Mixin;
@@ -8,10 +8,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(HoveredTooltipPositioner.class)
-public class HoveredTooltipPositionerMixin {
+@Mixin(DefaultTooltipPositioner.class)
+public class DefaultTooltipPositionerMixin {
 
-	@Inject(method = "preventOverflow", at = @At(value = "HEAD"), cancellable = true)
+	@Inject(method = "positionTooltip(IILorg/joml/Vector2i;II)V", at = @At(value = "HEAD"), cancellable = true)
 	public void getPosition(int screenWidth, int screenHeight, Vector2i pos, int width, int height, CallbackInfo ci) {
 		TooltipEvents.POSITION.invoker().onPositionTooltip(screenWidth, screenHeight, pos, width, height, ci);
 	}

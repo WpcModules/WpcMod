@@ -3,12 +3,12 @@ package net.wapic.wpcmod.features.fishing
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
-import net.minecraft.client.MinecraftClient
-import net.minecraft.entity.projectile.FishingBobberEntity
-import net.minecraft.item.Items
-import net.minecraft.screen.PlayerScreenHandler
+import net.minecraft.client.Minecraft
+import net.minecraft.world.entity.projectile.FishingHook
+import net.minecraft.world.item.Items
+import net.minecraft.world.inventory.InventoryMenu
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.mixin.accessors.MinecraftClientAccessor
+import net.wapic.wpcmod.mixin.accessors.MinecraftAccessor
 import net.wapic.wpcmod.util.EntityUtils.getArmorStandsByEntity
 import net.wapic.wpcmod.util.MC
 import kotlin.random.Random
@@ -23,12 +23,12 @@ object AutoFish {
 		ClientTickEvents.END_CLIENT_TICK.register(::onTick)
 	}
 
-	private fun onTick(client: MinecraftClient) {
+	private fun onTick(client: Minecraft) {
 		if(!config.enabled || preventFutureRodUse) return
 
-		val fishHook = client.player?.fishHook ?: return
+		val fishHook = client.player?.fishing ?: return
 
-		if (config.slugFish && fishHook.age < slugDelayInTicks) return
+		if (config.slugFish && fishHook.tickCount < slugDelayInTicks) return
 
 		if (fishHook.hasCaughtFish) {
 			preventFutureRodUse = true
@@ -36,7 +36,7 @@ object AutoFish {
 		}
 	}
 
-	private fun useRod(client: MinecraftClient) = WpcMod.coroutineScope.launch {
+	private fun useRod(client: Minecraft) = WpcMod.coroutineScope.launch {
 		val cast = if(config.recast) 2 else 1
 
 		val minDelay = config.minDelay.toLong()
@@ -47,11 +47,11 @@ object AutoFish {
 			delay(castDelay)
 
 			val isHoldingRod = client.player?.isHolding(Items.FISHING_ROD) == true
-			val notInGui = client.player?.currentScreenHandler is PlayerScreenHandler
+			val notInGui = client.player?.containerMenu is InventoryMenu
 
 			if (isHoldingRod && notInGui) {
 				MC.runOnThread {
-					(client as MinecraftClientAccessor).doItemUse_WpcMod()
+					(client as MinecraftAccessor).doItemUse_WpcMod()
 				}
 			}
 		}
@@ -60,5 +60,5 @@ object AutoFish {
 		preventFutureRodUse = false
 	}
 
-	private val FishingBobberEntity.hasCaughtFish: Boolean get() = getArmorStandsByEntity(this).any { it.name.string == "!!!" } && isInFluid
+	private val FishingHook.hasCaughtFish: Boolean get() = getArmorStandsByEntity(this).any { it.name.string == "!!!" } && isInLiquid
 }

@@ -5,27 +5,27 @@ import com.mojang.blaze3d.pipeline.RenderPipeline
 import com.mojang.blaze3d.platform.DepthTestFunction
 import com.mojang.blaze3d.vertex.VertexFormat
 import com.mojang.blaze3d.vertex.VertexFormatElement
-import net.minecraft.client.gl.RenderPipelines
-import net.minecraft.client.render.VertexFormats
+import net.minecraft.client.renderer.RenderPipelines
+import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import net.wapic.wpcmod.util.Utils.modIdentifier
 
 object WpcModRenderPipelines {
 
 	val LINES: RenderPipeline = RenderPipelines.register(
-		RenderPipeline.builder(RenderPipelines.RENDERTYPE_LINES_SNIPPET)
+		RenderPipeline.builder(RenderPipelines.LINES_SNIPPET)
 			.withLocation(modIdentifier("pipeline/wpcmod_lines"))
 			.withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST).build()
 	)
 
 	val FILLED_BOX: RenderPipeline = RenderPipelines.register(
-		RenderPipeline.builder(RenderPipelines.POSITION_COLOR_SNIPPET)
+		RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
 			.withLocation(modIdentifier("pipeline/wpcmod_filled_box"))
 			.withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
-			.withVertexFormat(VertexFormats.POSITION_COLOR, VertexFormat.DrawMode.TRIANGLE_STRIP).build()
+			.withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.TRIANGLE_STRIP).build()
 	)
 
 	val GUI_THING: RenderPipeline = RenderPipelines.register(
-		RenderPipeline.builder(RenderPipelines.TRANSFORMS_AND_PROJECTION_SNIPPET)
+		RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET)
 			.withBlend(BlendFunction.TRANSLUCENT)
 			.withVertexFormat(
 				VertexFormat.builder()
@@ -52,7 +52,7 @@ object WpcModRenderPipelines {
 						)
 					)
 					.add("Color", VertexFormatElement.COLOR)
-					.build(), VertexFormat.DrawMode.QUADS
+					.build(), VertexFormat.Mode.QUADS
 			)
 			.withCull(true)
 			.withFragmentShader(modIdentifier("core/rendertype_rr"))

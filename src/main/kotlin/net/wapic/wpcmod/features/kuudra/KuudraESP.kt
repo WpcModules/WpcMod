@@ -1,7 +1,7 @@
 package net.wapic.wpcmod.features.kuudra
 
 import io.github.notenoughupdates.moulconfig.ChromaColour
-import net.minecraft.entity.Entity
+import net.minecraft.world.entity.Entity
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldRenderEvent
 import net.wapic.wpcmod.features.entity.MobGlowCache

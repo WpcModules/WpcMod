@@ -1,14 +1,14 @@
 package net.wapic.wpcmod.features.inventory.experiments
 
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.entity.player.PlayerInventory
-import net.minecraft.item.Item
-import net.minecraft.item.ItemStack
-import net.minecraft.item.Items
-import net.minecraft.screen.slot.Slot
-import net.minecraft.screen.slot.SlotActionType
+import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.world.entity.player.Inventory
+import net.minecraft.world.item.Item
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
+import net.minecraft.world.inventory.Slot
+import net.minecraft.world.inventory.ClickType
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.GuiEvents
 import net.wapic.wpcmod.events.InventoryEvents
@@ -80,26 +80,26 @@ object SuperpairsSolver {
 		slot: Slot?,
 		slotId: Int,
 		button: Int,
-		slotActionType: SlotActionType,
+		slotActionType: ClickType,
 		callbackInfo: CallbackInfo
 	) {
-		if (slot?.inventory is PlayerInventory || !inSuperpairs || !config.superpairsSolver || slot?.stack?.item in ignoredItems) return
+		if (slot?.container is Inventory || !inSuperpairs || !config.superpairsSolver || slot?.item?.item in ignoredItems) return
 
 		slot?.let { slot ->
 			if (slotId !in superpairsMap.keys) {
-				if (skyHanniRegex.matches(slot.stack.name.string)) {
+				if (skyHanniRegex.matches(slot.item.hoverName.string)) {
 					slotsToRead.add(slot)
 					return
 				}
-				superpairsMap[slotId] = slot.stack
+				superpairsMap[slotId] = slot.item
 			}
-			if (lastClickedSlot?.index != slotId) checkForPair(slot)
+			if (lastClickedSlot?.containerSlot != slotId) checkForPair(slot)
 		}
 	}
 
 	fun hasPair(itemStack: ItemStack): Boolean {
-		val screenHandler = MinecraftClient.getInstance().player?.currentScreenHandler ?: return false
-		val items = screenHandler.slots.filter { itemStack.isSimilar(it.stack) }.map { it.index }
+		val screenHandler = Minecraft.getInstance().player?.containerMenu ?: return false
+		val items = screenHandler.slots.filter { itemStack.isSimilar(it.item) }.map { it.containerSlot }
 		if (items.size == 2) {
 			foundPairs.addAll(items)
 			activeInstantFinds--
@@ -109,21 +109,21 @@ object SuperpairsSolver {
 	}
 
 	fun checkForPair(slot: Slot) {
-		if (slot.stack.item !in powerUps && activeInstantFinds > 0) {
-			if (hasPair(slot.stack)) {
+		if (slot.item.item !in powerUps && activeInstantFinds > 0) {
+			if (hasPair(slot.item)) {
 				return
 			}
 			itemToInstantFind = slot
 			return
 		}
 
-		if (slot.stack.item == Items.DIAMOND) {
+		if (slot.item.item == Items.DIAMOND) {
 			activeInstantFinds++
 			lastClickedSlot = null
 			return
 		}
 
-		if (slot.stack.item in powerUps) return
+		if (slot.item.item in powerUps) return
 
 		if (lastClickedSlot == null) {
 			lastClickedSlot = slot
@@ -131,8 +131,8 @@ object SuperpairsSolver {
 		}
 
 		lastClickedSlot?.let {
-			if (it.stack.isSimilar(slot.stack)) {
-				foundPairs.addAll(listOf(it.index, slot.index))
+			if (it.item.isSimilar(slot.item)) {
+				foundPairs.addAll(listOf(it.containerSlot, slot.containerSlot))
 			}
 		}
 
@@ -142,32 +142,32 @@ object SuperpairsSolver {
 	fun onSlotUpdate(syncId: Int, slotId: Int, itemStack: ItemStack) {
 		if (!inSuperpairs || !config.superpairsSolver) return
 		if (slotId > 53 || itemStack.isEmpty) return
-		if (skyHanniRegex.matches(itemStack.name.string)) return
+		if (skyHanniRegex.matches(itemStack.hoverName.string)) return
 		itemToInstantFind?.let {
-			if (it.stack.isSimilar(itemStack) && it.index != slotId) {
+			if (it.item.isSimilar(itemStack) && it.containerSlot != slotId) {
 				if (hasPair(itemStack)) itemToInstantFind = null
 			}
 		}
 
-		slotsToRead.find { it.index == slotId }?.let { slot ->
+		slotsToRead.find { it.containerSlot == slotId }?.let { slot ->
 			superpairsMap[slotId] = itemStack
 			checkForPair(slot)
-			slotsToRead.removeIf { it.index == slotId }
+			slotsToRead.removeIf { it.containerSlot == slotId }
 		}
 	}
 
-	fun onDrawSlot(drawContext: DrawContext, screen: Screen, slot: Slot, callbackInfo: CallbackInfo) {
-		if (slot.inventory is PlayerInventory || !inSuperpairs || !config.superpairsSolver) return
-		if (slot.stack.item in ignoredItems || skyHanniRegex.matches(slot.stack.name.string)) return
+	fun onDrawSlot(drawContext: GuiGraphics, screen: Screen, slot: Slot, callbackInfo: CallbackInfo) {
+		if (slot.container is Inventory || !inSuperpairs || !config.superpairsSolver) return
+		if (slot.item.item in ignoredItems || skyHanniRegex.matches(slot.item.hoverName.string)) return
 
-		val inv = MinecraftClient.getInstance().player?.currentScreenHandler?.stacks
-		inv?.count { it.isSimilar(slot.stack) }?.let {
+		val inv = Minecraft.getInstance().player?.containerMenu?.items
+		inv?.count { it.isSimilar(slot.item) }?.let {
 			val color = if (it > 1) Color(255, 69, 0, 150) else Color(240, 230, 140)
 			drawContext.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, color.rgb)
 		}
 
-		if (slot.index in foundPairs) drawContext.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, Color.GREEN.rgb)
-		if (slot.stack.item in powerUps) drawContext.fill(
+		if (slot.containerSlot in foundPairs) drawContext.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, Color.GREEN.rgb)
+		if (slot.item.item in powerUps) drawContext.fill(
 			slot.x, slot.y, slot.x + 16, slot.y + 16, Color(100, 30, 130).rgb
 		)
 	}

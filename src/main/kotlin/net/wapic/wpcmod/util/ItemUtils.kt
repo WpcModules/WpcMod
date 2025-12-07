@@ -1,24 +1,24 @@
 package net.wapic.wpcmod.util
 
 import com.mojang.authlib.properties.Property
-import net.minecraft.component.DataComponentTypes
-import net.minecraft.component.type.LoreComponent
-import net.minecraft.item.ItemStack
-import net.minecraft.text.Text
+import net.minecraft.core.component.DataComponents
+import net.minecraft.world.item.component.ItemLore
+import net.minecraft.world.item.ItemStack
+import net.minecraft.network.chat.Component
 import kotlin.jvm.optionals.getOrNull
 
 object ItemUtils {
 
 	val ItemStack.headTexture: String
-		get() = get(DataComponentTypes.PROFILE)?.gameProfile?.properties?.get("textures")?.map(Property::value)?.firstOrNull() ?: ""
+		get() = get(DataComponents.PROFILE)?.partialProfile()?.properties?.get("textures")?.map(Property::value)?.firstOrNull() ?: ""
 
-	val ItemStack.lore: List<Text> get() = getOrDefault(DataComponentTypes.LORE, LoreComponent.DEFAULT).lines
+	val ItemStack.lore: List<Component> get() = getOrDefault(DataComponents.LORE, ItemLore.EMPTY).lines
 
 	val ItemStack.skyBlockID: String?
-		get() = get(DataComponentTypes.CUSTOM_DATA)?.copyNbt()?.getString("id")?.getOrNull()
+		get() = get(DataComponents.CUSTOM_DATA)?.copyTag()?.getString("id")?.getOrNull()
 
 	fun ItemStack.getSearchName(): String {
-		val name = name.string
+		val name = hoverName.string
 		if (name == "Enchanted Book") {
 			if (lore.first().string.trim().contains("Rare Book!", ignoreCase = true)) {
 				return lore[2].string.trim()
@@ -32,6 +32,6 @@ object ItemUtils {
 	}
 
 	fun ItemStack.isSimilar(otherItemStack: ItemStack): Boolean {
-		return isOf(otherItemStack.item) && getSearchName() == otherItemStack.getSearchName()
+		return `is`(otherItemStack.item) && getSearchName() == otherItemStack.getSearchName()
 	}
 }

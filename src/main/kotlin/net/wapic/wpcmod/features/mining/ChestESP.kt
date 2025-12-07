@@ -1,6 +1,6 @@
 package net.wapic.wpcmod.features.mining
 
-import net.minecraft.util.math.Box
+import net.minecraft.world.phys.AABB
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldRenderEvent
 import net.wapic.wpcmod.util.Island
@@ -20,14 +20,14 @@ object ChestESP {
 		if (!config.tracer && !config.box) return
 		worldRenderContext.profiler.push("chest-esp")
 
-		val blockEntities = worldRenderContext.world.blockEntities
+		val blockEntities = worldRenderContext.world.globallyRenderedBlockEntities
 
 		val playerPos = worldRenderContext.camera.pos
 
 		blockEntities.forEach {
-			if(playerPos.distanceTo(it.pos.toCenterPos()) >= config.radius) return@forEach
+			if(playerPos.distanceTo(it.blockPos.center) >= config.radius) return@forEach
 
-			val chest = Box.of(it.pos.toCenterPos(), 1.0, 1.0, 1.0)
+			val chest = AABB.ofSize(it.blockPos.center, 1.0, 1.0, 1.0)
 
 			if (config.box)
 				worldRenderContext.drawBoundingBox(chest, config.color)

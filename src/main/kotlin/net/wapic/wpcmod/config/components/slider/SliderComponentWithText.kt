@@ -9,7 +9,7 @@ import io.github.notenoughupdates.moulconfig.gui.GuiImmediateContext
 import io.github.notenoughupdates.moulconfig.gui.KeyboardEvent
 import io.github.notenoughupdates.moulconfig.gui.MouseEvent
 import io.github.notenoughupdates.moulconfig.observer.GetSetter
-import net.minecraft.util.math.MathHelper.clamp
+import net.minecraft.util.Mth.clamp
 import kotlin.math.round
 import kotlin.math.roundToInt
 

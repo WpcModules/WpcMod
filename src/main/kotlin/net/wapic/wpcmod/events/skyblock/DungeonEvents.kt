@@ -3,7 +3,7 @@ package net.wapic.wpcmod.events.skyblock
 import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalHandler
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
-import net.minecraft.client.gui.screen.Screen
+import net.minecraft.client.gui.screens.Screen
 
 object DungeonEvents {
 

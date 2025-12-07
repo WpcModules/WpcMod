@@ -1,13 +1,13 @@
 package net.wapic.wpcmod.features.dungeons.funnymap.core
 
-import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.entity.player.SkinTextures
+import net.minecraft.world.entity.player.Player
+import net.minecraft.world.entity.player.PlayerSkin
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Room
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
 import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils
 import net.wapic.wpcmod.util.DungeonUtils
 
-data class DungeonPlayer(val skin: SkinTextures) {
+data class DungeonPlayer(val skin: PlayerSkin) {
 
 	var name = ""
 
@@ -35,8 +35,8 @@ data class DungeonPlayer(val skin: SkinTextures) {
 	var roomVisits: MutableList<Pair<Long, String>> = mutableListOf()
 
 	/** Set player data that requires entity to be loaded */
-	fun setData(player: PlayerEntity) {
-		uuid = player.uuidAsString
+	fun setData(player: Player) {
+		uuid = player.stringUUID
 		playerLoaded = true
 	}
 

@@ -1,23 +1,23 @@
 package net.wapic.wpcmod.util
 
-import net.minecraft.text.MutableText
-import net.minecraft.text.Style
-import net.minecraft.text.Text
-import net.minecraft.util.Formatting
+import net.minecraft.network.chat.MutableComponent
+import net.minecraft.network.chat.Style
+import net.minecraft.network.chat.Component
+import net.minecraft.ChatFormatting
 import java.util.regex.Pattern
 
 object ChatUtils {
 	val formattingRegex: Pattern = Pattern.compile("(?i)§[0-9A-FK-OR]")
-	val PREFIX: MutableText = Text.literal("[WpcMod]: ").setStyle(Style.EMPTY.withColor(Formatting.AQUA))
+	val PREFIX: MutableComponent = Component.literal("[WpcMod]: ").setStyle(Style.EMPTY.withColor(ChatFormatting.AQUA))
 
 	fun sendMessage(message: String, style: Style = Style.EMPTY) {
-		MC.inGameHud.chatHud.addMessage(PREFIX.copy().append(Text.literal(message).setStyle(style)))
+		MC.inGameHud.chat.addMessage(PREFIX.copy().append(Component.literal(message).setStyle(style)))
 	}
 
-	fun sendAlert(title: MutableText, subtitle: MutableText = Text.literal(""), fadeInTicks: Int = 5, stayTicks: Int = 20, fadeOutTicks: Int = 5) = with(MC.inGameHud) {
+	fun sendAlert(title: MutableComponent, subtitle: MutableComponent = Component.literal(""), fadeInTicks: Int = 5, stayTicks: Int = 20, fadeOutTicks: Int = 5) = with(MC.inGameHud) {
 		setTitle(title)
 		setSubtitle(subtitle)
-		setTitleTicks(fadeInTicks, stayTicks, fadeOutTicks)
+		setTimes(fadeInTicks, stayTicks, fadeOutTicks)
 	}
 
 	fun String.removeFormatting(): String = formattingRegex.matcher(this).replaceAll("")

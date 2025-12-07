@@ -1,7 +1,7 @@
 package net.wapic.wpcmod.features.chat
 
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
-import net.minecraft.text.Text
+import net.minecraft.network.chat.Component
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.Utils
 import java.util.regex.Matcher
@@ -21,7 +21,7 @@ object AutoAcceptPartyInvite {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 	}
 
-	private fun onMessageReceived(message: Text, actionBar: Boolean) {
+	private fun onMessageReceived(message: Component, actionBar: Boolean) {
 		if(actionBar) return
 
 		val inviteMatcher: Matcher = invitePattern.matcher(message.string)

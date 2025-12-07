@@ -2,10 +2,10 @@ package net.wapic.wpcmod.events
 
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.screen.slot.Slot
-import net.minecraft.screen.slot.SlotActionType
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.world.inventory.Slot
+import net.minecraft.world.inventory.ClickType
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
 
@@ -22,7 +22,7 @@ object GuiEvents {
 		}
 
 	fun interface DrawSlotBefore {
-		fun onDrawSlot(drawContext: DrawContext, screen: Screen, slot: Slot, ci: CallbackInfo)
+		fun onDrawSlot(drawContext: GuiGraphics, screen: Screen, slot: Slot, ci: CallbackInfo)
 	}
 
 	@JvmField
@@ -36,7 +36,7 @@ object GuiEvents {
 
 	fun interface SlotClick {
 		fun onSlotClick(
-			slot: Slot?, slotId: Int, button: Int, slotActionType: SlotActionType, callbackInfo: CallbackInfo
+			slot: Slot?, slotId: Int, button: Int, slotActionType: ClickType, callbackInfo: CallbackInfo
 		)
 	}
 
@@ -78,7 +78,7 @@ object GuiEvents {
 	}
 
 	fun interface Render {
-		fun onRender(screen: Screen, drawContext: DrawContext, mouseX: Int, mouseY: Int, deltaTicks: Float, cir: CallbackInfo)
+		fun onRender(screen: Screen, drawContext: GuiGraphics, mouseX: Int, mouseY: Int, deltaTicks: Float, cir: CallbackInfo)
 	}
 
 	@JvmField
@@ -91,6 +91,6 @@ object GuiEvents {
 	}
 
 	fun interface DrawBackground {
-		fun onDrawBackground(screen: Screen, drawContext: DrawContext, callbackInfo: CallbackInfo)
+		fun onDrawBackground(screen: Screen, drawContext: GuiGraphics, callbackInfo: CallbackInfo)
 	}
 }

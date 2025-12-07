@@ -3,12 +3,12 @@ package net.wapic.wpcmod.util
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.hypixel.modapi.HypixelModAPI
 import net.hypixel.modapi.packet.impl.clientbound.event.ClientboundLocationPacket
-import net.minecraft.block.entity.BlockEntity
-import net.minecraft.util.Identifier
-import net.minecraft.util.Util
-import net.minecraft.util.math.ChunkPos
-import net.minecraft.world.chunk.EmptyChunk
-import net.minecraft.world.chunk.WorldChunk
+import net.minecraft.world.level.block.entity.BlockEntity
+import net.minecraft.resources.ResourceLocation
+import net.minecraft.Util
+import net.minecraft.world.level.ChunkPos
+import net.minecraft.world.level.chunk.EmptyLevelChunk
+import net.minecraft.world.level.chunk.LevelChunk
 import net.wapic.wpcmod.WpcMod
 import java.util.*
 import kotlin.math.max
@@ -29,7 +29,7 @@ object Utils {
 	}
 
 	fun Any?.equalsOneOf(vararg other: Any): Boolean = other.any { this == it }
-	fun modIdentifier(path: String): Identifier = Identifier.of(WpcMod.MOD_ID, path)
+	fun modIdentifier(path: String): ResourceLocation = ResourceLocation.fromNamespaceAndPath(WpcMod.MOD_ID, path)
 	fun Number.toFixed(decimals: Int = 2): String = "%.${decimals}f".format(Locale.ENGLISH, this)
 
 	fun copyToClipboard(string: String) {
@@ -37,7 +37,7 @@ object Utils {
 	}
 
 	fun addToCommandQueue(command: String) {
-		if (Util.getMeasuringTimeMs() - lastCommand < MIN_DELAY || commandQueue.isNotEmpty()) {
+		if (Util.getMillis() - lastCommand < MIN_DELAY || commandQueue.isNotEmpty()) {
 			commandQueue.add(command)
 			return
 		}
@@ -45,15 +45,15 @@ object Utils {
 	}
 
 	fun runCommand(command: String) {
-		MC.networkHandler?.sendChatCommand(command.removePrefix("/"))
+		MC.networkHandler?.sendCommand(command.removePrefix("/"))
 	}
 
 	private fun onTick() {
 		if (commandQueue.isEmpty()) return
 
-		if (Util.getMeasuringTimeMs() - lastCommand > MIN_DELAY) {
+		if (Util.getMillis() - lastCommand > MIN_DELAY) {
 			runCommand(commandQueue.first())
-			lastCommand = Util.getMeasuringTimeMs()
+			lastCommand = Util.getMillis()
 			commandQueue.removeFirst()
 		}
 	}
@@ -78,12 +78,12 @@ object Utils {
 		return blockEntities
 	}
 
-	fun getLoadedChunks(): List<WorldChunk?> {
-		val radius = max(2, MC.options.clampedViewDistance) + 3
+	fun getLoadedChunks(): List<LevelChunk?> {
+		val radius = max(2, MC.options.effectiveRenderDistance) + 3
 		val chunks = mutableSetOf<ChunkPos>()
 
 		MC.player?.let {
-			val center = it.chunkPos
+			val center = it.chunkPosition()
 
 			for (x in -radius..radius) {
 				for (z in -radius..radius) {
@@ -92,7 +92,7 @@ object Utils {
 			}
 		}
 
-		return chunks.filter { chunk -> MC.world?.getChunk(chunk.x, chunk.z) !is EmptyChunk }
+		return chunks.filter { chunk -> MC.world?.getChunk(chunk.x, chunk.z) !is EmptyLevelChunk }
 			.map { chunk -> MC.world?.getChunk(chunk.x,chunk.z) }
 			.filter { chunk -> chunk?.isEmpty == false }
 	}

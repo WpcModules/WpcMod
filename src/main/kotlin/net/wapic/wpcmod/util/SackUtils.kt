@@ -1,8 +1,8 @@
 package net.wapic.wpcmod.util
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
-import net.minecraft.client.MinecraftClient
-import net.minecraft.util.Util
+import net.minecraft.client.Minecraft
+import net.minecraft.Util
 import net.wapic.wpcmod.util.ItemUtils.skyBlockID
 
 object SackUtils {
@@ -15,18 +15,18 @@ object SackUtils {
 		ClientTickEvents.END_CLIENT_TICK.register(::onTick)
 	}
 
-	private fun onTick(client: MinecraftClient) {
+	private fun onTick(client: Minecraft) {
 		if (gfsQueue.isEmpty()) return
-		if (Util.getMeasuringTimeMs() - lastCommand >= COMMAND_DELAY) {
+		if (Util.getMillis() - lastCommand >= COMMAND_DELAY) {
 			val command = gfsQueue.first()
 			Utils.runCommand(command)
 			gfsQueue.removeFirst()
-			lastCommand = Util.getMeasuringTimeMs()
+			lastCommand = Util.getMillis()
 		}
 	}
 
 	fun getFromSack(item: String, maxStackSize: Int) {
-		MinecraftClient.getInstance().player?.inventory?.let { inv ->
+		Minecraft.getInstance().player?.inventory?.let { inv ->
 			val stackSize = inv.find { it.skyBlockID == item }?.count ?: 0
 			if (stackSize != maxStackSize) gfsQueue.add("gfs $item ${maxStackSize - stackSize}")
 		}

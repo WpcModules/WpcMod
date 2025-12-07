@@ -2,7 +2,7 @@ package net.wapic.wpcmod.events
 
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
-import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket
 
 object PlayerListChangeEvent {
 
@@ -16,6 +16,6 @@ object PlayerListChangeEvent {
 	}
 
 	fun interface PlayerListChange {
-		fun onPlayerListChange(entries: List<PlayerListS2CPacket.Entry>)
+		fun onPlayerListChange(entries: List<ClientboundPlayerInfoUpdatePacket.Entry>)
 	}
 }

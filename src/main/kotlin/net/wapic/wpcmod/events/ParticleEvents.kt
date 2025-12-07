@@ -2,8 +2,8 @@ package net.wapic.wpcmod.events
 
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
-import net.minecraft.client.world.ClientWorld
-import net.minecraft.network.packet.s2c.play.ParticleS2CPacket
+import net.minecraft.client.multiplayer.ClientLevel
+import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket
 
 object ParticleEvents {
 
@@ -17,6 +17,6 @@ object ParticleEvents {
 	}
 
 	fun interface ParticleSpawn {
-		fun onSpawn(packet: ParticleS2CPacket, world: ClientWorld)
+		fun onSpawn(packet: ClientboundLevelParticlesPacket, world: ClientLevel)
 	}
 }

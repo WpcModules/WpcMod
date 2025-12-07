@@ -16,12 +16,12 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents
 import net.fabricmc.loader.api.FabricLoader
 import net.fabricmc.loader.api.Version
 import net.fabricmc.loader.api.metadata.ModMetadata
-import net.minecraft.client.option.KeyBinding
-import net.minecraft.text.ClickEvent
-import net.minecraft.text.HoverEvent
-import net.minecraft.text.Style
-import net.minecraft.text.Text
-import net.minecraft.util.Formatting
+import net.minecraft.client.KeyMapping
+import net.minecraft.network.chat.ClickEvent
+import net.minecraft.network.chat.HoverEvent
+import net.minecraft.network.chat.Style
+import net.minecraft.network.chat.Component
+import net.minecraft.ChatFormatting
 import net.wapic.wpcmod.commands.*
 import net.wapic.wpcmod.config.ConfigManager
 import net.wapic.wpcmod.config.WpcConfig
@@ -88,7 +88,7 @@ object WpcMod : ModInitializer {
 		MOD_ID
 	)
 
-	val category: KeyBinding.Category = KeyBinding.Category.create(modIdentifier(MOD_ID))
+	val category: KeyMapping.Category = KeyMapping.Category.register(modIdentifier(MOD_ID))
 
 	override fun onInitialize() {
 		ConfigManager.firstLoad()
@@ -117,10 +117,10 @@ object WpcMod : ModInitializer {
 				ChatUtils.sendMessage(
 					"Update found: §e${updateContext.currentVersion.display()}§r. -> §e${potentialUpdate.update.versionName}§r Click here to update",
 					Style.EMPTY.withHoverEvent(
-						HoverEvent.ShowText(Text.of("Click to update"))
+						HoverEvent.ShowText(Component.nullToEmpty("Click to update"))
 					).withClickEvent(
 						ClickEvent.RunCommand("/wpcmod update")
-					).withColor(Formatting.WHITE)
+					).withColor(ChatFormatting.WHITE)
 				)
 			}
 		}

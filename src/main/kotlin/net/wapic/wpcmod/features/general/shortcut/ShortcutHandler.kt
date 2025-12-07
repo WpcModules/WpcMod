@@ -4,7 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
-import net.minecraft.client.MinecraftClient
+import net.minecraft.client.Minecraft
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.Utils
 import java.io.File
@@ -26,8 +26,8 @@ object ShortcutHandler {
 		}
 	}
 
-	private fun onTick(client: MinecraftClient) {
-		if (client.currentScreen != null) return
+	private fun onTick(client: Minecraft) {
+		if (client.screen != null) return
 
 		loadedShortcuts.forEach { shortcut ->
 			if (shortcut.isUnbound()) return@forEach

@@ -2,8 +2,8 @@ package net.wapic.wpcmod.features.general.shortcut
 
 import com.google.common.collect.Maps
 import com.google.gson.annotations.Expose
-import net.minecraft.client.util.InputUtil
-import net.minecraft.text.Text
+import com.mojang.blaze3d.platform.InputConstants
+import net.minecraft.network.chat.Component
 
 class Shortcut {
 
@@ -12,22 +12,22 @@ class Shortcut {
 
 	@Expose
 	private var keyCode: Int
-	private var boundKey: InputUtil.Key
+	private var boundKey: InputConstants.Key
 
 	private var timesPressed: Int = 0
 	private var isPressed: Boolean = false
 
-	constructor(command: String, key: InputUtil.Key) {
+	constructor(command: String, key: InputConstants.Key) {
 		this.command = command
-		this.keyCode = key.code
+		this.keyCode = key.value
 
 		this.boundKey = key
 		KEYS_BY_ID.add(this)
-		KEY_TO_BINDINGS[key.code] = this
+		KEY_TO_BINDINGS[key.value] = this
 	}
 
-	fun setBoundKey(key: InputUtil.Key) {
-		this.keyCode = key.code
+	fun setBoundKey(key: InputConstants.Key) {
+		this.keyCode = key.value
 		this.boundKey = key
 	}
 
@@ -53,18 +53,18 @@ class Shortcut {
 	}
 
 	fun isUnbound(): Boolean {
-		return this.boundKey == InputUtil.UNKNOWN_KEY
+		return this.boundKey == InputConstants.UNKNOWN
 	}
 
-	fun getBoundKeyText(): Text {
-		return this.boundKey.localizedText
+	fun getBoundKeyText(): Component {
+		return this.boundKey.displayName
 	}
 
 	fun addToMap() {
 		if (this.keyCode in 0..7) {
-			this.boundKey = InputUtil.Type.MOUSE.createFromCode(this.keyCode)
+			this.boundKey = InputConstants.Type.MOUSE.getOrCreate(this.keyCode)
 		} else {
-			this.boundKey = InputUtil.Type.KEYSYM.createFromCode(this.keyCode)
+			this.boundKey = InputConstants.Type.KEYSYM.getOrCreate(this.keyCode)
 		}
 		KEYS_BY_ID.add(this)
 		KEY_TO_BINDINGS[this.keyCode] = this
@@ -83,14 +83,14 @@ class Shortcut {
 			}
 		}
 
-		fun onKeyPressed(key: InputUtil.Key) {
-			KEY_TO_BINDINGS[key.code]?.let {
+		fun onKeyPressed(key: InputConstants.Key) {
+			KEY_TO_BINDINGS[key.value]?.let {
 				it.timesPressed++
 			}
 		}
 
-		fun setKeyPressed(key: InputUtil.Key, pressed: Boolean) {
-			KEY_TO_BINDINGS[key.code]?.let {
+		fun setKeyPressed(key: InputConstants.Key, pressed: Boolean) {
+			KEY_TO_BINDINGS[key.value]?.let {
 				it.isPressed = pressed
 			}
 		}

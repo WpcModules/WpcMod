@@ -2,8 +2,9 @@ package net.wapic.wpcmod.events
 
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
-import net.minecraft.item.ItemStack
+import net.minecraft.world.item.ItemStack
 
+//TODO: merge with GuiEvents
 object InventoryEvents {
 
 	/** When a screen is opened */

@@ -1,11 +1,11 @@
 package net.wapic.wpcmod.features.dungeons.floor7
 
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.world.ClientWorld
-import net.minecraft.text.Text
-import net.minecraft.util.Colors
-import net.minecraft.util.profiler.Profilers
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.multiplayer.ClientLevel
+import net.minecraft.network.chat.Component
+import net.minecraft.util.CommonColors
+import net.minecraft.util.profiling.Profiler
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.ServerTickEvent
 import net.wapic.wpcmod.events.WorldChangeEvent
@@ -48,7 +48,7 @@ object TickTimers : SimpleHudElement("Tick Timers", 120, 12) {
 		if (necronTime >= 0) necronTime--
     }
 
-	fun onMessageReceived(text: Text, actionBar: Boolean) {
+	fun onMessageReceived(text: Component, actionBar: Boolean) {
 		if (actionBar || !isActive) return
 
 		when {
@@ -68,7 +68,7 @@ object TickTimers : SimpleHudElement("Tick Timers", 120, 12) {
 		}
 	}
 
-    fun onWorldChange(world: ClientWorld) {
+    fun onWorldChange(world: ClientLevel) {
         goldorStartTime = -1
         goldorTickTime = -1
         padTickTime = -1
@@ -85,12 +85,12 @@ object TickTimers : SimpleHudElement("Tick Timers", 120, 12) {
         return "${if (config.showPrefix) "$prefix " else ""}$color$timeDisplay"
     }
 
-	override fun render(drawContext: DrawContext, deltaTicks: Float) {
+	override fun render(drawContext: GuiGraphics, deltaTicks: Float) {
 		if (!isActive) return
-		val profiler = Profilers.get()
+		val profiler = Profiler.get()
 		profiler.push("TickTimers")
 
-		val matrixStack = drawContext.matrices
+		val matrixStack = drawContext.pose()
 		matrixStack.pushMatrix()
 		applyTransformations(matrixStack)
 
@@ -102,11 +102,11 @@ object TickTimers : SimpleHudElement("Tick Timers", 120, 12) {
 
 		when {
 			padTickTime >= 0 ->
-				drawContext.drawText(MC.textRenderer, formatTimer(padTickTime, 20, "§bPad:"), 1, 1, Colors.RED, true)
+				drawContext.drawString(MC.textRenderer, formatTimer(padTickTime, 20, "§bPad:"), 1, 1, CommonColors.RED, true)
 			goldorStartTime >= 0 || goldorTickTime >= 0 ->
-				drawContext.drawText(MC.textRenderer, formatTimer(time, max, prefix), 1, 1, Colors.RED, true)
+				drawContext.drawString(MC.textRenderer, formatTimer(time, max, prefix), 1, 1, CommonColors.RED, true)
 			necronTime >= 0 ->
-				drawContext.drawText(MC.textRenderer, formatTimer(necronTime.toInt(), 60, "§4Necron dropping in"), 1, 1, Colors.RED, true)
+				drawContext.drawString(MC.textRenderer, formatTimer(necronTime.toInt(), 60, "§4Necron dropping in"), 1, 1, CommonColors.RED, true)
 		}
 
 		matrixStack.popMatrix()

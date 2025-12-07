@@ -3,13 +3,13 @@ package net.wapic.wpcmod.features.general
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.fabricmc.fabric.api.event.player.*
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.option.KeyBinding
-import net.minecraft.client.util.InputUtil
-import net.minecraft.entity.Entity
-import net.minecraft.util.ActionResult
-import net.minecraft.util.math.MathHelper
-import net.minecraft.util.math.Vec3d
+import net.minecraft.client.Minecraft
+import net.minecraft.client.KeyMapping
+import com.mojang.blaze3d.platform.InputConstants
+import net.minecraft.world.entity.Entity
+import net.minecraft.world.InteractionResult
+import net.minecraft.util.Mth
+import net.minecraft.world.phys.Vec3
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.util.ChatUtils
@@ -17,9 +17,9 @@ import net.wapic.wpcmod.util.freecam.CameraEntity
 import net.wapic.wpcmod.util.freecam.CameraEntity.Companion.createCameraEntity
 
 class Freecam {
-	private val bind: KeyBinding =
-		KeyBindingHelper.registerKeyBinding(KeyBinding("freecam", InputUtil.GLFW_KEY_B, WpcMod.category))
-	private var cameraMotion: Vec3d = Vec3d.ZERO
+	private val bind: KeyMapping =
+		KeyBindingHelper.registerKeyBinding(KeyMapping("freecam", InputConstants.KEY_B, WpcMod.category))
+	private var cameraMotion: Vec3 = Vec3.ZERO
 
 	init {
 		UseItemCallback.EVENT.register { _, _, _ -> onInteract() }
@@ -29,16 +29,16 @@ class Freecam {
 		AttackBlockCallback.EVENT.register { _, _, _, _, _ -> onInteract() }
 		ClientTickEvents.END_CLIENT_TICK.register(::onTick)
 		WorldChangeEvent.BEFORE.register { _ ->
-			removeCamera(MinecraftClient.getInstance())
+			removeCamera(Minecraft.getInstance())
 			isEnabled = false
 		}
 	}
 
-	fun onInteract(): ActionResult {
+	fun onInteract(): InteractionResult {
 		if (isEnabled) {
-			return ActionResult.FAIL
+			return InteractionResult.FAIL
 		}
-		return ActionResult.PASS
+		return InteractionResult.PASS
 	}
 
 	fun getRampedMotion(current: Double, input: Int, rampAmount: Double, decelerationFactor: Double): Double {
@@ -54,7 +54,7 @@ class Freecam {
 				c = 0.0
 			}
 
-			c = MathHelper.clamp(c + r, -1.0, 1.0)
+			c = Mth.clamp(c + r, -1.0, 1.0)
 		} else {
 			c *= decelerationFactor
 		}
@@ -62,36 +62,36 @@ class Freecam {
 		return c
 	}
 
-	fun calculateMotionWithDeceleration(lastMotion: Vec3d, rampAmount: Double, decelerationFactor: Double): Vec3d {
-		val options = MinecraftClient.getInstance().options
+	fun calculateMotionWithDeceleration(lastMotion: Vec3, rampAmount: Double, decelerationFactor: Double): Vec3 {
+		val options = Minecraft.getInstance().options
 		var forward = 0
 		var vertical = 0
 		var strafe = 0
 
-		if (options.forwardKey.isPressed) forward += 1
-		if (options.backKey.isPressed) forward -= 1
-		if (options.leftKey.isPressed) strafe += 1
-		if (options.rightKey.isPressed) strafe -= 1
-		if (options.jumpKey.isPressed) vertical += 1
-		if (options.sneakKey.isPressed) vertical -= 1
+		if (options.keyUp.isDown) forward += 1
+		if (options.keyDown.isDown) forward -= 1
+		if (options.keyLeft.isDown) strafe += 1
+		if (options.keyRight.isDown) strafe -= 1
+		if (options.keyJump.isDown) vertical += 1
+		if (options.keyShift.isDown) vertical -= 1
 
 		val speed = if (forward != 0 && strafe != 0) 1.2 else 1.0
 		val forwardRamped = getRampedMotion(lastMotion.x, forward, rampAmount, decelerationFactor) / speed
 		val verticalRamped = getRampedMotion(lastMotion.y, vertical, rampAmount, decelerationFactor)
 		val strafeRamped = getRampedMotion(lastMotion.z, strafe, rampAmount, decelerationFactor) / speed
 
-		return Vec3d(forwardRamped, verticalRamped, strafeRamped)
+		return Vec3(forwardRamped, verticalRamped, strafeRamped)
 	}
 
-	fun onTick(client: MinecraftClient) {
-		if (bind.wasPressed()) {
+	fun onTick(client: Minecraft) {
+		if (bind.consumeClick()) {
 			toggle(client)
 		}
 
 		camera?.let {
 			it.updateLastTickPosition()
 			val cameraMotion = calculateMotionWithDeceleration(cameraMotion, 0.15, 0.4)
-			val forward = if (client.options.sprintKey.isPressed) cameraMotion.x * 2 else cameraMotion.x
+			val forward = if (client.options.keySprint.isDown) cameraMotion.x * 2 else cameraMotion.x
 			it.handleMotion(forward, cameraMotion.y, cameraMotion.z)
 		}
 	}
@@ -106,7 +106,7 @@ class Freecam {
 		var camera: CameraEntity? = null
 			private set
 
-		fun toggle(client: MinecraftClient) {
+		fun toggle(client: Minecraft) {
 			isEnabled = !isEnabled
 			if (isEnabled) {
 				createAndSetCamera(client)
@@ -117,21 +117,21 @@ class Freecam {
 			}
 		}
 
-		fun createAndSetCamera(mc: MinecraftClient) {
+		fun createAndSetCamera(mc: Minecraft) {
 			camera = createCameraEntity(mc)
 			camera?.let {
 				originalCameraEntity = mc.cameraEntity
 				originalCameraWasPlayer = originalCameraEntity == mc.player
 
 				mc.cameraEntity = it
-				mc.chunkCullingEnabled = false
+				mc.smartCull = false
 			}
 		}
 
-		fun removeCamera(mc: MinecraftClient) {
-			mc.world?.let {
+		fun removeCamera(mc: Minecraft) {
+			mc.level?.let {
 				mc.cameraEntity = if (originalCameraWasPlayer) mc.player else originalCameraEntity
-				mc.chunkCullingEnabled = true
+				mc.smartCull = true
 			}
 
 			originalCameraEntity = null

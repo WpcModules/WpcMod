@@ -1,9 +1,9 @@
 package net.wapic.wpcmod.features.dungeons.funnymap.dungeon
 
-import net.minecraft.block.Blocks
-import net.minecraft.util.math.BlockPos
-import net.minecraft.world.Heightmap
-import net.minecraft.world.chunk.EmptyChunk
+import net.minecraft.world.level.block.Blocks
+import net.minecraft.core.BlockPos
+import net.minecraft.world.level.levelgen.Heightmap
+import net.minecraft.world.level.chunk.EmptyLevelChunk
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.features.dungeons.ScoreCalculation
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.*
@@ -49,7 +49,7 @@ object DungeonScan {
 				val xPos = START_X + x * (ROOM_SIZE shr 1)
 				val zPos = START_Z + z * (ROOM_SIZE shr 1)
 
-				if (MC.world?.getChunk(xPos shr 4, zPos shr 4) is EmptyChunk) {
+				if (MC.world?.getChunk(xPos shr 4, zPos shr 4) is EmptyLevelChunk) {
 					allChunksLoaded = false
 					continue
 				}
@@ -105,7 +105,7 @@ object DungeonScan {
 	}
 
 	private fun scanRoom(x: Int, z: Int, row: Int, column: Int): Tile? {
-		val height = MC.world?.getChunk(x shr 4, z shr 4)?.sampleHeightmap(Heightmap.Type.WORLD_SURFACE_WG, x, z)
+		val height = MC.world?.getChunk(x shr 4, z shr 4)?.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z)
 		if (height == -1) return null
 
 		val rowEven = row and 1 == 0
