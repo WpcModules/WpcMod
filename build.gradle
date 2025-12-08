@@ -151,9 +151,6 @@ publishing {
 			name = "WapicMavenRepo"
 			url = "https://maven.wapic.net/${project.properties.get("sha") ? "snapshots": "releases"}"
 			credentials(PasswordCredentials)
-			authentication {
-				basic(BasicAuthentication)
-			}
 		}
 	}
 }
