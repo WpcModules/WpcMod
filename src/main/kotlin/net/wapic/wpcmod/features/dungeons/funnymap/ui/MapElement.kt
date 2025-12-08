@@ -28,7 +28,7 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 	private val legitPeekBind: KeyMapping = KeyBindingHelper.registerKeyBinding(KeyMapping("Legit Peek", InputConstants.KEY_J, WpcMod.category))
 	private val config get() = WpcMod.config.dungeon.funnyMap
 	override val isEnabled: Boolean get() = config.mapEnabled
-	override val isActive: Boolean get() = (isEnabled && DungeonUtils.inDungeons) && (config.mapHideInBoss && !DungeonUtils.bossSpawned)
+	override val isActive: Boolean get() = (isEnabled && DungeonUtils.inDungeons) && !(config.hideInBoss && DungeonUtils.bossSpawned)
 
 	val legitRender: Boolean get() = config.legitMode && !legitPeekBind.isDown
 
