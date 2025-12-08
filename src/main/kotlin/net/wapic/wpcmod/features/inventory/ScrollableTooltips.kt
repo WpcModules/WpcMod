@@ -4,7 +4,6 @@ import net.minecraft.world.inventory.Slot
 import net.minecraft.util.Mth
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.GuiEvents
-import net.wapic.wpcmod.events.InventoryEvents
 import net.wapic.wpcmod.events.TooltipEvents
 import org.joml.Vector2i
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
@@ -17,7 +16,7 @@ object ScrollableTooltips {
 
 	fun init() {
 		GuiEvents.MOUSE_SCROLL.register(::onMouseScroll)
-		InventoryEvents.CLOSE.register(::reset)
+		GuiEvents.CLOSE.register(::reset)
 		TooltipEvents.RESET.register(::reset)
 		TooltipEvents.POSITION.register(::onPositionTooltip)
 	}

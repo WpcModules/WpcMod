@@ -7,7 +7,7 @@ import net.minecraft.client.player.KeyboardInput;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.wapic.wpcmod.events.InventoryEvents;
+import net.wapic.wpcmod.events.GuiEvents;
 import net.wapic.wpcmod.features.general.Freecam;
 import net.wapic.wpcmod.util.freecam.DummyInput;
 import org.spongepowered.asm.mixin.Final;
@@ -70,6 +70,6 @@ public class LocalPlayerMixin extends AbstractClientPlayer {
 
 	@Inject(at = @At("HEAD"), method = "clientSideCloseContainer")
 	public void onCloseScreen(CallbackInfo ci) {
-		InventoryEvents.CLOSE.invoker().onClose();
+		GuiEvents.CLOSE.invoker().onClose();
 	}
 }

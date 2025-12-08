@@ -6,6 +6,7 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.inventory.ClickType
+import net.minecraft.world.item.ItemStack
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
 
@@ -92,5 +93,47 @@ object GuiEvents {
 
 	fun interface DrawBackground {
 		fun onDrawBackground(screen: Screen, drawContext: GuiGraphics, callbackInfo: CallbackInfo)
+	}
+
+	/** When a screen is opened */
+	@JvmField
+	val OPEN: Event<OpenedEvent> = EventFactory.createArrayBacked(OpenedEvent::class.java) { listeners ->
+		OpenedEvent { title ->
+			for (listener in listeners) {
+				listener.onOpen(title)
+			}
+		}
+	}
+
+	fun interface OpenedEvent {
+		fun onOpen(title: String)
+	}
+
+	/** When a Screen with a new title is opened */
+	@JvmField
+	val CLOSE: Event<ClosedEvent> = EventFactory.createArrayBacked(ClosedEvent::class.java) { listeners ->
+		ClosedEvent {
+			for (listener in listeners) {
+				listener.onClose()
+			}
+		}
+	}
+
+	fun interface ClosedEvent {
+		fun onClose()
+	}
+
+	/** When a slot in an inventory updates */
+	@JvmField
+	val SLOT_UPDATE: Event<SlotUpdate> = EventFactory.createArrayBacked(SlotUpdate::class.java) { listeners ->
+		SlotUpdate { syncId, slotId, itemStack ->
+			for (listener in listeners) {
+				listener.onSlotUpdate(syncId, slotId, itemStack)
+			}
+		}
+	}
+
+	fun interface SlotUpdate {
+		fun onSlotUpdate(syncId: Int, slotId: Int, itemStack: ItemStack)
 	}
 }

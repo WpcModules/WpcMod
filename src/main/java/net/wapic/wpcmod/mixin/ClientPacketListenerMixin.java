@@ -5,10 +5,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.protocol.game.*;
-import net.wapic.wpcmod.events.InventoryEvents;
-import net.wapic.wpcmod.events.ParticleEvents;
-import net.wapic.wpcmod.events.ScoreboardChangeEvent;
-import net.wapic.wpcmod.events.SoundEvents;
+import net.wapic.wpcmod.events.*;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -37,12 +34,7 @@ public abstract class ClientPacketListenerMixin {
 
 	@Inject(at = @At("TAIL"), method = "handleContainerSetSlot")
 	private void onSlotUpdate(ClientboundContainerSetSlotPacket packet, CallbackInfo ci) {
-		InventoryEvents.SLOT_UPDATE.invoker().onSlotUpdate(packet.getContainerId(), packet.getSlot(), packet.getItem());
-	}
-
-	@Inject(at = @At("TAIL"), method = "handleContainerContent")
-	private void onSlotUpdate(ClientboundContainerSetContentPacket packet, CallbackInfo ci) {
-		InventoryEvents.UPDATE.invoker().onUpdate(packet.containerId(), packet.items(), packet.carriedItem());
+		GuiEvents.SLOT_UPDATE.invoker().onSlotUpdate(packet.getContainerId(), packet.getSlot(), packet.getItem());
 	}
 
 	@Inject(at = @At("HEAD"), method = "handleOpenScreen")
@@ -50,14 +42,14 @@ public abstract class ClientPacketListenerMixin {
 		Screen currentScreen = Minecraft.getInstance().screen;
 		String title = packet.getTitle().getString();
 		if (currentScreen != null && !currentScreen.getTitle().getString().equals(title)) {
-			InventoryEvents.CLOSE.invoker().onClose();
+			GuiEvents.CLOSE.invoker().onClose();
 		}
-		InventoryEvents.OPEN.invoker().onOpen(title);
+		GuiEvents.OPEN.invoker().onOpen(title);
 	}
 
 	@Inject(at = @At("HEAD"), method = "handleContainerClose")
 	private void onCloseScreen(CallbackInfo ci) {
-		InventoryEvents.CLOSE.invoker().onClose();
+		GuiEvents.CLOSE.invoker().onClose();
 	}
 
 	@Inject(at = @At("HEAD"), method = "handleSetPlayerTeamPacket")

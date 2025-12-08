@@ -253,7 +253,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 		if (mimicOpenTime == 0L || mimicKilled) return
 		if (Util.getMillis() - mimicOpenTime < 750) return
 
-		val playerDistanceFromMimic = client.player?.distanceToSqr(mimicPos?.center) ?: return
+		val playerDistanceFromMimic = client.player?.distanceToSqr(mimicPos?.center ?: return) ?: return
 		if (playerDistanceFromMimic >= 400.0) return
 
 		val isMimicDead = client.level?.entitiesForRendering()?.none { it is Zombie && it.isBaby }

@@ -11,7 +11,6 @@ import net.minecraft.world.inventory.Slot
 import net.minecraft.world.inventory.ClickType
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.GuiEvents
-import net.wapic.wpcmod.events.InventoryEvents
 import net.wapic.wpcmod.events.ReplaceItemEvent
 import net.wapic.wpcmod.util.ItemUtils.isSimilar
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
@@ -39,17 +38,16 @@ object SuperpairsSolver {
 	private var itemToInstantFind: Slot? = null
 	private var activeInstantFinds: Int = 0
 
-	private val skyHanniRegex = "\\?|(?:Click a(?: seco)?n[dy]|Next) button(?: is instantly rewarded)?!?".toRegex()
+	private val skyHanniRegex = Regex("\\?|(?:Click a(?: seco)?n[dy]|Next) button(?: is instantly rewarded)?!?")
 
 	fun init() {
+		GuiEvents.OPEN.register(::onInventoryOpen)
+		GuiEvents.SLOT_UPDATE.register(::onSlotUpdate)
 		GuiEvents.SLOT_CLICKED.register(::onMouseClick)
 		GuiEvents.DRAW_SLOT_BACKGROUND.register(::onDrawSlot)
+		GuiEvents.CLOSE.register(::onInventoryClosed)
 
 		ReplaceItemEvent.EVENT.register(::onReplaceItem)
-
-		InventoryEvents.OPEN.register(::onInventoryOpen)
-		InventoryEvents.CLOSE.register(::onInventoryClosed)
-		InventoryEvents.SLOT_UPDATE.register(::onSlotUpdate)
 	}
 
 	fun onInventoryOpen(title: String) {
