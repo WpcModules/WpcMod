@@ -75,7 +75,7 @@ open class TerminalHandler(val type: TerminalTypes) {
 			slotIndex,
 			button,
 			if (button == GLFW.GLFW_MOUSE_BUTTON_3) ClickType.CLONE else ClickType.PICKUP,
-			MC.player
+			MC.player ?: return
 		)
     }
 

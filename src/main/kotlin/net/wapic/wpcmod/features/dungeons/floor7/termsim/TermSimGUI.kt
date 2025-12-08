@@ -4,8 +4,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.minecraft.client.gui.screens.inventory.ContainerScreen
 import net.minecraft.core.component.DataComponents
-import net.minecraft.world.entity.player.PlayerEquipment
-import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.SimpleContainer
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
@@ -40,9 +38,9 @@ open class TermSimGUI(
         else if (size <= 36) MenuType.GENERIC_9x4
         else if (size <= 45) MenuType.GENERIC_9x5
         else MenuType.GENERIC_9x6,
-        0, Inventory(MC.player, PlayerEquipment(MC.player)), inv, size / 9
+        0, MC.player!!.inventory, inv, size / 9
     ),
-    Inventory(MC.player, PlayerEquipment(MC.player)),
+    MC.player!!.inventory,
     Component.literal(name)
 ) {
     val blackPane = ItemStack(Items.BLACK_STAINED_GLASS_PANE).apply { set(DataComponents.CUSTOM_NAME, Component.literal("")) }
@@ -93,14 +91,14 @@ open class TermSimGUI(
 		if (!doesAcceptClick || slot.container != inv || slot.item?.item == Items.BLACK_STAINED_GLASS_PANE) return@launch
         doesAcceptClick = false
 
-		delay((ping).coerceAtLeast(1))
+		delay((ping).coerceAtLeast(0))
 		if (MC.screen != this@TermSimGUI) return@launch
 		doesAcceptClick = true
 		slotClick(slot, button)
     }
 
-    override fun slotClicked(slot: Slot?, slotId: Int, button: Int, actionType: ClickType?) {
-        slot?.let { delaySlotClick(it, slotId) }
+    override fun slotClicked(slot: Slot?, slotId: Int, button: Int, actionType: ClickType) {
+        slot?.let { delaySlotClick(it, button) }
     }
 
     protected fun createNewGui(block: (Slot) -> ItemStack) {

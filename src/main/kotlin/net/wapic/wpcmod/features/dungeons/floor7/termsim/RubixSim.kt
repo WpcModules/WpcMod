@@ -31,8 +31,8 @@ object RubixSim : TermSimGUI(
         val current = order.find { it == ((slot.item?.item as? BlockItem)?.block as? StainedGlassPaneBlock)?.color } ?: return
         createNewGui {
             if (it == slot) {
-                if (button == 1) genStack(order.indexOf(current) - 1)
-                else genStack((order.indexOf(current) + 1) % order.size)
+				if (button == 1) genStack(order.indexOf(current) - 1)
+				else genStack((order.indexOf(current) + 1) % order.size)
             } else it.item ?: blackPane
         }
 

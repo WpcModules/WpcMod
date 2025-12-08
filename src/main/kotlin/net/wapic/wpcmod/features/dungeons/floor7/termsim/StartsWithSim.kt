@@ -40,21 +40,15 @@ class StartsWithSim(
     }
 
     override fun slotClick(slot: Slot, button: Int) = with(slot.item) {
-		if (hoverName.string?.startsWith(
-				letter,
-				true
-			) == false || hasFoil()
-		) return ChatUtils.sendMessage("§cThat item does not start with: \'$letter\' ${slot.item}!")
+		if (hoverName.string?.startsWith(letter, true) == false || hasFoil())
+			return ChatUtils.sendMessage("§cThat item does not start with: \'$letter\' ${slot.item}!")
 
 		createNewGui {
-			if (it == slot) apply {
-				set(
-					DataComponents.ENCHANTMENT_GLINT_OVERRIDE,
-					true
-				)
-			} else it.item
+			if (it == slot) apply { set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true) } else it.item
 		}
+
         playTermSimSound()
+
         if (guiInventorySlots.none { it?.item?.hoverName?.string?.startsWith(letter, true) == true && !it.item.hasFoil() })
             TerminalSolver.lastTermOpened?.let { DungeonEvents.TERMINAL_SOLVED.invoker().onSolve(it) }
     }

@@ -18,12 +18,18 @@ object PanesSim : TermSimGUI(
 
     override fun create() {
         createNewGui {
-            if (floor(it.containerSlot / 9f) in 1f..3f && it.containerSlot % 9 in 2..6) if (Math.random() > 0.75) greenPane else redPane else blackPane
+            if (floor(it.containerSlot / 9f) in 1f..3f && it.containerSlot % 9 in 2..6) {
+				if (Math.random() > 0.75) greenPane else redPane
+			} else blackPane
         }
     }
 
     override fun slotClick(slot: Slot, button: Int) {
-        createNewGui { if (it == slot) { if (slot.item?.item == Items.RED_STAINED_GLASS_PANE) greenPane else redPane } else it.item }
+        createNewGui {
+			if (it == slot) {
+				if (slot.item?.item == Items.RED_STAINED_GLASS_PANE) greenPane else redPane
+			} else it.item
+		}
 
         playTermSimSound()
         if (guiInventorySlots.none { it?.item?.item == Items.RED_STAINED_GLASS_PANE })

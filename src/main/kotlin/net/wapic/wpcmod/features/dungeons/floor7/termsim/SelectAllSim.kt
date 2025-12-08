@@ -42,9 +42,7 @@ class SelectAllSim(
 		if (!possibleItems.contains(stack.item)) return ChatUtils.sendMessage("§cThat item is not: ${color.name.uppercase()}!")
 
 		createNewGui {
-			if (it == slot) {
-				stack.apply { set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true) }
-			} else it.item
+			if (it == slot) { stack.apply { set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true) } } else it.item
 		}
 
 		playTermSimSound()
