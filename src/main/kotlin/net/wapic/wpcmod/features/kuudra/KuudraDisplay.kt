@@ -38,9 +38,7 @@ object KuudraDisplay : SimpleHudElement("Kuudra Display", 75, 11) {
 
 				val health = "$formatting${it.health / 1000}K / §a100K §cHP"
 
-				val x = (drawContext.guiWidth() / 2) - (MC.textRenderer.width(health) / 2)
-				val y = (drawContext.guiHeight() / 2) - (MC.textRenderer.lineHeight / 2)
-				drawContext.drawString(MC.textRenderer, health, x, y, CommonColors.WHITE)
+				drawContext.drawString(MC.textRenderer, health, 0, 0, CommonColors.WHITE)
 			}
 		}
 
