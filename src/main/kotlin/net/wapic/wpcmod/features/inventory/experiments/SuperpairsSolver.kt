@@ -42,7 +42,7 @@ object SuperpairsSolver {
 
 	fun init() {
 		GuiEvents.OPEN.register(::onInventoryOpen)
-		GuiEvents.SLOT_UPDATE.register(::onSlotUpdate)
+		GuiEvents.SLOT_UPDATE_AFTER.register(::onSlotUpdate)
 		GuiEvents.SLOT_CLICKED.register(::onMouseClick)
 		GuiEvents.DRAW_SLOT_BACKGROUND.register(::onDrawSlot)
 		GuiEvents.CLOSE.register(::onInventoryClosed)

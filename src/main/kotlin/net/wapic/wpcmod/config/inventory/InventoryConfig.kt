@@ -8,6 +8,10 @@ class InventoryConfig {
 	@ConfigEditorBoolean
 	var armorSwapper: Boolean = false
 
+	@ConfigOption(name = "Auto Close Wardrobe", desc = "Auto close wardrobe after equipping a wardrobe slot")
+	@ConfigEditorBoolean
+	var autoCloseWardrobe: Boolean = false
+
 	@Accordion
 	@ConfigOption(name = "Scrollable Tooltips", desc = "")
 	var scrollableTooltips = ScrollableTooltips()

@@ -125,15 +125,29 @@ object GuiEvents {
 
 	/** When a slot in an inventory updates */
 	@JvmField
-	val SLOT_UPDATE: Event<SlotUpdate> = EventFactory.createArrayBacked(SlotUpdate::class.java) { listeners ->
-		SlotUpdate { syncId, slotId, itemStack ->
+	val SLOT_UPDATE_AFTER: Event<SlotUpdateAfter> = EventFactory.createArrayBacked(SlotUpdateAfter::class.java) { listeners ->
+		SlotUpdateAfter { syncId, slotId, itemStack ->
 			for (listener in listeners) {
-				listener.onSlotUpdate(syncId, slotId, itemStack)
+				listener.onSlotUpdateAfter(syncId, slotId, itemStack)
 			}
 		}
 	}
 
-	fun interface SlotUpdate {
-		fun onSlotUpdate(syncId: Int, slotId: Int, itemStack: ItemStack)
+	fun interface SlotUpdateAfter {
+		fun onSlotUpdateAfter(syncId: Int, slotId: Int, itemStack: ItemStack)
+	}
+
+	/** When a slot in an inventory updates */
+	@JvmField
+	val SLOT_UPDATE_BEFORE: Event<SlotUpdateBefore> = EventFactory.createArrayBacked(SlotUpdateBefore::class.java) { listeners ->
+		SlotUpdateBefore { syncId, slotId, itemStack ->
+			for (listener in listeners) {
+				listener.onSlotUpdateBefore(syncId, slotId, itemStack)
+			}
+		}
+	}
+
+	fun interface SlotUpdateBefore {
+		fun onSlotUpdateBefore(syncId: Int, slotId: Int, itemStack: ItemStack)
 	}
 }

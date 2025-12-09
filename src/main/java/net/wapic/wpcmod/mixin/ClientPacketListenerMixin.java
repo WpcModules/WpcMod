@@ -32,9 +32,14 @@ public abstract class ClientPacketListenerMixin {
 		}
 	}
 
+	@Inject(at = @At("HEAD"), method = "handleContainerSetSlot")
+	private void onSlotUpdateBefore(ClientboundContainerSetSlotPacket packet, CallbackInfo ci) {
+		GuiEvents.SLOT_UPDATE_BEFORE.invoker().onSlotUpdateBefore(packet.getContainerId(), packet.getSlot(), packet.getItem());
+	}
+
 	@Inject(at = @At("TAIL"), method = "handleContainerSetSlot")
-	private void onSlotUpdate(ClientboundContainerSetSlotPacket packet, CallbackInfo ci) {
-		GuiEvents.SLOT_UPDATE.invoker().onSlotUpdate(packet.getContainerId(), packet.getSlot(), packet.getItem());
+	private void onSlotUpdateAfter(ClientboundContainerSetSlotPacket packet, CallbackInfo ci) {
+		GuiEvents.SLOT_UPDATE_AFTER.invoker().onSlotUpdateAfter(packet.getContainerId(), packet.getSlot(), packet.getItem());
 	}
 
 	@Inject(at = @At("HEAD"), method = "handleOpenScreen")
