@@ -8,6 +8,7 @@ import net.minecraft.network.chat.Component
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.events.skyblock.KuudraEvents
+import net.wapic.wpcmod.util.ChatUtils.removeFormatting
 import net.wapic.wpcmod.util.EntityUtils.skyBlockMaxHealth
 
 object KuudraUtils {
@@ -23,6 +24,7 @@ object KuudraUtils {
 		"[NPC] Elle: Phew! The Ballista is finally ready! It should be strong enough to tank Kuudra's blows now!"
 	private const val END_MESSAGE: String =
 		"§e[NPC] §cElle§f: POW! SURELY THAT'S IT! I don't think he has any more in him!"
+	private const val KUUDRA_END_MESSAGE: String = "KUUDRA DOWN!"
 
 	fun init() {
 		ClientTickEvents.END_WORLD_TICK.register(::onTick)
@@ -56,11 +58,14 @@ object KuudraUtils {
 
 			BUILD_PHASE_MESSAGE -> phase = Phase.BUILD
 			STUN_PHASE_MESSAGE -> phase = Phase.STUN
+			END_MESSAGE -> phase = Phase.KILL
 
-			END_MESSAGE -> {
-				KuudraEvents.END.invoker().onEnd()
-				phase = Phase.KILL
-			}
+
+		}
+
+		if (message.string.removeFormatting().trim() == KUUDRA_END_MESSAGE) {
+			WpcMod.logger.debug("Kuudra Ended")
+			KuudraEvents.END.invoker().onEnd()
 		}
 	}
 

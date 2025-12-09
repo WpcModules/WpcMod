@@ -49,6 +49,7 @@ import net.wapic.wpcmod.features.inventory.experiments.AutoExperiments
 import net.wapic.wpcmod.features.inventory.experiments.SuperpairsSolver
 import net.wapic.wpcmod.features.kuudra.KuudraAutoGFS
 import net.wapic.wpcmod.features.kuudra.KuudraESP
+import net.wapic.wpcmod.features.kuudra.RendAnnounce
 import net.wapic.wpcmod.features.mining.ChestESP
 import net.wapic.wpcmod.features.mining.PigeonSwapper
 import net.wapic.wpcmod.hud.HudManager
@@ -170,6 +171,7 @@ object WpcMod : ModInitializer {
 		// Kuudra
 		KuudraESP.init()
 		KuudraAutoGFS.init()
+		RendAnnounce.init()
 
 		// Galatea
 		GalateaESP.init()
