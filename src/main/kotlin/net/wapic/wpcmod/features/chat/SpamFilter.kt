@@ -4,12 +4,12 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.render.RenderTickCounter
-import net.minecraft.text.Text
-import net.minecraft.util.Colors
-import net.minecraft.util.math.MathHelper
+import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.DeltaTracker
+import net.minecraft.network.chat.Component
+import net.minecraft.util.CommonColors
+import net.minecraft.util.Mth
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.chat.SpamConfig
 import net.wapic.wpcmod.util.Utils
@@ -27,8 +27,8 @@ object SpamFilter {
 		Regex("\\+\\d+ Kill Combo(?: \\+\\d+[%☯]? (?:✯ Magic Find|coins per kill|Combat Wisdom))?")
 	private val joinOrLeaveRegex = Regex("^(?:Friend|Guild) > \\w+ (?:joined|left)\\.$")
 
-	data class Notification(val text: Text, var delay: Int) {
-		var x = MinecraftClient.getInstance().textRenderer.getWidth(text.string)
+	data class Notification(val text: Component, var delay: Int) {
+		var x = Minecraft.getInstance().font.width(text.string)
 	}
 
 	fun init() {
@@ -41,7 +41,7 @@ object SpamFilter {
 		)
 	}
 
-	fun onTick(client: MinecraftClient) {
+	fun onTick(client: Minecraft) {
 		if (notifyQueue.isEmpty()) return
 		notifyQueue.toList().forEach { notification ->
 			if (notification.delay == 0) notifyQueue.removeIf { it == notification }
@@ -49,11 +49,11 @@ object SpamFilter {
 		}
 	}
 
-	fun addToNotifyQueue(text: Text) {
+	fun addToNotifyQueue(text: Component) {
 		notifyQueue.add(Notification(text, 30))
 	}
 
-	fun handle(spamType: SpamConfig.SpamType, text: Text): Boolean {
+	fun handle(spamType: SpamConfig.SpamType, text: Component): Boolean {
 		when (spamType) {
 			SpamConfig.SpamType.SHOW -> return true
 			SpamConfig.SpamType.HIDE -> return false
@@ -65,21 +65,21 @@ object SpamFilter {
 		}
 	}
 
-	fun onRenderHud(drawContext: DrawContext, tickCounter: RenderTickCounter) {
-		val mc = MinecraftClient.getInstance()
-		var y = drawContext.scaledWindowHeight - 48
+	fun onRenderHud(drawContext: GuiGraphics, tickCounter: DeltaTracker) {
+		val mc = Minecraft.getInstance()
+		var y = drawContext.guiHeight() - 48
 
 		for (notification in notifyQueue.toList()) {
-			val width = mc.textRenderer.getWidth(notification.text)
-			val x1 = (drawContext.scaledWindowWidth - width) + notification.x
+			val width = mc.font.width(notification.text)
+			val x1 = (drawContext.guiWidth() - width) + notification.x
 			drawContext.fill(x1, y - 2, x1 + width, y + 10, 0xaa121212.toInt())
-			drawContext.drawText(mc.textRenderer, notification.text, x1, y, Colors.WHITE, false)
+			drawContext.drawString(mc.font, notification.text, x1, y, CommonColors.WHITE, false)
 			y -= 12
-			notification.x = MathHelper.lerp(tickCounter.dynamicDeltaTicks, notification.x, -12)
+			notification.x = Mth.lerpInt(tickCounter.gameTimeDeltaTicks, notification.x, -12)
 		}
 	}
 
-	fun onMessageReceived(text: Text, actionBar: Boolean): Boolean {
+	fun onMessageReceived(text: Component, actionBar: Boolean): Boolean {
 		if (!actionBar) {
 			if (text.string.matches(abilityRegex)) return handle(config.abilityHit, text)
 			if (text.string.matches(tpFailRegex)) return handle(config.tpFail, text)

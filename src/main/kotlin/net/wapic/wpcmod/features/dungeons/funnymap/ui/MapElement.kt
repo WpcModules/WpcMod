@@ -1,11 +1,11 @@
 package net.wapic.wpcmod.features.dungeons.funnymap.ui
 
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.option.KeyBinding
-import net.minecraft.client.util.InputUtil
-import net.minecraft.util.Colors
-import net.minecraft.util.profiler.Profilers
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.KeyMapping
+import com.mojang.blaze3d.platform.InputConstants
+import net.minecraft.util.CommonColors
+import net.minecraft.util.profiling.Profiler
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.features.dungeons.funnymap.core.DungeonPlayer
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.*
@@ -25,18 +25,18 @@ import net.wapic.wpcmod.util.render.fillWithOutline
 
 object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 
-	private val legitPeekBind: KeyBinding = KeyBindingHelper.registerKeyBinding(KeyBinding("Legit Peek", InputUtil.GLFW_KEY_J, WpcMod.category))
+	private val legitPeekBind: KeyMapping = KeyBindingHelper.registerKeyBinding(KeyMapping("Legit Peek", InputConstants.KEY_J, WpcMod.category))
 	private val config get() = WpcMod.config.dungeon.funnyMap
 	override val isEnabled: Boolean get() = config.mapEnabled
-	override val isActive: Boolean get() = (isEnabled && DungeonUtils.inDungeons) && (config.mapHideInBoss && !DungeonUtils.bossSpawned)
+	override val isActive: Boolean get() = (isEnabled && DungeonUtils.inDungeons) && !(config.hideInBoss && DungeonUtils.bossSpawned)
 
-	val legitRender: Boolean get() = config.legitMode && !legitPeekBind.isPressed
+	val legitRender: Boolean get() = config.legitMode && !legitPeekBind.isDown
 
-	override fun render(drawContext: DrawContext, deltaTicks: Float) {
+	override fun render(drawContext: GuiGraphics, deltaTicks: Float) {
 		if (!isActive) return
 		val player = MC.player ?: return
-		val matrixStack = drawContext.matrices
-		val profiler = Profilers.get()
+		val matrixStack = drawContext.pose()
+		val profiler = Profiler.get()
 		profiler.push("funnyMap")
 
 		matrixStack.pushMatrix()
@@ -54,7 +54,7 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 			drawContext.enableScissor(0, 0, width, height)
 
 			matrixStack.translate(64f, 64f)
-			matrixStack.rotate(Math.toRadians(-player.yaw + 180.0).toFloat())
+			matrixStack.rotate(Math.toRadians(-player.yRot + 180.0).toFloat())
 
 			if(config.mapCenter) {
 				matrixStack.translate(
@@ -68,9 +68,9 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 
 		profiler.push("rooms")
 		renderRooms(drawContext)
-		profiler.swap("text")
+		profiler.popPush("text")
 		renderText(drawContext)
-		profiler.swap("players")
+		profiler.popPush("players")
 		renderPlayerHeads(drawContext)
 		profiler.pop()
 
@@ -83,8 +83,8 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 		profiler.pop()
 	}
 
-	private fun renderRooms(drawContext: DrawContext) {
-		val matrixStack = drawContext.matrices
+	private fun renderRooms(drawContext: GuiGraphics) {
+		val matrixStack = drawContext.pose()
 		matrixStack.pushMatrix()
 		matrixStack.translate(MapUtils.startCorner.first.toFloat(), MapUtils.startCorner.second.toFloat())
 
@@ -139,8 +139,8 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 		matrixStack.popMatrix()
 	}
 
-	private fun renderText(drawContext: DrawContext) {
-		val matrixStack = drawContext.matrices
+	private fun renderText(drawContext: GuiGraphics) {
+		val matrixStack = drawContext.pose()
 		matrixStack.pushMatrix()
 		matrixStack.translate(MapUtils.startCorner.first.toFloat(), MapUtils.startCorner.second.toFloat())
 
@@ -172,7 +172,7 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 				name,
 				xOffsetName.toInt() + halfRoomSize,
 				yOffsetName.toInt() + halfRoomSize,
-				Colors.WHITE
+				CommonColors.WHITE
 			)
 
 			if (config.mapCheckmark) {
@@ -182,12 +182,12 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 		matrixStack.popMatrix()
 	}
 
-	fun renderPlayerHeads(drawContext: DrawContext) {
+	fun renderPlayerHeads(drawContext: GuiGraphics) {
 		try {
 			if (FunnyMap.dungeonTeammates.isEmpty()) {
 				MC.player?.let {
 					MapRenderer.drawPlayerHead(drawContext, it.name.string, DungeonPlayer(it.skin).apply {
-						yaw = it.yaw
+						yaw = it.yRot
 					})
 				}
 			} else {

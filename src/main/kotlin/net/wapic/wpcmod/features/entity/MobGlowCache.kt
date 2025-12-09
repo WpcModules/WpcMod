@@ -1,7 +1,7 @@
 package net.wapic.wpcmod.features.entity
 
 import io.github.notenoughupdates.moulconfig.ChromaColour
-import net.minecraft.entity.Entity
+import net.minecraft.world.entity.Entity
 
 abstract class MobGlowCache {
 

@@ -1,10 +1,10 @@
 package net.wapic.wpcmod.render;
 
 import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.util.math.ColorHelper;
-import net.minecraft.util.math.MathHelper;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.util.ARGB;
+import net.minecraft.util.Mth;
 import net.wapic.wpcmod.mixin.accessors.BufferBuilderAccessor;
 import org.lwjgl.system.MemoryUtil;
 
@@ -39,7 +39,7 @@ public class DirectVertexConsumer implements VertexConsumer {
 	public DirectVertexConsumer(BufferBuilder original, boolean skipFirstAlloc) {
 		this.original = original;
 		BufferBuilderAccessor bfa = ((BufferBuilderAccessor) original);
-		format = bfa.getVertexFormat();
+		format = bfa.getFormat();
 		long ptr;
 		if (!skipFirstAlloc) {
 			ptr = bfa.beginNewVertex();
@@ -72,7 +72,7 @@ public class DirectVertexConsumer implements VertexConsumer {
 	}
 
 	@Override
-	public VertexConsumer vertex(float x, float y, float z) {
+	public VertexConsumer addVertex(float x, float y, float z) {
 		checkEnd();
 		into.putFloat(x);
 		into.putFloat(y);
@@ -81,20 +81,20 @@ public class DirectVertexConsumer implements VertexConsumer {
 	}
 
 	@Override
-	public VertexConsumer color(int red, int green, int blue, int alpha) {
-		return color(ColorHelper.getArgb(alpha, red, green, blue));
+	public VertexConsumer setColor(int red, int green, int blue, int alpha) {
+		return setColor(ARGB.color(alpha, red, green, blue));
 	}
 
 	@Override
-	public VertexConsumer color(int argb) {
+	public VertexConsumer setColor(int argb) {
 		checkEnd();
-		int i = ColorHelper.toAbgr(argb);
+		int i = ARGB.toABGR(argb);
 		into.putInt(i);
 		return this;
 	}
 
 	@Override
-	public VertexConsumer texture(float u, float v) {
+	public VertexConsumer setUv(float u, float v) {
 		checkEnd();
 		into.putFloat(u);
 		into.putFloat(v);
@@ -102,7 +102,7 @@ public class DirectVertexConsumer implements VertexConsumer {
 	}
 
 	@Override
-	public VertexConsumer overlay(int u, int v) {
+	public VertexConsumer setUv1(int u, int v) {
 		checkEnd();
 		into.putShort((short) u);
 		into.putShort((short) v);
@@ -110,28 +110,28 @@ public class DirectVertexConsumer implements VertexConsumer {
 	}
 
 	@Override
-	public VertexConsumer overlay(int uv) {
+	public VertexConsumer setOverlay(int uv) {
 		checkEnd();
 		into.putInt(uv);
 		return this;
 	}
 
 	@Override
-	public VertexConsumer light(int u, int v) {
-		return overlay(u, v);
+	public VertexConsumer setUv2(int u, int v) {
+		return setUv1(u, v);
 	}
 
 	@Override
-	public VertexConsumer light(int uv) {
-		return overlay(uv);
+	public VertexConsumer setLight(int uv) {
+		return setOverlay(uv);
 	}
 
 	private static byte floatToByte(float f) {
-		return (byte) ((int) (MathHelper.clamp(f, -1.0F, 1.0F) * 127.0F) & 0xFF);
+		return (byte) ((int) (Mth.clamp(f, -1.0F, 1.0F) * 127.0F) & 0xFF);
 	}
 
 	@Override
-	public VertexConsumer normal(float x, float y, float z) {
+	public VertexConsumer setNormal(float x, float y, float z) {
 		checkEnd();
 		into.put(floatToByte(x));
 		into.put(floatToByte(y));

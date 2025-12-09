@@ -1,12 +1,12 @@
 package net.wapic.wpcmod.features.dungeons
 
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
-import net.minecraft.block.BlockState
-import net.minecraft.block.Blocks
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.text.Text
-import net.minecraft.util.Colors
-import net.minecraft.util.math.BlockPos
+import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.block.Blocks
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.network.chat.Component
+import net.minecraft.util.CommonColors
+import net.minecraft.core.BlockPos
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.BlockEvents
 import net.wapic.wpcmod.events.ServerTickEvent
@@ -43,16 +43,16 @@ object SpiritBearTimer : SimpleHudElement("Spirit Bear Timer", 90, 12) {
 		}
 	}
 
-	override fun render(drawContext: DrawContext, deltaTicks: Float) {
+	override fun render(drawContext: GuiGraphics, deltaTicks: Float) {
 		if (!isActive || spawnTime <= 0) return
-		val matrixStack = drawContext.matrices
+		val matrixStack = drawContext.pose()
 		matrixStack.pushMatrix()
 		applyTransformations(matrixStack)
 
 		drawContext.drawText(
 			"§dSpirit Bear: ${(spawnTime / 20f).toFixed()}s",
 			x = 2, y = 2,
-			Colors.WHITE,
+			CommonColors.WHITE,
 			shadow = true
 		)
 
@@ -67,7 +67,7 @@ object SpiritBearTimer : SimpleHudElement("Spirit Bear Timer", 90, 12) {
 		}
 	}
 
-	fun onMessageReceived(text: Text, actionBar: Boolean) {
+	fun onMessageReceived(text: Component, actionBar: Boolean) {
 		if (!isActive || actionBar) return
 		if (text.string == "A Spirit Bear has appeared!") spawnTime = 0
 	}

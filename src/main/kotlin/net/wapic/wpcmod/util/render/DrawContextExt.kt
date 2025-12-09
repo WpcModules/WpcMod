@@ -1,14 +1,14 @@
 package net.wapic.wpcmod.util.render
 
 import io.github.notenoughupdates.moulconfig.ChromaColour
-import net.minecraft.client.gl.RenderPipelines
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.util.Identifier
+import net.minecraft.client.renderer.RenderPipelines
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.resources.ResourceLocation
 import net.wapic.wpcmod.util.MC
 import org.joml.Matrix3x2f
 
-fun DrawContext.drawTexture(
-	sprite: Identifier,
+fun GuiGraphics.drawTexture(
+	sprite: ResourceLocation,
 	x: Int,
 	y: Int,
 	u: Float,
@@ -17,12 +17,12 @@ fun DrawContext.drawTexture(
 	height: Int,
 	textureWidth: Int,
 	textureHeight: Int
-) = this.drawTexture(RenderPipelines.GUI_TEXTURED, sprite, x, y, u, v, width, height, textureWidth, textureHeight)
+) = this.blit(RenderPipelines.GUI_TEXTURED, sprite, x, y, u, v, width, height, textureWidth, textureHeight)
 
-fun DrawContext.drawText(text: String, x: Int, y: Int, color: Int, shadow: Boolean) =
-	this.drawText(MC.textRenderer, text, x, y, color, shadow)
+fun GuiGraphics.drawText(text: String, x: Int, y: Int, color: Int, shadow: Boolean) =
+	this.drawString(MC.textRenderer, text, x, y, color, shadow)
 
-fun DrawContext.fillWithOutline(
+fun GuiGraphics.fillWithOutline(
 	x: Int,
 	y: Int,
 	width: Int,
@@ -39,7 +39,7 @@ fun DrawContext.fillWithOutline(
 	fill(x + width - 1, y + 1, x + width, y + height - 1, outlineColor)
 }
 
-fun DrawContext.drawBorder(x: Int, y: Int, width: Int, height: Int, color: ChromaColour) {
+fun GuiGraphics.drawBorder(x: Int, y: Int, width: Int, height: Int, color: ChromaColour) {
 	val color = color.getEffectiveColourRGB()
 	fill(x, y, x + width, y + 1, color)
 	fill(x, y + height - 1, x + width, y + height, color)
@@ -47,9 +47,9 @@ fun DrawContext.drawBorder(x: Int, y: Int, width: Int, height: Int, color: Chrom
 	fill(x + width - 1, y + 1, x + width, y + height - 1, color)
 }
 
-fun DrawContext.drawRoundedRect(x: Int, y: Int, width: Int, height: Int, radius: Float, color: ChromaColour) {
-	val matrix = Matrix3x2f(matrices)
-	this.state.addSimpleElement(
+fun GuiGraphics.drawRoundedRect(x: Int, y: Int, width: Int, height: Int, radius: Float, color: ChromaColour) {
+	val matrix = Matrix3x2f(pose())
+	this.guiRenderState.submitGuiElement(
 		RoundedRectangleRenderState(
 			matrix,
 			x,

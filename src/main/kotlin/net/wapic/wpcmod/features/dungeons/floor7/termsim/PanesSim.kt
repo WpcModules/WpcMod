@@ -2,31 +2,37 @@ package net.wapic.wpcmod.features.dungeons.floor7.termsim
 
 import net.wapic.wpcmod.features.dungeons.floor7.TerminalSolver
 import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalTypes
-import net.minecraft.component.DataComponentTypes
-import net.minecraft.item.ItemStack
-import net.minecraft.item.Items
-import net.minecraft.screen.slot.Slot
-import net.minecraft.text.Text
+import net.minecraft.core.component.DataComponents
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
+import net.minecraft.world.inventory.Slot
+import net.minecraft.network.chat.Component
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import kotlin.math.floor
 
 object PanesSim : TermSimGUI(
     TerminalTypes.PANES.windowName, TerminalTypes.PANES.windowSize
 ) {
-    private val greenPane get() = ItemStack(Items.LIME_STAINED_GLASS_PANE).apply { set(DataComponentTypes.CUSTOM_NAME, Text.literal("")) }
-    private val redPane   get() = ItemStack(Items.RED_STAINED_GLASS_PANE).apply { set(DataComponentTypes.CUSTOM_NAME, Text.literal("")) }
+    private val greenPane get() = ItemStack(Items.LIME_STAINED_GLASS_PANE).apply { set(DataComponents.CUSTOM_NAME, Component.literal("")) }
+    private val redPane   get() = ItemStack(Items.RED_STAINED_GLASS_PANE).apply { set(DataComponents.CUSTOM_NAME, Component.literal("")) }
 
     override fun create() {
         createNewGui {
-            if (floor(it.index / 9f) in 1f..3f && it.index % 9 in 2..6) if (Math.random() > 0.75) greenPane else redPane else blackPane
+            if (floor(it.containerSlot / 9f) in 1f..3f && it.containerSlot % 9 in 2..6) {
+				if (Math.random() > 0.75) greenPane else redPane
+			} else blackPane
         }
     }
 
     override fun slotClick(slot: Slot, button: Int) {
-        createNewGui { if (it == slot) { if (slot.stack?.item == Items.RED_STAINED_GLASS_PANE) greenPane else redPane } else it.stack }
+        createNewGui {
+			if (it == slot) {
+				if (slot.item?.item == Items.RED_STAINED_GLASS_PANE) greenPane else redPane
+			} else it.item
+		}
 
         playTermSimSound()
-        if (guiInventorySlots.none { it?.stack?.item == Items.RED_STAINED_GLASS_PANE })
+        if (guiInventorySlots.none { it?.item?.item == Items.RED_STAINED_GLASS_PANE })
             TerminalSolver.lastTermOpened?.let { DungeonEvents.TERMINAL_SOLVED.invoker().onSolve(it) }
     }
 }

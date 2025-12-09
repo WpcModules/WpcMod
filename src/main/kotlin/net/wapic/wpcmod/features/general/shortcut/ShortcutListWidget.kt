@@ -1,23 +1,23 @@
 package net.wapic.wpcmod.features.general.shortcut
 
 import com.google.common.collect.ImmutableList
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.Element
-import net.minecraft.client.gui.Selectable
-import net.minecraft.client.gui.widget.ButtonWidget
-import net.minecraft.client.gui.widget.ElementListWidget
-import net.minecraft.client.gui.widget.TextFieldWidget
-import net.minecraft.text.Text
-import net.minecraft.util.Formatting
+import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.events.GuiEventListener
+import net.minecraft.client.gui.narration.NarratableEntry
+import net.minecraft.client.gui.components.Button
+import net.minecraft.client.gui.components.ContainerObjectSelectionList
+import net.minecraft.client.gui.components.EditBox
+import net.minecraft.network.chat.Component
+import net.minecraft.ChatFormatting
 import net.wapic.wpcmod.features.general.shortcut.ShortcutListWidget.Entry
 import java.util.function.Consumer
 
-class ShortcutListWidget : ElementListWidget<Entry> {
+class ShortcutListWidget : ContainerObjectSelectionList<Entry> {
 
 	var parent: ShortcutScreen? = null
 
-	constructor(parent: ShortcutScreen, client: MinecraftClient) : super(
+	constructor(parent: ShortcutScreen, client: Minecraft) : super(
 		client, parent.width, parent.layout.contentHeight, parent.layout.headerHeight, 20
 	) {
 		this.parent = parent
@@ -44,43 +44,43 @@ class ShortcutListWidget : ElementListWidget<Entry> {
 		return 340
 	}
 
-	abstract class Entry : ElementListWidget.Entry<Entry>() {
+	abstract class Entry : ContainerObjectSelectionList.Entry<Entry>() {
 
 		abstract fun update()
 	}
 
 	inner class ShortcutEntry internal constructor(private val binding: Shortcut) : Entry() {
 
-		private val commandField: TextFieldWidget
-		private val editButton: ButtonWidget
-		private val deleteButton: ButtonWidget
-		private val client: MinecraftClient = MinecraftClient.getInstance()
+		private val commandField: EditBox
+		private val editButton: Button
+		private val deleteButton: Button
+		private val client: Minecraft = Minecraft.getInstance()
 		private var duplicate = false
 
 		init {
-			this.commandField = TextFieldWidget(client.textRenderer, 120, 20, Text.of(binding.getCommand()))
-			this.commandField.text = binding.getCommand()
-			this.commandField.setChangedListener { command ->
+			this.commandField = EditBox(client.font, 120, 20, Component.nullToEmpty(binding.getCommand()))
+			this.commandField.setValue(binding.getCommand())
+			this.commandField.setResponder { command ->
 				binding.setCommand(command)
 				this@ShortcutListWidget.update()
 			}
 
-			this.editButton = ButtonWidget.builder(Text.of("")) { button: ButtonWidget? ->
+			this.editButton = Button.builder(Component.nullToEmpty("")) { button: Button? ->
 				this@ShortcutListWidget.parent?.selectedShortcut = binding
 				this@ShortcutListWidget.update()
-			}.dimensions(0, 0, 75, 20).build()
+			}.bounds(0, 0, 75, 20).build()
 
-			this.deleteButton = ButtonWidget.builder(Text.of("Delete")) { button: ButtonWidget? ->
+			this.deleteButton = Button.builder(Component.nullToEmpty("Delete")) { button: Button? ->
 				this@ShortcutListWidget.removeEntry(this)
 				this@ShortcutListWidget.update()
 				ShortcutHandler.loadedShortcuts.removeIf { it == binding }
-			}.dimensions(0, 0, 50, 20).build()
+			}.bounds(0, 0, 50, 20).build()
 
 			this.update()
 		}
 
-		override fun render(context: DrawContext, mouseX: Int, mouseY: Int, hovered: Boolean, tickProgress: Float) {
-			val i: Int = this@ShortcutListWidget.scrollbarX - this.deleteButton.width - 10
+		override fun renderContent(context: GuiGraphics, mouseX: Int, mouseY: Int, hovered: Boolean, tickProgress: Float) {
+			val i: Int = this@ShortcutListWidget.scrollBarX() - this.deleteButton.width - 10
 			val j = y - 2
 			this.deleteButton.setPosition(i, j)
 			this.deleteButton.render(context, mouseX, mouseY, tickProgress)
@@ -97,18 +97,18 @@ class ShortcutListWidget : ElementListWidget<Entry> {
 			}
 		}
 
-		override fun children(): MutableList<out Element?> {
+		override fun children(): MutableList<out GuiEventListener?> {
 			return ImmutableList.of(this.commandField, this.editButton, this.deleteButton)
 		}
 
-		override fun selectableChildren(): MutableList<out Selectable?> {
+		override fun narratables(): MutableList<out NarratableEntry?> {
 			return ImmutableList.of(this.commandField, this.editButton, this.deleteButton)
 		}
 
 		override fun update() {
 			this.editButton.message = this.binding.getBoundKeyText()
 			this.duplicate = false
-			val mutableText = Text.empty()
+			val mutableText = Component.empty()
 
 			if (!this.binding.isUnbound()) {
 
@@ -126,21 +126,21 @@ class ShortcutListWidget : ElementListWidget<Entry> {
 			}
 
 			if (this.duplicate) {
-				this.editButton.message = Text.literal("[ ").append(
-					this.editButton.message.copy().formatted(
-						Formatting.WHITE
+				this.editButton.message = Component.literal("[ ").append(
+					this.editButton.message.copy().withStyle(
+						ChatFormatting.WHITE
 					)
-				).append(" ]").formatted(Formatting.RED)
+				).append(" ]").withStyle(ChatFormatting.RED)
 			}
 
 			if (this@ShortcutListWidget.parent?.selectedShortcut === this.binding) {
-				this.editButton.message = Text.literal("> ").append(
-					this.editButton.message.copy().formatted(
+				this.editButton.message = Component.literal("> ").append(
+					this.editButton.message.copy().withStyle(
 						*arrayOf(
-							Formatting.WHITE, Formatting.UNDERLINE
+							ChatFormatting.WHITE, ChatFormatting.UNDERLINE
 						)
 					)
-				).append(" <").formatted(Formatting.YELLOW)
+				).append(" <").withStyle(ChatFormatting.YELLOW)
 			}
 		}
 	}

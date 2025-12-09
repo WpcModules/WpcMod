@@ -1,11 +1,11 @@
 package net.wapic.wpcmod.features.dungeons
 
 import io.github.notenoughupdates.moulconfig.ChromaColour
-import net.minecraft.entity.Entity
-import net.minecraft.entity.decoration.ArmorStandEntity
-import net.minecraft.entity.passive.BatEntity
-import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.util.math.Box
+import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.decoration.ArmorStand
+import net.minecraft.world.entity.ambient.Bat
+import net.minecraft.world.entity.player.Player
+import net.minecraft.world.phys.AABB
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldRenderEvent
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.RoomState
@@ -33,15 +33,15 @@ object DungeonESP : MobGlowCache() {
 		if(!isEnabled()) return
 		worldRenderContext.profiler.push("dungeon-esp")
 
-		for (entity in worldRenderContext.world.entities) {
+		for (entity in worldRenderContext.world.entitiesForRendering()) {
 			val entityConfig = when {
-				entity is ArmorStandEntity && entity.headTexture.equalsOneOf(
+				entity is ArmorStand && entity.headTexture.equalsOneOf(
 					HeadTextures.BLOOD_KEY,
 					HeadTextures.WITHER_KEY
 				) && !entity.isMarker -> config.doorKeys
-				isStarredMob(entity) || (entity is ArmorStandEntity && entity.headTexture == HeadTextures.FEL) -> config.starMob
-				entity is BatEntity && !entity.isInvisible && entity.health == 100f -> config.bat
-				entity is PlayerEntity && entity.name.string in miniBosses -> config.miniboss
+				isStarredMob(entity) || (entity is ArmorStand && entity.headTexture == HeadTextures.FEL) -> config.starMob
+				entity is Bat && !entity.isInvisible && entity.health == 100f -> config.bat
+				entity is Player && entity.name.string in miniBosses -> config.miniboss
 				else -> continue
 			}
 
@@ -49,18 +49,18 @@ object DungeonESP : MobGlowCache() {
 				worldRenderContext.drawBoundingBox(entity.boundingBox, entityConfig.color)
 			}
 			if(entityConfig.tracer) {
-				val pos = if (entity is ArmorStandEntity) entity.eyePos else entity.boundingBox.center
+				val pos = if (entity is ArmorStand) entity.eyePosition else entity.boundingBox.center
 				worldRenderContext.drawTracer(pos, entityConfig.color)
 			}
 		}
 
-		worldRenderContext.profiler.swap("door esp")
+		worldRenderContext.profiler.popPush("door esp")
 		if (config.witherDoor.box) {
 			val color = (if (FunnyMap.Info.keys > 0) config.witherDoor.hasKeyColor else config.witherDoor.noKeyColor)
 
 			FunnyMap.espDoors.forEach { door ->
 				if (door.state == RoomState.UNDISCOVERED) return@forEach
-				val box = Box(door.x - 1.0, 69.0, door.z - 1.0, door.x + 2.0, 73.0, door.z + 2.0)
+				val box = AABB(door.x - 1.0, 69.0, door.z - 1.0, door.x + 2.0, 73.0, door.z + 2.0)
 				worldRenderContext.drawFilledBoxWithOutline(box, color.darker(), color.brighter(), 4.0)
 			}
 		}
@@ -74,13 +74,13 @@ object DungeonESP : MobGlowCache() {
 
 	override fun compute(entity: Entity): ChromaColour? {
 		return when {
-			config.doorKeys.glow && entity is ArmorStandEntity && entity.headTexture.equalsOneOf(
+			config.doorKeys.glow && entity is ArmorStand && entity.headTexture.equalsOneOf(
 				HeadTextures.WITHER_KEY,
 				HeadTextures.BLOOD_KEY
 			) && !entity.isMarker -> config.doorKeys.color
 			config.starMob.glow && isStarredMob(entity) -> config.starMob.color
 			config.miniboss.glow && entity.name.string in miniBosses -> config.miniboss.color
-			config.bat.glow && entity is BatEntity && !entity.isInvisible && entity.health == 100f -> config.bat.color
+			config.bat.glow && entity is Bat && !entity.isInvisible && entity.health == 100f -> config.bat.color
 			else -> null
 		}
 	}

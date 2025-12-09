@@ -3,15 +3,15 @@ package net.wapic.wpcmod.features.dungeons.floor7.terminalhandler
 import com.google.common.primitives.Shorts
 import com.google.common.primitives.SignedBytes
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
-import net.minecraft.client.gui.screen.ingame.GenericContainerScreen
-import net.minecraft.item.ItemStack
-import net.minecraft.network.listener.PacketListener
-import net.minecraft.network.packet.Packet
-import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket
-import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket
-import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket
-import net.minecraft.screen.slot.SlotActionType
-import net.minecraft.screen.sync.ItemStackHash
+import net.minecraft.client.gui.screens.inventory.ContainerScreen
+import net.minecraft.world.item.ItemStack
+import net.minecraft.network.PacketListener
+import net.minecraft.network.protocol.Packet
+import net.minecraft.network.protocol.game.ServerboundContainerClickPacket
+import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket
+import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket
+import net.minecraft.world.inventory.ClickType
+import net.minecraft.network.HashedStack
 import net.wapic.wpcmod.events.PacketEvents
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.dungeons.floor7.termsim.TermSimGUI
@@ -30,14 +30,14 @@ open class TerminalHandler(val type: TerminalTypes) {
 
     fun onPacketReceive(packet: Packet<out PacketListener>) = with (packet) {
         when (this) {
-            is ScreenHandlerSlotUpdateS2CPacket -> {
+            is ClientboundContainerSetSlotPacket -> {
                 if (slot !in 0 until type.windowSize) return@with
-                items[slot] = stack
+                items[slot] = item
                 if (handleSlotUpdate(this)) DungeonEvents.TERMINAL_UPDATED.invoker().onOpen(this@TerminalHandler)
             }
 
-            is OpenScreenS2CPacket -> {
-				this@TerminalHandler.containerId = syncId
+            is ClientboundOpenScreenPacket -> {
+				this@TerminalHandler.containerId = containerId
                 isClicked = false
                 items.fill(null)
             }
@@ -48,34 +48,34 @@ open class TerminalHandler(val type: TerminalTypes) {
 		PacketEvents.RECEIVE.register(::onPacketReceive)
     }
 
-    open fun handleSlotUpdate(packet: ScreenHandlerSlotUpdateS2CPacket): Boolean = false
+    open fun handleSlotUpdate(packet: ClientboundContainerSetSlotPacket): Boolean = false
 
     open fun simulateClick(slotIndex: Int, clickType: Int) {}
 
 	open fun click(slotIndex: Int, button: Int, simulateClick: Boolean = true) {
-		val screenHandler = (MC.screen as? GenericContainerScreen)?.screenHandler ?: return
+		val screenHandler = (MC.screen as? ContainerScreen)?.menu ?: return
         if (simulateClick) simulateClick(slotIndex, button)
         isClicked = true
 
 		if (MC.screen is TermSimGUI) {
 			PacketEvents.SEND.invoker().onPacketSend(
-				ClickSlotC2SPacket(
-					screenHandler.syncId,
-					MC.player?.currentScreenHandler?.revision ?: 0,
+				ServerboundContainerClickPacket(
+					screenHandler.containerId,
+					MC.player?.containerMenu?.stateId ?: 0,
 					Shorts.checkedCast(slotIndex.toLong()), SignedBytes.checkedCast(button.toLong()),
-					if (button == GLFW.GLFW_MOUSE_BUTTON_3) SlotActionType.CLONE else SlotActionType.PICKUP,
-					Int2ObjectOpenHashMap(), ItemStackHash.EMPTY
+					if (button == GLFW.GLFW_MOUSE_BUTTON_3) ClickType.CLONE else ClickType.PICKUP,
+					Int2ObjectOpenHashMap(), HashedStack.EMPTY
 				),
 				CallbackInfo("TermSimClick", true)
 			)
 			return
 		}
-		MC.interactionManager?.clickSlot(
-			screenHandler.syncId,
+		MC.interactionManager?.handleInventoryMouseClick(
+			screenHandler.containerId,
 			slotIndex,
 			button,
-			if (button == GLFW.GLFW_MOUSE_BUTTON_3) SlotActionType.CLONE else SlotActionType.PICKUP,
-			MC.player
+			if (button == GLFW.GLFW_MOUSE_BUTTON_3) ClickType.CLONE else ClickType.PICKUP,
+			MC.player ?: return
 		)
     }
 

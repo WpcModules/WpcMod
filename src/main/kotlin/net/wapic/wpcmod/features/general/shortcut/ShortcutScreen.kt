@@ -1,56 +1,56 @@
 package net.wapic.wpcmod.features.general.shortcut
 
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.Click
-import net.minecraft.client.gui.screen.option.GameOptionsScreen
-import net.minecraft.client.gui.widget.ButtonWidget
-import net.minecraft.client.gui.widget.DirectionalLayoutWidget
-import net.minecraft.client.input.KeyInput
-import net.minecraft.client.util.InputUtil
-import net.minecraft.screen.ScreenTexts
-import net.minecraft.text.Text
-import net.minecraft.util.Util
+import net.minecraft.client.Minecraft
+import net.minecraft.client.input.MouseButtonEvent
+import net.minecraft.client.gui.screens.options.OptionsSubScreen
+import net.minecraft.client.gui.components.Button
+import net.minecraft.client.gui.layouts.LinearLayout
+import net.minecraft.client.input.KeyEvent
+import com.mojang.blaze3d.platform.InputConstants
+import net.minecraft.network.chat.CommonComponents
+import net.minecraft.network.chat.Component
+import net.minecraft.Util
 
-class ShortcutScreen : GameOptionsScreen(null, MinecraftClient.getInstance().options, Text.of("Command Shortcuts")) {
+class ShortcutScreen : OptionsSubScreen(null, Minecraft.getInstance().options, Component.nullToEmpty("Command Shortcuts")) {
 
 	var selectedShortcut: Shortcut? = null
 	private var shortcutsList: ShortcutListWidget? = null
 	var lastKeyCodeUpdateTime: Long = 0
 
-	override fun initBody() {
-		this.shortcutsList = this.layout.addBody(ShortcutListWidget(this, this.client!!))
+	override fun addContents() {
+		this.shortcutsList = this.layout.addToContents(ShortcutListWidget(this, this.minecraft!!))
 	}
 
 	override fun addOptions() {
 
 	}
 
-	override fun close() {
+	override fun onClose() {
 		ShortcutHandler.saveShortcuts()
-		super.close()
+		super.onClose()
 	}
 
-	override fun refreshWidgetPositions() {
-		this.layout.refreshPositions()
-		this.shortcutsList?.position(this.width, this.layout)
+	override fun repositionElements() {
+		this.layout.arrangeElements()
+		this.shortcutsList?.updateSize(this.width, this.layout)
 	}
 
-	override fun initFooter() {
-		val newShortcut: ButtonWidget = ButtonWidget.builder(Text.of("New shortcut")) {
-			val shortcut = Shortcut("", InputUtil.UNKNOWN_KEY)
+	override fun addFooter() {
+		val newShortcut: Button = Button.builder(Component.nullToEmpty("New shortcut")) {
+			val shortcut = Shortcut("", InputConstants.UNKNOWN)
 			this.shortcutsList?.addShortcutEntry(shortcut)
 			ShortcutHandler.loadedShortcuts.add(shortcut)
 		}.build()
-		val close: ButtonWidget = ButtonWidget.builder(ScreenTexts.DONE) { close() }.build()
+		val close: Button = Button.builder(CommonComponents.GUI_DONE) { onClose() }.build()
 
-		val directionalLayoutWidget = this.layout.addFooter(DirectionalLayoutWidget.horizontal().spacing(8))
-		directionalLayoutWidget.add(newShortcut)
-		directionalLayoutWidget.add(close)
+		val directionalLayoutWidget = this.layout.addToFooter(LinearLayout.horizontal().spacing(8))
+		directionalLayoutWidget.addChild(newShortcut)
+		directionalLayoutWidget.addChild(close)
 	}
 
-	override fun mouseClicked(click: Click, doubled: Boolean): Boolean {
+	override fun mouseClicked(click: MouseButtonEvent, doubled: Boolean): Boolean {
 		if (this.selectedShortcut != null) {
-			this.selectedShortcut?.setBoundKey(InputUtil.Type.MOUSE.createFromCode(click.button()))
+			this.selectedShortcut?.setBoundKey(InputConstants.Type.MOUSE.getOrCreate(click.button()))
 			this.selectedShortcut = null
 			this.shortcutsList?.update()
 			return true
@@ -60,16 +60,16 @@ class ShortcutScreen : GameOptionsScreen(null, MinecraftClient.getInstance().opt
 
 	}
 
-	override fun keyPressed(input: KeyInput): Boolean {
+	override fun keyPressed(input: KeyEvent): Boolean {
 		if (this.selectedShortcut != null) {
-			if (input.keycode == 256) {
-				this.selectedShortcut?.setBoundKey(InputUtil.UNKNOWN_KEY)
+			if (input.input() == 256) {
+				this.selectedShortcut?.setBoundKey(InputConstants.UNKNOWN)
 			} else {
-				this.selectedShortcut?.setBoundKey(InputUtil.fromKeyCode(input))
+				this.selectedShortcut?.setBoundKey(InputConstants.getKey(input))
 			}
 
 			this.selectedShortcut = null
-			this.lastKeyCodeUpdateTime = Util.getMeasuringTimeMs()
+			this.lastKeyCodeUpdateTime = Util.getMillis()
 			this.shortcutsList?.update()
 			return true
 		} else {

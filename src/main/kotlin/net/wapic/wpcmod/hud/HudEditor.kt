@@ -1,11 +1,11 @@
 package net.wapic.wpcmod.hud
 
 import io.github.notenoughupdates.moulconfig.ChromaColour
-import net.minecraft.client.gui.Click
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.text.Text
-import net.minecraft.util.Colors
+import net.minecraft.client.input.MouseButtonEvent
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.network.chat.Component
+import net.minecraft.util.CommonColors
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.render.fillWithOutline
 import org.lwjgl.glfw.GLFW
@@ -23,29 +23,29 @@ class HudEditor : Screen {
 	val borderColour = ChromaColour.fromStaticRGB(125, 125, 125, 255)
 	val backgroundColour = ChromaColour.fromStaticRGB(0, 0, 0, 125)
 
-	constructor(elements: List<SimpleHudElement>) : super(Text.of("Hud Editor")) {
+	constructor(elements: List<SimpleHudElement>) : super(Component.nullToEmpty("Hud Editor")) {
 		this.elements = elements.filter { it.isEnabled }
 	}
 
-	override fun render(context: DrawContext, mouseX: Int, mouseY: Int, deltaTicks: Float) {
+	override fun render(context: GuiGraphics, mouseX: Int, mouseY: Int, deltaTicks: Float) {
 		super.render(context, mouseX, mouseY, deltaTicks)
 
 		elements.forEach {
-			context.matrices.pushMatrix()
-			it.applyTransformations(context.matrices)
+			context.pose().pushMatrix()
+			it.applyTransformations(context.pose())
 			context.fillWithOutline(0, 0, it.getUnscaledWidth(), it.getUnscaledHeight(), backgroundColour, borderColour)
-			context.drawCenteredTextWithShadow(
-				this.textRenderer,
+			context.drawCenteredString(
+				this.font,
 				it.label,
 				it.getUnscaledWidth() / 2,
-				it.getUnscaledHeight() / 2 - this.textRenderer.fontHeight / 2,
-				Colors.WHITE
+				it.getUnscaledHeight() / 2 - this.font.lineHeight / 2,
+				CommonColors.WHITE
 			)
-			context.matrices.popMatrix()
+			context.pose().popMatrix()
 		}
 	}
 
-	override fun renderBackground(context: DrawContext, mouseX: Int, mouseY: Int, deltaTicks: Float) { }
+	override fun renderBackground(context: GuiGraphics, mouseX: Int, mouseY: Int, deltaTicks: Float) { }
 
 	fun getHoveredElement(mouseX: Double, mouseY: Double): SimpleHudElement? {
 		return elements.find {
@@ -54,7 +54,7 @@ class HudEditor : Screen {
 		}
 	}
 
-	override fun mouseClicked(click: Click, doubled: Boolean): Boolean {
+	override fun mouseClicked(click: MouseButtonEvent, doubled: Boolean): Boolean {
 		clickedElement = getHoveredElement(click.x, click.y)?.also {
 			offsetX = click.x - it.getAbsoluteX()
 			offsetY = click.y - it.getAbsoluteY()
@@ -85,11 +85,11 @@ class HudEditor : Screen {
 	override fun mouseMoved(mouseX: Double, mouseY: Double) {
 		clickedElement?.let {
 			if (isDragging) {
-				val x = (mouseX - offsetX).coerceIn(0.0, (MC.window.scaledWidth - it.getEffectiveWidth()).toDouble())
-				val y = (mouseY - offsetY).coerceIn(0.0, (MC.window.scaledHeight - it.getEffectiveHeight()).toDouble())
+				val x = (mouseX - offsetX).coerceIn(0.0, (MC.window.guiScaledWidth - it.getEffectiveWidth()).toDouble())
+				val y = (mouseY - offsetY).coerceIn(0.0, (MC.window.guiScaledHeight - it.getEffectiveHeight()).toDouble())
 
-				it.x = (x / (MC.window.scaledWidth - it.getEffectiveWidth())).toFloat()
-				it.y = (y / (MC.window.scaledHeight - it.getEffectiveHeight())).toFloat()
+				it.x = (x / (MC.window.guiScaledWidth - it.getEffectiveWidth())).toFloat()
+				it.y = (y / (MC.window.guiScaledHeight - it.getEffectiveHeight())).toFloat()
 				return
 			}
 
@@ -99,8 +99,8 @@ class HudEditor : Screen {
 
 				it.scale = newScale.toFloat()
 				val translatedPos = translate(oppositeCorner, it)
-				it.x = translatedPos.first.coerceIn(0f, (MC.window.scaledWidth - it.getEffectiveWidth()).toFloat()) / (MC.window.scaledWidth - it.getEffectiveWidth()).toFloat()
-				it.y = translatedPos.second.coerceIn(0f, (MC.window.scaledWidth - it.getEffectiveWidth()).toFloat()) / (MC.window.scaledHeight - it.getEffectiveHeight()).toFloat()
+				it.x = translatedPos.first.coerceIn(0f, (MC.window.guiScaledWidth - it.getEffectiveWidth()).toFloat()) / (MC.window.guiScaledWidth - it.getEffectiveWidth()).toFloat()
+				it.y = translatedPos.second.coerceIn(0f, (MC.window.guiScaledWidth - it.getEffectiveWidth()).toFloat()) / (MC.window.guiScaledHeight - it.getEffectiveHeight()).toFloat()
 			}
 		}
 
@@ -112,15 +112,15 @@ class HudEditor : Screen {
 				(pos.y + element.getEffectiveHeight() * if(pos.y > element.getAbsoluteY() + element.getEffectiveHeight() / 2) -1f else 0f)
 	}
 
-	override fun mouseReleased(click: Click): Boolean {
+	override fun mouseReleased(click: MouseButtonEvent): Boolean {
 		clickedElement = null
 		isScaling = false
 		isDragging = false
 		return super.mouseReleased(click)
 	}
 
-	override fun close() {
+	override fun onClose() {
 		HudManager.saveLocations()
-		super.close()
+		super.onClose()
 	}
 }

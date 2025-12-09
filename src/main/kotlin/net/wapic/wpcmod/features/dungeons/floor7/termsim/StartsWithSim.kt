@@ -1,9 +1,9 @@
 package net.wapic.wpcmod.features.dungeons.floor7.termsim
 
-import net.minecraft.component.DataComponentTypes
-import net.minecraft.item.ItemStack
-import net.minecraft.registry.Registries
-import net.minecraft.screen.slot.Slot
+import net.minecraft.core.component.DataComponents
+import net.minecraft.world.item.ItemStack
+import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.world.inventory.Slot
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.dungeons.floor7.TerminalSolver
 import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalTypes
@@ -31,36 +31,30 @@ class StartsWithSim(
     override fun create() {
         createNewGui {
             when {
-                floor(it.index / 9f) !in 1f..3f || it.index % 9 !in 1..7 -> blackPane
-                it.index == (10..16).random() -> getLetterItemStack()
+                floor(it.containerSlot / 9f) !in 1f..3f || it.containerSlot % 9 !in 1..7 -> blackPane
+                it.containerSlot == (10..16).random() -> getLetterItemStack()
                 Math.random() > .7f -> getLetterItemStack()
                 else -> getLetterItemStack(true)
             }
         }
     }
 
-    override fun slotClick(slot: Slot, button: Int) = with(slot.stack) {
-		if (name.string?.startsWith(
-				letter,
-				true
-			) == false || hasGlint()
-		) return ChatUtils.sendMessage("§cThat item does not start with: \'$letter\' ${slot.stack}!")
+    override fun slotClick(slot: Slot, button: Int) = with(slot.item) {
+		if (hoverName.string?.startsWith(letter, true) == false || hasFoil())
+			return ChatUtils.sendMessage("§cThat item does not start with: \'$letter\' ${slot.item}!")
 
 		createNewGui {
-			if (it == slot) apply {
-				set(
-					DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE,
-					true
-				)
-			} else it.stack
+			if (it == slot) apply { set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true) } else it.item
 		}
+
         playTermSimSound()
-        if (guiInventorySlots.none { it?.stack?.name?.string?.startsWith(letter, true) == true && !it.stack.hasGlint() })
+
+        if (guiInventorySlots.none { it?.item?.hoverName?.string?.startsWith(letter, true) == true && !it.item.hasFoil() })
             TerminalSolver.lastTermOpened?.let { DungeonEvents.TERMINAL_SOLVED.invoker().onSolve(it) }
     }
 
     private fun getLetterItemStack(filterNot: Boolean = false): ItemStack {
-        val matchingItem = Registries.ITEM
+        val matchingItem = BuiltInRegistries.ITEM
             .filter { item ->
 				val id = item?.name?.string ?: return@filter false
 				id.startsWith(letter, true) != filterNot && !id.contains("pane", true)

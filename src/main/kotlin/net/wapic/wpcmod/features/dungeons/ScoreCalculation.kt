@@ -2,20 +2,20 @@ package net.wapic.wpcmod.features.dungeons
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
-import net.minecraft.block.BlockState
-import net.minecraft.block.Blocks
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.entity.Entity
-import net.minecraft.entity.mob.ZombieEntity
-import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket
-import net.minecraft.sound.SoundEvents
-import net.minecraft.text.Style
-import net.minecraft.text.Text
-import net.minecraft.util.Colors
-import net.minecraft.util.Formatting
-import net.minecraft.util.Util
-import net.minecraft.util.math.BlockPos
+import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.block.Blocks
+import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.monster.Zombie
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket
+import net.minecraft.sounds.SoundEvents
+import net.minecraft.network.chat.Style
+import net.minecraft.network.chat.Component
+import net.minecraft.util.CommonColors
+import net.minecraft.ChatFormatting
+import net.minecraft.Util
+import net.minecraft.core.BlockPos
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.dungeon.ScoreCalculationConfig.ScoreHudType
 import net.wapic.wpcmod.config.dungeon.ScoreCalculationConfig.ScoreMessageType
@@ -206,8 +206,8 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 		}
 
 		if (shouldSendTitle) {
-			ChatUtils.sendAlert(Text.literal("$score").setStyle(Style.EMPTY.withColor(Formatting.GOLD)))
-			MC.player?.playSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP)
+			ChatUtils.sendAlert(Component.literal("$score").setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD)))
+			MC.player?.makeSound(SoundEvents.EXPERIENCE_ORB_PICKUP)
 		}
 	}
 
@@ -244,26 +244,26 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 	private fun onBlockChange(pos: BlockPos, old: BlockState, new: BlockState) {
 		if (!isActive) return
 		if (old.block == Blocks.TRAPPED_CHEST && new.block == Blocks.AIR) {
-			mimicOpenTime = Util.getMeasuringTimeMs()
+			mimicOpenTime = Util.getMillis()
 			mimicPos = pos
 		}
 	}
 
-	private fun checkMimicDead(client: MinecraftClient) {
+	private fun checkMimicDead(client: Minecraft) {
 		if (mimicOpenTime == 0L || mimicKilled) return
-		if (Util.getMeasuringTimeMs() - mimicOpenTime < 750) return
+		if (Util.getMillis() - mimicOpenTime < 750) return
 
-		val playerDistanceFromMimic = client.player?.squaredDistanceTo(mimicPos?.toCenterPos()) ?: return
+		val playerDistanceFromMimic = client.player?.distanceToSqr(mimicPos?.center ?: return) ?: return
 		if (playerDistanceFromMimic >= 400.0) return
 
-		val isMimicDead = client.world?.entities?.none { it is ZombieEntity && it.isBaby }
+		val isMimicDead = client.level?.entitiesForRendering()?.none { it is Zombie && it.isBaby }
 		if (isMimicDead == true)
 			setMimicDead(config.mimicMessage)
 	}
 
 	private fun onEntityDespawn(entity: Entity) {
 		if (!isActive) return
-		if (entity is ZombieEntity && entity.isBaby && entity.headTexture == HeadTextures.MIMIC) {
+		if (entity is Zombie && entity.isBaby && entity.headTexture == HeadTextures.MIMIC) {
 			setMimicDead(config.mimicMessage)
 		}
 	}
@@ -294,7 +294,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 		}
 	}
 
-	private fun onPlayerListChange(entries: List<PlayerListS2CPacket.Entry>) {
+	private fun onPlayerListChange(entries: List<ClientboundPlayerInfoUpdatePacket.Entry>) {
 		if (!isActive) return
 
 		entries.forEach { playerData ->
@@ -358,7 +358,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 		}
 	}
 
-	private fun onMessageReceived(text: Text, actionBar: Boolean) {
+	private fun onMessageReceived(text: Component, actionBar: Boolean) {
 		if (!isActive || actionBar) return
 		val message = text.string
 
@@ -376,7 +376,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 		}
 	}
 
-	private fun onTick(client: MinecraftClient) {
+	private fun onTick(client: Minecraft) {
 		if (!isActive) return
 
 		if (isMimicFloor) checkMimicDead(client)
@@ -397,10 +397,10 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 		}
 	}
 
-	override fun render(drawContext: DrawContext, deltaTicks: Float) {
+	override fun render(drawContext: GuiGraphics, deltaTicks: Float) {
 		if (!isActive || config.scoreHudType == ScoreHudType.DISABLED) return
-		drawContext.matrices.pushMatrix()
-		applyTransformations(drawContext.matrices)
+		drawContext.pose().pushMatrix()
+		applyTransformations(drawContext.pose())
 
 		if (config.scoreHudType == ScoreHudType.FULL) {
 
@@ -432,13 +432,13 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 			}
 
 			for ((index, line) in lines.withIndex()) {
-				drawContext.drawText(line, 2, 2 + (index * 10), Colors.WHITE, true)
+				drawContext.drawText(line, 2, 2 + (index * 10), CommonColors.WHITE, true)
 			}
 
 		} else {
-			drawContext.drawText("§eScore: §a$totalScore §7($rank§7)", 2, 2, Colors.WHITE, true)
+			drawContext.drawText("§eScore: §a$totalScore §7($rank§7)", 2, 2, CommonColors.WHITE, true)
 		}
 
-		drawContext.matrices.popMatrix()
+		drawContext.pose().popMatrix()
 	}
 }

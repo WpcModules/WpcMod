@@ -1,7 +1,7 @@
 package net.wapic.wpcmod.mixin;
 
-import net.minecraft.block.enums.CameraSubmersionType;
-import net.minecraft.client.render.Camera;
+import net.minecraft.world.level.material.FogType;
+import net.minecraft.client.Camera;
 import net.wapic.wpcmod.WpcMod;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -11,10 +11,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Camera.class)
 public class CameraMixin {
 
-	@Inject(method = "getSubmersionType", at = @At("HEAD"), cancellable = true)
-	private void disableFluidFog(CallbackInfoReturnable<CameraSubmersionType> cir) {
+	@Inject(method = "getFluidInCamera", at = @At("HEAD"), cancellable = true)
+	private void disableFluidFog(CallbackInfoReturnable<FogType> cir) {
 		if (WpcMod.config.getRender().getDisableFluidFog()) {
-			cir.setReturnValue(CameraSubmersionType.NONE);
+			cir.setReturnValue(FogType.NONE);
 		}
 	}
 }

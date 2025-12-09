@@ -2,10 +2,10 @@ package net.wapic.wpcmod.features.mining
 
 import net.fabricmc.fabric.api.event.player.UseBlockCallback
 import net.fabricmc.fabric.api.event.player.UseItemCallback
-import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.util.ActionResult
-import net.minecraft.util.Hand
-import net.minecraft.world.World
+import net.minecraft.world.entity.player.Player
+import net.minecraft.world.InteractionResult
+import net.minecraft.world.InteractionHand
+import net.minecraft.world.level.Level
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.ItemUtils.skyBlockID
@@ -21,14 +21,14 @@ object PigeonSwapper {
 		UseBlockCallback.EVENT.register { player, world, hand, _ -> onUse(player, world, hand)}
 	}
 
-	private fun onUse(player: PlayerEntity, world: World, hand: Hand): ActionResult {
-		if (!config.pigeonSwapper || Utils.getLocation() !in allowedAreas) return ActionResult.PASS
-		if (player.mainHandStack?.skyBlockID != "ROYAL_PIGEON") return ActionResult.PASS
+	private fun onUse(player: Player, world: Level, hand: InteractionHand): InteractionResult {
+		if (!config.pigeonSwapper || Utils.getLocation() !in allowedAreas) return InteractionResult.PASS
+		if (player.mainHandItem?.skyBlockID != "ROYAL_PIGEON") return InteractionResult.PASS
 
-		val inventory = player.inventory ?: return ActionResult.PASS
-		val drillItem = inventory.find { it.name.string.contains("Drill") } ?: return ActionResult.PASS
+		val inventory = player.inventory ?: return InteractionResult.PASS
+		val drillItem = inventory.find { it.hoverName.string.contains("Drill") } ?: return InteractionResult.PASS
 
-		inventory.selectedSlot = inventory.getSlotWithStack(drillItem)
-		return ActionResult.SUCCESS
+		inventory.selectedSlot = inventory.findSlotMatchingItem(drillItem)
+		return InteractionResult.SUCCESS
 	}
 }

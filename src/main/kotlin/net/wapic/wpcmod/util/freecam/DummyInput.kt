@@ -1,8 +1,8 @@
 package net.wapic.wpcmod.util.freecam
 
-import net.minecraft.client.input.KeyboardInput
-import net.minecraft.client.option.GameOptions
+import net.minecraft.client.player.KeyboardInput
+import net.minecraft.client.Options
 
-class DummyInput(options: GameOptions?) : KeyboardInput(options) {
+class DummyInput(options: Options?) : KeyboardInput(options) {
 	override fun tick() {}
 }

@@ -1,10 +1,10 @@
 package net.wapic.wpcmod.features.dungeons
 
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.gui.screen.ingame.GenericContainerScreen
-import net.minecraft.sound.SoundEvents
-import net.minecraft.text.Text
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.gui.screens.inventory.ContainerScreen
+import net.minecraft.sounds.SoundEvents
+import net.minecraft.network.chat.Component
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.DungeonUtils
@@ -21,22 +21,22 @@ object AutoCloseChests {
 
 	fun onScreenInit(screen: Screen) {
 		if (!config.autoCloseChests || !DungeonUtils.inDungeons) return
-		if (screen !is GenericContainerScreen || !defaultTitles.contains(screen.title.string)) return
+		if (screen !is ContainerScreen || !defaultTitles.contains(screen.title.string)) return
 
 		if (config.alertOnTreasureTalismans) {
 			ScreenEvents.afterTick(screen).register { screen ->
-				(screen as GenericContainerScreen).screenHandler?.inventory?.find { stack ->
-					stack.name.string.contains(
+				(screen as ContainerScreen).menu?.container?.find { stack ->
+					stack.hoverName.string.contains(
 						"Treasure Talisman"
 					)
 				}?.let { stack ->
-					ChatUtils.sendAlert(Text.literal(stack.name.string).setStyle(stack.name.style))
-					ChatUtils.sendMessage(stack.name.string, stack.name.style)
-					MC.player?.playSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP)
+					ChatUtils.sendAlert(Component.literal(stack.hoverName.string).setStyle(stack.hoverName.style))
+					ChatUtils.sendMessage(stack.hoverName.string, stack.hoverName.style)
+					MC.player?.makeSound(SoundEvents.EXPERIENCE_ORB_PICKUP)
 				}
 			}
 		}
 
-		screen.close()
+		screen.onClose()
 	}
 }

@@ -1,13 +1,13 @@
 package net.wapic.wpcmod.mixin;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.input.Input;
-import net.minecraft.client.input.KeyboardInput;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.world.ClientWorld;
-import net.wapic.wpcmod.events.InventoryEvents;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.ClientInput;
+import net.minecraft.client.player.KeyboardInput;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.wapic.wpcmod.events.GuiEvents;
 import net.wapic.wpcmod.features.general.Freecam;
 import net.wapic.wpcmod.util.freecam.DummyInput;
 import org.spongepowered.asm.mixin.Final;
@@ -19,22 +19,22 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(ClientPlayerEntity.class)
-public class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
+@Mixin(LocalPlayer.class)
+public class LocalPlayerMixin extends AbstractClientPlayer {
 
 	@Shadow
-	public Input input;
+	public ClientInput input;
 
 	@Shadow
 	@Final
-	protected MinecraftClient client;
+	protected Minecraft minecraft;
 
 	@Unique
 	private final KeyboardInput dummy = new DummyInput(null);
 	@Unique
-	private Input realInput;
+	private ClientInput realInput;
 
-	public ClientPlayerEntityMixin(ClientWorld world, GameProfile profile) {
+	public LocalPlayerMixin(ClientLevel world, GameProfile profile) {
 		super(world, profile);
 	}
 
@@ -54,22 +54,22 @@ public class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
 		}
 	}
 
-	@Inject(method = "isCamera", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "isControlledCamera", at = @At("HEAD"), cancellable = true)
 	private void freecam_allowPlayerMovement(CallbackInfoReturnable<Boolean> cir) {
 		if (Freecam.Companion.isEnabled() && Freecam.Companion.getOriginalCameraWasPlayer()) {
 			cir.setReturnValue(true);
 		}
 	}
 
-	@Inject(method = "swingHand", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "swing", at = @At("HEAD"), cancellable = true)
 	private void freecam_disableSwing(CallbackInfo ci) {
 		if (Freecam.Companion.isEnabled()) {
 			ci.cancel();
 		}
 	}
 
-	@Inject(at = @At("HEAD"), method = "closeScreen")
+	@Inject(at = @At("HEAD"), method = "clientSideCloseContainer")
 	public void onCloseScreen(CallbackInfo ci) {
-		InventoryEvents.CLOSE.invoker().onClose();
+		GuiEvents.CLOSE.invoker().onClose();
 	}
 }

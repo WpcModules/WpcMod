@@ -1,11 +1,11 @@
 package net.wapic.wpcmod.listeners
 
-import net.minecraft.network.packet.Packet
-import net.minecraft.network.packet.s2c.common.CommonPingS2CPacket
-import net.minecraft.network.packet.s2c.play.EntitiesDestroyS2CPacket
-import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket
-import net.minecraft.network.packet.s2c.play.MapUpdateS2CPacket
-import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket
+import net.minecraft.network.protocol.Packet
+import net.minecraft.network.protocol.common.ClientboundPingPacket
+import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
+import net.minecraft.network.protocol.game.ClientboundMapItemDataPacket
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket
 import net.wapic.wpcmod.events.EntityEvents
 import net.wapic.wpcmod.events.PacketEvents
 import net.wapic.wpcmod.events.PlayerListChangeEvent
@@ -21,32 +21,32 @@ object NetworkListener {
 
 	private fun onPacketReceive(packet: Packet<*>) {
 		when(packet) {
-			is PlayerListS2CPacket -> onTabListUpdate(packet)
-			is EntitiesDestroyS2CPacket -> onEntityDespawn(packet)
-			is EntitySpawnS2CPacket -> onEntitySpawn(packet)
-			is MapUpdateS2CPacket -> MapUtils.updateMapData(packet)
-			is CommonPingS2CPacket -> onPingPacket()
+			is ClientboundPlayerInfoUpdatePacket -> onTabListUpdate(packet)
+			is ClientboundRemoveEntitiesPacket -> onEntityDespawn(packet)
+			is ClientboundAddEntityPacket -> onEntitySpawn(packet)
+			is ClientboundMapItemDataPacket -> MapUtils.updateMapData(packet)
+			is ClientboundPingPacket -> onPingPacket()
 		}
 	}
 
-	private fun onTabListUpdate(packet: PlayerListS2CPacket) {
-		val actions = setOf(PlayerListS2CPacket.Action.UPDATE_DISPLAY_NAME, PlayerListS2CPacket.Action.ADD_PLAYER)
-		val hasActions = packet.actions.intersect(actions).isNotEmpty()
+	private fun onTabListUpdate(packet: ClientboundPlayerInfoUpdatePacket) {
+		val actions = setOf(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_DISPLAY_NAME, ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER)
+		val hasActions = packet.actions().intersect(actions).isNotEmpty()
 		if (hasActions) {
-			PlayerListChangeEvent.EVENT.invoker().onPlayerListChange(packet.entries)
+			PlayerListChangeEvent.EVENT.invoker().onPlayerListChange(packet.entries())
 		}
 	}
 
-	private fun onEntityDespawn(packet: EntitiesDestroyS2CPacket){
+	private fun onEntityDespawn(packet: ClientboundRemoveEntitiesPacket){
 		val world = MC.world ?: return
 
 		packet.entityIds.forEach {
-			val entity = world.getEntityById(it) ?: return@forEach
+			val entity = world.getEntity(it) ?: return@forEach
 			EntityEvents.DESPAWN.invoker().onEntityDespawn(entity)
 		}
 	}
 
-	private fun onEntitySpawn(packet: EntitySpawnS2CPacket) {
+	private fun onEntitySpawn(packet: ClientboundAddEntityPacket) {
 		val world = MC.world ?: return
 		val entity = world.getEntity(packet.uuid) ?: return
 		EntityEvents.SPAWN.invoker().onSpawn(entity)

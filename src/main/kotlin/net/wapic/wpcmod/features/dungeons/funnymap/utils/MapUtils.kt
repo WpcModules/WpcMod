@@ -1,10 +1,10 @@
 package net.wapic.wpcmod.features.dungeons.funnymap.utils
 
-import net.minecraft.item.FilledMapItem
-import net.minecraft.item.ItemStack
-import net.minecraft.item.Items
-import net.minecraft.item.map.MapState
-import net.minecraft.network.packet.s2c.play.MapUpdateS2CPacket
+import net.minecraft.world.item.MapItem
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
+import net.minecraft.world.level.saveddata.maps.MapItemSavedData
+import net.minecraft.network.protocol.game.ClientboundMapItemDataPacket
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.DungeonScan
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.DungeonUtils.inDungeons
@@ -13,7 +13,7 @@ import net.wapic.wpcmod.util.Utils.equalsOneOf
 
 object MapUtils {
 
-	var mapData: MapState? = null
+	var mapData: MapItemSavedData? = null
 	var startCorner = Pair(5, 5)
 	var coordMultiplier = 0.625
 	var roomSize = 16
@@ -23,25 +23,25 @@ object MapUtils {
 	var mapDataUpdated = false
 
 	private fun getMapItem(): ItemStack? {
-		val map = MC.player?.inventory?.getStack(8) ?: return null
-		if (map.item != Items.MAP || !map.name.string.contains("Magical Map")) return null
+		val map = MC.player?.inventory?.getItem(8) ?: return null
+		if (map.item != Items.MAP || !map.hoverName.string.contains("Magical Map")) return null
 		return map
 	}
 
-	fun updateMapData(packet: MapUpdateS2CPacket) {
+	fun updateMapData(packet: ClientboundMapItemDataPacket) {
 		if (!inDungeons) return
 		MC.runOnThread {
 			val map = getMapItem()
 			map?.let {
-				mapData = FilledMapItem.getMapState(it, MC.world)
+				mapData = MapItem.getSavedData(it, MC.world)
 			}
 
 			if (mapData == null) {
-				mapData = FilledMapItem.getMapState(packet.mapId, MC.world)
+				mapData = MapItem.getSavedData(packet.mapId, MC.world)
 			}
 
 			mapData?.let {
-				packet.apply(mapData)
+				packet.applyToMap(mapData)
 				mapDataUpdated = true
 			}
 		}

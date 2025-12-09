@@ -1,8 +1,8 @@
 package net.wapic.wpcmod.features.dungeons.funnymap.ui
 
 import io.github.notenoughupdates.moulconfig.ChromaColour
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.util.Colors
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.util.CommonColors
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.dungeon.FunnyConfig
 import net.wapic.wpcmod.features.dungeons.funnymap.core.DungeonPlayer
@@ -29,28 +29,28 @@ object MapRenderer {
 	private val whiteResource = Utils.modIdentifier("dungeon/white_check.png")
 	private val mapIcons = Utils.modIdentifier("dungeon/marker.png")
 
-	fun renderCenteredText(drawContext: DrawContext, text: List<String>, x: Int, y: Int, color: Int) {
+	fun renderCenteredText(drawContext: GuiGraphics, text: List<String>, x: Int, y: Int, color: Int) {
 		if (text.isEmpty()) return
 		val player = MC.player ?: return
-		val matrixStack = drawContext.matrices
+		val matrixStack = drawContext.pose()
 
 		matrixStack.pushMatrix()
 		matrixStack.translate(x.toFloat(), y.toFloat())
 		matrixStack.scale(config.textScale, config.textScale)
 
 		if (config.mapRotate) {
-			matrixStack.rotate(Math.toRadians(player.yaw + 180.0).toFloat())
+			matrixStack.rotate(Math.toRadians(player.yRot + 180.0).toFloat())
 		}
 
 		val tr = MC.textRenderer
-		val fontHeight = tr.fontHeight + 1
+		val fontHeight = tr.lineHeight + 1
 		val yTextOffset = text.size * fontHeight / -2f
 
 		for (i in 0..<text.size) {
-			drawContext.drawText(
+			drawContext.drawString(
 				tr,
 				text[i],
-				tr.getWidth(text[i]) / -2,
+				tr.width(text[i]) / -2,
 				yTextOffset.toInt() + i * fontHeight,
 				color,
 				true
@@ -60,7 +60,7 @@ object MapRenderer {
 		matrixStack.popMatrix()
 	}
 
-	fun drawCheckmark(drawContext: DrawContext, x: Float, y: Float, state: RoomState) {
+	fun drawCheckmark(drawContext: GuiGraphics, x: Float, y: Float, state: RoomState) {
 		if (!config.mapCheckmark) return
 		val checkmark = when (state) {
 			RoomState.CLEARED -> whiteResource
@@ -82,8 +82,8 @@ object MapRenderer {
 		}
 	}
 
-	fun drawPlayerHead(drawContext: DrawContext, name: String, player: DungeonPlayer) {
-		val matrixStack = drawContext.matrices
+	fun drawPlayerHead(drawContext: GuiGraphics, name: String, player: DungeonPlayer) {
+		val matrixStack = drawContext.pose()
 		matrixStack.pushMatrix()
 		try {
 			// Translates to the player's location which is updated every tick.
@@ -118,12 +118,12 @@ object MapRenderer {
 				}
 				matrixStack.translate(0f, config.playerHeadScale * 4f)
 				matrixStack.scale(config.playerNameScale, config.playerNameScale)
-				drawContext.drawText(
+				drawContext.drawString(
 					MC.textRenderer,
 					name,
-					-MC.textRenderer.getWidth(name) / 2,
+					-MC.textRenderer.width(name) / 2,
 					0,
-					Colors.WHITE,
+					CommonColors.WHITE,
 					true
 				)
 			}

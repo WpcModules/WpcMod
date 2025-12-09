@@ -1,11 +1,11 @@
 package net.wapic.wpcmod.features.dungeons.floor7.termGUI
 
-import net.minecraft.client.gui.DrawContext
+import net.minecraft.client.gui.GuiGraphics
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 
 object PanesGui : TermGui() {
 
-    override fun renderTerminal(drawContext: DrawContext, slotCount: Int) {
+    override fun renderTerminal(drawContext: GuiGraphics, slotCount: Int) {
         renderBackground(drawContext, slotCount, 5)
 
         for (index in 9..<slotCount) {

@@ -2,22 +2,22 @@ package net.wapic.wpcmod.features.dungeons.floor7
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.gui.screen.ingame.HandledScreen
-import net.minecraft.network.listener.PacketListener
-import net.minecraft.network.packet.Packet
-import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket
-import net.minecraft.network.packet.c2s.play.CloseHandledScreenC2SPacket
-import net.minecraft.network.packet.s2c.common.CommonPingS2CPacket
-import net.minecraft.network.packet.s2c.play.CloseScreenS2CPacket
-import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket
-import net.minecraft.screen.slot.Slot
-import net.minecraft.screen.slot.SlotActionType
-import net.minecraft.screen.sync.ItemStackHash
-import net.minecraft.text.Text
-import net.minecraft.util.Colors
-import net.minecraft.util.DyeColor
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
+import net.minecraft.network.PacketListener
+import net.minecraft.network.protocol.Packet
+import net.minecraft.network.protocol.game.ServerboundContainerClickPacket
+import net.minecraft.network.protocol.game.ServerboundContainerClosePacket
+import net.minecraft.network.protocol.common.ClientboundPingPacket
+import net.minecraft.network.protocol.game.ClientboundContainerClosePacket
+import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket
+import net.minecraft.world.inventory.Slot
+import net.minecraft.world.inventory.ClickType
+import net.minecraft.network.HashedStack
+import net.minecraft.network.chat.Component
+import net.minecraft.util.CommonColors
+import net.minecraft.world.item.DyeColor
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.compat.ReiCompatibility
 import net.wapic.wpcmod.config.dungeon.Floor7Config.TerminalSolverConfig.RenderType
@@ -27,7 +27,7 @@ import net.wapic.wpcmod.events.TooltipEvents
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.*
 import net.wapic.wpcmod.features.dungeons.floor7.termsim.TermSimGUI
-import net.wapic.wpcmod.mixin.accessors.HandledScreenAccessor
+import net.wapic.wpcmod.mixin.accessors.AbstractContainerScreenAccessor
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.MC
 import org.lwjgl.glfw.GLFW
@@ -72,9 +72,9 @@ object TerminalSolver {
 		if(!config.enabled) return
 
         when (packet) {
-            is OpenScreenS2CPacket -> {
+            is ClientboundOpenScreenPacket -> {
                 currentTerm?.let { if (!it.isClicked && MC.screen !is TermSimGUI) leftTerm() }
-                val windowName = packet.name?.string ?: return
+                val windowName = packet.title?.string ?: return
                 val newTermType = TerminalTypes.entries.find { terminal -> windowName.startsWith(terminal.windowName) }?.takeIf { it != currentTerm?.type } ?: return
 
                 currentTerm = when (newTermType) {
@@ -106,16 +106,16 @@ object TerminalSolver {
                 currentTerm?.let {
 					WpcMod.logger.debug("§aNew terminal: §6${it.type.name}")
 					DungeonEvents.TERMINAL_OPENED.invoker().onOpen(it)
-					it.containerId = packet.syncId
+					it.containerId = packet.containerId
                     lastTermOpened = it
                 }
             }
 
-            is CloseScreenS2CPacket -> leftTerm()
+            is ClientboundContainerClosePacket -> leftTerm()
         }
     }
 
-	fun onMessageReceived(text: Text, actionBar: Boolean) {
+	fun onMessageReceived(text: Component, actionBar: Boolean) {
 		if(actionBar || !config.enabled) return
 
 		termSolverRegex.find(text.string)?.let { message ->
@@ -126,16 +126,17 @@ object TerminalSolver {
     fun onPacketSend(packet: Packet<out PacketListener>, callbackInfo: CallbackInfo) {
 		if(!config.enabled) return
         when (packet) {
-            is CloseHandledScreenC2SPacket -> leftTerm()
+            is ServerboundContainerClosePacket -> leftTerm()
 
-            is ClickSlotC2SPacket -> {
+            is ServerboundContainerClickPacket -> {
                 lastClickTime = System.currentTimeMillis()
                 currentTerm?.isClicked = true
             }
 
-            is CommonPingS2CPacket -> {
+            is ClientboundPingPacket -> {
                 if (System.currentTimeMillis() - lastClickTime >= config.terminalReloadThreshold && currentTerm?.isClicked == true) currentTerm?.let {
-                    PacketEvents.RECEIVE.invoker().onPacketReceive(ClickSlotC2SPacket(MC.player?.currentScreenHandler?.syncId ?: -1, 0, 0, 0, SlotActionType.PICKUP, Int2ObjectMaps.emptyMap(), ItemStackHash.EMPTY))
+                    PacketEvents.RECEIVE.invoker().onPacketReceive(
+						ServerboundContainerClickPacket(MC.player?.containerMenu?.containerId ?: -1, 0, 0, 0, ClickType.PICKUP, Int2ObjectMaps.emptyMap(), HashedStack.EMPTY))
                     it.isClicked = false
                 }
             }
@@ -154,7 +155,7 @@ object TerminalSolver {
         }
     }
 
-	fun onSlotClick(slot: Slot?, slotId: Int, button: Int, slotActionType: SlotActionType, callbackInfo: CallbackInfo) =
+	fun onSlotClick(slot: Slot?, slotId: Int, button: Int, slotActionType: ClickType, callbackInfo: CallbackInfo) =
 		with(currentTerm) {
 			if (!config.enabled || this == null) return
 
@@ -181,7 +182,7 @@ object TerminalSolver {
 			}
 		}
 
-	fun onDrawBackground(screen: Screen, drawContext: DrawContext, callbackInfo: CallbackInfo) {
+	fun onDrawBackground(screen: Screen, drawContext: GuiGraphics, callbackInfo: CallbackInfo) {
 		if (!config.enabled || currentTerm == null || (currentTerm?.type == TerminalTypes.MELODY && config.cancelMelodySolver) || config.renderType != RenderType.CUSTOM) return
 		currentTerm?.type?.getGUI()?.render(drawContext)
 		callbackInfo.cancel()
@@ -189,7 +190,7 @@ object TerminalSolver {
 
 	fun onGuiRender(
 		screen: Screen,
-		drawContext: DrawContext,
+		drawContext: GuiGraphics,
 		mouseX: Int,
 		mouseY: Int,
 		deltaTicks: Float,
@@ -201,21 +202,21 @@ object TerminalSolver {
 			return
 		}
 
-		val screen = (screen as? HandledScreen<*>) as? HandledScreenAccessor ?: return
+		val screen = (screen as? AbstractContainerScreen<*>) as? AbstractContainerScreenAccessor ?: return
 		drawContext.fill(
-			screen.x + 7,
-			screen.y + 16,
-			screen.x + screen.width - 7,
-			screen.y + screen.height - 96,
+			screen.leftPos + 7,
+			screen.topPos + 16,
+			screen.leftPos + screen.width - 7,
+			screen.topPos + screen.height - 96,
 			config.backgroundColor.getEffectiveColourRGB()
 		)
 	}
 
-	fun drawSlot(drawContext: DrawContext, screen: Screen, slot: Slot, callbackInfo: CallbackInfo) = with(currentTerm) {
+	fun drawSlot(drawContext: GuiGraphics, screen: Screen, slot: Slot, callbackInfo: CallbackInfo) = with(currentTerm) {
 		if (!config.enabled || config.renderType == RenderType.CUSTOM || this?.type == null || type == TerminalTypes.MELODY) return
 
-        val slotIndex = slot.id
-		val inventorySize = (screen as? HandledScreen<*>)?.screenHandler?.slots?.size ?: return
+        val slotIndex = slot.index
+		val inventorySize = (screen as? AbstractContainerScreen<*>)?.menu?.slots?.size ?: return
 
         callbackInfo.cancel()
         if (slotIndex !in solution || slotIndex > inventorySize - 37) return
@@ -238,7 +239,7 @@ object TerminalSolver {
 			)
 
             TerminalTypes.NUMBERS -> {
-                val index = solution.indexOf(slot.index)
+                val index = solution.indexOf(slot.containerSlot)
                 if (index < 3) {
                     val color = when (index) {
                         0 -> config.orderColor
@@ -248,14 +249,14 @@ object TerminalSolver {
                     drawContext.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, color)
                     callbackInfo.cancel()
                 }
-                val amount = slot.stack?.count?.toString() ?: ""
+                val amount = slot.item?.count?.toString() ?: ""
                 if (config.showNumbers)
-					drawContext.drawText(
+					drawContext.drawString(
 						MC.textRenderer,
 						amount,
-						slot.x + 8 - MC.textRenderer.getWidth(amount) / 2,
+						slot.x + 8 - MC.textRenderer.width(amount) / 2,
 						slot.y + 4,
-						Colors.WHITE,
+						CommonColors.WHITE,
 						true
 					)
             }
@@ -272,7 +273,7 @@ object TerminalSolver {
                     }
 
                     drawContext.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, color.getEffectiveColourRGB())
-                    drawContext.drawText(MC.textRenderer, text.toString(), slot.x + 8 - MC.textRenderer.getWidth(text.toString()) / 2, slot.y + 4, Colors.WHITE, true)
+                    drawContext.drawString(MC.textRenderer, text.toString(), slot.x + 8 - MC.textRenderer.width(text.toString()) / 2, slot.y + 4, CommonColors.WHITE, true)
                 }
             }
 
@@ -280,7 +281,7 @@ object TerminalSolver {
 		}
     }
 
-    fun onTooltipDraw(screen: Screen, mouseX: Int, mouseY: Int, drawContext: DrawContext, callbackInfo: CallbackInfo) {
+    fun onTooltipDraw(screen: Screen, mouseX: Int, mouseY: Int, drawContext: GuiGraphics, callbackInfo: CallbackInfo) {
         if (config.enabled && config.cancelToolTip && currentTerm != null) callbackInfo.cancel()
     }
 

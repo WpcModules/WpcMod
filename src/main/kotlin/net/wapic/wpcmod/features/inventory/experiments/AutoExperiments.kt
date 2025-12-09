@@ -1,15 +1,15 @@
 package net.wapic.wpcmod.features.inventory.experiments
 
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
-import net.minecraft.block.Blocks
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.gui.screen.ingame.GenericContainerScreen
-import net.minecraft.inventory.Inventory
-import net.minecraft.item.Item
-import net.minecraft.item.Items
-import net.minecraft.screen.GenericContainerScreenHandler
-import net.minecraft.screen.slot.SlotActionType
+import net.minecraft.world.level.block.Blocks
+import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.gui.screens.inventory.ContainerScreen
+import net.minecraft.world.Container
+import net.minecraft.world.item.Item
+import net.minecraft.world.item.Items
+import net.minecraft.world.inventory.ChestMenu
+import net.minecraft.world.inventory.ClickType
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.Utils
@@ -30,7 +30,7 @@ object AutoExperiments {
 	private var clicks = 0
 	private var lastClickTime = 0L
 
-	private var handledScreen: GenericContainerScreenHandler? = null
+	private var handledScreen: ChestMenu? = null
 
 	private val ultraSequenceItems = listOf<Item>(
 		Items.WHITE_DYE,
@@ -69,7 +69,7 @@ object AutoExperiments {
 		reset()
 
 		if (Utils.getLocation() != Island.PRIVATE_ISLAND || !config.autoExperiments) return
-		handledScreen = (screen as? GenericContainerScreen)?.screenHandler ?: return
+		handledScreen = (screen as? ContainerScreen)?.menu ?: return
 
 		currentExperiment = when {
 			screen.title.string.startsWith("Chronomatron") -> ExperimentType.CHRONOMATRON
@@ -84,7 +84,7 @@ object AutoExperiments {
 	private fun onScreenRender(screen: Screen) {
 		if (Utils.getLocation() != Island.PRIVATE_ISLAND || !config.autoExperiments) return
 
-		(screen as? GenericContainerScreen)?.screenHandler?.inventory?.takeIf { it.size() >= 54 }?.let {
+		(screen as? ContainerScreen)?.menu?.container?.takeIf { it.containerSize >= 54 }?.let {
 			when (currentExperiment) {
 				ExperimentType.CHRONOMATRON -> solveChronomatron(it)
 				ExperimentType.ULTRASEQUENCER -> solveUltrasequencer(it)
@@ -93,14 +93,14 @@ object AutoExperiments {
 		}
 	}
 
-	private fun solveChronomatron(inventory: Inventory) {
-		if (inventory.getStack(49).item == Blocks.GLOWSTONE.asItem() && !inventory.getStack(lastAdded).hasGlint()) {
+	private fun solveChronomatron(inventory: Container) {
+		if (inventory.getItem(49).item == Blocks.GLOWSTONE.asItem() && !inventory.getItem(lastAdded).hasFoil()) {
 			hasAdded = false
-			if (config.autoClose && chronomatronOrder.size > 11 - config.serumCount) MinecraftClient.getInstance().currentScreen?.close()
+			if (config.autoClose && chronomatronOrder.size > 11 - config.serumCount) Minecraft.getInstance().screen?.onClose()
 		}
 
-		if (!hasAdded && inventory.getStack(49).item == Items.CLOCK) {
-			inventory.withIndex().find { (i, stack) -> i in 9..44 && stack.hasGlint() }?.let {
+		if (!hasAdded && inventory.getItem(49).item == Items.CLOCK) {
+			inventory.withIndex().find { (i, stack) -> i in 9..44 && stack.hasFoil() }?.let {
 				chronomatronOrder.add(it.index)
 				lastAdded = it.index
 				hasAdded = true
@@ -108,14 +108,14 @@ object AutoExperiments {
 			}
 		}
 
-		if (hasAdded && inventory.getStack(49).item == Items.CLOCK && chronomatronOrder.size > clicks && System.currentTimeMillis() - lastClickTime > config.clickDelay) {
+		if (hasAdded && inventory.getItem(49).item == Items.CLOCK && chronomatronOrder.size > clicks && System.currentTimeMillis() - lastClickTime > config.clickDelay) {
 			handledScreen?.let {
-				MinecraftClient.getInstance().interactionManager?.clickSlot(
-					it.syncId,
+				Minecraft.getInstance().gameMode?.handleInventoryMouseClick(
+					it.containerId,
 					chronomatronOrder[clicks],
 					GLFW.GLFW_MOUSE_BUTTON_MIDDLE,
-					SlotActionType.CLONE,
-					MinecraftClient.getInstance().player
+					ClickType.CLONE,
+					Minecraft.getInstance().player
 				)
 				lastClickTime = System.currentTimeMillis()
 				clicks++
@@ -123,29 +123,29 @@ object AutoExperiments {
 		}
 	}
 
-	private fun solveUltrasequencer(inventory: Inventory) {
-		if (inventory.getStack(49).item == Items.CLOCK) hasAdded = false
+	private fun solveUltrasequencer(inventory: Container) {
+		if (inventory.getItem(49).item == Items.CLOCK) hasAdded = false
 
-		if (!hasAdded && inventory.getStack(49).item == Blocks.GLOWSTONE.asItem()) {
-			if (inventory.getStack(44) == Items.AIR) return
+		if (!hasAdded && inventory.getItem(49).item == Blocks.GLOWSTONE.asItem()) {
+			if (inventory.getItem(44) == Items.AIR) return
 			ultrasequencerOrder.clear()
 			inventory.withIndex().forEach { (i, stack) ->
 				if (i in 9..44 && ultraSequenceItems.contains(stack.item)) ultrasequencerOrder[stack.count - 1] = i
 			}
 			hasAdded = true
 			clicks = 0
-			if (config.autoClose && ultrasequencerOrder.size > 9 - config.serumCount) MinecraftClient.getInstance().currentScreen?.close()
+			if (config.autoClose && ultrasequencerOrder.size > 9 - config.serumCount) Minecraft.getInstance().screen?.onClose()
 		}
 
-		if (inventory.getStack(49).item == Items.CLOCK && ultrasequencerOrder.contains(clicks) && System.currentTimeMillis() - lastClickTime > config.clickDelay) {
+		if (inventory.getItem(49).item == Items.CLOCK && ultrasequencerOrder.contains(clicks) && System.currentTimeMillis() - lastClickTime > config.clickDelay) {
 			handledScreen?.let { screenHandler ->
 				ultrasequencerOrder[clicks]?.let {
-					MinecraftClient.getInstance().interactionManager?.clickSlot(
-						screenHandler.syncId,
+					Minecraft.getInstance().gameMode?.handleInventoryMouseClick(
+						screenHandler.containerId,
 						it,
 						GLFW.GLFW_MOUSE_BUTTON_MIDDLE,
-						SlotActionType.CLONE,
-						MinecraftClient.getInstance().player
+						ClickType.CLONE,
+						Minecraft.getInstance().player
 					)
 				}
 				lastClickTime = System.currentTimeMillis()

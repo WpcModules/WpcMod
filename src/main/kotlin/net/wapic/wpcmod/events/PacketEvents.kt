@@ -2,8 +2,8 @@ package net.wapic.wpcmod.events
 
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
-import net.minecraft.network.listener.PacketListener
-import net.minecraft.network.packet.Packet
+import net.minecraft.network.PacketListener
+import net.minecraft.network.protocol.Packet
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 
 object PacketEvents {

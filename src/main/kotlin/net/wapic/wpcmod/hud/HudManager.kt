@@ -4,8 +4,8 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
-import net.minecraft.client.option.KeyBinding
-import net.minecraft.client.util.InputUtil
+import net.minecraft.client.KeyMapping
+import com.mojang.blaze3d.platform.InputConstants
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.features.dungeons.ScoreCalculation
 import net.wapic.wpcmod.features.dungeons.SpiritBearTimer
@@ -26,10 +26,10 @@ object HudManager {
 	private val tempFile = File(file.parentFile, "${file.name}.tmp")
 	private val gson: Gson = GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().create()
 
-	private val hudKeyBind: KeyBinding = KeyBindingHelper.registerKeyBinding(
-		KeyBinding(
+	private val hudKeyBind: KeyMapping = KeyBindingHelper.registerKeyBinding(
+		KeyMapping(
 			"hud",
-			InputUtil.GLFW_KEY_END,
+			InputConstants.KEY_END,
 			WpcMod.category
 		)
 	)
@@ -46,7 +46,7 @@ object HudManager {
 
 	fun init() {
 		ClientTickEvents.END_CLIENT_TICK.register {
-			while (hudKeyBind.wasPressed()) {
+			while (hudKeyBind.consumeClick()) {
 				openEditor()
 			}
 		}
@@ -55,7 +55,7 @@ object HudManager {
 	}
 
 	fun openEditor() {
-		MC.instance.send { MC.screen = HudEditor(hudElements) }
+		MC.instance.schedule { MC.screen = HudEditor(hudElements) }
 	}
 
 	private fun readFile(): String = try {

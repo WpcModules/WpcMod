@@ -1,11 +1,11 @@
 package net.wapic.wpcmod.features.dungeons.funnymap.dungeon
 
-import net.minecraft.block.Blocks
-import net.minecraft.client.network.PlayerListEntry
-import net.minecraft.item.map.MapDecorationTypes
-import net.minecraft.text.Text
-import net.minecraft.util.math.BlockPos
-import net.minecraft.world.chunk.EmptyChunk
+import net.minecraft.world.level.block.Blocks
+import net.minecraft.client.multiplayer.PlayerInfo
+import net.minecraft.world.level.saveddata.maps.MapDecorationTypes
+import net.minecraft.network.chat.Component
+import net.minecraft.core.BlockPos
+import net.minecraft.world.level.chunk.EmptyLevelChunk
 import net.wapic.wpcmod.features.dungeons.ScoreCalculation
 import net.wapic.wpcmod.features.dungeons.funnymap.core.DungeonPlayer
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.*
@@ -21,7 +21,7 @@ object MapUpdate {
 	fun preloadHeads() {
 		val tabEntries = TabListUtil.getDungeonTabList() ?: return
 		for (i in listOf(5, 9, 13, 17, 1)) {
-			tabEntries[i].first.skinTextures
+			tabEntries[i].first.skin
 		}
 	}
 
@@ -33,8 +33,8 @@ object MapUpdate {
 			with(tabEntries[i]) {
 				val name = second.string.trim().substringAfterLast("] ").split(" ")[0]
 				if (name != "") {
-					FunnyMap.dungeonTeammates[name] = DungeonPlayer(first.skinTextures).apply {
-						MC.world?.players?.find { it.name.string == name }?.let { setData(it) }
+					FunnyMap.dungeonTeammates[name] = DungeonPlayer(first.skin).apply {
+						MC.world?.players()?.find { it.name.string == name }?.let { setData(it) }
 						colorPrefix = second.string.substringBefore(name, "f").last()
 						this.name = name
 						icon = "icon-$iconNum"
@@ -45,7 +45,7 @@ object MapUpdate {
 		}
 	}
 
-	fun updatePlayers(tabEntries: List<Pair<PlayerListEntry, Text>>) {
+	fun updatePlayers(tabEntries: List<Pair<PlayerInfo, Component>>) {
 		if (FunnyMap.dungeonTeammates.isEmpty()) return
 		// Update map icons
 		val time = System.currentTimeMillis() - FunnyMap.Info.startTime
@@ -63,7 +63,7 @@ object MapUpdate {
 					iconNum++
 				}
 				if (!playerLoaded) {
-					MC.world?.players?.find { it.name.string == name }?.let { setData(it) }
+					MC.world?.players()?.find { it.name.string == name }?.let { setData(it) }
 				}
 
 				val room = getCurrentRoom()
@@ -87,15 +87,15 @@ object MapUpdate {
 			player.isPlayer = decoration.type == MapDecorationTypes.FRAME
 			if(player.isPlayer) {
 				MC.player?.let {
-					player.yaw = it.yaw
+					player.yaw = it.yRot
 					player.mapX = ((it.x - DungeonScan.START_X + 15) * MapUtils.coordMultiplier + MapUtils.startCorner.first).roundToInt()
 					player.mapZ = ((it.z - DungeonScan.START_Z + 15) * MapUtils.coordMultiplier + MapUtils.startCorner.second).roundToInt()
 					return@forEachIndexed
 				}
 			}
-			player.yaw = decoration.rotation * 22.5f
+			player.yaw = decoration.rot * 22.5f
 			player.mapX = (decoration.x + 128) shr 1
-			player.mapZ = (decoration.z + 128) shr 1
+			player.mapZ = (decoration.y + 128) shr 1
 		}
 	}
 
@@ -140,7 +140,7 @@ object MapUpdate {
 						if (room.opened) {
 							room.opened = false
 						}
-					} else if (!room.opened && MC.world?.getChunk(room.x shr 4, room.z shr 4) !is EmptyChunk &&
+					} else if (!room.opened && MC.world?.getChunk(room.x shr 4, room.z shr 4) !is EmptyLevelChunk &&
 						MC.world?.getBlockState(BlockPos(room.x, 69, room.z))?.block == Blocks.AIR
 					) {
 						room.opened = true

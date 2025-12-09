@@ -1,7 +1,7 @@
 package net.wapic.wpcmod.util
 
-import net.minecraft.util.math.Vec3d
+import net.minecraft.world.phys.Vec3
 
 object VecUtils {
-	operator fun Vec3d.unaryMinus(): Vec3d = Vec3d(-x, -y, -z)
+	operator fun Vec3.unaryMinus(): Vec3 = Vec3(-x, -y, -z)
 }

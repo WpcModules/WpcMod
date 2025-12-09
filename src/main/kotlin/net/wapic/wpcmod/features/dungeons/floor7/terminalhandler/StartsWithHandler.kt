@@ -1,14 +1,14 @@
 package net.wapic.wpcmod.features.dungeons.floor7.terminalhandler
 
-import net.minecraft.item.ItemStack
-import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket
+import net.minecraft.world.item.ItemStack
+import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket
 
 class StartsWithHandler(private val letter: String): TerminalHandler(TerminalTypes.STARTS_WITH) {
 
 	private val clickedSlots = mutableSetOf<Int>()
 	private var lastContainerId = -1
 
-    override fun handleSlotUpdate(packet: ScreenHandlerSlotUpdateS2CPacket): Boolean {
+    override fun handleSlotUpdate(packet: ClientboundContainerSetSlotPacket): Boolean {
         if (packet.slot != type.windowSize - 1) return false
         solution.clear()
         solution.addAll(solveStartsWith(items, letter))
@@ -30,7 +30,7 @@ class StartsWithHandler(private val letter: String): TerminalHandler(TerminalTyp
 
     private fun solveStartsWith(items: Array<ItemStack?>, letter: String): List<Int> =
 		items.mapIndexedNotNull { index, item ->
-			if (item?.name?.string?.startsWith(
+			if (item?.hoverName?.string?.startsWith(
 					letter,
 					true
 				) == true && index !in clickedSlots

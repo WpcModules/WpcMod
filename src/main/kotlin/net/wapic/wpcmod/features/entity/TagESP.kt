@@ -4,7 +4,7 @@ import com.mojang.brigadier.arguments.StringArgumentType.getString
 import com.mojang.brigadier.context.CommandContext
 import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
-import net.minecraft.entity.Entity
+import net.minecraft.world.entity.Entity
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldRenderEvent
 import net.wapic.wpcmod.util.ChatUtils
@@ -23,7 +23,7 @@ object TagESP : MobGlowCache() {
 
 	private fun onRenderWorld(worldRenderContext: WorldRenderContext) {
 		if(!isEnabled()) return
-		for (entity in worldRenderContext.world.entities) {
+		for (entity in worldRenderContext.world.entitiesForRendering()) {
 			if (!isTagged(entity)) continue
 
 			if (config.box)

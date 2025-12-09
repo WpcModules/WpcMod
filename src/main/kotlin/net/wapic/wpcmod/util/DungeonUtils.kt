@@ -2,9 +2,9 @@ package net.wapic.wpcmod.util
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
-import net.minecraft.client.MinecraftClient
-import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket
-import net.minecraft.text.Text
+import net.minecraft.client.Minecraft
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket
+import net.minecraft.network.chat.Component
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.PlayerListChangeEvent
 import net.wapic.wpcmod.events.WorldChangeEvent
@@ -50,7 +50,7 @@ object DungeonUtils {
 		}
 	}
 
-	private fun onMessageReceived(message: Text, actionBar: Boolean) {
+	private fun onMessageReceived(message: Component, actionBar: Boolean) {
 		if (actionBar) return
 
 		if (message.string == DUNGEON_START_MESSAGE) {
@@ -81,7 +81,7 @@ object DungeonUtils {
 		}
 	}
 
-	fun onTick(client: MinecraftClient) {
+	fun onTick(client: Minecraft) {
 		if (!inDungeons) return
 		ScoreboardUtil.sidebarLines = ScoreboardUtil.fetchScoreboardLines().map { ScoreboardUtil.cleanSB(it) }
 
@@ -106,7 +106,7 @@ object DungeonUtils {
 		return bossName.endsWith(correctBoss)
 	}
 
-	private fun onPlayerListChange(entries: List<PlayerListS2CPacket.Entry>) {
+	private fun onPlayerListChange(entries: List<ClientboundPlayerInfoUpdatePacket.Entry>) {
 		if (!inDungeons) return
 
 		entries.forEach { playerData ->

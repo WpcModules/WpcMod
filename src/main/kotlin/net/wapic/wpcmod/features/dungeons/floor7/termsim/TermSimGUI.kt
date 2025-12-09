@@ -2,25 +2,23 @@ package net.wapic.wpcmod.features.dungeons.floor7.termsim
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import net.minecraft.client.gui.screen.ingame.GenericContainerScreen
-import net.minecraft.component.DataComponentTypes
-import net.minecraft.entity.player.PlayerEquipment
-import net.minecraft.entity.player.PlayerInventory
-import net.minecraft.inventory.SimpleInventory
-import net.minecraft.item.ItemStack
-import net.minecraft.item.Items
-import net.minecraft.network.listener.PacketListener
-import net.minecraft.network.packet.Packet
-import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket
-import net.minecraft.network.packet.s2c.play.CloseScreenS2CPacket
-import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket
-import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket
-import net.minecraft.screen.GenericContainerScreenHandler
-import net.minecraft.screen.ScreenHandlerType
-import net.minecraft.screen.slot.Slot
-import net.minecraft.screen.slot.SlotActionType
-import net.minecraft.sound.SoundEvents
-import net.minecraft.text.Text
+import net.minecraft.client.gui.screens.inventory.ContainerScreen
+import net.minecraft.core.component.DataComponents
+import net.minecraft.world.SimpleContainer
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
+import net.minecraft.network.PacketListener
+import net.minecraft.network.protocol.Packet
+import net.minecraft.network.protocol.game.ServerboundContainerClickPacket
+import net.minecraft.network.protocol.game.ClientboundContainerClosePacket
+import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket
+import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket
+import net.minecraft.world.inventory.ChestMenu
+import net.minecraft.world.inventory.MenuType
+import net.minecraft.world.inventory.Slot
+import net.minecraft.world.inventory.ClickType
+import net.minecraft.sounds.SoundEvents
+import net.minecraft.network.chat.Component
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.PacketEvents
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
@@ -31,22 +29,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 open class TermSimGUI(
     val name: String,
     val size: Int,
-    private val inv: SimpleInventory = SimpleInventory(size)
-) : GenericContainerScreen(
-    GenericContainerScreenHandler(
-        if (size <= 9) ScreenHandlerType.GENERIC_9X1
-        else if (size <= 18) ScreenHandlerType.GENERIC_9X2
-        else if (size <= 27) ScreenHandlerType.GENERIC_9X3
-        else if (size <= 36) ScreenHandlerType.GENERIC_9X4
-        else if (size <= 45) ScreenHandlerType.GENERIC_9X5
-        else ScreenHandlerType.GENERIC_9X6,
-        0, PlayerInventory(MC.player, PlayerEquipment(MC.player)), inv, size / 9
+    private val inv: SimpleContainer = SimpleContainer(size)
+) : ContainerScreen(
+    ChestMenu(
+        if (size <= 9) MenuType.GENERIC_9x1
+        else if (size <= 18) MenuType.GENERIC_9x2
+        else if (size <= 27) MenuType.GENERIC_9x3
+        else if (size <= 36) MenuType.GENERIC_9x4
+        else if (size <= 45) MenuType.GENERIC_9x5
+        else MenuType.GENERIC_9x6,
+        0, MC.player!!.inventory, inv, size / 9
     ),
-    PlayerInventory(MC.player, PlayerEquipment(MC.player)),
-    Text.literal(name)
+    MC.player!!.inventory,
+    Component.literal(name)
 ) {
-    val blackPane = ItemStack(Items.BLACK_STAINED_GLASS_PANE).apply { set(DataComponentTypes.CUSTOM_NAME, Text.literal("")) }
-    val guiInventorySlots get() = handler?.slots?.subList(0, size) ?: emptyList()
+    val blackPane = ItemStack(Items.BLACK_STAINED_GLASS_PANE).apply { set(DataComponents.CUSTOM_NAME, Component.literal("")) }
+    val guiInventorySlots get() = menu?.slots?.subList(0, size) ?: emptyList()
     private var doesAcceptClick = true
     protected var ping = 0L
 	private var syncId = 0
@@ -61,7 +59,7 @@ open class TermSimGUI(
     }
 
     fun open(terminalPing: Long = 0L) {
-		MC.instance.send {
+		MC.instance.schedule {
 			MC.screen = this
 			create()
 			ping = terminalPing
@@ -70,53 +68,53 @@ open class TermSimGUI(
 
 	private fun onTerminalSolved(terminalHandler: TerminalHandler) {
         if (MC.screen !== this) return
-		PacketEvents.RECEIVE.invoker().onPacketReceive(CloseScreenS2CPacket(handler.syncId))
+		PacketEvents.RECEIVE.invoker().onPacketReceive(ClientboundContainerClosePacket(menu.containerId))
         StartGUI.open(ping)
     }
 
     open fun slotClick(slot: Slot, button: Int) {}
 
-    override fun close() {
+    override fun onClose() {
         doesAcceptClick = true
-        super.close()
+        super.onClose()
     }
 
 	private fun onPacketSend(packet: Packet<out PacketListener>, callbackInfo: CallbackInfo) {
-        val packet = packet as? ClickSlotC2SPacket ?: return
-		if (MC.screen !== this || packet.actionType == SlotActionType.PICKUP_ALL) return
-        delaySlotClick(guiInventorySlots.getOrNull(packet.slot.toInt()) ?: return, packet.button.toInt())
+        val packet = packet as? ServerboundContainerClickPacket ?: return
+		if (MC.screen !== this || packet.clickType == ClickType.PICKUP_ALL) return
+        delaySlotClick(guiInventorySlots.getOrNull(packet.slotNum.toInt()) ?: return, packet.buttonNum.toInt())
         callbackInfo.cancel()
     }
 
 	private fun delaySlotClick(slot: Slot, button: Int) = WpcMod.coroutineScope.launch {
 		if (MC.screen == StartGUI) return@launch slotClick(slot, button)
-		if (!doesAcceptClick || slot.inventory != inv || slot.stack?.item == Items.BLACK_STAINED_GLASS_PANE) return@launch
+		if (!doesAcceptClick || slot.container != inv || slot.item?.item == Items.BLACK_STAINED_GLASS_PANE) return@launch
         doesAcceptClick = false
 
-		delay((ping).coerceAtLeast(1))
+		delay((ping).coerceAtLeast(0))
 		if (MC.screen != this@TermSimGUI) return@launch
 		doesAcceptClick = true
 		slotClick(slot, button)
     }
 
-    override fun onMouseClick(slot: Slot?, slotId: Int, button: Int, actionType: SlotActionType?) {
-        slot?.let { delaySlotClick(it, slotId) }
+    override fun slotClicked(slot: Slot?, slotId: Int, button: Int, actionType: ClickType) {
+        slot?.let { delaySlotClick(it, button) }
     }
 
     protected fun createNewGui(block: (Slot) -> ItemStack) {
 		PacketEvents.RECEIVE.invoker()
-			.onPacketReceive(OpenScreenS2CPacket(syncId++, ScreenHandlerType.GENERIC_9X3, Text.literal(name)))
+			.onPacketReceive(ClientboundOpenScreenPacket(syncId++, MenuType.GENERIC_9x3, Component.literal(name)))
         guiInventorySlots.forEach { it.setSlot(block(it)) }
     }
 
     protected fun Slot.setSlot(stack: ItemStack) {
-		PacketEvents.RECEIVE.invoker().onPacketReceive(ScreenHandlerSlotUpdateS2CPacket(-2, 0, id, stack))
-        setStack(stack)
+		PacketEvents.RECEIVE.invoker().onPacketReceive(ClientboundContainerSetSlotPacket(-2, 0, index, stack))
+        setByPlayer(stack)
     }
 
     protected fun playTermSimSound() {
 		MC.runOnThread {
-			MC.player?.playSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1f)
+			MC.player?.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP, 1f, 1f)
 		}
     }
 }

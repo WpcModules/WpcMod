@@ -2,22 +2,22 @@ package net.wapic.wpcmod.features.chat
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
+import net.minecraft.client.GuiMessage
+import net.minecraft.network.chat.MutableComponent
+import net.minecraft.network.chat.Style
+import net.minecraft.network.chat.Component
+import net.minecraft.ChatFormatting
 import net.minecraft.SharedConstants
-import net.minecraft.client.gui.hud.ChatHudLine
-import net.minecraft.text.MutableText
-import net.minecraft.text.Style
-import net.minecraft.text.Text
-import net.minecraft.util.Formatting
-import net.minecraft.util.Util
+import net.minecraft.Util
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.mixin.accessors.ChatHudAccessor
+import net.wapic.wpcmod.mixin.accessors.ChatComponentAccessor
 import net.wapic.wpcmod.util.MC
 
 object CompactChat {
 
 	private val config get() = WpcMod.config.chat
 
-	private val messages = mutableMapOf<Text, Message>()
+	private val messages = mutableMapOf<Component, Message>()
 	private var currentDividerSet: MutableList<Message>? = null
 	private var compactingTicks = 0
 	private const val PRUNE_TICK = 15 * SharedConstants.TICKS_PER_SECOND
@@ -25,7 +25,7 @@ object CompactChat {
 	fun init() {
 		ClientTickEvents.END_CLIENT_TICK.register { _ -> prune() }
 		ClientReceiveMessageEvents.ALLOW_GAME.register { message, _ ->
-			return@register if (!config.removeBlank) true else (Formatting.strip(message.string)?.isBlank() == false)
+			return@register if (!config.removeBlank) true else (ChatFormatting.stripFormatting(message.string)?.isBlank() == false)
 		}
 	}
 
@@ -39,7 +39,7 @@ object CompactChat {
 
 	private fun processDivider(message: Message) {
 		currentDividerSet?.let {
-			if (Util.getMeasuringTimeMs() > it.first().lastSeen + 5000) {
+			if (Util.getMillis() > it.first().lastSeen + 5000) {
 				WpcMod.logger.warn("Second divider wasn't received after 5 seconds!")
 				currentDividerSet = null
 			}
@@ -56,7 +56,7 @@ object CompactChat {
 	}
 
 	@JvmStatic
-	fun compact(text: Text): Message? {
+	fun compact(text: Component): Message? {
 		if (!config.compactChat) return null
 
 		var message: Message? = messages[text]?.takeUnless { it.isOld() }
@@ -67,7 +67,7 @@ object CompactChat {
 		processDivider(message)
 
 		message.timesSeen++
-		message.lastSeen = Util.getMeasuringTimeMs()
+		message.lastSeen = Util.getMillis()
 
 		if (message.shouldCompact) message.remove()
 		return message
@@ -87,38 +87,38 @@ object CompactChat {
 	}
 
 	@JvmStatic
-	fun buildLineCache(): Map<ChatHudLine, Message> =
+	fun buildLineCache(): Map<GuiMessage, Message> =
 		messages.entries.mapNotNull { (it.value.lastLine ?: return@mapNotNull null) to it.value }.toMap()
 
-	class Message(val text: MutableText) {
-		var lastLine: ChatHudLine? = null
-		val lastVisible: MutableList<ChatHudLine.Visible> = mutableListOf()
+	class Message(val text: MutableComponent) {
+		var lastLine: GuiMessage? = null
+		val lastVisible: MutableList<GuiMessage.Line> = mutableListOf()
 		val dividers: MutableList<Message> = mutableListOf()
 
 		var timesSeen: Int = 0
-		var lastSeen: Long = Util.getMeasuringTimeMs()
+		var lastSeen: Long = Util.getMillis()
 
 		val isDivider: Boolean by lazy {
-			val message = Formatting.strip(text.string)!!
+			val message = ChatFormatting.stripFormatting(text.string)!!
 			message.length > 5 && message.all { it == '-' || it == '=' || it == '\u25AC' }
 		}
 
-		val textWithCounter: Text
+		val textWithCounter: Component
 			get() = if (timesSeen == 1) text else {
 				text.copy().append(
-					Text.literal(" ($timesSeen)").setStyle(Style.EMPTY.withExclusiveFormatting(Formatting.DARK_GRAY))
+					Component.literal(" ($timesSeen)").setStyle(Style.EMPTY.applyLegacyFormat(ChatFormatting.DARK_GRAY))
 				)
 		}
 
 		@get:JvmName("shouldCompact")
 		val shouldCompact: Boolean get() = timesSeen > 1 && !isDivider
 
-		fun isOld(): Boolean = Util.getMeasuringTimeMs() >= lastSeen + config.compactTimeout * 1000
+		fun isOld(): Boolean = Util.getMillis() >= lastSeen + config.compactTimeout * 1000
 
 		fun remove() {
-			val hud = MC.inGameHud.chatHud as ChatHudAccessor
-			lastLine?.let(hud.messages::remove)
-			lastVisible.forEach(hud.visibleMessages::remove)
+			val hud = MC.inGameHud.chat as ChatComponentAccessor
+			lastLine?.let(hud.allMessages::remove)
+			lastVisible.forEach(hud.trimmedMessages::remove)
 			lastVisible.clear()
 			dividers.forEach(Message::remove)
 			dividers.clear()

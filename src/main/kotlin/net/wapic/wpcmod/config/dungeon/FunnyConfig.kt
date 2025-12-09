@@ -31,7 +31,7 @@ class FunnyConfig {
 
 	@ConfigOption(name = "Hide In Boss", desc = "Hides the map in boss.")
 	@ConfigEditorBoolean
-	var mapHideInBoss = false
+	var hideInBoss = false
 
 	@ConfigOption(
 		name = "Show Player Names",

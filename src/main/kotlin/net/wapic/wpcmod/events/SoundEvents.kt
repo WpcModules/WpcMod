@@ -2,8 +2,8 @@ package net.wapic.wpcmod.events
 
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
-import net.minecraft.client.world.ClientWorld
-import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket
+import net.minecraft.client.multiplayer.ClientLevel
+import net.minecraft.network.protocol.game.ClientboundSoundPacket
 
 object SoundEvents {
 
@@ -17,6 +17,6 @@ object SoundEvents {
 	}
 
 	fun interface PlaySound {
-		fun onPlaySound(packet: PlaySoundS2CPacket, world: ClientWorld)
+		fun onPlaySound(packet: ClientboundSoundPacket, world: ClientLevel)
 	}
 }

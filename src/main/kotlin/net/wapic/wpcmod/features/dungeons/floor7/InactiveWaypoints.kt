@@ -2,12 +2,12 @@ package net.wapic.wpcmod.features.dungeons.floor7
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.world.ClientWorld
-import net.minecraft.entity.decoration.ArmorStandEntity
-import net.minecraft.text.Text
-import net.minecraft.util.Colors
-import net.minecraft.util.math.Box
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.multiplayer.ClientLevel
+import net.minecraft.world.entity.decoration.ArmorStand
+import net.minecraft.network.chat.Component
+import net.minecraft.util.CommonColors
+import net.minecraft.world.phys.AABB
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.events.WorldRenderEvent
@@ -26,7 +26,7 @@ object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
 	override val isEnabled: Boolean get() = config.enabled
 	override val isActive: Boolean get() = isEnabled && DungeonUtils.bossSpawned && shouldRender
 
-    private var inactiveList = setOf<ArmorStandEntity>()
+    private var inactiveList = setOf<ArmorStand>()
     private var firstInSection = false
     private var shouldRender = false
     private var isComplete = false
@@ -49,15 +49,15 @@ object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
 
 		ClientTickEvents.END_WORLD_TICK.register {
 			if (DungeonUtils.getF7Phase() != DungeonUtils.F7Phase.GOLDOR || !config.enabled) return@register
-			inactiveList = it.entities.filterIsInstance<ArmorStandEntity>().filter { entity ->
+			inactiveList = it.entitiesForRendering().filterIsInstance<ArmorStand>().filter { entity ->
 				entity.name.string.equalsOneOf("Inactive Terminal", "Inactive", "Not Activated", "CLICK HERE")
 			}.toSet()
 		}
     }
 
-	override fun render(drawContext: DrawContext, deltaTicks: Float) {
+	override fun render(drawContext: GuiGraphics, deltaTicks: Float) {
 		if (!isActive) return
-		val matrixStack = drawContext.matrices
+		val matrixStack = drawContext.pose()
 		matrixStack.pushMatrix()
 		applyTransformations(matrixStack)
 
@@ -70,8 +70,8 @@ object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
 		for ((index, line) in lines.withIndex()) {
 			drawContext.drawText(
 				line,
-				1, 2 + MC.textRenderer.fontHeight * index,
-				Colors.WHITE,
+				1, 2 + MC.textRenderer.lineHeight * index,
+				CommonColors.WHITE,
 				true
 			)
 		}
@@ -79,7 +79,7 @@ object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
 		matrixStack.popMatrix()
 	}
 
-    fun onMessageReceived(text: Text, actionBar: Boolean) {
+    fun onMessageReceived(text: Component, actionBar: Boolean) {
 		if (actionBar || !DungeonUtils.bossSpawned || !config.enabled) return
         val text = text.string
 
@@ -119,7 +119,7 @@ object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
         }
     }
 
-    fun onWorldLoad(world: ClientWorld) {
+    fun onWorldLoad(world: ClientLevel) {
         shouldRender = false
         resetState()
     }
@@ -152,15 +152,15 @@ object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
         inactiveList.forEach {
             val name = it.name.string
             if ((name == "Inactive Terminal" && config.showTerminals) || (name == "Inactive" && config.showDevices) || (name == "Not Activated" && config.showLevers)) {
-                val customName = Text.of(if (name == "Inactive Terminal") "Terminal" else if (name == "Inactive") "Device" else "Lever").asOrderedText()
+                val customName = Component.nullToEmpty(if (name == "Inactive Terminal") "Terminal" else if (name == "Inactive") "Device" else "Lever").visualOrderText
                 if (config.renderBox)
 					worldRenderContext.drawFilledBoxWithOutline(
-						Box.from(it.entityPos.add(-0.5, 0.0, -0.5)),
+						AABB.unitCubeFromLowerCorner(it.position().add(-0.5, 0.0, -0.5)),
 						config.color.darker(),
 						config.color.brighter()
 					)
                 if (config.renderText)
-					worldRenderContext.drawText(customName, it.entityPos.add(0.0, 2.0, 0.0), 1.5f, true)
+					worldRenderContext.drawText(customName, it.position().add(0.0, 2.0, 0.0), 1.5f, true)
             }
             it.isCustomNameVisible = !config.hideDefault
         }

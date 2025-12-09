@@ -1,13 +1,13 @@
 package net.wapic.wpcmod.features.general
 
 import net.fabricmc.fabric.api.event.player.UseBlockCallback
-import net.minecraft.block.Blocks
-import net.minecraft.client.MinecraftClient
-import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.util.ActionResult
-import net.minecraft.util.Hand
-import net.minecraft.util.hit.BlockHitResult
-import net.minecraft.world.World
+import net.minecraft.world.level.block.Blocks
+import net.minecraft.client.Minecraft
+import net.minecraft.world.entity.player.Player
+import net.minecraft.world.InteractionResult
+import net.minecraft.world.InteractionHand
+import net.minecraft.world.phys.BlockHitResult
+import net.minecraft.world.level.Level
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.ItemUtils.skyBlockID
@@ -73,20 +73,20 @@ object PreventPlacingItems {
 		UseBlockCallback.EVENT.register(::onUseBlock)
 	}
 
-	private fun onUseBlock(player: PlayerEntity, world: World, hand: Hand, hitResult: BlockHitResult): ActionResult {
-		if (!config.preventPlacing || player.mainHandStack.isEmpty) return ActionResult.PASS
-		val item = player.mainHandStack.skyBlockID ?: return ActionResult.PASS
+	private fun onUseBlock(player: Player, world: Level, hand: InteractionHand, hitResult: BlockHitResult): InteractionResult {
+		if (!config.preventPlacing || player.mainHandItem.isEmpty) return InteractionResult.PASS
+		val item = player.mainHandItem.skyBlockID ?: return InteractionResult.PASS
 
 		if (item.contains("ABIPHONE") || item in placeableItems) {
 
-			val block = MinecraftClient.getInstance().world?.getBlockState(hitResult.blockPos)
+			val block = Minecraft.getInstance().level?.getBlockState(hitResult.blockPos)
 			if (block?.block in interactables || DungeonUtils.inDungeons && (block?.block == Blocks.COAL_BLOCK || block?.block == Blocks.RED_TERRACOTTA)) {
-				return ActionResult.PASS
+				return InteractionResult.PASS
 			}
 
-			return ActionResult.SUCCESS
+			return InteractionResult.SUCCESS
 		}
 
-		return ActionResult.PASS
+		return InteractionResult.PASS
 	}
 }

@@ -2,14 +2,14 @@ package net.wapic.wpcmod.features.dungeons.floor7.termsim
 
 import net.wapic.wpcmod.features.dungeons.floor7.TerminalSolver
 import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalTypes
-import net.minecraft.component.DataComponentTypes
-import net.minecraft.item.Item
-import net.minecraft.item.ItemStack
-import net.minecraft.item.Items
-import net.minecraft.registry.Registries
-import net.minecraft.screen.slot.Slot
-import net.minecraft.util.DyeColor
-import net.minecraft.util.Identifier
+import net.minecraft.core.component.DataComponents
+import net.minecraft.world.item.Item
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
+import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.world.inventory.Slot
+import net.minecraft.world.item.DyeColor
+import net.minecraft.resources.ResourceLocation
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.util.ChatUtils
 import kotlin.math.floor
@@ -24,10 +24,10 @@ class SelectAllSim(
 	override fun create() {
 		val guaranteed = (10..16).plus(19..25).plus(28..34).plus(37..43).random()
 		createNewGui { slot ->
-			if (floor(slot.index / 9.0) in 1.0..4.0 && slot.index % 9 in 1..7) {
+			if (floor(slot.containerSlot / 9.0) in 1.0..4.0 && slot.containerSlot % 9 in 1..7) {
 				val item = ItemStack(getPossibleItems(color).random())
 
-				if (slot.index == guaranteed) item
+				if (slot.containerSlot == guaranteed) item
 				else {
 					if (Math.random() > 0.75) item
 					else ItemStack(getPossibleItems(DyeColor.entries.filter { it != color }.random()).random())
@@ -37,33 +37,31 @@ class SelectAllSim(
 	}
 
 	override fun slotClick(slot: Slot, button: Int) {
-		val stack = slot.stack ?: return
+		val stack = slot.item ?: return
 		val possibleItems = getPossibleItems(color)
 		if (!possibleItems.contains(stack.item)) return ChatUtils.sendMessage("§cThat item is not: ${color.name.uppercase()}!")
 
 		createNewGui {
-			if (it == slot) {
-				stack.apply { set(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, true) }
-			} else it.stack
+			if (it == slot) { stack.apply { set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true) } } else it.item
 		}
 
 		playTermSimSound()
 
-		if (guiInventorySlots.none { it?.stack?.hasGlint() == false && possibleItems.contains(it.stack?.item) })
+		if (guiInventorySlots.none { it?.item?.hasFoil() == false && possibleItems.contains(it.item?.item) })
 			TerminalSolver.lastTermOpened?.let { DungeonEvents.TERMINAL_SOLVED.invoker().onSolve(it) }
 	}
 
 	private fun getPossibleItems(color: DyeColor): List<Item> {
 		return listOf(
-			Registries.ITEM.get(Identifier.of("minecraft", "${color.name.lowercase()}_stained_glass")),
-			Registries.ITEM.get(Identifier.of("minecraft", "${color.name.lowercase()}_wool")),
-			Registries.ITEM.get(Identifier.of("minecraft", "${color.name.lowercase()}_terracotta")),
+			BuiltInRegistries.ITEM.getValue(ResourceLocation.fromNamespaceAndPath("minecraft", "${color.name.lowercase()}_stained_glass")),
+			BuiltInRegistries.ITEM.getValue(ResourceLocation.fromNamespaceAndPath("minecraft", "${color.name.lowercase()}_wool")),
+			BuiltInRegistries.ITEM.getValue(ResourceLocation.fromNamespaceAndPath("minecraft", "${color.name.lowercase()}_terracotta")),
 			when (color) {
 				DyeColor.WHITE -> Items.BONE_MEAL
 				DyeColor.BLUE -> Items.LAPIS_LAZULI
 				DyeColor.BLACK -> Items.INK_SAC
 				DyeColor.BROWN -> Items.COCOA_BEANS
-				else -> Registries.ITEM.get(Identifier.of("minecraft", "${color.name.lowercase()}_dye"))
+				else -> BuiltInRegistries.ITEM.getValue(ResourceLocation.fromNamespaceAndPath("minecraft", "${color.name.lowercase()}_dye"))
 			}
 		)
 	}

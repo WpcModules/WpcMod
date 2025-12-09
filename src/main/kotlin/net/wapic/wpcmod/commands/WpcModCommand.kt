@@ -8,7 +8,7 @@ import net.wapic.wpcmod.config.ConfigManager
 object WpcModCommand : Command("wpc") {
 
 	override fun executes(context: CommandContext<FabricClientCommandSource>): Int {
-		context.source.client.send {
+		context.source.client.schedule {
 			IMinecraft.INSTANCE.openWrappedScreen(ConfigManager.getEditor())
 		}
 		return super.executes(context)

@@ -2,9 +2,9 @@ package net.wapic.wpcmod.util
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
-import net.minecraft.client.world.ClientWorld
-import net.minecraft.entity.mob.MagmaCubeEntity
-import net.minecraft.text.Text
+import net.minecraft.client.multiplayer.ClientLevel
+import net.minecraft.world.entity.monster.MagmaCube
+import net.minecraft.network.chat.Component
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.events.skyblock.KuudraEvents
@@ -12,7 +12,7 @@ import net.wapic.wpcmod.util.EntityUtils.skyBlockMaxHealth
 
 object KuudraUtils {
 
-	var kuudraEntity: MagmaCubeEntity? = null
+	var kuudraEntity: MagmaCube? = null
 	var phase: Phase? = null
 
 	private const val START_MESSAGE: String =
@@ -34,18 +34,18 @@ object KuudraUtils {
 		}
 	}
 
-	private fun onTick(world: ClientWorld) {
+	private fun onTick(world: ClientLevel) {
 		if (Utils.getLocation() != Island.KUUDRA) return
 
 		if (kuudraEntity == null) {
-			world.entities.find { it is MagmaCubeEntity && it.size == 30 && it.skyBlockMaxHealth == 100000.0f }?.let {
-				kuudraEntity = it as MagmaCubeEntity
+			world.entitiesForRendering().find { it is MagmaCube && it.size == 30 && it.skyBlockMaxHealth == 100000.0f }?.let {
+				kuudraEntity = it as MagmaCube
 				WpcMod.logger.debug("set KuudraEntity to {}", it)
 			}
 		}
 	}
 
-	private fun onMessageReceived(message: Text, actionBar: Boolean) {
+	private fun onMessageReceived(message: Component, actionBar: Boolean) {
 		if (actionBar) return
 
 		when (message.string) {

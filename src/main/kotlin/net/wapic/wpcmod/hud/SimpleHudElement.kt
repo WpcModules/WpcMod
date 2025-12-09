@@ -3,8 +3,8 @@ package net.wapic.wpcmod.hud
 import com.google.gson.annotations.Expose
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.text.Text
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.network.chat.Component
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.modIdentifier
 import org.joml.Matrix3x2f
@@ -29,14 +29,14 @@ open class SimpleHudElement(
 	init {
 		val identifier = modIdentifier(label.lowercase(Locale.US).replace(" ", "_"))
 		HudElementRegistry.attachElementBefore(VanillaHudElements.DEMO_TIMER, identifier) { context, tickCounter ->
-			render(context, tickCounter.dynamicDeltaTicks)
+			render(context, tickCounter.gameTimeDeltaTicks)
 		}
 	}
 
-	open fun render(drawContext: DrawContext, deltaTicks: Float) {}
+	open fun render(drawContext: GuiGraphics, deltaTicks: Float) {}
 
-	fun getLabel(): Text {
-		return Text.of(label)
+	fun getLabel(): Component {
+		return Component.nullToEmpty(label)
 	}
 
 	fun getUnscaledWidth(): Int {
@@ -62,11 +62,11 @@ open class SimpleHudElement(
 	}
 
 	fun getAbsoluteX(): Float {
-		return x * (MC.window.scaledWidth - getEffectiveWidth())
+		return x * (MC.window.guiScaledWidth - getEffectiveWidth())
 	}
 
 	fun getAbsoluteY(): Float {
-		return y * (MC.window.scaledHeight - getEffectiveHeight())
+		return y * (MC.window.guiScaledHeight - getEffectiveHeight())
 	}
 
 	fun applyTransformations(matrices: Matrix3x2f) {

@@ -1,26 +1,26 @@
 package net.wapic.wpcmod.util.freecam
 
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.network.ClientPlayNetworkHandler
-import net.minecraft.client.network.ClientPlayerEntity
-import net.minecraft.client.recipebook.ClientRecipeBook
-import net.minecraft.client.world.ClientWorld
-import net.minecraft.entity.MovementType
-import net.minecraft.stat.StatHandler
-import net.minecraft.util.PlayerInput
-import net.minecraft.util.math.MathHelper
-import net.minecraft.util.math.Vec3d
+import net.minecraft.client.Minecraft
+import net.minecraft.client.multiplayer.ClientPacketListener
+import net.minecraft.client.player.LocalPlayer
+import net.minecraft.client.ClientRecipeBook
+import net.minecraft.client.multiplayer.ClientLevel
+import net.minecraft.world.entity.MoverType
+import net.minecraft.stats.StatsCounter
+import net.minecraft.world.entity.player.Input
+import net.minecraft.util.Mth
+import net.minecraft.world.phys.Vec3
 import net.wapic.wpcmod.features.general.Freecam
 import kotlin.math.cos
 import kotlin.math.sin
 
 class CameraEntity(
-	mc: MinecraftClient,
-	world: ClientWorld,
-	netHandler: ClientPlayNetworkHandler,
-	statHandler: StatHandler,
+	mc: Minecraft,
+	world: ClientLevel,
+	netHandler: ClientPacketListener,
+	statHandler: StatsCounter,
 	recipeBook: ClientRecipeBook
-) : ClientPlayerEntity(mc, world, netHandler, statHandler, recipeBook, PlayerInput.DEFAULT, false) {
+) : LocalPlayer(mc, world, netHandler, statHandler, recipeBook, Input.EMPTY, false) {
 
 	override fun isSpectator(): Boolean {
 		return true
@@ -34,38 +34,38 @@ class CameraEntity(
 	}
 
 	fun updateCameraRotations(yaw: Float, pitch: Float) {
-		val yaw = this.yaw + yaw * 0.15F
-		val pitch = MathHelper.clamp(this.pitch + pitch * 0.15F, -90F, 90F)
+		val yaw = this.yRot + yaw * 0.15F
+		val pitch = Mth.clamp(this.xRot + pitch * 0.15F, -90F, 90F)
 
-		this.yaw = yaw
-		this.pitch = pitch
+		this.setYRot(yaw)
+		this.setXRot(pitch)
 		this.setCameraRotations(yaw, pitch)
 	}
 
 	fun setCameraRotations(yaw: Float, pitch: Float) {
-		this.yaw = yaw
-		this.pitch = pitch
-		this.headYaw = yaw
+		this.setYRot(yaw)
+		this.setXRot(pitch)
+		this.yHeadRot = yaw
 	}
 
 	fun updateLastTickPosition() {
-		this.lastRenderX = this.x
-		this.lastRenderY = this.y
-		this.lastRenderZ = this.z
+		this.xOld = this.x
+		this.yOld = this.y
+		this.zOld = this.z
 
-		this.lastX = this.x
-		this.lastY = this.y
-		this.lastZ = this.z
+		this.xo = this.x
+		this.yo = this.y
+		this.zo = this.z
 
-		this.lastYaw = this.yaw
-		this.lastPitch = this.pitch
+		this.yRotO = this.yRot
+		this.xRotO = this.xRot
 
-		this.lastHeadYaw = this.headYaw
+		this.yHeadRotO = this.yHeadRot
 	}
 
 	fun handleMotion(forward: Double, up: Double, strafe: Double) {
-		val yaw = this.yaw
-		val scale = (movementSpeed * 40)
+		val yaw = this.yRot
+		val scale = (speed * 40)
 		val xFactor = sin(yaw * Math.PI / 180)
 		val zFactor = cos(yaw * Math.PI / 180)
 
@@ -73,21 +73,21 @@ class CameraEntity(
 		val y = up * scale
 		val z = (forward * zFactor + strafe * xFactor) * scale
 
-		this.velocity = Vec3d(x, y, z)
-		this.move(MovementType.SELF, this.velocity)
+		this.setDeltaMovement(Vec3(x, y, z))
+		this.move(MoverType.SELF, this.deltaMovement)
 	}
 
 	companion object {
-		fun createCameraEntity(mc: MinecraftClient): CameraEntity? {
+		fun createCameraEntity(mc: Minecraft): CameraEntity? {
 			mc.player?.let {
-				if (it.isOnGround) {
-					it.velocity = Vec3d.ZERO
+				if (it.onGround()) {
+					it.setDeltaMovement(Vec3.ZERO)
 				}
 
-				val cam = CameraEntity(mc, mc.world!!, it.networkHandler, it.statHandler, it.recipeBook)
-				cam.noClip = true
-				cam.copyPositionAndRotation(it)
-				cam.velocity = Vec3d.ZERO
+				val cam = CameraEntity(mc, mc.level!!, it.connection, it.stats, it.recipeBook)
+				cam.noPhysics = true
+				cam.copyPosition(it)
+				cam.setDeltaMovement(Vec3.ZERO)
 
 				return cam
 			}

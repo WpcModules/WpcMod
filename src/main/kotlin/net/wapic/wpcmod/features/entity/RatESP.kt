@@ -1,8 +1,8 @@
 package net.wapic.wpcmod.features.entity
 
 import io.github.notenoughupdates.moulconfig.ChromaColour
-import net.minecraft.entity.Entity
-import net.minecraft.entity.decoration.ArmorStandEntity
+import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.decoration.ArmorStand
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldRenderEvent
 import net.wapic.wpcmod.util.EntityUtils.headTexture
@@ -19,15 +19,15 @@ object RatESP : MobGlowCache() {
 		WorldRenderEvent.EVENT.register(::onRenderWorld)
 	}
 
-	private fun isRat(entity: Entity): Boolean = entity is ArmorStandEntity && entity.headTexture == HeadTextures.RAT
+	private fun isRat(entity: Entity): Boolean = entity is ArmorStand && entity.headTexture == HeadTextures.RAT
 
 	private fun onRenderWorld(worldRenderContext: WorldRenderContext) {
 		if(!isEnabled()) return
 		worldRenderContext.profiler.push("rat-esp")
-		for (entity in worldRenderContext.world.entities) {
+		for (entity in worldRenderContext.world.entitiesForRendering()) {
 			if(!isRat(entity)) continue
 
-			val box = entity.boundingBox.withMinY(entity.boundingBox.minY + 1.4)
+			val box = entity.boundingBox.setMinY(entity.boundingBox.minY + 1.4)
 			if (config.box) worldRenderContext.drawBoundingBox(box, config.color)
 			if (config.tracer) worldRenderContext.drawTracer(box.center, config.color)
 		}

@@ -2,13 +2,13 @@ package net.wapic.wpcmod.features.end
 
 import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
-import net.minecraft.block.Blocks
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.world.ClientWorld
-import net.minecraft.entity.Entity
-import net.minecraft.entity.boss.dragon.EnderDragonEntity
-import net.minecraft.util.math.BlockPos
-import net.minecraft.util.math.Box
+import net.minecraft.world.level.block.Blocks
+import net.minecraft.client.Minecraft
+import net.minecraft.client.multiplayer.ClientLevel
+import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon
+import net.minecraft.core.BlockPos
+import net.minecraft.world.phys.AABB
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldRenderEvent
 import net.wapic.wpcmod.features.entity.MobGlowCache
@@ -19,7 +19,7 @@ import net.wapic.wpcmod.util.render.WorldRenderContext
 
 object EndESP : MobGlowCache() {
 
-	private var endNodes: MutableSet<Box> = mutableSetOf()
+	private var endNodes: MutableSet<AABB> = mutableSetOf()
 	private val config get() = WpcMod.config.end.esp
 
 	fun init() {
@@ -28,25 +28,25 @@ object EndESP : MobGlowCache() {
 	}
 
 	private var lock = false
-	private fun worldTick(world: ClientWorld) {
+	private fun worldTick(world: ClientLevel) {
 		if (Utils.getLocation() != Island.END) return
 		if (!config.endNode.tracer && !config.endNode.box) return
 
 		if (lock) return
 
-		val player = MinecraftClient.getInstance().player
+		val player = Minecraft.getInstance().player
 		val radius = config.endNode.radius.toDouble()
 
-		val newEndNodes: MutableSet<Box> = mutableSetOf()
+		val newEndNodes: MutableSet<AABB> = mutableSetOf()
 		lock = true
 
 		player?.let {
-			val pos = it.entityPos
-			val box = Box.from(pos).expand(radius)
+			val pos = it.position()
+			val box = AABB.unitCubeFromLowerCorner(pos).inflate(radius)
 
-			BlockPos.iterate(box).forEach { blockPos ->
+			BlockPos.betweenClosed(box).forEach { blockPos ->
 				if (world.getBlockState(blockPos).block == Blocks.PURPLE_TERRACOTTA) {
-					newEndNodes.add(Box.of(blockPos.toCenterPos(), 1.0, 1.0, 1.0))
+					newEndNodes.add(AABB.ofSize(blockPos.center, 1.0, 1.0, 1.0))
 				}
 			}
 		}
@@ -60,9 +60,9 @@ object EndESP : MobGlowCache() {
 
 		worldRenderContext.profiler.push("end-esp")
 
-		MC.world?.entities?.forEach { entity ->
+		MC.world?.entitiesForRendering()?.forEach { entity ->
 			val settings = when (entity) {
-				is EnderDragonEntity -> config.dragon
+				is EnderDragon -> config.dragon
 				else -> return@forEach
 			}
 
@@ -75,7 +75,7 @@ object EndESP : MobGlowCache() {
 				)
 		}
 
-		worldRenderContext.profiler.swap("end-nodes")
+		worldRenderContext.profiler.popPush("end-nodes")
 		if(config.endNode.box || config.endNode.tracer) {
 			for (node in endNodes) {
 				if (config.endNode.box)
@@ -89,7 +89,7 @@ object EndESP : MobGlowCache() {
 
 	override fun compute(entity: Entity): ChromaColour? {
 		return when {
-			config.dragon.glow && entity is EnderDragonEntity -> config.dragon.color
+			config.dragon.glow && entity is EnderDragon -> config.dragon.color
 			else -> null
 		}
 	}

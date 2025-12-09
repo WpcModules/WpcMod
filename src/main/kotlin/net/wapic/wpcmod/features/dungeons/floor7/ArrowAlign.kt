@@ -1,20 +1,20 @@
 package net.wapic.wpcmod.features.dungeons.floor7
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
-import net.minecraft.client.MinecraftClient
-import net.minecraft.entity.decoration.ItemFrameEntity
-import net.minecraft.item.Items
-import net.minecraft.network.listener.PacketListener
-import net.minecraft.network.packet.Packet
-import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket
-import net.minecraft.text.Text
-import net.minecraft.util.Hand
-import net.minecraft.util.math.BlockPos
-import net.minecraft.util.math.Vec3d
+import net.minecraft.client.Minecraft
+import net.minecraft.world.entity.decoration.ItemFrame
+import net.minecraft.world.item.Items
+import net.minecraft.network.PacketListener
+import net.minecraft.network.protocol.Packet
+import net.minecraft.network.protocol.game.ServerboundInteractPacket
+import net.minecraft.network.chat.Component
+import net.minecraft.world.InteractionHand
+import net.minecraft.core.BlockPos
+import net.minecraft.world.phys.Vec3
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.PacketEvents
 import net.wapic.wpcmod.events.WorldRenderEvent
-import net.wapic.wpcmod.mixin.accessors.PlayerInteractEntityC2SPacketAccessor
+import net.wapic.wpcmod.mixin.accessors.ServerboundInteractPacketAccessor
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.DungeonUtils.F7Phase
 import net.wapic.wpcmod.util.MC
@@ -36,11 +36,11 @@ object ArrowAlign {
 		WorldRenderEvent.EVENT.register(::onRenderWorld)
     }
 
-	fun onTick(client: MinecraftClient) {
+	fun onTick(client: Minecraft) {
 		if (DungeonUtils.getF7Phase() != F7Phase.GOLDOR || !config.enabled) return
 
 		clicksRemaining.clear()
-		if ((MC.player?.entityPos?.distanceTo(Vec3d(0.0, 120.0, 77.0)) ?: return) > 200) {
+		if ((MC.player?.position()?.distanceTo(Vec3(0.0, 120.0, 77.0)) ?: return) > 200) {
 			currentFrameRotations = null
 			targetSolution = null
 			return
@@ -64,18 +64,18 @@ object ArrowAlign {
 	fun onPacketSend(packet: Packet<out PacketListener>, ci: CallbackInfo) {
 		if (DungeonUtils.getF7Phase() != F7Phase.GOLDOR || !config.enabled) return
 
-        val packet = packet as? PlayerInteractEntityC2SPacket ?: return
-		packet.handle(object : PlayerInteractEntityC2SPacket.Handler {
-			override fun interact(hand: Hand?) {
+        val packet = packet as? ServerboundInteractPacket ?: return
+		packet.dispatch(object : ServerboundInteractPacket.Handler {
+			override fun onInteraction(hand: InteractionHand) {
 				val entity =
-					MC.world?.getEntityById((packet as PlayerInteractEntityC2SPacketAccessor).entityId) as? ItemFrameEntity
+					MC.world?.getEntity((packet as ServerboundInteractPacketAccessor).entityId) as? ItemFrame
 						?: return
-				if (entity.heldItemStack?.item != Items.ARROW) return
+				if (entity.item?.item != Items.ARROW) return
 
 				val frameIndex = ((entity.blockY - frameGridCorner.y) + (entity.blockZ - frameGridCorner.z) * 5)
 				if (entity.blockX != frameGridCorner.x || currentFrameRotations?.get(frameIndex) == -1 || frameIndex !in 0..24) return
 
-				if (!clicksRemaining.containsKey(frameIndex) && MC.player?.isSneaking == config.invertSneak && config.blockWrongClick) {
+				if (!clicksRemaining.containsKey(frameIndex) && MC.player?.isShiftKeyDown == config.invertSneak && config.blockWrongClick) {
 					ci.cancel()
 					return
 				}
@@ -91,8 +91,8 @@ object ArrowAlign {
 				) clicksRemaining.remove(frameIndex)
 			}
 
-			override fun interactAt(hand: Hand?, pos: Vec3d?) {}
-			override fun attack() {}
+			override fun onInteraction(hand: InteractionHand, pos: Vec3) {}
+			override fun onAttack() {}
 		})
 	}
 
@@ -109,8 +109,8 @@ object ArrowAlign {
             }
 
 			worldRenderContext.drawText(
-                Text.of("§$colorCode$clickNeeded").asOrderedText(),
-                getFramePositionFromIndex(index).toCenterPos().add(Vec3d(-0.3, 0.0, 0.1)),
+                Component.nullToEmpty("§$colorCode$clickNeeded").visualOrderText,
+                getFramePositionFromIndex(index).center.add(Vec3(-0.3, 0.0, 0.1)),
                 1f,
 
 				false
@@ -120,20 +120,20 @@ object ArrowAlign {
     }
 
     private fun getFrames(): List<Int> {
-        val itemFrames = MC.world?.entities?.mapNotNull {
-            if (it is ItemFrameEntity && it.heldItemStack?.item?.asItem() == Items.ARROW) it else null
+        val itemFrames = MC.world?.entitiesForRendering()?.mapNotNull {
+            if (it is ItemFrame && it.item?.item?.asItem() == Items.ARROW) it else null
         }?.takeIf { it.isNotEmpty() } ?: return List(25) { -1 }
 
         return (0..24).map { index ->
             if (recentClickTimestamps[index]?.let { System.currentTimeMillis() - it < 1000 } == true && currentFrameRotations != null)
                 currentFrameRotations?.get(index) ?: -1
             else
-                itemFrames.find { it.blockPos == getFramePositionFromIndex(index) }?.rotation ?: -1
+                itemFrames.find { it.blockPosition() == getFramePositionFromIndex(index) }?.rotation ?: -1
         }
     }
 
     private fun getFramePositionFromIndex(index: Int): BlockPos =
-        frameGridCorner.add(0, index % 5, index / 5)
+        frameGridCorner.offset(0, index % 5, index / 5)
 
     private fun calculateClicksNeeded(currentRotation: Int, targetRotation: Int): Int =
         (8 - currentRotation + targetRotation) % 8
