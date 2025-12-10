@@ -47,7 +47,7 @@ import net.wapic.wpcmod.features.inventory.AutoCloseWardrobe
 import net.wapic.wpcmod.features.inventory.ScrollableTooltips
 import net.wapic.wpcmod.features.inventory.experiments.AutoExperiments
 import net.wapic.wpcmod.features.inventory.experiments.SuperpairsSolver
-import net.wapic.wpcmod.features.kuudra.KuudraAutoGFS
+import net.wapic.wpcmod.features.instance.CancelInteract
 import net.wapic.wpcmod.features.kuudra.KuudraESP
 import net.wapic.wpcmod.features.mining.ChestESP
 import net.wapic.wpcmod.features.mining.PigeonSwapper
@@ -144,6 +144,7 @@ object WpcMod : ModInitializer {
 		// General
 		ShortcutHandler.init()
 		PreventPlacingItems.init()
+		CancelInteract.init()
 		Freecam()
 		RatESP.init()
 		TagESP.init()
