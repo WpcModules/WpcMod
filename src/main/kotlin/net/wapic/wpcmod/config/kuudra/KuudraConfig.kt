@@ -14,6 +14,10 @@ class KuudraConfig {
 	@ConfigEditorBoolean
 	var healthDisplay: Boolean = false
 
+	@ConfigOption(name = "Cancel Interact", desc = "Allow spamming pearls to the ground")
+	@ConfigEditorBoolean
+	var cancelInteract: Boolean = false
+
 	@Category(name = "ESP", desc = "Configure ESP features in Kuudra")
 	var esp: ESPConfig = ESPConfig()
 }

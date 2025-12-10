@@ -42,12 +42,13 @@ import net.wapic.wpcmod.features.galatea.GalateaESP
 import net.wapic.wpcmod.features.general.Freecam
 import net.wapic.wpcmod.features.general.PreventPlacingItems
 import net.wapic.wpcmod.features.general.shortcut.ShortcutHandler
+import net.wapic.wpcmod.features.instance.AutoGFS
 import net.wapic.wpcmod.features.inventory.ArmorSwapper
 import net.wapic.wpcmod.features.inventory.AutoCloseWardrobe
 import net.wapic.wpcmod.features.inventory.ScrollableTooltips
 import net.wapic.wpcmod.features.inventory.experiments.AutoExperiments
 import net.wapic.wpcmod.features.inventory.experiments.SuperpairsSolver
-import net.wapic.wpcmod.features.kuudra.KuudraAutoGFS
+import net.wapic.wpcmod.features.instance.CancelInteract
 import net.wapic.wpcmod.features.kuudra.KuudraESP
 import net.wapic.wpcmod.features.kuudra.RendAnnounce
 import net.wapic.wpcmod.features.mining.ChestESP
@@ -153,9 +154,12 @@ object WpcMod : ModInitializer {
 		AutoExperiments.init()
 		SuperpairsSolver.init()
 
+		//Instance
+		CancelInteract.init()
+		AutoGFS.init()
+
 		// Dungeons
 		AutoCloseChests.init()
-		DungeonAutoGFS.init()
 		ScoreCalculation.init()
 		DungeonESP.init()
 		TickTimers.init()
@@ -170,7 +174,6 @@ object WpcMod : ModInitializer {
 
 		// Kuudra
 		KuudraESP.init()
-		KuudraAutoGFS.init()
 		RendAnnounce.init()
 
 		// Galatea
