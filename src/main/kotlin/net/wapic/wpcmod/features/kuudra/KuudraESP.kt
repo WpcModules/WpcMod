@@ -22,6 +22,8 @@ object KuudraESP : MobGlowCache() {
 		worldRenderContext.profiler.push("kuudra-esp")
 
 		KuudraUtils.kuudraEntity?.let {
+			if(config.kuudra.killPhaseOnly && KuudraUtils.phase != KuudraUtils.Phase.KILL) return
+
 			if (config.kuudra.box)
 				worldRenderContext.drawBoundingBox(it.boundingBox, config.kuudra.color)
 			if (config.kuudra.tracer)
@@ -32,6 +34,7 @@ object KuudraESP : MobGlowCache() {
 
 	override fun compute(entity: Entity): ChromaColour? {
 		if (config.kuudra.glow && entity == KuudraUtils.kuudraEntity) {
+			if(config.kuudra.killPhaseOnly && KuudraUtils.phase != KuudraUtils.Phase.KILL) return null
 			return config.kuudra.color
 		}
 		return null
