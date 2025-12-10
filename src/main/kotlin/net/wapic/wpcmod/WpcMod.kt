@@ -50,6 +50,7 @@ import net.wapic.wpcmod.features.inventory.experiments.AutoExperiments
 import net.wapic.wpcmod.features.inventory.experiments.SuperpairsSolver
 import net.wapic.wpcmod.features.instance.CancelInteract
 import net.wapic.wpcmod.features.kuudra.KuudraESP
+import net.wapic.wpcmod.features.kuudra.RendAnnounce
 import net.wapic.wpcmod.features.mining.ChestESP
 import net.wapic.wpcmod.features.mining.PigeonSwapper
 import net.wapic.wpcmod.hud.HudManager
@@ -108,6 +109,7 @@ object WpcMod : ModInitializer {
 					.then(TermSimCommand.getCommand())
 					.then(FunnyMapCommands.getCommand())
 					.then(HudEditorCommand.getCommand())
+					.then(GFSCommand.getCommand())
 			)
 
 			dispatcher.register(ClientCommandManager.literal("wpcmod").redirect(mainCommand))
@@ -173,6 +175,7 @@ object WpcMod : ModInitializer {
 
 		// Kuudra
 		KuudraESP.init()
+		RendAnnounce.init()
 
 		// Galatea
 		GalateaESP.init()
