@@ -14,6 +14,10 @@ class KuudraConfig {
 	@ConfigEditorBoolean
 	var healthDisplay: Boolean = false
 
+	@ConfigOption(name = "Rend Announce", desc = "Shows rend damage done in chat when someone pulls")
+	@ConfigEditorBoolean
+	var rendAnnounce: Boolean = false
+
 	@ConfigOption(name = "Cancel Interact", desc = "Allow spamming pearls to the ground")
 	@ConfigEditorBoolean
 	var cancelInteract: Boolean = false

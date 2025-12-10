@@ -1,5 +1,6 @@
 package net.wapic.wpcmod.features.kuudra
 
+import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.ServerTickEvent
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.util.ChatUtils
@@ -8,6 +9,7 @@ import java.text.DecimalFormat
 
 object RendAnnounce {
 
+	private val config get() = WpcMod.config.kuudra
 	private var kuudraLastHP: Float = 25_000f
 
 	fun init() {
@@ -19,7 +21,9 @@ object RendAnnounce {
 	fun format(value: Float): String = DecimalFormat("#,###").format(value)
 
 	private fun onTick() {
+		if(!config.rendAnnounce) return
 		if(KuudraUtils.phase != KuudraUtils.Phase.KILL) return
+
 		KuudraUtils.kuudraEntity?.let {
 			val diff = kuudraLastHP - it.health
 			if(diff > 1666) {
