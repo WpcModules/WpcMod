@@ -11,6 +11,7 @@ import net.wapic.wpcmod.util.KuudraUtils.Phase
 import net.wapic.wpcmod.util.KuudraUtils.kuudraEntity
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils
+import net.wapic.wpcmod.util.Utils.toFixed
 
 object KuudraDisplay : SimpleHudElement("Kuudra Display", 75, 11) {
 
@@ -36,7 +37,7 @@ object KuudraDisplay : SimpleHudElement("Kuudra Display", 75, 11) {
 					else -> ChatFormatting.DARK_RED
 				}
 
-				val health = "$formatting${it.health / 1000}K / §a100K §cHP"
+				val health = "$formatting${(it.health / 1000).toFixed(2)}K / §a100K §cHP"
 
 				drawContext.drawString(MC.textRenderer, health, 0, 0, CommonColors.WHITE)
 			}
