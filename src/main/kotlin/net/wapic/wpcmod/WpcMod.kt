@@ -42,6 +42,7 @@ import net.wapic.wpcmod.features.galatea.GalateaESP
 import net.wapic.wpcmod.features.general.Freecam
 import net.wapic.wpcmod.features.general.PreventPlacingItems
 import net.wapic.wpcmod.features.general.shortcut.ShortcutHandler
+import net.wapic.wpcmod.features.instance.AutoGFS
 import net.wapic.wpcmod.features.inventory.ArmorSwapper
 import net.wapic.wpcmod.features.inventory.AutoCloseWardrobe
 import net.wapic.wpcmod.features.inventory.ScrollableTooltips
@@ -144,7 +145,6 @@ object WpcMod : ModInitializer {
 		// General
 		ShortcutHandler.init()
 		PreventPlacingItems.init()
-		CancelInteract.init()
 		Freecam()
 		RatESP.init()
 		TagESP.init()
@@ -153,9 +153,12 @@ object WpcMod : ModInitializer {
 		AutoExperiments.init()
 		SuperpairsSolver.init()
 
+		//Instance
+		CancelInteract.init()
+		AutoGFS.init()
+
 		// Dungeons
 		AutoCloseChests.init()
-		DungeonAutoGFS.init()
 		ScoreCalculation.init()
 		DungeonESP.init()
 		TickTimers.init()
@@ -170,7 +173,6 @@ object WpcMod : ModInitializer {
 
 		// Kuudra
 		KuudraESP.init()
-		KuudraAutoGFS.init()
 
 		// Galatea
 		GalateaESP.init()

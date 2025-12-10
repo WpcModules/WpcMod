@@ -1,7 +1,7 @@
 package net.wapic.wpcmod.config.dungeon
 
 import io.github.notenoughupdates.moulconfig.annotations.*
-import net.wapic.wpcmod.features.dungeons.DungeonAutoGFS
+import net.wapic.wpcmod.features.instance.AutoGFS
 
 class DungeonConfig {
 
@@ -17,6 +17,10 @@ class DungeonConfig {
 	@ConfigEditorBoolean
 	var spiritBear: Boolean = false
 
+	@ConfigOption(name = "Cancel Interact", desc = "Cancel block interaction with ender pearls")
+	@ConfigEditorBoolean
+	var cancelInteract: Boolean = false
+
 	@Accordion
 	@ConfigOption(name = "Dungeonbreaker", desc = "")
 	var dungeonbreaker: DungeonbreakerConfig = DungeonbreakerConfig()
@@ -24,14 +28,14 @@ class DungeonConfig {
 	class DungeonbreakerConfig {
 		@ConfigOption(
 			name = "Enable Prevent Breaking Blocks",
-			desc = "Prevents blocks in the list below from being broken with the Dungeonbreaker"
+			desc = "Prevents blocks in the list below from being broken with Dungeonbreaker"
 		)
 		@ConfigEditorBoolean
 		var enabled = false
 
 		@ConfigOption(
 			name = "Prevent Breaking Blocks",
-			desc = "Prevent Breaking the selected blocks with the Dungeonbreaker"
+			desc = "Prevent breaking the selected blocks with Dungeonbreaker"
 		)
 		@ConfigEditorDraggableList
 		var preventedDungeonbreakerBlocks = mutableListOf<InteractableBlocks>()
@@ -65,7 +69,7 @@ class DungeonConfig {
 
 		@ConfigOption(name = "", desc = "Items to automatically get from sack")
 		@ConfigEditorDraggableList
-		var items = mutableListOf<DungeonAutoGFS.DungeonSackItems>()
+		var items = mutableListOf<AutoGFS.DungeonSackItems>()
 	}
 
 	@Accordion
@@ -76,7 +80,7 @@ class DungeonConfig {
 	var invincibilityTimer: InvincibilityTimerConfig = InvincibilityTimerConfig()
 
 	class InvincibilityTimerConfig {
-		@ConfigOption(name = "Enable Invincibility Timers", desc = "Enables Invincibility Timer features")
+		@ConfigOption(name = "Enable Invincibility Timers", desc = "Enables invincibility timer features")
 		@ConfigEditorBoolean
 		var enabled = false
 
@@ -102,15 +106,15 @@ class DungeonConfig {
 		override fun toString(): String = "§f$label"
 	}
 
-	@Category(name = "ESP", desc = "Configure ESP on Dungeon mobs")
+	@Category(name = "ESP", desc = "Configure ESP on dungeon mobs")
 	var esp: ESPConfig = ESPConfig()
 
 	@Category(name = "FunnyMap", desc = "funny map")
 	var funnyMap: FunnyConfig = FunnyConfig()
 
-	@Category(name = "Floor 7", desc = "Floor 7 Features")
+	@Category(name = "Floor 7", desc = "Floor 7 features")
 	var floor7: Floor7Config = Floor7Config()
 
-	@Category(name = "Score Calculation", desc = "Configure Score Calculation")
+	@Category(name = "Score Calculation", desc = "Configure score calculation")
 	var scoreCalculation: ScoreCalculationConfig = ScoreCalculationConfig()
 }
