@@ -109,6 +109,7 @@ object WpcMod : ModInitializer {
 					.then(TermSimCommand.getCommand())
 					.then(FunnyMapCommands.getCommand())
 					.then(HudEditorCommand.getCommand())
+					.then(GFSCommand.getCommand())
 			)
 
 			dispatcher.register(ClientCommandManager.literal("wpcmod").redirect(mainCommand))
