@@ -40,7 +40,7 @@ object ArrowAlign {
 		if (DungeonUtils.getF7Phase() != F7Phase.GOLDOR || !config.enabled) return
 
 		clicksRemaining.clear()
-		if ((MC.player?.position()?.distanceTo(Vec3(0.0, 120.0, 77.0)) ?: return) > 200) {
+		if ((client.player?.position()?.distanceTo(Vec3(0.0, 120.0, 77.0)) ?: return) > 200) {
 			currentFrameRotations = null
 			targetSolution = null
 			return

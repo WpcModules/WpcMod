@@ -13,6 +13,7 @@ import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.GuiEvents
 import net.wapic.wpcmod.events.ReplaceItemEvent
 import net.wapic.wpcmod.util.ItemUtils.isSimilar
+import net.wapic.wpcmod.util.MC
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
 import java.awt.Color
@@ -158,7 +159,7 @@ object SuperpairsSolver {
 		if (slot.container is Inventory || !inSuperpairs || !config.superpairsSolver) return
 		if (slot.item.item in ignoredItems || skyHanniRegex.matches(slot.item.hoverName.string)) return
 
-		val inv = Minecraft.getInstance().player?.containerMenu?.items
+		val inv = MC.player?.containerMenu?.items
 		inv?.count { it.isSimilar(slot.item) }?.let {
 			val color = if (it > 1) Color(255, 69, 0, 150) else Color(240, 230, 140)
 			drawContext.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, color.rgb)

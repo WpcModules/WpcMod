@@ -11,6 +11,7 @@ import net.minecraft.client.gui.components.EditBox
 import net.minecraft.network.chat.Component
 import net.minecraft.ChatFormatting
 import net.wapic.wpcmod.features.general.shortcut.ShortcutListWidget.Entry
+import net.wapic.wpcmod.util.MC
 import java.util.function.Consumer
 
 class ShortcutListWidget : ContainerObjectSelectionList<Entry> {
@@ -51,15 +52,13 @@ class ShortcutListWidget : ContainerObjectSelectionList<Entry> {
 
 	inner class ShortcutEntry internal constructor(private val binding: Shortcut) : Entry() {
 
-		private val commandField: EditBox
+		private val commandField: EditBox = EditBox(MC.textRenderer, 120, 20, Component.nullToEmpty(binding.getCommand()))
 		private val editButton: Button
 		private val deleteButton: Button
-		private val client: Minecraft = Minecraft.getInstance()
 		private var duplicate = false
 
 		init {
-			this.commandField = EditBox(client.font, 120, 20, Component.nullToEmpty(binding.getCommand()))
-			this.commandField.setValue(binding.getCommand())
+			this.commandField.value = binding.getCommand()
 			this.commandField.setResponder { command ->
 				binding.setCommand(command)
 				this@ShortcutListWidget.update()
