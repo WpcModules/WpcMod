@@ -22,7 +22,7 @@ object KuudraUtils {
 		"§e[NPC] §cElle§f: OMG! Great work collecting my supplies!"
 	private const val STUN_PHASE_MESSAGE: String =
 		"[NPC] Elle: Phew! The Ballista is finally ready! It should be strong enough to tank Kuudra's blows now!"
-	private const val END_MESSAGE: String =
+	private const val KILL_PHASE_MESSAGE: String =
 		"§e[NPC] §cElle§f: POW! SURELY THAT'S IT! I don't think he has any more in him!"
 	private const val KUUDRA_END_MESSAGE: String = "KUUDRA DOWN!"
 
@@ -58,7 +58,7 @@ object KuudraUtils {
 
 			BUILD_PHASE_MESSAGE -> phase = Phase.BUILD
 			STUN_PHASE_MESSAGE -> phase = Phase.STUN
-			END_MESSAGE -> phase = Phase.KILL
+			KILL_PHASE_MESSAGE -> phase = Phase.KILL
 
 
 		}
@@ -66,6 +66,7 @@ object KuudraUtils {
 		if (message.string.removeFormatting().trim() == KUUDRA_END_MESSAGE) {
 			WpcMod.logger.debug("Kuudra Ended")
 			KuudraEvents.END.invoker().onEnd()
+			phase = null
 		}
 	}
 

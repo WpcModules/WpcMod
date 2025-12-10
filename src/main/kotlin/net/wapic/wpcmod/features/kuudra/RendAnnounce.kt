@@ -4,13 +4,11 @@ import net.wapic.wpcmod.events.ServerTickEvent
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.KuudraUtils
-import net.wapic.wpcmod.util.MC
-import net.wapic.wpcmod.util.Utils.toFixed
+import java.text.DecimalFormat
 
 object RendAnnounce {
 
 	private var kuudraLastHP: Float = 25_000f
-	private var inP4 = false
 
 	fun init() {
 		WorldChangeEvent.BEFORE.register { kuudraLastHP = 25_000f }
@@ -18,12 +16,14 @@ object RendAnnounce {
 		ServerTickEvent.EVENT.register(::onTick)
 	}
 
+	fun format(value: Float): String = DecimalFormat("#,###").format(value)
+
 	private fun onTick() {
-		MC.player?.let { inP4 = it.y <= 20 } ?: return
+		if(KuudraUtils.phase != KuudraUtils.Phase.KILL) return
 		KuudraUtils.kuudraEntity?.let {
 			val diff = kuudraLastHP - it.health
 			if(diff > 1666) {
-				ChatUtils.sendMessage("Someone pulled for: ${diff.toFixed(2)} dmg")
+				ChatUtils.sendMessage("Someone pulled for: ${format(diff * 9600f)} damage")
 			}
 
 			kuudraLastHP = it.health
