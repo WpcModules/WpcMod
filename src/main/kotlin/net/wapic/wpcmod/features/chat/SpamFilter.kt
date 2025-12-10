@@ -12,6 +12,7 @@ import net.minecraft.util.CommonColors
 import net.minecraft.util.Mth
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.chat.SpamConfig
+import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils
 
 object SpamFilter {
@@ -28,7 +29,7 @@ object SpamFilter {
 	private val joinOrLeaveRegex = Regex("^(?:Friend|Guild) > \\w+ (?:joined|left)\\.$")
 
 	data class Notification(val text: Component, var delay: Int) {
-		var x = Minecraft.getInstance().font.width(text.string)
+		var x = MC.textRenderer.width(text.string)
 	}
 
 	fun init() {
@@ -66,14 +67,13 @@ object SpamFilter {
 	}
 
 	fun onRenderHud(drawContext: GuiGraphics, tickCounter: DeltaTracker) {
-		val mc = Minecraft.getInstance()
 		var y = drawContext.guiHeight() - 48
 
 		for (notification in notifyQueue.toList()) {
-			val width = mc.font.width(notification.text)
+			val width = MC.textRenderer.width(notification.text)
 			val x1 = (drawContext.guiWidth() - width) + notification.x
 			drawContext.fill(x1, y - 2, x1 + width, y + 10, 0xaa121212.toInt())
-			drawContext.drawString(mc.font, notification.text, x1, y, CommonColors.WHITE, false)
+			drawContext.drawString(MC.textRenderer, notification.text, x1, y, CommonColors.WHITE, false)
 			y -= 12
 			notification.x = Mth.lerpInt(tickCounter.gameTimeDeltaTicks, notification.x, -12)
 		}

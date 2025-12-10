@@ -13,6 +13,7 @@ import net.minecraft.world.phys.Vec3
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.util.ChatUtils
+import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.freecam.CameraEntity
 import net.wapic.wpcmod.util.freecam.CameraEntity.Companion.createCameraEntity
 
@@ -29,7 +30,7 @@ class Freecam {
 		AttackBlockCallback.EVENT.register { _, _, _, _, _ -> onInteract() }
 		ClientTickEvents.END_CLIENT_TICK.register(::onTick)
 		WorldChangeEvent.BEFORE.register { _ ->
-			removeCamera(Minecraft.getInstance())
+			removeCamera(MC.instance)
 			isEnabled = false
 		}
 	}
@@ -63,7 +64,7 @@ class Freecam {
 	}
 
 	fun calculateMotionWithDeceleration(lastMotion: Vec3, rampAmount: Double, decelerationFactor: Double): Vec3 {
-		val options = Minecraft.getInstance().options
+		val options = MC.options
 		var forward = 0
 		var vertical = 0
 		var strafe = 0

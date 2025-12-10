@@ -21,13 +21,13 @@ object CancelInteract {
 	}
 
 	fun onItemUse(player: Player, world: Level, hand: InteractionHand, block: BlockHitResult): InteractionResult {
-		if(!(config.kuudra.cancelInteract && Utils.getLocation() == Island.KUUDRA) ||
-			!(config.dungeon.cancelInteract && Utils.getLocation() == Island.DUNGEON))
-		{
+		if ((Utils.getLocation() != Island.KUUDRA || !config.kuudra.cancelInteract) &&
+			(Utils.getLocation() != Island.DUNGEON || !config.dungeon.cancelInteract)
+		) {
 			return InteractionResult.PASS
 		}
 
-		if(player.mainHandItem.skyBlockID == ENDER_PEARL) {
+		if (player.mainHandItem.skyBlockID == ENDER_PEARL) {
 			return MC.interactionManager?.useItem(player, hand) ?: InteractionResult.PASS
 		}
 

@@ -27,31 +27,23 @@ object EndESP : MobGlowCache() {
 		ClientTickEvents.END_WORLD_TICK.register(::worldTick)
 	}
 
-	private var lock = false
 	private fun worldTick(world: ClientLevel) {
 		if (Utils.getLocation() != Island.END) return
 		if (!config.endNode.tracer && !config.endNode.box) return
 
-		if (lock) return
-
-		val player = Minecraft.getInstance().player
+		val player = MC.player ?: return
 		val radius = config.endNode.radius.toDouble()
 
 		val newEndNodes: MutableSet<AABB> = mutableSetOf()
-		lock = true
 
-		player?.let {
-			val pos = it.position()
-			val box = AABB.unitCubeFromLowerCorner(pos).inflate(radius)
+		val box = AABB.unitCubeFromLowerCorner(player.position()).inflate(radius)
 
-			BlockPos.betweenClosed(box).forEach { blockPos ->
-				if (world.getBlockState(blockPos).block == Blocks.PURPLE_TERRACOTTA) {
-					newEndNodes.add(AABB.ofSize(blockPos.center, 1.0, 1.0, 1.0))
-				}
+		BlockPos.betweenClosed(box).forEach { blockPos ->
+			if (world.getBlockState(blockPos).block == Blocks.PURPLE_TERRACOTTA) {
+				newEndNodes.add(AABB.ofSize(blockPos.center, 1.0, 1.0, 1.0))
 			}
 		}
 
-		lock = false
 		endNodes = newEndNodes
 	}
 

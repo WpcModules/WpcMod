@@ -12,6 +12,7 @@ import net.minecraft.world.inventory.ChestMenu
 import net.minecraft.world.inventory.ClickType
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.Island
+import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils
 import org.lwjgl.glfw.GLFW
 
@@ -110,12 +111,12 @@ object AutoExperiments {
 
 		if (hasAdded && inventory.getItem(49).item == Items.CLOCK && chronomatronOrder.size > clicks && System.currentTimeMillis() - lastClickTime > config.clickDelay) {
 			handledScreen?.let {
-				Minecraft.getInstance().gameMode?.handleInventoryMouseClick(
+				MC.interactionManager?.handleInventoryMouseClick(
 					it.containerId,
 					chronomatronOrder[clicks],
 					GLFW.GLFW_MOUSE_BUTTON_MIDDLE,
 					ClickType.CLONE,
-					Minecraft.getInstance().player
+					MC.player
 				)
 				lastClickTime = System.currentTimeMillis()
 				clicks++
@@ -140,12 +141,12 @@ object AutoExperiments {
 		if (inventory.getItem(49).item == Items.CLOCK && ultrasequencerOrder.contains(clicks) && System.currentTimeMillis() - lastClickTime > config.clickDelay) {
 			handledScreen?.let { screenHandler ->
 				ultrasequencerOrder[clicks]?.let {
-					Minecraft.getInstance().gameMode?.handleInventoryMouseClick(
+					MC.interactionManager?.handleInventoryMouseClick(
 						screenHandler.containerId,
 						it,
 						GLFW.GLFW_MOUSE_BUTTON_MIDDLE,
 						ClickType.CLONE,
-						Minecraft.getInstance().player
+						MC.player
 					)
 				}
 				lastClickTime = System.currentTimeMillis()

@@ -1,6 +1,5 @@
 package net.wapic.wpcmod.features.general.shortcut
 
-import net.minecraft.client.Minecraft
 import net.minecraft.client.input.MouseButtonEvent
 import net.minecraft.client.gui.screens.options.OptionsSubScreen
 import net.minecraft.client.gui.components.Button
@@ -10,8 +9,9 @@ import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.network.chat.CommonComponents
 import net.minecraft.network.chat.Component
 import net.minecraft.Util
+import net.wapic.wpcmod.util.MC
 
-class ShortcutScreen : OptionsSubScreen(null, Minecraft.getInstance().options, Component.nullToEmpty("Command Shortcuts")) {
+class ShortcutScreen : OptionsSubScreen(null, MC.options, Component.nullToEmpty("Command Shortcuts")) {
 
 	var selectedShortcut: Shortcut? = null
 	private var shortcutsList: ShortcutListWidget? = null
