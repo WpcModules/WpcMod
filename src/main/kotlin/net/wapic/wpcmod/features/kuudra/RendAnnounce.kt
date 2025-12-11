@@ -27,7 +27,7 @@ object RendAnnounce {
 		KuudraUtils.kuudraEntity?.let {
 			val diff = kuudraLastHP - it.health
 			if(diff > 1666) {
-				ChatUtils.sendMessage("Someone pulled for: ${format(diff * 9600f)} damage")
+				ChatUtils.sendMessage("Someone pulled for: §c${format(diff * 9600f)}§r damage")
 			}
 
 			kuudraLastHP = it.health
