@@ -44,17 +44,8 @@ public abstract class ClientPacketListenerMixin {
 
 	@Inject(at = @At("HEAD"), method = "handleOpenScreen")
 	private void onOpenScreen(ClientboundOpenScreenPacket packet, CallbackInfo ci) {
-		Screen currentScreen = Minecraft.getInstance().screen;
 		String title = packet.getTitle().getString();
-		if (currentScreen != null && !currentScreen.getTitle().getString().equals(title)) {
-			GuiEvents.CLOSE.invoker().onClose();
-		}
 		GuiEvents.OPEN.invoker().onOpen(title);
-	}
-
-	@Inject(at = @At("HEAD"), method = "handleContainerClose")
-	private void onCloseScreen(CallbackInfo ci) {
-		GuiEvents.CLOSE.invoker().onClose();
 	}
 
 	@Inject(at = @At("HEAD"), method = "handleSetPlayerTeamPacket")

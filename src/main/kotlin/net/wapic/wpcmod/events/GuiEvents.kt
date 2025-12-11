@@ -95,7 +95,6 @@ object GuiEvents {
 		fun onDrawBackground(screen: Screen, drawContext: GuiGraphics, callbackInfo: CallbackInfo)
 	}
 
-	/** When a screen is opened */
 	@JvmField
 	val OPEN: Event<OpenedEvent> = EventFactory.createArrayBacked(OpenedEvent::class.java) { listeners ->
 		OpenedEvent { title ->
@@ -109,7 +108,6 @@ object GuiEvents {
 		fun onOpen(title: String)
 	}
 
-	/** When a Screen with a new title is opened */
 	@JvmField
 	val CLOSE: Event<ClosedEvent> = EventFactory.createArrayBacked(ClosedEvent::class.java) { listeners ->
 		ClosedEvent {
@@ -123,7 +121,6 @@ object GuiEvents {
 		fun onClose()
 	}
 
-	/** When a slot in an inventory updates */
 	@JvmField
 	val SLOT_UPDATE_AFTER: Event<SlotUpdateAfter> = EventFactory.createArrayBacked(SlotUpdateAfter::class.java) { listeners ->
 		SlotUpdateAfter { syncId, slotId, itemStack ->
@@ -137,7 +134,6 @@ object GuiEvents {
 		fun onSlotUpdateAfter(syncId: Int, slotId: Int, itemStack: ItemStack)
 	}
 
-	/** When a slot in an inventory updates */
 	@JvmField
 	val SLOT_UPDATE_BEFORE: Event<SlotUpdateBefore> = EventFactory.createArrayBacked(SlotUpdateBefore::class.java) { listeners ->
 		SlotUpdateBefore { syncId, slotId, itemStack ->

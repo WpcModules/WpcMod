@@ -16,7 +16,7 @@ import net.minecraft.server.packs.resources.ResourceManager
 
 object MC {
 
-	fun runOnThread(run: () -> Unit) = if(instance.isSameThread) run() else instance.schedule { run() }
+	fun runOnThread(run: () -> Unit) = instance.execute(run)
 
 	inline val instance: Minecraft get() = Minecraft.getInstance()
 	inline val player: LocalPlayer? get() = instance.player
