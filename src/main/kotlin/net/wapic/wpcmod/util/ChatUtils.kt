@@ -10,7 +10,7 @@ object ChatUtils {
 	val formattingRegex: Pattern = Pattern.compile("(?i)§[0-9A-FK-OR]")
 	val PREFIX: MutableComponent = Component.literal("[WpcMod]: ").setStyle(Style.EMPTY.withColor(ChatFormatting.AQUA))
 
-	fun sendMessage(message: String, style: Style = Style.EMPTY) {
+	fun sendMessage(message: String, style: Style = Style.EMPTY.withColor(ChatFormatting.WHITE)) {
 		MC.inGameHud.chat.addMessage(PREFIX.copy().append(Component.literal(message).setStyle(style)))
 	}
 
