@@ -27,7 +27,7 @@ object SackUtils {
 
 	fun getFromSack(item: String, maxStackSize: Int) {
 		Minecraft.getInstance().player?.inventory?.let { inv ->
-			val stackSize = inv.find { it.skyBlockID == item }?.count ?: 0
+			val stackSize = inv.find { it.skyBlockID == item.uppercase() }?.count ?: 0
 			if (stackSize < maxStackSize || stackSize != maxStackSize) gfsQueue.add("gfs $item ${maxStackSize - stackSize}")
 		}
 	}

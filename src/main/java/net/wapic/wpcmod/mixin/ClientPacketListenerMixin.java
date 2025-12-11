@@ -1,7 +1,5 @@
 package net.wapic.wpcmod.mixin;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.protocol.game.*;
