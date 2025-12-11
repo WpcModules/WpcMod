@@ -9,12 +9,12 @@ object AutoGFS {
 	private val config get() = WpcMod.config
 	fun init() {
 		KuudraEvents.START.register {
-			if (config.kuudra.autoGfs) SackUtils.getFromSack("ENDER_PEARL", 16)
+			if (config.kuudra.autoGfs) SackUtils.queueGetFromSack("ENDER_PEARL", 16)
 		}
 
 		DungeonEvents.START.register {
 			if(!config.dungeon.autoGFS.enabled) return@register
-			config.dungeon.autoGFS.items.forEach { SackUtils.getFromSack(it.name, it.maxStackSize) }
+			config.dungeon.autoGFS.items.forEach { SackUtils.queueGetFromSack(it.name, it.maxStackSize) }
 		}
 	}
 
