@@ -10,8 +10,8 @@ object ChatEmotes {
 	private val chatEmoteMap = mapOf(
 		"o7" to "( ﾟ◡ﾟ)/",
 		"<3" to "❤",
-		":)" to "◕‿◕",
-		":(" to "◉‸◉",
+		":smile:" to "◕‿◕",
+		":frown:" to "◉‸◉",
 		":star:" to "✮",
 		":yes:" to "✔",
 		":no:" to "✖",
