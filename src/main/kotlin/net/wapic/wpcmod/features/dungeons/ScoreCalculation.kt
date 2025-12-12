@@ -2,20 +2,20 @@ package net.wapic.wpcmod.features.dungeons
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
-import net.minecraft.world.level.block.state.BlockState
-import net.minecraft.world.level.block.Blocks
-import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.world.entity.Entity
-import net.minecraft.world.entity.monster.Zombie
-import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket
-import net.minecraft.sounds.SoundEvents
-import net.minecraft.network.chat.Style
-import net.minecraft.network.chat.Component
-import net.minecraft.util.CommonColors
 import net.minecraft.ChatFormatting
 import net.minecraft.Util
+import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.core.BlockPos
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.Style
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket
+import net.minecraft.sounds.SoundEvents
+import net.minecraft.util.CommonColors
+import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.monster.Zombie
+import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.level.block.state.BlockState
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.dungeon.ScoreCalculationConfig.ScoreHudType
 import net.wapic.wpcmod.config.dungeon.ScoreCalculationConfig.ScoreMessageType
@@ -381,7 +381,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 
 		if (isMimicFloor) checkMimicDead(client)
 
-		if (config.scoreMessage300 != ScoreMessageType.DISABLED && config.scoreMessage270 != ScoreMessageType.DISABLED) {
+		if (config.scoreMessage300 != ScoreMessageType.DISABLED || config.scoreMessage270 != ScoreMessageType.DISABLED) {
 			when {
 				totalScore >= 300 && !sent300Message -> {
 					sendScoreMessage(300, config.scoreMessage300)
