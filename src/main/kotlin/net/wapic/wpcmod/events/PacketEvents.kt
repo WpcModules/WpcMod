@@ -22,15 +22,29 @@ object PacketEvents {
 	}
 
 	@JvmField
-	val SEND: Event<PacketSend> = EventFactory.createArrayBacked(PacketSend::class.java) { listeners ->
-		PacketSend { entity, callbackInfo ->
+	val SEND_BEFORE: Event<PacketSendBefore> =
+		EventFactory.createArrayBacked(PacketSendBefore::class.java) { listeners ->
+			PacketSendBefore { packet, callbackInfo ->
 			for (listener in listeners) {
-				listener.onPacketSend(entity, callbackInfo)
+				listener.onPacketSendBefore(packet, callbackInfo)
 			}
 		}
 	}
 
-	fun interface PacketSend {
-		fun onPacketSend(packet: Packet<out PacketListener>, callbackInfo: CallbackInfo)
+	fun interface PacketSendBefore {
+		fun onPacketSendBefore(packet: Packet<out PacketListener>, callbackInfo: CallbackInfo)
+	}
+
+	@JvmField
+	val SEND_AFTER: Event<PacketSendAfter> = EventFactory.createArrayBacked(PacketSendAfter::class.java) { listeners ->
+		PacketSendAfter { packet, callbackInfo ->
+			for (listener in listeners) {
+				listener.onPacketSendAfter(packet, callbackInfo)
+			}
+		}
+	}
+
+	fun interface PacketSendAfter {
+		fun onPacketSendAfter(packet: Packet<out PacketListener>, callbackInfo: CallbackInfo)
 	}
 }

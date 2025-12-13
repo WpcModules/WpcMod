@@ -5,18 +5,18 @@ import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
+import net.minecraft.network.HashedStack
 import net.minecraft.network.PacketListener
+import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.Packet
-import net.minecraft.network.protocol.game.ServerboundContainerClickPacket
-import net.minecraft.network.protocol.game.ServerboundContainerClosePacket
 import net.minecraft.network.protocol.common.ClientboundPingPacket
 import net.minecraft.network.protocol.game.ClientboundContainerClosePacket
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket
-import net.minecraft.world.inventory.Slot
-import net.minecraft.world.inventory.ClickType
-import net.minecraft.network.HashedStack
-import net.minecraft.network.chat.Component
+import net.minecraft.network.protocol.game.ServerboundContainerClickPacket
+import net.minecraft.network.protocol.game.ServerboundContainerClosePacket
 import net.minecraft.util.CommonColors
+import net.minecraft.world.inventory.ClickType
+import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.DyeColor
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.compat.ReiCompatibility
@@ -49,7 +49,7 @@ object TerminalSolver {
 
 	fun init() {
 		PacketEvents.RECEIVE.register(::onPacketReceive)
-		PacketEvents.SEND.register(::onPacketSend)
+		PacketEvents.SEND_BEFORE.register(::onPacketSend)
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 		GuiEvents.DRAW_SLOT_BACKGROUND.register(::drawSlot)
 		GuiEvents.MOUSE_CLICK.register(::onGuiClick)

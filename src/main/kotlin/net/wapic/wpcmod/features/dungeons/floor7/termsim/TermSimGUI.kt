@@ -4,21 +4,21 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.minecraft.client.gui.screens.inventory.ContainerScreen
 import net.minecraft.core.component.DataComponents
-import net.minecraft.world.SimpleContainer
-import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.Items
 import net.minecraft.network.PacketListener
+import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.Packet
-import net.minecraft.network.protocol.game.ServerboundContainerClickPacket
 import net.minecraft.network.protocol.game.ClientboundContainerClosePacket
-import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket
+import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket
+import net.minecraft.network.protocol.game.ServerboundContainerClickPacket
+import net.minecraft.sounds.SoundEvents
+import net.minecraft.world.SimpleContainer
 import net.minecraft.world.inventory.ChestMenu
+import net.minecraft.world.inventory.ClickType
 import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.inventory.Slot
-import net.minecraft.world.inventory.ClickType
-import net.minecraft.sounds.SoundEvents
-import net.minecraft.network.chat.Component
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.PacketEvents
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
@@ -50,7 +50,7 @@ open class TermSimGUI(
 	private var syncId = 0
 
 	init {
-		PacketEvents.SEND.register(::onPacketSend)
+		PacketEvents.SEND_BEFORE.register(::onPacketSend)
 		DungeonEvents.TERMINAL_SOLVED.register(::onTerminalSolved)
 	}
 

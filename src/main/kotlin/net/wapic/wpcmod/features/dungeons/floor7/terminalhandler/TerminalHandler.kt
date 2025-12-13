@@ -4,14 +4,14 @@ import com.google.common.primitives.Shorts
 import com.google.common.primitives.SignedBytes
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
 import net.minecraft.client.gui.screens.inventory.ContainerScreen
-import net.minecraft.world.item.ItemStack
+import net.minecraft.network.HashedStack
 import net.minecraft.network.PacketListener
 import net.minecraft.network.protocol.Packet
-import net.minecraft.network.protocol.game.ServerboundContainerClickPacket
-import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket
+import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket
+import net.minecraft.network.protocol.game.ServerboundContainerClickPacket
 import net.minecraft.world.inventory.ClickType
-import net.minecraft.network.HashedStack
+import net.minecraft.world.item.ItemStack
 import net.wapic.wpcmod.events.PacketEvents
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.dungeons.floor7.termsim.TermSimGUI
@@ -58,7 +58,7 @@ open class TerminalHandler(val type: TerminalTypes) {
         isClicked = true
 
 		if (MC.screen is TermSimGUI) {
-			PacketEvents.SEND.invoker().onPacketSend(
+			PacketEvents.SEND_BEFORE.invoker().onPacketSendBefore(
 				ServerboundContainerClickPacket(
 					screenHandler.containerId,
 					MC.player?.containerMenu?.stateId ?: 0,

@@ -2,14 +2,14 @@ package net.wapic.wpcmod.features.dungeons.floor7
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.minecraft.client.Minecraft
-import net.minecraft.world.entity.decoration.ItemFrame
-import net.minecraft.world.item.Items
+import net.minecraft.core.BlockPos
 import net.minecraft.network.PacketListener
+import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.game.ServerboundInteractPacket
-import net.minecraft.network.chat.Component
 import net.minecraft.world.InteractionHand
-import net.minecraft.core.BlockPos
+import net.minecraft.world.entity.decoration.ItemFrame
+import net.minecraft.world.item.Items
 import net.minecraft.world.phys.Vec3
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.PacketEvents
@@ -31,7 +31,7 @@ object ArrowAlign {
     private var targetSolution: List<Int>? = null
 
 	fun init() {
-		PacketEvents.SEND.register(::onPacketSend)
+		PacketEvents.SEND_BEFORE.register(::onPacketSend)
 		ClientTickEvents.END_CLIENT_TICK.register(::onTick)
 		WorldRenderEvent.EVENT.register(::onRenderWorld)
     }
