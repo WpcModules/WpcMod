@@ -9,6 +9,7 @@ import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.events.skyblock.KuudraEvents
 import net.wapic.wpcmod.util.ChatUtils.removeFormatting
+import net.wapic.wpcmod.util.EntityUtils.skyBlockMaxHealth
 
 object KuudraUtils {
 
@@ -39,7 +40,7 @@ object KuudraUtils {
 		if (Utils.getLocation() != Island.KUUDRA) return
 
 		if (kuudraEntity == null) {
-			world.entitiesForRendering().find { it is MagmaCube && it.size == 30 && it.maxHealth == 100_000.0f }?.let {
+			world.entitiesForRendering().find { it is MagmaCube && it.size == 30 && it.skyBlockMaxHealth == 100000.0f }?.let {
 				kuudraEntity = it as MagmaCube
 				WpcMod.logger.debug("set KuudraEntity to {}", it)
 			}
@@ -58,12 +59,14 @@ object KuudraUtils {
 			BUILD_PHASE_MESSAGE -> phase = Phase.BUILD
 			STUN_PHASE_MESSAGE -> phase = Phase.STUN
 			KILL_PHASE_MESSAGE -> phase = Phase.KILL
+
+
 		}
 
 		if (message.string.removeFormatting().trim() == KUUDRA_END_MESSAGE) {
 			WpcMod.logger.debug("Kuudra Ended")
-			phase = null
 			KuudraEvents.END.invoker().onEnd()
+			phase = null
 		}
 	}
 
