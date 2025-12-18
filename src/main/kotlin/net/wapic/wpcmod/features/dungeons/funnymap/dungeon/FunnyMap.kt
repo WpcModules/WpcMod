@@ -13,6 +13,7 @@ import net.wapic.wpcmod.features.dungeons.funnymap.core.DungeonPlayer
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.*
 import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils
 import net.wapic.wpcmod.util.ChatUtils
+import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.DungeonUtils.inDungeons
 import net.wapic.wpcmod.util.DungeonUtils.isMimicFloor
 import net.wapic.wpcmod.util.TabListUtil
@@ -31,11 +32,13 @@ object FunnyMap {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 		DungeonEvents.END.register(::onDungeonEnd)
 		DungeonEvents.START.register(::onDungeonStart)
-		WorldChangeEvent.BEFORE.register { _ -> reset() }
+		WorldChangeEvent.BEFORE.register { reset() }
 	}
 
 	fun onTick(client: Minecraft) {
-		if (!inDungeons) return
+		if (!inDungeons || !config.mapEnabled) return
+		if (config.hideInBoss && DungeonUtils.bossSpawned) return
+
 		val profiler: ProfilerFiller = Profiler.get()
 		profiler.push("funnyMap")
 
@@ -46,28 +49,24 @@ object FunnyMap {
 				Info.mimicFound = true
 			}
 		}
-		profiler.pop()
 
-		profiler.push("calibrate map")
+		profiler.popPush("calibrate map")
 		if (!MapUtils.calibrated) {
 			MapUtils.calibrated = MapUtils.calibrateMap()
 		}
-		profiler.pop()
 
-		profiler.push("updateRooms")
+		profiler.popPush("updateRooms")
 		if (MapUtils.mapDataUpdated) {
 			MapUpdate.updateRooms()
 			MapUtils.mapDataUpdated = false
 		}
-		profiler.pop()
 
-		profiler.push("updatePlayers")
+		profiler.popPush("updatePlayers")
 		TabListUtil.getDungeonTabList()?.let {
 			MapUpdate.updatePlayers(it)
 		}
-		profiler.pop()
 
-		profiler.push("scan")
+		profiler.popPush("scan")
 		if (DungeonScan.shouldScan) {
 			DungeonScan.scan()
 		}

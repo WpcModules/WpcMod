@@ -3,6 +3,7 @@ package net.wapic.wpcmod.hud
 import com.google.gson.annotations.Expose
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements
+import net.minecraft.client.DeltaTracker
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.wapic.wpcmod.util.MC
@@ -29,11 +30,11 @@ open class SimpleHudElement(
 	init {
 		val identifier = modIdentifier(label.lowercase(Locale.US).replace(" ", "_"))
 		HudElementRegistry.attachElementBefore(VanillaHudElements.DEMO_TIMER, identifier) { context, tickCounter ->
-			render(context, tickCounter.gameTimeDeltaTicks)
+			render(context, tickCounter)
 		}
 	}
 
-	open fun render(drawContext: GuiGraphics, deltaTicks: Float) {}
+	open fun render(drawContext: GuiGraphics, tickCounter: DeltaTracker) {}
 
 	fun getLabel(): Component {
 		return Component.nullToEmpty(label)

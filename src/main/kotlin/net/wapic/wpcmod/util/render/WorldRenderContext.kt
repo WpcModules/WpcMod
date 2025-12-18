@@ -65,25 +65,30 @@ class WorldRenderContext {
 		matrixStack.popPose()
 	}
 
-/*	fun WorldRenderContext.drawBeaconBeam(position: BlockPos, color: Color) {
-		val matrix = matrixStack() ?: return
-		val bufferSource = consumers() as? VertexConsumerProvider.Immediate ?: return
-		val camera = camera().pos
-
-		matrix.push()
-		matrix.multiplyPositionMatrix(positionMatrix())
-		matrix.translate(position.x - camera.x, position.y - camera.y, position.z - camera.z)
-
-		val length = camera.subtract(position.toCenterPos()).horizontalLength().toFloat()
-		val scale = if (MC.player != null && MC.player?.isUsingSpyglass == true) 1.0f else maxOf(1.0f, length / 96.0f)
-
-		BeaconBlockEntityRenderer.renderBeam(
-			matrix, bufferSource, BeaconBlockEntityRenderer.BEAM_TEXTURE,
-			tickCounter().getTickProgress(true), scale, world().time, 0, 319, color.rgb, 0.2f * scale, 0.25f * scale
-		)
-
-		matrix.pop()
-	}*/
+//	fun drawBeaconBeam(position: BlockPos, color: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255)) {
+//		val camera = camera.pos
+//
+//		matrixStack.pushPose()
+//		matrixStack.mulPose(matrixStack.last().pose())
+//		matrixStack.translate(position.x - camera.x, position.y - camera.y, position.z - camera.z)
+//
+//		val length = camera.subtract(position.center).length().toFloat()
+//		val scale = if (MC.player != null && MC.player?.isScoping == true) 1.0f else maxOf(1.0f, length / 96.0f)
+//
+//		BeaconRenderer.submitBeaconBeam(
+//			matrixStack, SubmitNodeColletor Here,
+//			BeaconRenderer.BEAM_LOCATION, tickCounter.getGameTimeDeltaPartialTick(true),
+//			scale,
+//			world.gameTime,
+//			0, 319,
+//			color.getEffectiveColourRGB(),
+//			0.2f * scale, 0.25f * scale
+//		)
+//
+//		consumer.endBatch()
+//
+//		matrixStack.popPose()
+//	}
 
 	fun drawBoundingBox(
 		pos: Vec3,

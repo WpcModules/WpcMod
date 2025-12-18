@@ -1,6 +1,7 @@
 package net.wapic.wpcmod.features.dungeons
 
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
+import net.minecraft.client.DeltaTracker
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.client.gui.GuiGraphics
@@ -43,7 +44,7 @@ object SpiritBearTimer : SimpleHudElement("Spirit Bear Timer", 90, 12) {
 		}
 	}
 
-	override fun render(drawContext: GuiGraphics, deltaTicks: Float) {
+	override fun render(drawContext: GuiGraphics, tickCounter: DeltaTracker) {
 		if (!isActive || spawnTime <= 0) return
 		val matrixStack = drawContext.pose()
 		matrixStack.pushMatrix()

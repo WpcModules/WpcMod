@@ -28,22 +28,21 @@ object MapUtils {
 		return map
 	}
 
-	fun updateMapData(packet: ClientboundMapItemDataPacket) {
-		if (!inDungeons) return
-		MC.runOnThread {
-			val map = getMapItem()
-			map?.let {
-				mapData = MapItem.getSavedData(it, MC.world)
-			}
+	fun updateMapData(packet: ClientboundMapItemDataPacket) = MC.runOnThread {
+		if (!inDungeons) return@runOnThread
 
-			if (mapData == null) {
-				mapData = MapItem.getSavedData(packet.mapId, MC.world)
-			}
+		val map = getMapItem()
+		map?.let {
+			mapData = MapItem.getSavedData(it, MC.world ?: return@runOnThread)
+		}
 
-			mapData?.let {
-				packet.applyToMap(mapData)
-				mapDataUpdated = true
-			}
+		if (mapData == null) {
+			mapData = MapItem.getSavedData(packet.mapId, MC.world ?: return@runOnThread)
+		}
+
+		mapData?.let {
+			packet.applyToMap(it)
+			mapDataUpdated = true
 		}
 	}
 

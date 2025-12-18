@@ -3,11 +3,11 @@ package net.wapic.wpcmod.features.dungeons.funnymap.ui
 import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.util.CommonColors
+import net.minecraft.util.Mth
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.dungeon.FunnyConfig
 import net.wapic.wpcmod.features.dungeons.funnymap.core.DungeonPlayer
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.RoomState
-import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.DungeonScan
 import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils
 import net.wapic.wpcmod.util.ItemUtils.skyBlockID
 import net.wapic.wpcmod.util.MC
@@ -39,7 +39,7 @@ object MapRenderer {
 		matrixStack.scale(config.textScale, config.textScale)
 
 		if (config.mapRotate) {
-			matrixStack.rotate(Math.toRadians(player.yRot + 180.0).toFloat())
+			matrixStack.rotate((player.yRot + 180f) * Mth.DEG_TO_RAD)
 		}
 
 		val tr = MC.textRenderer
@@ -82,25 +82,16 @@ object MapRenderer {
 		}
 	}
 
-	fun drawPlayerHead(drawContext: GuiGraphics, name: String, player: DungeonPlayer) {
+	fun drawPlayerHead(drawContext: GuiGraphics, name: String, player: DungeonPlayer, deltaTicks: Float) {
 		val matrixStack = drawContext.pose()
 		matrixStack.pushMatrix()
 		try {
 			// Translates to the player's location which is updated every tick.
-			if (player.isPlayer || name == MC.player?.name?.string) {
-				MC.player?.let {
-					matrixStack.translate(
-						((it.x - DungeonScan.START_X + 13) * MapUtils.coordMultiplier + MapUtils.startCorner.first).toFloat(),
-						((it.z - DungeonScan.START_Z + 13) * MapUtils.coordMultiplier + MapUtils.startCorner.second).toFloat(),
-					)
-				}
-			} else {
-				matrixStack.translate(player.mapX.toFloat(), player.mapZ.toFloat())
-			}
+			matrixStack.translate(player.getX(deltaTicks), player.getY(deltaTicks))
 
+			val rotation = (player.getYaw(deltaTicks) + 180f) * Mth.DEG_TO_RAD
 			matrixStack.scale(config.playerHeadScale, config.playerHeadScale)
-
-			matrixStack.rotate(Math.toRadians(player.yaw + 180.0).toFloat())
+			matrixStack.rotate(rotation)
 
 			if (config.mapVanillaMarker && (player.isPlayer || name == MC.player?.name?.string)) {
 				drawContext.drawTexture(mapIcons, -4, -4, 0f, 0f, 8, 8, 8, 8)
@@ -114,7 +105,7 @@ object MapRenderer {
 				(config.playerHeads == FunnyConfig.PlayerNameType.HOLDING_LEAP && MC.heldItem.skyBlockID.equalsOneOf("SPIRIT_LEAP", "INFINITE_SPIRIT_LEAP", "HAUNT_ABILITY"))
 				) {
 				if(!config.mapRotate) {
-					matrixStack.rotate(-Math.toRadians(player.yaw + 180.0).toFloat())
+					matrixStack.rotate(-rotation)
 				}
 				matrixStack.translate(0f, config.playerHeadScale * 4f)
 				matrixStack.scale(config.playerNameScale, config.playerNameScale)

@@ -1,6 +1,7 @@
 package net.wapic.wpcmod.features.dungeons.floor7
 
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
+import net.minecraft.client.DeltaTracker
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.network.chat.Component
@@ -85,7 +86,7 @@ object TickTimers : SimpleHudElement("Tick Timers", 120, 12) {
         return "${if (config.showPrefix) "$prefix " else ""}$color$timeDisplay"
     }
 
-	override fun render(drawContext: GuiGraphics, deltaTicks: Float) {
+	override fun render(drawContext: GuiGraphics, tickCounter: DeltaTracker) {
 		if (!isActive) return
 		val profiler = Profiler.get()
 		profiler.push("TickTimers")

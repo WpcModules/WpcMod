@@ -3,6 +3,7 @@ package net.wapic.wpcmod.features.kuudra
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.util.CommonColors
 import net.minecraft.ChatFormatting
+import net.minecraft.client.DeltaTracker
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.hud.SimpleHudElement
 import net.wapic.wpcmod.util.Island
@@ -19,7 +20,7 @@ object KuudraDisplay : SimpleHudElement("Kuudra Display", 75, 11) {
 	override val isEnabled: Boolean get() = config.healthDisplay
 	override val isActive: Boolean get() = isEnabled && Utils.getLocation() == Island.KUUDRA
 
-	override fun render(drawContext: GuiGraphics, deltaTicks: Float) {
+	override fun render(drawContext: GuiGraphics, tickCounter: DeltaTracker) {
 		if (!isActive) return
 
 		val matrixStack = drawContext.pose()

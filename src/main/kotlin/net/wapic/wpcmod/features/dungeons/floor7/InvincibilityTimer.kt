@@ -1,6 +1,7 @@
 package net.wapic.wpcmod.features.dungeons.floor7
 
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
+import net.minecraft.client.DeltaTracker
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.util.CommonColors
@@ -31,7 +32,7 @@ object InvincibilityTimer : SimpleHudElement("Invincibility Timer", 160, 33) {
 		InvincibilityType.entries.firstOrNull { it.regex.matches(text.string) }?.proc()
 	}
 
-	override fun render(drawContext: GuiGraphics, deltaTicks: Float) {
+	override fun render(drawContext: GuiGraphics, tickCounter: DeltaTracker) {
 		if (!isActive) return
 		val matrixStack = drawContext.pose()
 		matrixStack.pushMatrix()

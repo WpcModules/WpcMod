@@ -68,33 +68,4 @@ object Utils {
 			WpcMod.logger.info("Map set to: $location")
 		}
 	}
-
-	fun getLoadedBlockEntities(): List<BlockEntity> {
-		val blockEntities = mutableListOf<BlockEntity>()
-		val chunks = getLoadedChunks()
-		for(chunk in chunks) {
-			chunk?.blockEntities?.values?.forEach(blockEntities::add)
-		}
-		return blockEntities
-	}
-
-	fun getLoadedChunks(): List<LevelChunk?> {
-		val radius = max(2, MC.options.effectiveRenderDistance) + 3
-		val chunks = mutableSetOf<ChunkPos>()
-
-		MC.player?.let {
-			val center = it.chunkPosition()
-
-			for (x in -radius..radius) {
-				for (z in -radius..radius) {
-					chunks.add(ChunkPos(center.x + x, center.z + z))
-				}
-			}
-		}
-
-		return chunks.filter { chunk -> MC.world?.getChunk(chunk.x, chunk.z) !is EmptyLevelChunk }
-			.map { chunk -> MC.world?.getChunk(chunk.x,chunk.z) }
-			.filter { chunk -> chunk?.isEmpty == false }
-	}
-
 }

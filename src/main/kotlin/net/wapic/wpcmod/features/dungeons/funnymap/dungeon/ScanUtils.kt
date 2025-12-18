@@ -13,7 +13,6 @@ import net.minecraft.world.level.levelgen.Heightmap
 import net.wapic.wpcmod.features.dungeons.funnymap.core.RoomData
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Room
 import net.wapic.wpcmod.util.MC
-import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 import kotlin.math.roundToInt
 
@@ -37,14 +36,13 @@ object ScanUtils {
 	}
 
 	fun findMimic(): String? {
-		Utils.getLoadedBlockEntities().filterIsInstance<TrappedChestBlockEntity>()
-			.groupingBy { getRoomFromPos(it.blockPos)?.data?.name }.eachCount()
-			.forEach { (room, trappedChests) ->
-				FunnyMap.Info.uniqueRooms.find { it.name == room && it.mainRoom.data.trappedChests < trappedChests }?.let {
-					it.hasMimic = true
-					return it.name
-				}
+		val loadedBlockEntities = MC.world?.globallyRenderedBlockEntities?.filterIsInstance<TrappedChestBlockEntity>() ?: return null
+		loadedBlockEntities.groupingBy { getRoomFromPos(it.blockPos)?.data?.name }.eachCount().forEach { (room, trappedChests) ->
+			FunnyMap.Info.uniqueRooms.find { it.name == room && it.mainRoom.data.trappedChests < trappedChests }?.let {
+				it.hasMimic = true
+				return it.name
 			}
+		}
 		return null
 	}
 

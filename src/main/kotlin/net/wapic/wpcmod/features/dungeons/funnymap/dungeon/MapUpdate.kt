@@ -2,7 +2,6 @@ package net.wapic.wpcmod.features.dungeons.funnymap.dungeon
 
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.client.multiplayer.PlayerInfo
-import net.minecraft.world.level.saveddata.maps.MapDecorationTypes
 import net.minecraft.network.chat.Component
 import net.minecraft.core.BlockPos
 import net.minecraft.world.level.chunk.EmptyLevelChunk
@@ -13,7 +12,6 @@ import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.TabListUtil
 import net.wapic.wpcmod.util.Utils.equalsOneOf
-import kotlin.math.roundToInt
 
 object MapUpdate {
 	var roomAdded = false
@@ -49,6 +47,7 @@ object MapUpdate {
 		if (FunnyMap.dungeonTeammates.isEmpty()) return
 		// Update map icons
 		val time = System.currentTimeMillis() - FunnyMap.Info.startTime
+		val decor = MapUtils.mapData?.decorations
 		var iconNum = 0
 		for (i in listOf(5, 9, 13, 17, 1)) {
 			val tabText = tabEntries[i].second.string.trim()
@@ -60,6 +59,9 @@ object MapUpdate {
 					icon = ""
 				} else {
 					icon = "icon-$iconNum"
+					decor?.elementAtOrNull(iconNum)?.let {
+						updatePosition(it.rot, it.x, it.y)
+					}
 					iconNum++
 				}
 				if (!playerLoaded) {
@@ -76,26 +78,26 @@ object MapUpdate {
 						lastRoom = room
 					}
 				}
+				/*
+				decor.forEachIndexed { index, decoration ->
+					val player =
+						FunnyMap.dungeonTeammates.values.firstOrNull { it.icon == "icon-$index" } ?: return@forEachIndexed
+					player.isPlayer = decoration.type == MapDecorationTypes.FRAME
+					if(player.isPlayer) {
+						//TODO: check why the fuck I'm doing this
+						/*
+						MC.player?.let {
+							player.lastYaw = it.yRotO
+							player.yaw = it.yRot
+							player.mapX = ((it.x - DungeonScan.START_X + 15) * MapUtils.coordMultiplier + MapUtils.startCorner.first).roundToInt()
+							player.mapZ = ((it.z - DungeonScan.START_Z + 15) * MapUtils.coordMultiplier + MapUtils.startCorner.second).roundToInt()
+							return@forEachIndexed
+						}*/
+					} else {
+						player.updatePosition(decoration.rot, decoration.x, decoration.y)
+					}
+				}*/
 			}
-		}
-
-		val decor = MapUtils.mapData?.decorations ?: return
-
-		decor.forEachIndexed { index, decoration ->
-			val player =
-				FunnyMap.dungeonTeammates.values.firstOrNull { it.icon == "icon-$index" } ?: return@forEachIndexed
-			player.isPlayer = decoration.type == MapDecorationTypes.FRAME
-			if(player.isPlayer) {
-				MC.player?.let {
-					player.yaw = it.yRot
-					player.mapX = ((it.x - DungeonScan.START_X + 15) * MapUtils.coordMultiplier + MapUtils.startCorner.first).roundToInt()
-					player.mapZ = ((it.z - DungeonScan.START_Z + 15) * MapUtils.coordMultiplier + MapUtils.startCorner.second).roundToInt()
-					return@forEachIndexed
-				}
-			}
-			player.yaw = decoration.rot * 22.5f
-			player.mapX = (decoration.x + 128) shr 1
-			player.mapZ = (decoration.y + 128) shr 1
 		}
 	}
 

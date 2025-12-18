@@ -4,7 +4,10 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.KeyMapping
 import com.mojang.blaze3d.platform.InputConstants
+import net.minecraft.Util
+import net.minecraft.client.DeltaTracker
 import net.minecraft.util.CommonColors
+import net.minecraft.util.Mth
 import net.minecraft.util.profiling.Profiler
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.features.dungeons.funnymap.core.DungeonPlayer
@@ -22,6 +25,9 @@ import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 import net.wapic.wpcmod.util.render.fillWithOutline
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.round
 
 object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 
@@ -32,16 +38,23 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 
 	val legitRender: Boolean get() = config.legitMode && !legitPeekBind.isDown
 
-	override fun render(drawContext: GuiGraphics, deltaTicks: Float) {
+	val interpFactor: Float get() = max(0f, min(1f, round((Util.getMillis() - lastUpdate) * 100f) / 100f / (lastUpdate - lastLastUpdate)))
+	private var lastUpdate: Long = -1
+	private var lastLastUpdate: Long = -1
+
+	override fun render(drawContext: GuiGraphics, tickCounter: DeltaTracker) {
 		if (!isActive) return
 		val player = MC.player ?: return
 		val matrixStack = drawContext.pose()
 		val profiler = Profiler.get()
 		profiler.push("funnyMap")
 
+		lastLastUpdate = lastUpdate
+		lastUpdate = Util.getMillis()
+
 		matrixStack.pushMatrix()
 		applyTransformations(matrixStack)
-
+0.0f
 		drawContext.fillWithOutline(
 			0, 0,
 			width, height,
@@ -54,7 +67,7 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 			drawContext.enableScissor(0, 0, width, height)
 
 			matrixStack.translate(64f, 64f)
-			matrixStack.rotate(Math.toRadians(-player.yRot + 180.0).toFloat())
+			matrixStack.rotate((-player.yRot + 180f) * Mth.DEG_TO_RAD)
 
 			if(config.mapCenter) {
 				matrixStack.translate(
@@ -71,7 +84,7 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 		profiler.popPush("text")
 		renderText(drawContext)
 		profiler.popPush("players")
-		renderPlayerHeads(drawContext)
+		renderPlayerHeads(drawContext, tickCounter.realtimeDeltaTicks)
 		profiler.pop()
 
 		if (config.mapRotate) {
@@ -166,7 +179,7 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 			)
 			name.addAll(room.data.name.split(" "))
 
-			// Offset + half of roomsize
+			// Offset + half of room size
 			MapRenderer.renderCenteredText(
 				drawContext,
 				name,
@@ -182,18 +195,16 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 		matrixStack.popMatrix()
 	}
 
-	fun renderPlayerHeads(drawContext: GuiGraphics) {
+	fun renderPlayerHeads(drawContext: GuiGraphics, deltaTicks: Float) {
 		try {
 			if (FunnyMap.dungeonTeammates.isEmpty()) {
 				MC.player?.let {
-					MapRenderer.drawPlayerHead(drawContext, it.name.string, DungeonPlayer(it.skin).apply {
-						yaw = it.yRot
-					})
+					MapRenderer.drawPlayerHead(drawContext, it.name.string, DungeonPlayer(it.skin), deltaTicks)
 				}
 			} else {
 				FunnyMap.dungeonTeammates.forEach { (name, teammate) ->
 					if (!teammate.dead) {
-						MapRenderer.drawPlayerHead(drawContext, name, teammate)
+						MapRenderer.drawPlayerHead(drawContext, name, teammate, deltaTicks)
 					}
 				}
 			}

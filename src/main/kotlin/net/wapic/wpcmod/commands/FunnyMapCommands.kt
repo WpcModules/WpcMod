@@ -8,6 +8,7 @@ import net.minecraft.network.chat.Style
 import net.minecraft.ChatFormatting
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.DungeonScan
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
+import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.MapUpdate
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.ScanUtils
 import net.wapic.wpcmod.features.general.Freecam
 import net.wapic.wpcmod.util.ChatUtils
@@ -38,6 +39,7 @@ object FunnyMapCommands : Command("dungeon") {
 	val scan: LiteralArgumentBuilder<FabricClientCommandSource> = literal("scan").executes {
 		FunnyMap.reset()
 		DungeonScan.scan()
+		MapUpdate.getPlayers()
 		return@executes 0
 	}
 

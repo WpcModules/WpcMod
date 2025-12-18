@@ -2,6 +2,7 @@ package net.wapic.wpcmod.features.dungeons.floor7
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
+import net.minecraft.client.DeltaTracker
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.world.entity.decoration.ArmorStand
@@ -55,7 +56,7 @@ object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
 		}
     }
 
-	override fun render(drawContext: GuiGraphics, deltaTicks: Float) {
+	override fun render(drawContext: GuiGraphics, tickCounter: DeltaTracker) {
 		if (!isActive) return
 		val matrixStack = drawContext.pose()
 		matrixStack.pushMatrix()

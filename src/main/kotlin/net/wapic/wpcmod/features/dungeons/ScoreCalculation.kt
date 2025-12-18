@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.ChatFormatting
 import net.minecraft.Util
+import net.minecraft.client.DeltaTracker
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.core.BlockPos
@@ -397,7 +398,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 		}
 	}
 
-	override fun render(drawContext: GuiGraphics, deltaTicks: Float) {
+	override fun render(drawContext: GuiGraphics, tickCounter: DeltaTracker) {
 		if (!isActive || config.scoreHudType == ScoreHudType.DISABLED) return
 		drawContext.pose().pushMatrix()
 		applyTransformations(drawContext.pose())
