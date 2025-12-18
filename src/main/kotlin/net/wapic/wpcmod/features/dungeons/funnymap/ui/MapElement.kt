@@ -54,7 +54,7 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 
 		matrixStack.pushMatrix()
 		applyTransformations(matrixStack)
-0.0f
+
 		drawContext.fillWithOutline(
 			0, 0,
 			width, height,

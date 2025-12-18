@@ -3,15 +3,10 @@ package net.wapic.wpcmod.util
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.hypixel.modapi.HypixelModAPI
 import net.hypixel.modapi.packet.impl.clientbound.event.ClientboundLocationPacket
-import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.Util
-import net.minecraft.world.level.ChunkPos
-import net.minecraft.world.level.chunk.EmptyLevelChunk
-import net.minecraft.world.level.chunk.LevelChunk
 import net.wapic.wpcmod.WpcMod
 import java.util.*
-import kotlin.math.max
 
 object Utils {
 
