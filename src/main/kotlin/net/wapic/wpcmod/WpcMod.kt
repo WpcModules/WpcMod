@@ -16,12 +16,12 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents
 import net.fabricmc.loader.api.FabricLoader
 import net.fabricmc.loader.api.Version
 import net.fabricmc.loader.api.metadata.ModMetadata
+import net.minecraft.ChatFormatting
 import net.minecraft.client.KeyMapping
 import net.minecraft.network.chat.ClickEvent
+import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.HoverEvent
 import net.minecraft.network.chat.Style
-import net.minecraft.network.chat.Component
-import net.minecraft.ChatFormatting
 import net.wapic.wpcmod.commands.*
 import net.wapic.wpcmod.config.ConfigManager
 import net.wapic.wpcmod.config.WpcConfig
@@ -40,15 +40,16 @@ import net.wapic.wpcmod.features.entity.TagESP
 import net.wapic.wpcmod.features.fishing.AutoFish
 import net.wapic.wpcmod.features.galatea.GalateaESP
 import net.wapic.wpcmod.features.general.Freecam
+import net.wapic.wpcmod.features.general.GoonDisplay
 import net.wapic.wpcmod.features.general.PreventPlacingItems
 import net.wapic.wpcmod.features.general.shortcut.ShortcutHandler
 import net.wapic.wpcmod.features.instance.AutoGFS
+import net.wapic.wpcmod.features.instance.CancelInteract
 import net.wapic.wpcmod.features.inventory.ArmorSwapper
 import net.wapic.wpcmod.features.inventory.AutoCloseWardrobe
 import net.wapic.wpcmod.features.inventory.ScrollableTooltips
 import net.wapic.wpcmod.features.inventory.experiments.AutoExperiments
 import net.wapic.wpcmod.features.inventory.experiments.SuperpairsSolver
-import net.wapic.wpcmod.features.instance.CancelInteract
 import net.wapic.wpcmod.features.kuudra.KuudraESP
 import net.wapic.wpcmod.features.kuudra.RendAnnounce
 import net.wapic.wpcmod.features.mining.ChestESP
@@ -150,6 +151,7 @@ object WpcMod : ModInitializer {
 		Freecam()
 		RatESP.init()
 		TagESP.init()
+		GoonDisplay.init()
 
 		//Experiments
 		AutoExperiments.init()

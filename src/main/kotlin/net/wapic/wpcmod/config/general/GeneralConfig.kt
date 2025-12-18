@@ -4,12 +4,15 @@ import io.github.notenoughupdates.moulconfig.annotations.Category
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorBoolean
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorButton
 import io.github.notenoughupdates.moulconfig.annotations.ConfigOption
-import net.minecraft.client.Minecraft
 import net.wapic.wpcmod.features.general.shortcut.ShortcutScreen
 import net.wapic.wpcmod.hud.HudManager
 import net.wapic.wpcmod.util.MC
 
 class GeneralConfig {
+
+	@ConfigOption(name = "Goon Display", desc = "Show when to refresh goons")
+	@ConfigEditorBoolean
+	var goonDisplay = false
 
 	@ConfigOption(name = "Prevent Placing Items", desc = "Prevent placing items such as Weird Tuba and Flower of Truth")
 	@ConfigEditorBoolean

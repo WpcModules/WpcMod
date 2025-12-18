@@ -2,10 +2,10 @@ package net.wapic.wpcmod.hud
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.mojang.blaze3d.platform.InputConstants
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.minecraft.client.KeyMapping
-import com.mojang.blaze3d.platform.InputConstants
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.features.dungeons.ScoreCalculation
 import net.wapic.wpcmod.features.dungeons.SpiritBearTimer
@@ -13,6 +13,7 @@ import net.wapic.wpcmod.features.dungeons.floor7.InactiveWaypoints
 import net.wapic.wpcmod.features.dungeons.floor7.InvincibilityTimer
 import net.wapic.wpcmod.features.dungeons.floor7.TickTimers
 import net.wapic.wpcmod.features.dungeons.funnymap.ui.MapElement
+import net.wapic.wpcmod.features.general.GoonDisplay
 import net.wapic.wpcmod.features.kuudra.KuudraDisplay
 import net.wapic.wpcmod.util.MC
 import java.io.File
@@ -42,6 +43,7 @@ object HudManager {
 		MapElement,
 		SpiritBearTimer,
 		InvincibilityTimer,
+		GoonDisplay,
 	)
 
 	fun init() {
