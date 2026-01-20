@@ -13,6 +13,20 @@ class InventoryConfig {
 	var autoCloseWardrobe: Boolean = false
 
 	@Accordion
+	@ConfigOption(name = "Leather Color", desc = "")
+	var leatherColor = LeatherColor()
+
+	class LeatherColor {
+		@ConfigOption(name = "Show Leather Color", desc = "Show leather color in tooltip")
+		@ConfigEditorBoolean
+		var showLeatherColor: Boolean = false
+
+		@ConfigOption(name = "Tooltip Color", desc = "Show leather color on the hex color in tooltip")
+		@ConfigEditorBoolean
+		var colorToolTip: Boolean = false
+	}
+
+	@Accordion
 	@ConfigOption(name = "Scrollable Tooltips", desc = "")
 	var scrollableTooltips = ScrollableTooltips()
 
