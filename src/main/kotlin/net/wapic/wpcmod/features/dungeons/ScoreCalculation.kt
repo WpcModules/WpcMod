@@ -174,7 +174,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 		PlayerListChangeEvent.EVENT.register(::onPlayerListChange)
 		ScoreboardChangeEvent.EVENT.register(::onScoreboardChange)
-		EntityEvents.DESPAWN.register(::onEntityDespawn)
+		EntityEvents.DEATH.register(::onEntityDeath)
 		DungeonEvents.PUZZLE_RESET.register(::onPuzzleReset)
 		BlockEvents.CHANGE.register(::onBlockChange)
 		ClientTickEvents.START_CLIENT_TICK.register(::onTick)
@@ -256,14 +256,14 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 		val playerDistanceFromMimic = client.player?.distanceToSqr(mimicPos?.center ?: return) ?: return
 		if (playerDistanceFromMimic >= 400.0) return
 
-		val isMimicDead = client.level?.entitiesForRendering()?.none { it is Zombie && it.isBaby }
+		val isMimicDead = client.level?.entitiesForRendering()?.none { it is Zombie && it.isBaby && it.headTexture == HeadTextures.MIMIC }
 		if (isMimicDead == true)
 			setMimicDead(config.mimicMessage)
 	}
 
-	private fun onEntityDespawn(entity: Entity) {
+	private fun onEntityDeath(entity: Entity) {
 		if (!isActive) return
-		if (entity is Zombie && entity.isBaby && entity.headTexture == HeadTextures.MIMIC) {
+		if (entity is Zombie && entity.isBaby) {
 			setMimicDead(config.mimicMessage)
 		}
 	}

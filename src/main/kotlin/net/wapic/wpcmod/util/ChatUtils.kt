@@ -1,9 +1,9 @@
 package net.wapic.wpcmod.util
 
+import net.minecraft.ChatFormatting
+import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.network.chat.Style
-import net.minecraft.network.chat.Component
-import net.minecraft.ChatFormatting
 import java.util.regex.Pattern
 
 object ChatUtils {
@@ -15,6 +15,18 @@ object ChatUtils {
 	}
 
 	fun sendAlert(title: MutableComponent, subtitle: MutableComponent = Component.literal(""), fadeInTicks: Int = 5, stayTicks: Int = 20, fadeOutTicks: Int = 5) = with(MC.inGameHud) {
+		setTitle(title)
+		setSubtitle(subtitle)
+		setTimes(fadeInTicks, stayTicks, fadeOutTicks)
+	}
+
+	fun sendAlert(
+		title: Component,
+		subtitle: Component = Component.literal(""),
+		fadeInTicks: Int = 5,
+		stayTicks: Int = 20,
+		fadeOutTicks: Int = 5
+	) = with(MC.inGameHud) {
 		setTitle(title)
 		setSubtitle(subtitle)
 		setTimes(fadeInTicks, stayTicks, fadeOutTicks)

@@ -2,16 +2,16 @@ package net.wapic.wpcmod.util
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
-import net.minecraft.client.Minecraft
 import net.minecraft.Util
+import net.minecraft.client.Minecraft
 import net.minecraft.network.chat.Component
 import net.wapic.wpcmod.util.ItemUtils.skyBlockID
 
 object SackUtils {
 
-	private val gfsQueue: MutableList<String> = mutableListOf()
+	private val gfsQueue: ArrayDeque<String> = ArrayDeque()
 	private var lastCommand: Long = 0
-	private const val COMMAND_DELAY: Long = 2500
+	private const val COMMAND_DELAY: Long = 2000 // Hypixel Command Rate Limitation
 	private val gfsRegex = Regex("^Moved (?<amount>\\d+) (?<item>.+) from your Sacks to your inventory\\.$")
 	private var gfsLock = false
 
@@ -23,9 +23,8 @@ object SackUtils {
 	private fun onTick(client: Minecraft) {
 		if (gfsQueue.isEmpty()) return
 		if (Util.getMillis() - lastCommand >= COMMAND_DELAY) {
-			val command = gfsQueue.first()
+			val command = gfsQueue.removeFirstOrNull() ?: return
 			Utils.runCommand(command)
-			gfsQueue.removeFirst()
 			lastCommand = Util.getMillis()
 		}
 	}
@@ -33,10 +32,7 @@ object SackUtils {
 	private fun onMessageReceived(text: Component, actionBar: Boolean) {
 		if(actionBar) return
 
-		if(text.string.matches(gfsRegex)) {
-			gfsLock = false
-			lastCommand = Util.getMillis()
-		}
+		if (text.string.matches(gfsRegex)) gfsLock = false
 	}
 
 	fun queueGetFromSack(item: String, maxStackSize: Int) {
@@ -56,6 +52,7 @@ object SackUtils {
 
 		if (stackSize < maxStackSize || stackSize != maxStackSize) {
 			Utils.runCommand("gfs $item ${maxStackSize - stackSize}")
+			lastCommand = Util.getMillis()
 			gfsLock = true
 		}
 	}

@@ -9,7 +9,7 @@ class DungeonConfig {
 	@ConfigEditorBoolean
 	var autoCloseChests: Boolean = false
 
-	@ConfigOption(name = "Alert on Talisman", desc = "Alerts you when secret chests contain a treasure talisman")
+	@ConfigOption(name = "Alert on Treasure Talisman", desc = "Alerts when a treasure talisman spawns nearby")
 	@ConfigEditorBoolean
 	var alertOnTreasureTalismans: Boolean = false
 

@@ -40,13 +40,13 @@ import net.wapic.wpcmod.features.entity.TagESP
 import net.wapic.wpcmod.features.fishing.AutoFish
 import net.wapic.wpcmod.features.galatea.GalateaESP
 import net.wapic.wpcmod.features.general.Freecam
-import net.wapic.wpcmod.features.general.GoonDisplay
 import net.wapic.wpcmod.features.general.PreventPlacingItems
 import net.wapic.wpcmod.features.general.shortcut.ShortcutHandler
 import net.wapic.wpcmod.features.instance.AutoGFS
 import net.wapic.wpcmod.features.instance.CancelInteract
 import net.wapic.wpcmod.features.inventory.ArmorSwapper
 import net.wapic.wpcmod.features.inventory.AutoCloseWardrobe
+import net.wapic.wpcmod.features.inventory.LeatherColor
 import net.wapic.wpcmod.features.inventory.ScrollableTooltips
 import net.wapic.wpcmod.features.inventory.experiments.AutoExperiments
 import net.wapic.wpcmod.features.inventory.experiments.SuperpairsSolver
@@ -151,7 +151,6 @@ object WpcMod : ModInitializer {
 		Freecam()
 		RatESP.init()
 		TagESP.init()
-		GoonDisplay.init()
 
 		//Experiments
 		AutoExperiments.init()
@@ -202,6 +201,7 @@ object WpcMod : ModInitializer {
 		ArmorSwapper.init()
 		ScrollableTooltips.init()
 		AutoCloseWardrobe.init()
+		LeatherColor.init()
 
 		// Dev
 		SkyBlockID.init()

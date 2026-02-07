@@ -1,9 +1,9 @@
 package net.wapic.wpcmod.features.dungeons.funnymap.ui
 
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
-import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.client.KeyMapping
 import com.mojang.blaze3d.platform.InputConstants
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
+import net.minecraft.client.KeyMapping
+import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.util.CommonColors
 import net.minecraft.util.profiling.Profiler
 import net.wapic.wpcmod.WpcMod
@@ -166,13 +166,15 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 			)
 			name.addAll(room.data.name.split(" "))
 
+			val color = if (room.state == RoomState.GREEN) CommonColors.GREEN else CommonColors.WHITE
+
 			// Offset + half of roomsize
 			MapRenderer.renderCenteredText(
 				drawContext,
 				name,
 				xOffsetName.toInt() + halfRoomSize,
 				yOffsetName.toInt() + halfRoomSize,
-				CommonColors.WHITE
+				color
 			)
 
 			if (config.mapCheckmark) {
