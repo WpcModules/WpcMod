@@ -20,15 +20,15 @@ object EntityEvents {
 	}
 
 	@JvmField
-	val DESPAWN: Event<EntityDespawn> = EventFactory.createArrayBacked(EntityDespawn::class.java) { listeners ->
-		EntityDespawn { entity ->
+	val DEATH: Event<EntityDeath> = EventFactory.createArrayBacked(EntityDeath::class.java) { listeners ->
+		EntityDeath { entity ->
 			for (listener in listeners) {
-				listener.onEntityDespawn(entity)
+				listener.onEntityDeath(entity)
 			}
 		}
 	}
 
-	fun interface EntityDespawn {
-		fun onEntityDespawn(entity: Entity)
+	fun interface EntityDeath {
+		fun onEntityDeath(entity: Entity)
 	}
 }
