@@ -10,10 +10,6 @@ import net.wapic.wpcmod.util.MC
 
 class GeneralConfig {
 
-	@ConfigOption(name = "Goon Display", desc = "Show when to refresh goons")
-	@ConfigEditorBoolean
-	var goonDisplay = false
-
 	@ConfigOption(name = "Prevent Placing Items", desc = "Prevent placing items such as Weird Tuba and Flower of Truth")
 	@ConfigEditorBoolean
 	var preventPlacing: Boolean = false
