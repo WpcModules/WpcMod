@@ -40,7 +40,6 @@ import net.wapic.wpcmod.features.entity.TagESP
 import net.wapic.wpcmod.features.fishing.AutoFish
 import net.wapic.wpcmod.features.galatea.GalateaESP
 import net.wapic.wpcmod.features.general.Freecam
-import net.wapic.wpcmod.features.general.GoonDisplay
 import net.wapic.wpcmod.features.general.PreventPlacingItems
 import net.wapic.wpcmod.features.general.shortcut.ShortcutHandler
 import net.wapic.wpcmod.features.instance.AutoGFS
@@ -152,7 +151,6 @@ object WpcMod : ModInitializer {
 		Freecam()
 		RatESP.init()
 		TagESP.init()
-		GoonDisplay.init()
 
 		//Experiments
 		AutoExperiments.init()

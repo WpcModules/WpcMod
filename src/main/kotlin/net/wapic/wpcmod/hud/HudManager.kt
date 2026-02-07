@@ -13,7 +13,6 @@ import net.wapic.wpcmod.features.dungeons.floor7.InactiveWaypoints
 import net.wapic.wpcmod.features.dungeons.floor7.InvincibilityTimer
 import net.wapic.wpcmod.features.dungeons.floor7.TickTimers
 import net.wapic.wpcmod.features.dungeons.funnymap.ui.MapElement
-import net.wapic.wpcmod.features.general.GoonDisplay
 import net.wapic.wpcmod.features.kuudra.KuudraDisplay
 import net.wapic.wpcmod.util.MC
 import java.io.File
@@ -43,7 +42,6 @@ object HudManager {
 		MapElement,
 		SpiritBearTimer,
 		InvincibilityTimer,
-		GoonDisplay,
 	)
 
 	fun init() {
