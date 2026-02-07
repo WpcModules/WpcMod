@@ -4,10 +4,13 @@ import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.gui.screens.inventory.ContainerScreen
 import net.minecraft.sounds.SoundEvents
-import net.minecraft.network.chat.Component
+import net.minecraft.world.item.ItemStack
 import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.events.EntityEvents
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.DungeonUtils
+import net.wapic.wpcmod.util.HeadTextures
+import net.wapic.wpcmod.util.ItemUtils.headTexture
 import net.wapic.wpcmod.util.MC
 
 object AutoCloseChests {
@@ -17,26 +20,22 @@ object AutoCloseChests {
 
 	fun init() {
 		ScreenEvents.AFTER_INIT.register { _, screen, _, _ -> onScreenInit(screen) }
+		EntityEvents.ITEM_DATA_SET.register(::onItemDataSet)
+	}
+
+	fun onItemDataSet(stack: ItemStack) {
+		if (!config.alertOnTreasureTalismans || !DungeonUtils.inDungeons) return
+		if (stack.headTexture == HeadTextures.TREASURE_TALISMAN) {
+			ChatUtils.sendAlert(stack.hoverName)
+			ChatUtils.sendMessage(stack.hoverName.string, stack.hoverName.style)
+			MC.player?.makeSound(SoundEvents.EXPERIENCE_ORB_PICKUP)
+		}
 	}
 
 	fun onScreenInit(screen: Screen) {
 		if (!config.autoCloseChests || !DungeonUtils.inDungeons) return
-		if (screen !is ContainerScreen || !defaultTitles.contains(screen.title.string)) return
-
-		if (config.alertOnTreasureTalismans) {
-			ScreenEvents.afterTick(screen).register { screen ->
-				(screen as ContainerScreen).menu?.container?.find { stack ->
-					stack.hoverName.string.contains(
-						"Treasure Talisman"
-					)
-				}?.let { stack ->
-					ChatUtils.sendAlert(Component.literal(stack.hoverName.string).setStyle(stack.hoverName.style))
-					ChatUtils.sendMessage(stack.hoverName.string, stack.hoverName.style)
-					MC.player?.makeSound(SoundEvents.EXPERIENCE_ORB_PICKUP)
-				}
-			}
+		if (screen.title.string in defaultTitles && screen is ContainerScreen) {
+			screen.onClose()
 		}
-
-		screen.onClose()
 	}
 }
