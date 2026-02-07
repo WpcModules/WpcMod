@@ -3,20 +3,32 @@ package net.wapic.wpcmod.features.events.diana
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.network.chat.ClickEvent
 import net.minecraft.network.chat.Component
+import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.Utils
 
 object AutoAnswerSphinx {
 	// I've typed these from memory which will be incorrect almost every time
-	// questions shouldn't matter but I'll keep em here for now
-	val questionsToAnswers = mapOf(
-		"What mob is unique to the Fishing Festival?" to "Shark",
-		"Where can the Titanoboa be found?" to "Backwater Bayou",
-		"Where is the Purple Dye sold?" to "Dark Auction",
-		"Who sells gold essence?" to "Marigold",
-		"Which of these is not a pet?" to "Slime",
-		"How many floors are there in the Catacombs?" to "7",
+	// questions shouldn't matter, but I'll keep em here for now
+	private val questionsToAnswers = mapOf(
+		"Who owns the Gold Essence Shop?" to "Marigold",
+		"Who helps you apply Rod Parts?" to "Roddy",
+		"How many floors are there in The Catacombs?" to "7",
+		"How do you obtain the Dark Purple Dye?" to "Dark Auction",
+		"Which of these is NOT a pet?" to "Slime",
+		"Which of these is NOT a type of Gemstone?" to "Prismite",
+		"Who runs the Chocolate Factory?" to "Hoppity",
+		"What type of mob is exclusive to the Fishing Festival?" to "Shark",
+		"Where is the Titanoboa found?" to "Backwater Bayou",
+		"Which type of Gemstone has the lowest Breaking Power?" to "Ruby",
+		"What item do you use to kill Pests?" to "Vacuum",
+		"What does Junker Joel collect?" to "Junk",
+		"Where is Trevor the Trapper found?" to "Mushroom Desert",
+		"Which item rarity comes after Mythic?" to "Divine",
+		"What is the first type of slayer Maddox offers?" to "Zombie",
 	)
+	private var nextAnswer: String? = null
 
 	fun init() {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
@@ -24,16 +36,16 @@ object AutoAnswerSphinx {
 
 	fun onMessageReceived(message: Component, actionBar: Boolean) {
 		if (actionBar || Utils.getLocation() != Island.HUB) return
-
-		val clickableMessages = message.siblings.filter {
-			it.style.clickEvent?.action() == ClickEvent.Action.RUN_COMMAND
+		if (nextAnswer == null) {
+			nextAnswer = questionsToAnswers[message.string]
 		}
 
-		clickableMessages.forEach { component ->
-			val hasAnswer = questionsToAnswers.values.find { answer -> answer in component.string }
-			if(hasAnswer != null) {
-				val answer = component.string.first().code - 98
-				Utils.runCommand("sphinxanswer $answer")
+		nextAnswer?.let { answer ->
+			WpcMod.logger.info("${message.string} $answer")
+			if (message.string.matches(Regex("§7\\s{3}[ABC]\\) §f$answer"))) {
+				val clickEvent = message.style.clickEvent as? ClickEvent.RunCommand
+				nextAnswer = null
+				Utils.runCommand(clickEvent?.command ?: return ChatUtils.sendMessage("Unable to find click event"))
 			}
 		}
 	}
