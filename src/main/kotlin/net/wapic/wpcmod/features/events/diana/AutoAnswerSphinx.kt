@@ -4,13 +4,15 @@ import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.network.chat.ClickEvent
 import net.minecraft.network.chat.Component
 import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.Utils
 
 object AutoAnswerSphinx {
-	// I've typed these from memory which will be incorrect almost every time
-	// questions shouldn't matter, but I'll keep em here for now
+
+	private val config = WpcMod.config.events.diana
+
 	private val questionsToAnswers = mapOf(
 		"Who owns the Gold Essence Shop?" to "Marigold",
 		"Who helps you apply Rod Parts?" to "Roddy",
@@ -32,10 +34,11 @@ object AutoAnswerSphinx {
 
 	fun init() {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
+		WorldChangeEvent.AFTER.register { nextAnswer = null }
 	}
 
 	fun onMessageReceived(message: Component, actionBar: Boolean) {
-		if (actionBar || Utils.getLocation() != Island.HUB) return
+		if (actionBar || Utils.getLocation() != Island.HUB || !config.autoAnswerSphinx) return
 		if (nextAnswer == null) {
 			nextAnswer = questionsToAnswers[message.string]
 		}

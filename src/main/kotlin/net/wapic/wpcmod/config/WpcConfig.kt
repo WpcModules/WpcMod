@@ -4,13 +4,14 @@ import io.github.notenoughupdates.moulconfig.Config
 import io.github.notenoughupdates.moulconfig.Social
 import io.github.notenoughupdates.moulconfig.annotations.Category
 import io.github.notenoughupdates.moulconfig.common.MyResourceLocation
-import net.fabricmc.loader.api.FabricLoader
 import io.github.notenoughupdates.moulconfig.common.text.StructuredText
+import net.fabricmc.loader.api.FabricLoader
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.chat.ChatConfig
 import net.wapic.wpcmod.config.dev.DevConfig
 import net.wapic.wpcmod.config.dungeon.DungeonConfig
 import net.wapic.wpcmod.config.end.EndConfig
+import net.wapic.wpcmod.config.events.EventsConfig
 import net.wapic.wpcmod.config.fishing.FishingConfig
 import net.wapic.wpcmod.config.galatea.GalateaConfig
 import net.wapic.wpcmod.config.general.GeneralConfig
@@ -67,6 +68,9 @@ class WpcConfig : Config() {
 
 	@Category(name = "Chat", desc = "Configuration options for Chat")
 	var chat: ChatConfig = ChatConfig()
+
+	@Category(name = "Events", desc = "Configuration options for SkyBlock Events")
+	var events: EventsConfig = EventsConfig()
 
 	@Category(name = "Inventory", desc = "Features that interact mainly with the inventory")
 	var inventory: InventoryConfig = InventoryConfig()
