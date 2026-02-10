@@ -28,6 +28,10 @@ class ChatConfig {
 	@ConfigEditorText
 	var autoPartyAccept: String = ""
 
+	@ConfigOption(name = "Auto Trapper Accept", desc = "Auto accept trapper task")
+	@ConfigEditorBoolean
+	var autoTrapperAccept: Boolean = false
+
 	@Category(name = "Spam Filter", desc = "Configure how to handle chat spam")
 	var spam: SpamConfig = SpamConfig()
 }

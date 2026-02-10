@@ -25,10 +25,7 @@ import net.minecraft.network.chat.Style
 import net.wapic.wpcmod.commands.*
 import net.wapic.wpcmod.config.ConfigManager
 import net.wapic.wpcmod.config.WpcConfig
-import net.wapic.wpcmod.features.chat.AutoAcceptPartyInvite
-import net.wapic.wpcmod.features.chat.ChatEmotes
-import net.wapic.wpcmod.features.chat.CompactChat
-import net.wapic.wpcmod.features.chat.SpamFilter
+import net.wapic.wpcmod.features.chat.*
 import net.wapic.wpcmod.features.dev.SkyBlockID
 import net.wapic.wpcmod.features.dungeons.*
 import net.wapic.wpcmod.features.dungeons.floor7.*
@@ -202,6 +199,7 @@ object WpcMod : ModInitializer {
 		SpamFilter.init()
 		ChatEmotes.init()
 		AutoAcceptPartyInvite.init()
+		AutoAcceptTrapper.init()
 
 		// Inventory
 		ArmorSwapper.init()
