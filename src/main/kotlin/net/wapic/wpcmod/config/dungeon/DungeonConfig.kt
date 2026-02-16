@@ -23,7 +23,7 @@ class DungeonConfig {
 
 	@ConfigOption(
 		name = "Easy Superboom",
-		desc = "Select and place superboom from hotbar using the pick block keybind on crypts/explodable walls"
+		desc = "Select and place superboom from the hotbar using the pick block keybind"
 	)
 	@ConfigEditorBoolean
 	var easySuperboom: Boolean = false
