@@ -21,6 +21,7 @@ import net.wapic.wpcmod.config.dungeon.ScoreCalculationConfig.ScoreHudType
 import net.wapic.wpcmod.config.dungeon.ScoreCalculationConfig.ScoreMessageType
 import net.wapic.wpcmod.events.*
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
+import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.DungeonScan
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
 import net.wapic.wpcmod.hud.SimpleHudElement
 import net.wapic.wpcmod.util.*
@@ -85,7 +86,8 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 
 	private val roomClearPercentage: Double
 		get() {
-			val total = getTotalRooms()
+			val total =
+				if (DungeonScan.hasScanned && FunnyMap.Info.roomCount > 0) FunnyMap.Info.roomCount else getTotalRooms()
 			val complete = completedRooms + (!DungeonUtils.bossSpawned).ifTrue(1) + (!bloodCleared).ifTrue(1)
 			return if (total > 0) (complete / total.toDouble()).coerceAtMost(1.0) else 0.0
 		}
@@ -95,6 +97,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 	// Secrets
 	private var foundSecrets = 0
 	var totalSecrets = 0
+		get() = if (DungeonScan.hasScanned && FunnyMap.Info.secretCount > 0) FunnyMap.Info.secretCount else field
 
 	private val secretsNeeded get() = if (totalSecrets == 0) 1 else ceil(totalSecrets * floorRequirement.secretPercentage).toInt()
 	private val secretsClearedPercentage get() = foundSecrets / secretsNeeded.toDouble()
@@ -186,8 +189,6 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 	private fun Double.applyEntranceModifier() = if (isEntrance) (this * 0.7).toInt() else this.toInt()
 
 	private fun getTotalRooms(): Int {
-		if (FunnyMap.Info.roomCount != 0) return FunnyMap.Info.roomCount
-
 		if (clearedPercentage > 0 && completedRooms > 0) {
 			val key = (100 * (completedRooms / clearedPercentage.toDouble())).roundToInt()
 			totalRoomMap[key] = (totalRoomMap[key] ?: 0) + 1
@@ -410,7 +411,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 				"§f* §eMissing Puzzles: §c$missingPuzzles",
 				"§f* §eFailed Puzzles: §c$failedPuzzles",
 				"§f* §eSecrets: §a$foundSecrets§7/§a$secretsNeeded §7(§6Total: $totalSecrets§7)",
-				"§f* §eCrypts: §a$crypts",
+				"§f* §eCrypts: §a$crypts §7(§6Total: ${FunnyMap.Info.cryptCount})",
 				"§f* §ePrince: ${if (princeKilled) "§a✔" else "§c✖"}",
 			)
 

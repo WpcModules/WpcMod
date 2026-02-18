@@ -1,11 +1,10 @@
 package net.wapic.wpcmod.features.dungeons.funnymap.dungeon
 
-import net.minecraft.world.level.block.Blocks
 import net.minecraft.core.BlockPos
-import net.minecraft.world.level.levelgen.Heightmap
+import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.chunk.EmptyLevelChunk
+import net.minecraft.world.level.levelgen.Heightmap
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.features.dungeons.ScoreCalculation
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.*
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.DungeonScan.scan
 import net.wapic.wpcmod.util.ChatUtils
@@ -94,8 +93,6 @@ object DungeonScan {
 				ChatUtils.sendMessage(lines.joinToString(separator = "\n"))
 			}
 			FunnyMap.Info.roomCount = FunnyMap.Info.dungeonList.filter { it is Room && !it.isSeparator }.size
-
-			ScoreCalculation.totalSecrets = FunnyMap.Info.secretCount
 
 			hasScanned = true
 		}
