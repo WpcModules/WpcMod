@@ -21,6 +21,13 @@ class DungeonConfig {
 	@ConfigEditorBoolean
 	var cancelInteract: Boolean = false
 
+	@ConfigOption(
+		name = "Easy Superboom",
+		desc = "Select and place superboom from the hotbar using the pick block keybind"
+	)
+	@ConfigEditorBoolean
+	var easySuperboom: Boolean = false
+
 	@Accordion
 	@ConfigOption(name = "Dungeonbreaker", desc = "")
 	var dungeonbreaker: DungeonbreakerConfig = DungeonbreakerConfig()

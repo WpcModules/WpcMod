@@ -174,6 +174,7 @@ object WpcMod : ModInitializer {
 		SpiritBearTimer.init()
 		DungeonBreaker.init()
 		InvincibilityTimer.init()
+		EasySuperboom.init()
 
 		// Kuudra
 		KuudraESP.init()
