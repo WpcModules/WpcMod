@@ -28,7 +28,7 @@ class ChatConfig {
 	@ConfigEditorText
 	var autoPartyAccept: String = ""
 
-	@ConfigOption(name = "Auto Trapper Accept", desc = "Auto accept trapper task")
+	@ConfigOption(name = "Auto Trapper Accept", desc = "Auto Accept Trevor the Trapper task")
 	@ConfigEditorBoolean
 	var autoTrapperAccept: Boolean = false
 
