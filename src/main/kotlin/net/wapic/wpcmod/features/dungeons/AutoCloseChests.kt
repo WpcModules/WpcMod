@@ -3,6 +3,7 @@ package net.wapic.wpcmod.features.dungeons
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.gui.screens.inventory.ContainerScreen
+import net.minecraft.network.chat.contents.TranslatableContents
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.world.item.ItemStack
 import net.wapic.wpcmod.WpcMod
@@ -16,7 +17,7 @@ import net.wapic.wpcmod.util.MC
 object AutoCloseChests {
 
 	private val config get() = WpcMod.config.dungeon
-	private val defaultTitles = listOf("Chest", "Large Chest")
+	private val defaultTitles = listOf("container.chest", "container.chestDouble")
 
 	fun init() {
 		ScreenEvents.AFTER_INIT.register { _, screen, _, _ -> onScreenInit(screen) }
@@ -34,7 +35,9 @@ object AutoCloseChests {
 
 	fun onScreenInit(screen: Screen) {
 		if (!config.autoCloseChests || !DungeonUtils.inDungeons) return
-		if (screen.title.string in defaultTitles && screen is ContainerScreen) {
+
+		val title = (screen.title.contents as? TranslatableContents)?.key ?: return
+		if (title in defaultTitles && screen is ContainerScreen) {
 			screen.onClose()
 		}
 	}
