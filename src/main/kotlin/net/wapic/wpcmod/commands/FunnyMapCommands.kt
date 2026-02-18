@@ -4,8 +4,8 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
-import net.minecraft.network.chat.Style
 import net.minecraft.ChatFormatting
+import net.minecraft.network.chat.Style
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.DungeonScan
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.ScanUtils
@@ -16,15 +16,16 @@ import net.wapic.wpcmod.util.Utils
 
 object FunnyMapCommands : Command("dungeon") {
 
-	val roomDataFromPlayer: LiteralArgumentBuilder<FabricClientCommandSource> = literal("room").executes{
+	val roomDataFromPlayer: LiteralArgumentBuilder<FabricClientCommandSource> = literal("room").executes {
 		val pos = if(Freecam.isEnabled) {
 			MC.instance.cameraEntity?.position() ?: return@executes 0
 		} else {
 			MC.player?.position() ?: return@executes 0
 		}
 
-		val roomCentre = ScanUtils.getRoomCentre(pos.x.toInt(), pos.y.toInt())
+		val roomCentre = ScanUtils.getRoomCentre(pos.x.toInt(), pos.z.toInt())
 		val data = ScanUtils.getRoomData(roomCentre.first, roomCentre.second)
+
 		if (data != null) {
 			Utils.copyToClipboard(data.toString())
 			ChatUtils.sendMessage("Copied room data to clipboard.", Style.EMPTY.withColor(ChatFormatting.GREEN))
