@@ -1,5 +1,6 @@
 package net.wapic.wpcmod.features.mining
 
+import net.minecraft.world.level.block.entity.ChestBlockEntity
 import net.minecraft.world.phys.AABB
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldRenderEvent
@@ -20,7 +21,7 @@ object ChestESP {
 		if (!config.tracer && !config.box) return
 		worldRenderContext.profiler.push("chest-esp")
 
-		val blockEntities = worldRenderContext.world.globallyRenderedBlockEntities
+		val blockEntities = Utils.getLoadedBlockEntities().filterIsInstance<ChestBlockEntity>()
 
 		val playerPos = worldRenderContext.camera.pos
 
