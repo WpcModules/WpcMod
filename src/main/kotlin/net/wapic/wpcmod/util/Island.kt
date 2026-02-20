@@ -24,11 +24,11 @@ enum class Island(val displayName: String = "", val internalName: String = "") {
 
 	companion object {
 
-		fun fromDisplayName(displayName: String): Island {
+		fun fromDisplayName(displayName: String?): Island {
 			return entries.find { it.displayName == displayName } ?: UNKNOWN
 		}
 
-		fun fromInternalName(internalName: String): Island {
+		fun fromInternalName(internalName: String?): Island {
 			return entries.find { it.internalName == internalName } ?: UNKNOWN
 		}
 	}

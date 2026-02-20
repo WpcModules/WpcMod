@@ -1,9 +1,13 @@
 package net.wapic.wpcmod.mixin;
 
-import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.protocol.game.*;
-import net.wapic.wpcmod.events.*;
+import net.wapic.wpcmod.events.GuiEvents;
+import net.wapic.wpcmod.events.ParticleEvents;
+import net.wapic.wpcmod.events.ScoreboardChangeEvent;
+import net.wapic.wpcmod.events.SoundEvents;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -56,7 +60,8 @@ public abstract class ClientPacketListenerMixin {
 		String suffix = team == null ? "" : team.getPlayerSuffix().getString();
 
 		String line = prefix + String.join(" ", packet.getPlayers()) + suffix;
+		String unformattedLine = ChatFormatting.stripFormatting(line);
 
-		ScoreboardChangeEvent.EVENT.invoker().onScoreboardChange(line);
+		ScoreboardChangeEvent.EVENT.invoker().onScoreboardChange(unformattedLine);
 	}
 }

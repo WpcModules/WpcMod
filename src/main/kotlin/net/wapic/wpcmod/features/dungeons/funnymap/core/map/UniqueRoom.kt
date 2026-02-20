@@ -2,7 +2,6 @@ package net.wapic.wpcmod.features.dungeons.funnymap.core.map
 
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
-import kotlin.collections.remove
 
 class UniqueRoom(arrX: Int, arrY: Int, room: Room) {
 	private val config get() = WpcMod.config.dungeon.funnyMap
@@ -14,6 +13,7 @@ class UniqueRoom(arrX: Int, arrY: Int, room: Room) {
 		get() = FunnyMap.Info.dungeonList[topLeft.second * 11 + topLeft.first] as? Room ?: field
 	val tiles = mutableListOf(room to Pair(arrX, arrY))
 	var hasMimic = false
+	var hasInitialized = false
 
 	init {
 		if (room.data.name == "Unknown") {
@@ -27,14 +27,19 @@ class UniqueRoom(arrX: Int, arrY: Int, room: Room) {
 	}
 
 	fun init(room: Room) {
+		// I'm not sure why on rare occasions rooms get initialized twice but this should fix that for now
+		if (hasInitialized) return WpcMod.logger.error("Tried to initialize \"${room.data.name}\" but it is already initialized")
+
 		FunnyMap.Info.cryptCount += room.data.crypts
 		FunnyMap.Info.secretCount += room.data.secrets
+
 		when (room.data.type) {
 			RoomType.TRAP -> FunnyMap.Info.trapType = room.data.name.split(" ")[0]
 			RoomType.PUZZLE -> Puzzle.fromName(room.data.name)?.let { FunnyMap.Info.puzzles.putIfAbsent(it, false) }
-
 			else -> {}
 		}
+
+		hasInitialized = true
 	}
 
 	fun addTile(x: Int, y: Int, tile: Room) {

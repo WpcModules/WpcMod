@@ -1,12 +1,11 @@
 package net.wapic.wpcmod.util
 
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
-import net.minecraft.client.Minecraft
-import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket
 import net.minecraft.network.chat.Component
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.PlayerListChangeEvent
+import net.wapic.wpcmod.events.ScoreboardChangeEvent
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.dungeons.ScoreCalculation
@@ -20,6 +19,7 @@ object DungeonUtils {
 	private const val DUNGEON_END_MESSAGE: String = "> EXTRA STATS <"
 
 	private val puzzleRegex = Regex(" (?<puzzle>.+): \\[(?:(?<completed>✔)|(?<failed>✖)|(?<missing>✦))] ?")
+	private val floorRegex = Regex("^ ⏣ The Catacombs \\((?<floor>[FME][1-7]?)\\)$")
 	private val incompletePuzzles: HashSet<String> = hashSetOf()
 	private val failedPuzzles: HashSet<String> = hashSetOf()
 	var bossSpawned = false
@@ -41,12 +41,13 @@ object DungeonUtils {
 	fun init() {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 		PlayerListChangeEvent.EVENT.register(::onPlayerListChange)
-		ClientTickEvents.END_CLIENT_TICK.register(::onTick)
+		ScoreboardChangeEvent.EVENT.register(::onScoreboardUpdate)
 
 		WorldChangeEvent.BEFORE.register { _ ->
 			incompletePuzzles.clear()
 			failedPuzzles.clear()
 			bossSpawned = false
+			currentFloor = DungeonFloor.NONE
 		}
 	}
 
@@ -81,13 +82,12 @@ object DungeonUtils {
 		}
 	}
 
-	fun onTick(client: Minecraft) {
+	fun onScoreboardUpdate(line: String) {
 		if (!inDungeons) return
-		ScoreboardUtil.sidebarLines = ScoreboardUtil.fetchScoreboardLines().map { ScoreboardUtil.cleanSB(it) }
 
-		ScoreboardUtil.sidebarLines.find { it.contains("The Catac") }?.let {
-			val floorShortName = it.substringAfter("(").substringBefore(")")
-			currentFloor = DungeonFloor.fromShortName(floorShortName)
+		if (line.contains("⏣ The Catacombs")) {
+			val matcher = floorRegex.find(line)
+			currentFloor = DungeonFloor.fromShortName(matcher?.groups["floor"]?.value)
 		}
 	}
 
@@ -197,7 +197,7 @@ object DungeonUtils {
 		NONE("");
 
 		companion object {
-			fun fromShortName(shortName: String): DungeonFloor {
+			fun fromShortName(shortName: String?): DungeonFloor {
 				return entries.find { it.shortName == shortName } ?: NONE
 			}
 		}

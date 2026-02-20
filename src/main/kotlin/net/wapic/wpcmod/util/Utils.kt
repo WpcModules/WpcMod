@@ -3,20 +3,21 @@ package net.wapic.wpcmod.util
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.hypixel.modapi.HypixelModAPI
 import net.hypixel.modapi.packet.impl.clientbound.event.ClientboundLocationPacket
-import net.minecraft.world.level.block.entity.BlockEntity
-import net.minecraft.resources.ResourceLocation
 import net.minecraft.Util
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.level.ChunkPos
+import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.chunk.EmptyLevelChunk
 import net.minecraft.world.level.chunk.LevelChunk
 import net.wapic.wpcmod.WpcMod
 import java.util.*
+import kotlin.jvm.optionals.getOrNull
 import kotlin.math.max
 
 object Utils {
 
 	private const val MIN_DELAY: Long = 500
-	private val commandQueue = mutableListOf<String>()
+	private val commandQueue = ArrayDeque<String>()
 	private var lastCommand: Long = 0
 
 	private var location: Island? = null
@@ -52,7 +53,7 @@ object Utils {
 		if (commandQueue.isEmpty()) return
 
 		if (Util.getMillis() - lastCommand > MIN_DELAY) {
-			runCommand(commandQueue.first())
+			runCommand(commandQueue.pollFirst())
 			lastCommand = Util.getMillis()
 			commandQueue.removeFirst()
 		}
@@ -63,10 +64,8 @@ object Utils {
 	}
 
 	private fun onHypixelLocationPacket(packet: ClientboundLocationPacket) {
-		if (packet.map.isPresent) {
-			location = Island.fromDisplayName(packet.map.get())
-			WpcMod.logger.info("Map set to: $location")
-		}
+		location = Island.fromDisplayName(packet.map.getOrNull())
+		WpcMod.logger.info("Location set to: $location")
 	}
 
 	fun getLoadedBlockEntities(): List<BlockEntity> {
@@ -94,7 +93,6 @@ object Utils {
 
 		return chunks.filter { chunk -> MC.world?.getChunk(chunk.x, chunk.z) !is EmptyLevelChunk }
 			.map { chunk -> MC.world?.getChunk(chunk.x,chunk.z) }
-			.filter { chunk -> chunk?.isEmpty == false }
 	}
 
 }

@@ -6,6 +6,7 @@ import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
 
 object APIUtils {
+
 	fun fetch(uri: String): String? {
 		HttpClients.createMinimal().use {
 			try {

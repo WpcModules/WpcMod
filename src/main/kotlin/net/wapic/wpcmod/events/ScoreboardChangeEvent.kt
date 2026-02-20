@@ -7,9 +7,9 @@ object ScoreboardChangeEvent {
 
 	@JvmField
 	val EVENT: Event<ScoreboardChange> = EventFactory.createArrayBacked(ScoreboardChange::class.java) { listeners ->
-		ScoreboardChange { entries ->
+		ScoreboardChange { line ->
 			for (listener in listeners) {
-				listener.onScoreboardChange(entries)
+				listener.onScoreboardChange(line)
 			}
 		}
 	}

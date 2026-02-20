@@ -86,8 +86,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 
 	private val roomClearPercentage: Double
 		get() {
-			val total =
-				if (DungeonScan.hasScanned && FunnyMap.Info.roomCount > 0) FunnyMap.Info.roomCount else getTotalRooms()
+			val total = getTotalRooms()
 			val complete = completedRooms + (!DungeonUtils.bossSpawned).ifTrue(1) + (!bloodCleared).ifTrue(1)
 			return if (total > 0) (complete / total.toDouble()).coerceAtMost(1.0) else 0.0
 		}
@@ -189,6 +188,8 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 	private fun Double.applyEntranceModifier() = if (isEntrance) (this * 0.7).toInt() else this.toInt()
 
 	private fun getTotalRooms(): Int {
+		if (DungeonScan.hasScanned && FunnyMap.Info.roomCount > 0) return FunnyMap.Info.roomCount
+
 		if (clearedPercentage > 0 && completedRooms > 0) {
 			val key = (100 * (completedRooms / clearedPercentage.toDouble())).roundToInt()
 			totalRoomMap[key] = (totalRoomMap[key] ?: 0) + 1
@@ -288,10 +289,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 
 		if (line.startsWith("Cleared: ")) {
 			val matcher = dungeonClearedPattern.find(line)
-			if (matcher != null) {
-				clearedPercentage = matcher.groups["percentage"]?.value?.toIntOrNull() ?: 0
-				return
-			}
+			clearedPercentage = matcher?.groups["percentage"]?.value?.toIntOrNull() ?: 0
 		}
 	}
 
@@ -404,32 +402,25 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 		applyTransformations(drawContext.pose())
 
 		if (config.scoreHudType == ScoreHudType.FULL) {
-
-			val status = setOf(
-				"§9Dungeon Status",
-				"§f* §eDeaths: §c$deaths",
-				"§f* §eMissing Puzzles: §c$missingPuzzles",
-				"§f* §eFailed Puzzles: §c$failedPuzzles",
-				"§f* §eSecrets: §a$foundSecrets§7/§a$secretsNeeded §7(§6Total: $totalSecrets§7)",
-				"§f* §eCrypts: §a$crypts §7(§6Total: ${FunnyMap.Info.cryptCount})",
-				"§f* §ePrince: ${if (princeKilled) "§a✔" else "§c✖"}",
-			)
-
-			val score = setOf(
-				"§9Score",
-				"§f* §eSkill Score: §a$skillScore",
-				"§f* §eExplore Score: §a$exploreScore §7(§e$roomClearScore §7+ §6$secretScore§7)",
-				"§f* §eSpeed Score: §a$speedScore",
-				"§f* §eBonus Score: §a$bonusScore",
-				"§f* §eTotal Score: §a$totalScore",
-				"§f* §eRank: $rank",
-			)
-
 			val lines = buildList {
-				addAll(status)
+				add("§9Dungeon Status")
+				add("§f* §eDeaths: §c$deaths")
+				add("§f* §eMissing Puzzles: §c$missingPuzzles")
+				add("§f* §eFailed Puzzles: §c$failedPuzzles")
+				add("§f* §eSecrets: §a$foundSecrets§7/§a$secretsNeeded §7(§6Total: $totalSecrets§7)")
+				add("§f* §eCrypts: §a$crypts §7(§6Total: ${FunnyMap.Info.cryptCount})")
+				add("§f* §ePrince: ${if (princeKilled) "§a✔" else "§c✖"}")
 				if (isMimicFloor) add("§f* §eMimic: ${if (mimicKilled) "§a✔" else "§c✖"}")
+
 				add("")
-				addAll(score)
+
+				add("§9Score")
+				add("§f* §eSkill Score: §a$skillScore")
+				add("§f* §eExplore Score: §a$exploreScore §7(§e$roomClearScore §7+ §6$secretScore§7)")
+				add("§f* §eSpeed Score: §a$speedScore")
+				add("§f* §eBonus Score: §a$bonusScore")
+				add("§f* §eTotal Score: §a$totalScore")
+				add("§f* §eRank: $rank")
 			}
 
 			for ((index, line) in lines.withIndex()) {
