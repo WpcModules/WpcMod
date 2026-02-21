@@ -186,6 +186,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 
 	private fun Boolean.ifTrue(num: Int) = if (this) num else 0
 	private fun Double.applyEntranceModifier() = if (isEntrance) (this * 0.7).toInt() else this.toInt()
+	private fun Entity.isMimic() = this is Zombie && this.isBaby && this.headTexture == HeadTextures.MIMIC
 
 	private fun getTotalRooms(): Int {
 		if (DungeonScan.hasScanned && FunnyMap.Info.roomCount > 0) return FunnyMap.Info.roomCount
@@ -258,16 +259,13 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 		val playerDistanceFromMimic = client.player?.distanceToSqr(mimicPos?.center ?: return) ?: return
 		if (playerDistanceFromMimic >= 400.0) return
 
-		val isMimicDead = client.level?.entitiesForRendering()?.none { it is Zombie && it.isBaby && it.headTexture == HeadTextures.MIMIC }
-		if (isMimicDead == true)
-			setMimicDead(config.mimicMessage)
+		val isMimicDead = client.level?.entitiesForRendering()?.none { it.isMimic() } ?: return
+		if (isMimicDead) setMimicDead(config.mimicMessage)
 	}
 
 	private fun onEntityDeath(entity: Entity) {
 		if (!isActive) return
-		if (entity is Zombie && entity.isBaby) {
-			setMimicDead(config.mimicMessage)
-		}
+		if (entity.isMimic()) setMimicDead(config.mimicMessage)
 	}
 
 	private fun setMimicDead(withMessage: Boolean) {
