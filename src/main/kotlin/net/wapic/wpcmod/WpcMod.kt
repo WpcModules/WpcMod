@@ -47,7 +47,7 @@ import net.wapic.wpcmod.features.instance.AutoGFS
 import net.wapic.wpcmod.features.instance.CancelInteract
 import net.wapic.wpcmod.features.inventory.ArmorSwapper
 import net.wapic.wpcmod.features.inventory.AutoCloseWardrobe
-import net.wapic.wpcmod.features.inventory.LeatherColor
+import net.wapic.wpcmod.features.inventory.DyeColor
 import net.wapic.wpcmod.features.inventory.ScrollableTooltips
 import net.wapic.wpcmod.features.inventory.experiments.AutoExperiments
 import net.wapic.wpcmod.features.inventory.experiments.SuperpairsSolver
@@ -208,7 +208,7 @@ object WpcMod : ModInitializer {
 		ArmorSwapper.init()
 		ScrollableTooltips.init()
 		AutoCloseWardrobe.init()
-		LeatherColor.init()
+		DyeColor.init()
 
 		// Dev
 		SkyBlockID.init()

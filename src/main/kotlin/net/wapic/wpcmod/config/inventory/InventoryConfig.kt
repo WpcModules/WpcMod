@@ -13,15 +13,15 @@ class InventoryConfig {
 	var autoCloseWardrobe: Boolean = false
 
 	@Accordion
-	@ConfigOption(name = "Leather Color", desc = "")
-	var leatherColor = LeatherColor()
+	@ConfigOption(name = "Dye Hex Color", desc = "")
+	var dyeColor = DyeColor()
 
-	class LeatherColor {
-		@ConfigOption(name = "Show Leather Color", desc = "Show leather color in tooltip")
+	class DyeColor {
+		@ConfigOption(name = "Show Dye Color", desc = "Show dye hex color in tooltip")
 		@ConfigEditorBoolean
 		var showLeatherColor: Boolean = false
 
-		@ConfigOption(name = "Tooltip Color", desc = "Show leather color on the hex color in tooltip")
+		@ConfigOption(name = "Color Tooltip", desc = "Color the text showing dye color")
 		@ConfigEditorBoolean
 		var colorToolTip: Boolean = false
 	}
