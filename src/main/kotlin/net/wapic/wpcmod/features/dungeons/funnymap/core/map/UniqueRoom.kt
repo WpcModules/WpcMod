@@ -13,33 +13,23 @@ class UniqueRoom(arrX: Int, arrY: Int, room: Room) {
 		get() = FunnyMap.Info.dungeonList[topLeft.second * 11 + topLeft.first] as? Room ?: field
 	val tiles = mutableListOf(room to Pair(arrX, arrY))
 	var hasMimic = false
-	var hasInitialized = false
 
 	init {
 		if (room.data.name == "Unknown") {
 			name = "Unknown_${arrX}_${arrY}"
 		} else {
 			name = room.data.name
-			init(room)
+			setDungeonData(room)
 		}
 		room.uniqueRoom = this
 		FunnyMap.Info.uniqueRooms.add(this)
 	}
 
-	fun init(room: Room) {
-		// I'm not sure why on rare occasions rooms get initialized twice but this should fix that for now
-		if (hasInitialized) return WpcMod.logger.error("Tried to initialize \"${room.data.name}\" but it is already initialized")
+	fun setDungeonData(room: Room) = when (room.data.type) {
+		RoomType.TRAP -> FunnyMap.Info.trapType = room.data.name.split(" ")[0]
+		RoomType.PUZZLE -> Puzzle.fromName(room.data.name)?.let { FunnyMap.Info.puzzles.putIfAbsent(it, false) }
 
-		FunnyMap.Info.cryptCount += room.data.crypts
-		FunnyMap.Info.secretCount += room.data.secrets
-
-		when (room.data.type) {
-			RoomType.TRAP -> FunnyMap.Info.trapType = room.data.name.split(" ")[0]
-			RoomType.PUZZLE -> Puzzle.fromName(room.data.name)?.let { FunnyMap.Info.puzzles.putIfAbsent(it, false) }
-			else -> {}
-		}
-
-		hasInitialized = true
+		else -> {}
 	}
 
 	fun addTile(x: Int, y: Int, tile: Room) {
@@ -61,7 +51,7 @@ class UniqueRoom(arrX: Int, arrY: Int, room: Room) {
 	private fun addToTiles(x: Int, y: Int, tile: Room) {
 		if (mainRoom.data.name == "Unknown") {
 			if (tile.data.name != "Unknown") {
-				init(tile)
+				setDungeonData(tile)
 				name = tile.data.name
 				mainRoom.data = tile.data
 			}

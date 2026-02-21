@@ -77,6 +77,10 @@ object DungeonScan {
 		}
 
 		if (allChunksLoaded) {
+			FunnyMap.Info.roomCount = FunnyMap.Info.dungeonList.filter { it is Room && !it.isSeparator }.size
+			FunnyMap.Info.secretCount = FunnyMap.Info.uniqueRooms.sumOf { it.mainRoom.data.secrets }
+			FunnyMap.Info.cryptCount = FunnyMap.Info.uniqueRooms.sumOf { it.mainRoom.data.crypts }
+
 			if (config.scanChatInfo) {
 				val lines = mutableListOf(
 					"§aScan Finished!",
@@ -92,7 +96,6 @@ object DungeonScan {
 				)
 				ChatUtils.sendMessage(lines.joinToString(separator = "\n"))
 			}
-			FunnyMap.Info.roomCount = FunnyMap.Info.dungeonList.filter { it is Room && !it.isSeparator }.size
 
 			hasScanned = true
 		}
