@@ -20,7 +20,7 @@ object AutoCloseWardrobe {
 	}
 
 	private fun onPacketSent(packet: Packet<out PacketListener>, callbackInfo: CallbackInfo) {
-		if (packet !is ServerboundContainerClickPacket) return
+		if (packet !is ServerboundContainerClickPacket || !config.armorSwapper) return
 
 		if (MC.screen?.title?.string?.matches(wardrobeTitle) == true && packet.slotNum in 36..44)
 			MC.runOnThread { MC.screen?.onClose() }
