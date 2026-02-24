@@ -1021,6 +1021,14 @@
     "secrets": 2
   },
   {
+    "name": "Multicolored",
+    "type": "NORMAL",
+    "cores": [
+      -854957305
+    ],
+    "secrets": 1
+  },
+  {
     "name": "Three Floors",
     "type": "RARE",
     "cores": [
@@ -1066,19 +1074,20 @@
     "secrets": 1
   },
   {
-    "name": "Multicolored",
-    "type": "NORMAL",
-    "cores": [
-      -854957305
-    ],
-    "secrets": 1
-  },
-  {
     "name": "Rare Pillars",
     "type": "RARE",
     "cores": [
       1216268340
     ],
+    "secrets": 1
+  },
+  {
+    "name": "Rare Carpets",
+    "type": "RARE",
+    "cores": [
+      338823043
+    ],
+    "crypts": 4,
     "secrets": 1
   },
   {
