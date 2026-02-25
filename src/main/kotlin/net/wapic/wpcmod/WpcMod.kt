@@ -175,6 +175,7 @@ object WpcMod : ModInitializer {
 		DungeonBreaker.init()
 		InvincibilityTimer.init()
 		EasySuperboom.init()
+		LividSolver.init()
 
 		// Kuudra
 		KuudraESP.init()
