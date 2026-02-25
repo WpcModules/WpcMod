@@ -14,6 +14,7 @@ import net.wapic.wpcmod.config.end.EndConfig
 import net.wapic.wpcmod.config.events.EventsConfig
 import net.wapic.wpcmod.config.fishing.FishingConfig
 import net.wapic.wpcmod.config.galatea.GalateaConfig
+import net.wapic.wpcmod.config.garden.GardenConfig
 import net.wapic.wpcmod.config.general.GeneralConfig
 import net.wapic.wpcmod.config.inventory.InventoryConfig
 import net.wapic.wpcmod.config.kuudra.KuudraConfig
@@ -65,6 +66,9 @@ class WpcConfig : Config() {
 
 	@Category(name = "Mining", desc = "Features that involve dwarven mines/hollows/glacite tunnels")
 	var mining: MiningConfig = MiningConfig()
+
+	@Category(name = "Garden", desc = "Configuration options for features in the Garden")
+	var garden: GardenConfig = GardenConfig()
 
 	@Category(name = "Chat", desc = "Configuration options for Chat")
 	var chat: ChatConfig = ChatConfig()

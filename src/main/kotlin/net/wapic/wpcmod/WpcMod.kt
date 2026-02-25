@@ -40,6 +40,7 @@ import net.wapic.wpcmod.features.entity.TagESP
 import net.wapic.wpcmod.features.events.diana.AutoAnswerSphinx
 import net.wapic.wpcmod.features.fishing.AutoFish
 import net.wapic.wpcmod.features.galatea.GalateaESP
+import net.wapic.wpcmod.features.garden.PestESP
 import net.wapic.wpcmod.features.general.Freecam
 import net.wapic.wpcmod.features.general.PreventPlacingItems
 import net.wapic.wpcmod.features.general.shortcut.ShortcutHandler
@@ -200,6 +201,9 @@ object WpcMod : ModInitializer {
 		PigeonSwapper.init()
 		ChestESP.init()
 		CorpseESP.init()
+
+		// Garden
+		PestESP.init()
 
 		// Chat
 		CompactChat.init()
