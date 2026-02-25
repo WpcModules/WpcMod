@@ -4,6 +4,7 @@ import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.player.RemotePlayer
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.state.BlockState
@@ -64,13 +65,11 @@ object LividSolver : MobGlowCache() {
 		livid = MC.world?.entitiesForRendering()?.find { it is RemotePlayer && it.plainTextName == correctLivid }
 
 		livid?.let {
-			if (config.box) worldRenderContext.drawBoundingBox(it.boundingBox, config.color)
+			val deltaTicks = worldRenderContext.tickCounter.getGameTimeDeltaPartialTick(true)
+			val position = it.getPosition(deltaTicks).relative(Direction.UP, 1.0)
 
-			if (config.tracerWidth > 0) worldRenderContext.drawTracer(
-				it.eyePosition,
-				config.color,
-				config.tracerWidth.toDouble()
-			)
+			if (config.box) worldRenderContext.drawBoundingBox(position, 0.5f, 1.85f, config.color)
+			if (config.lineWidth > 0) worldRenderContext.drawTracer(position, config.color, config.lineWidth.toDouble())
 		}
 	}
 

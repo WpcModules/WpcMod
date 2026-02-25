@@ -58,7 +58,7 @@ class DungeonConfig {
 			desc = "Width of the tracer\n0 Disables the tracer"
 		)
 		@ConfigEditorSlider(maxValue = 5f, minStep = 0.1f, minValue = 0f)
-		var tracerWidth = 2f
+		var lineWidth = 2f
 	}
 
 	@Accordion
