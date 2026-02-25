@@ -54,6 +54,7 @@ import net.wapic.wpcmod.features.inventory.experiments.SuperpairsSolver
 import net.wapic.wpcmod.features.kuudra.KuudraESP
 import net.wapic.wpcmod.features.kuudra.RendAnnounce
 import net.wapic.wpcmod.features.mining.ChestESP
+import net.wapic.wpcmod.features.mining.CorpseESP
 import net.wapic.wpcmod.features.mining.PigeonSwapper
 import net.wapic.wpcmod.hud.HudManager
 import net.wapic.wpcmod.listeners.NetworkListener
@@ -198,6 +199,7 @@ object WpcMod : ModInitializer {
 		// Mining
 		PigeonSwapper.init()
 		ChestESP.init()
+		CorpseESP.init()
 
 		// Chat
 		CompactChat.init()
