@@ -5,8 +5,8 @@ import kotlinx.coroutines.launch
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.minecraft.client.Minecraft
 import net.minecraft.world.entity.projectile.FishingHook
-import net.minecraft.world.item.Items
 import net.minecraft.world.inventory.InventoryMenu
+import net.minecraft.world.item.Items
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.mixin.accessors.MinecraftAccessor
 import net.wapic.wpcmod.util.EntityUtils.getArmorStandsByEntity
@@ -16,8 +16,9 @@ import kotlin.random.Random
 object AutoFish {
 
 	private val config get() = WpcMod.config.fishing.autofish
+	@Volatile
 	private var preventFutureRodUse: Boolean = false
-	private val slugDelayInTicks: Int get() = 20 * if (config.slugPet) 10 else 20
+	private val slugDelayInTicks: Int get() = if (config.slugPet) 200 else 400
 
 	fun init() {
 		ClientTickEvents.END_CLIENT_TICK.register(::onTick)
@@ -37,28 +38,32 @@ object AutoFish {
 	}
 
 	private fun useRod(client: Minecraft) = WpcMod.coroutineScope.launch {
-		val cast = if(config.recast) 2 else 1
+		try {
+			val castCount = if (config.disableRecast) 1 else 2
 
-		val minDelay = config.minDelay.toLong()
-		val maxDelay = minDelay + 100L
+			val minDelay = config.minDelay.toLong()
+			val maxDelay = minDelay + 100L
 
-		repeat(cast) {
-			val castDelay = Random.nextLong(minDelay, maxDelay)
-			delay(castDelay)
+			repeat(castCount) {
+				val castDelay = Random.nextLong(minDelay, maxDelay)
+				delay(castDelay)
 
-			val isHoldingRod = client.player?.isHolding(Items.FISHING_ROD) == true
-			val notInGui = client.player?.containerMenu is InventoryMenu
+				val isHoldingRod = client.player?.isHolding(Items.FISHING_ROD) == true
+				val inSkyBlockMenu = client.player?.containerMenu !is InventoryMenu
+				val isSafe = !(config.safeMode && inSkyBlockMenu)
 
-			if (isHoldingRod && notInGui) {
-				MC.runOnThread {
-					(client as MinecraftAccessor).doItemUse_WpcMod()
+				if (isHoldingRod && isSafe) {
+					MC.runOnThread {
+						(client as MinecraftAccessor).doItemUse_WpcMod()
+					}
 				}
 			}
-		}
 
-		delay(200) // Delay to prevent false positive from old armor stand
-		preventFutureRodUse = false
+			delay(350) // Delay to prevent false positive from old armor stand
+		} finally {
+			preventFutureRodUse = false
+		}
 	}
 
-	private val FishingHook.hasCaughtFish: Boolean get() = getArmorStandsByEntity(this).any { it.name.string == "!!!" } && isInLiquid
+	private val FishingHook.hasCaughtFish: Boolean get() = getArmorStandsByEntity(this).any { it.name.string == "!!!" }
 }

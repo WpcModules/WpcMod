@@ -18,12 +18,19 @@ class FishingConfig {
 		var enabled: Boolean = false
 
 		@ConfigEditorBoolean
-		@ConfigOption(name = "Recast", desc = "Won't recast after reeling in. useful when rod doesn't 1 tap")
-		var recast: Boolean = true
+		@ConfigOption(name = "Disable Recast", desc = "Won't recast after reeling in. useful when rod doesn't 1 tap")
+		var disableRecast: Boolean = false
 
-		@ConfigEditorSlider(minStep = 1f, minValue = 100f, maxValue = 250f)
+		@ConfigEditorBoolean
+		@ConfigOption(
+			name = "Prevent in SkyBlock Menus",
+			desc = "Prevents fishing rod from being used while inside of any SkyBlock menus"
+		)
+		var safeMode: Boolean = true
+
+		@ConfigEditorSlider(minStep = 1f, minValue = 50f, maxValue = 150f)
 		@ConfigOption(name = "Minimum Delay", desc = "The minimum amount of delay when casting rod")
-		var minDelay: Float = 175f
+		var minDelay: Float = 100f
 
 		@ConfigEditorBoolean
 		@ConfigOption(name = "Slug Fish", desc = "wait 20s to catch")
