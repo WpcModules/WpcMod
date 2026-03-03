@@ -1,14 +1,14 @@
 package net.wapic.wpcmod.util.freecam
 
+import net.minecraft.client.ClientRecipeBook
 import net.minecraft.client.Minecraft
+import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.multiplayer.ClientPacketListener
 import net.minecraft.client.player.LocalPlayer
-import net.minecraft.client.ClientRecipeBook
-import net.minecraft.client.multiplayer.ClientLevel
-import net.minecraft.world.entity.MoverType
 import net.minecraft.stats.StatsCounter
-import net.minecraft.world.entity.player.Input
 import net.minecraft.util.Mth
+import net.minecraft.world.entity.MoverType
+import net.minecraft.world.entity.player.Input
 import net.minecraft.world.phys.Vec3
 import net.wapic.wpcmod.features.general.Freecam
 import kotlin.math.cos
@@ -21,6 +21,7 @@ class CameraEntity(
 	statHandler: StatsCounter,
 	recipeBook: ClientRecipeBook
 ) : LocalPlayer(mc, world, netHandler, statHandler, recipeBook, Input.EMPTY, false) {
+	var flySpeed = 10f
 
 	override fun isSpectator(): Boolean {
 		return true
@@ -37,14 +38,14 @@ class CameraEntity(
 		val yaw = this.yRot + yaw * 0.15F
 		val pitch = Mth.clamp(this.xRot + pitch * 0.15F, -90F, 90F)
 
-		this.setYRot(yaw)
-		this.setXRot(pitch)
+		this.yRot = yaw
+		this.xRot = pitch
 		this.setCameraRotations(yaw, pitch)
 	}
 
 	fun setCameraRotations(yaw: Float, pitch: Float) {
-		this.setYRot(yaw)
-		this.setXRot(pitch)
+		this.yRot = yaw
+		this.xRot = pitch
 		this.yHeadRot = yaw
 	}
 
@@ -65,15 +66,14 @@ class CameraEntity(
 
 	fun handleMotion(forward: Double, up: Double, strafe: Double) {
 		val yaw = this.yRot
-		val scale = (speed * 40)
 		val xFactor = sin(yaw * Math.PI / 180)
 		val zFactor = cos(yaw * Math.PI / 180)
 
-		val x = (strafe * zFactor - forward * xFactor) * scale
-		val y = up * scale
-		val z = (forward * zFactor + strafe * xFactor) * scale
+		val x = (strafe * zFactor - forward * xFactor) * flySpeed
+		val y = up * flySpeed
+		val z = (forward * zFactor + strafe * xFactor) * flySpeed
 
-		this.setDeltaMovement(Vec3(x, y, z))
+		this.deltaMovement = Vec3(x, y, z)
 		this.move(MoverType.SELF, this.deltaMovement)
 	}
 
@@ -81,13 +81,13 @@ class CameraEntity(
 		fun createCameraEntity(mc: Minecraft): CameraEntity? {
 			mc.player?.let {
 				if (it.onGround()) {
-					it.setDeltaMovement(Vec3.ZERO)
+					it.deltaMovement = Vec3.ZERO
 				}
 
 				val cam = CameraEntity(mc, mc.level!!, it.connection, it.stats, it.recipeBook)
 				cam.noPhysics = true
 				cam.copyPosition(it)
-				cam.setDeltaMovement(Vec3.ZERO)
+				cam.deltaMovement = Vec3.ZERO
 
 				return cam
 			}

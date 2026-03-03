@@ -1,14 +1,14 @@
 package net.wapic.wpcmod.features.general
 
+import com.mojang.blaze3d.platform.InputConstants
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.fabricmc.fabric.api.event.player.*
-import net.minecraft.client.Minecraft
 import net.minecraft.client.KeyMapping
-import com.mojang.blaze3d.platform.InputConstants
-import net.minecraft.world.entity.Entity
-import net.minecraft.world.InteractionResult
+import net.minecraft.client.Minecraft
 import net.minecraft.util.Mth
+import net.minecraft.world.InteractionResult
+import net.minecraft.world.entity.Entity
 import net.minecraft.world.phys.Vec3
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldChangeEvent
@@ -35,12 +35,7 @@ class Freecam {
 		}
 	}
 
-	fun onInteract(): InteractionResult {
-		if (isEnabled) {
-			return InteractionResult.FAIL
-		}
-		return InteractionResult.PASS
-	}
+	fun onInteract(): InteractionResult = if (isEnabled) InteractionResult.FAIL else InteractionResult.PASS
 
 	fun getRampedMotion(current: Double, input: Int, rampAmount: Double, decelerationFactor: Double): Double {
 		var r = rampAmount
