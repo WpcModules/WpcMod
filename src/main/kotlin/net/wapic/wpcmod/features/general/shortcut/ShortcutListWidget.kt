@@ -1,15 +1,15 @@
 package net.wapic.wpcmod.features.general.shortcut
 
 import com.google.common.collect.ImmutableList
+import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.client.gui.components.events.GuiEventListener
-import net.minecraft.client.gui.narration.NarratableEntry
 import net.minecraft.client.gui.components.Button
 import net.minecraft.client.gui.components.ContainerObjectSelectionList
 import net.minecraft.client.gui.components.EditBox
+import net.minecraft.client.gui.components.events.GuiEventListener
+import net.minecraft.client.gui.narration.NarratableEntry
 import net.minecraft.network.chat.Component
-import net.minecraft.ChatFormatting
 import net.wapic.wpcmod.features.general.shortcut.ShortcutListWidget.Entry
 import net.wapic.wpcmod.util.MC
 import java.util.function.Consumer
@@ -58,6 +58,7 @@ class ShortcutListWidget : ContainerObjectSelectionList<Entry> {
 		private var duplicate = false
 
 		init {
+			this.commandField.setMaxLength(128)
 			this.commandField.value = binding.getCommand()
 			this.commandField.setResponder { command ->
 				binding.setCommand(command)
