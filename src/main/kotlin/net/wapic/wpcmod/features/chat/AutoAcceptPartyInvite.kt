@@ -4,13 +4,11 @@ import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.network.chat.Component
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.Utils
-import java.util.regex.Matcher
-import java.util.regex.Pattern
 
 object AutoAcceptPartyInvite {
 	private val config get() = WpcMod.config.chat.autoPartyAccept
 
-	private val invitePattern: Pattern = Pattern.compile(
+	private val invitePattern = Regex(
 		"-----------------------------------------------------\n" +
 				"(\\[[A-z]+\\+{0,2}]\\s)?(?<name>\\w{3,16}) has invited you to join their party!\n" +
 				"You have 60 seconds to accept. Click here to join!\n" +
@@ -24,14 +22,14 @@ object AutoAcceptPartyInvite {
 	private fun onMessageReceived(message: Component, actionBar: Boolean) {
 		if(actionBar) return
 
-		val inviteMatcher: Matcher = invitePattern.matcher(message.string)
-		if (!inviteMatcher.matches()) return
+		val inviteMatcher: MatchResult = invitePattern.matchEntire(message.string) ?: return
+		val name = inviteMatcher.groups["name"]?.value?.trim() ?: return
 
 		val players = config.split(",").map { it.trim().uppercase() }
 
-		if (inviteMatcher.group("name").trim().uppercase() in players) {
-			WpcMod.logger.info("Accepting invite from ${inviteMatcher.group("name")}")
-			Utils.addToCommandQueue("party accept " + inviteMatcher.group("name").trim())
+		if (name.uppercase() in players) {
+			WpcMod.logger.debug("Auto accepting invite from $name")
+			Utils.addToCommandQueue("party accept $name")
 		}
 	}
 }

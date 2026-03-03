@@ -48,7 +48,7 @@ object DungeonScan {
 				val xPos = START_X + x * (ROOM_SIZE shr 1)
 				val zPos = START_Z + z * (ROOM_SIZE shr 1)
 
-				if (MC.world?.getChunk(xPos shr 4, zPos shr 4) is EmptyLevelChunk) {
+				if (MC.level?.getChunk(xPos shr 4, zPos shr 4) is EmptyLevelChunk) {
 					allChunksLoaded = false
 					continue
 				}
@@ -105,7 +105,7 @@ object DungeonScan {
 	}
 
 	private fun scanRoom(x: Int, z: Int, row: Int, column: Int): Tile? {
-		val height = MC.world?.getChunk(x shr 4, z shr 4)?.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z)
+		val height = MC.level?.getChunk(x shr 4, z shr 4)?.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z)
 		if (height == -1) return null
 
 		val rowEven = row and 1 == 0
@@ -135,7 +135,7 @@ object DungeonScan {
 				Door(
 					x, z,
 					// Finds door type from door block
-					type = when (MC.world?.getBlockState(BlockPos(x, 69, z))?.block) {
+					type = when (MC.level?.getBlockState(BlockPos(x, 69, z))?.block) {
 						Blocks.COAL_BLOCK -> {
 							FunnyMap.Info.witherDoors++
 							DoorType.WITHER

@@ -4,9 +4,9 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.multiplayer.ClientLevel
-import net.minecraft.world.entity.decoration.ArmorStand
 import net.minecraft.network.chat.Component
 import net.minecraft.util.CommonColors
+import net.minecraft.world.entity.decoration.ArmorStand
 import net.minecraft.world.phys.AABB
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldChangeEvent
@@ -70,7 +70,7 @@ object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
 		for ((index, line) in lines.withIndex()) {
 			drawContext.drawText(
 				line,
-				1, 2 + MC.textRenderer.lineHeight * index,
+				1, 2 + MC.font.lineHeight * index,
 				CommonColors.WHITE,
 				true
 			)

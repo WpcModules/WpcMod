@@ -102,11 +102,18 @@ object TickTimers : SimpleHudElement("Tick Timers", 120, 12) {
 
 		when {
 			padTickTime >= 0 ->
-				drawContext.drawString(MC.textRenderer, formatTimer(padTickTime, 20, "§bPad:"), 1, 1, CommonColors.RED, true)
+				drawContext.drawString(MC.font, formatTimer(padTickTime, 20, "§bPad:"), 1, 1, CommonColors.RED, true)
 			goldorStartTime >= 0 || goldorTickTime >= 0 ->
-				drawContext.drawString(MC.textRenderer, formatTimer(time, max, prefix), 1, 1, CommonColors.RED, true)
+				drawContext.drawString(MC.font, formatTimer(time, max, prefix), 1, 1, CommonColors.RED, true)
 			necronTime >= 0 ->
-				drawContext.drawString(MC.textRenderer, formatTimer(necronTime.toInt(), 60, "§4Necron dropping in"), 1, 1, CommonColors.RED, true)
+				drawContext.drawString(
+					MC.font,
+					formatTimer(necronTime.toInt(), 60, "§4Necron dropping in"),
+					1,
+					1,
+					CommonColors.RED,
+					true
+				)
 		}
 
 		matrixStack.popMatrix()

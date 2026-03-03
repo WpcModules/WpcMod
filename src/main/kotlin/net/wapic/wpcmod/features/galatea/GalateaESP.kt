@@ -4,20 +4,20 @@ import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback
 import net.fabricmc.fabric.api.event.player.UseBlockCallback
 import net.minecraft.client.multiplayer.ClientLevel
-import net.minecraft.world.entity.Entity
-import net.minecraft.world.entity.decoration.ArmorStand
-import net.minecraft.world.entity.Display
-import net.minecraft.world.entity.monster.Shulker
-import net.minecraft.world.item.Items
-import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket
-import net.minecraft.core.particles.ParticleTypes
-import net.minecraft.world.InteractionResult
 import net.minecraft.core.BlockPos
+import net.minecraft.core.particles.ParticleTypes
+import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket
+import net.minecraft.world.InteractionResult
+import net.minecraft.world.entity.Display
+import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.animal.Panda
 import net.minecraft.world.entity.animal.Pufferfish
 import net.minecraft.world.entity.animal.Turtle
 import net.minecraft.world.entity.animal.axolotl.Axolotl
 import net.minecraft.world.entity.animal.frog.Frog
+import net.minecraft.world.entity.decoration.ArmorStand
+import net.minecraft.world.entity.monster.Shulker
+import net.minecraft.world.item.Items
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import net.wapic.wpcmod.WpcMod
@@ -83,7 +83,7 @@ object GalateaESP : MobGlowCache() {
 		if (!isEnabled()) return
 
 		worldRenderContext.profiler.push("galatea-esp")
-		for (entity in worldRenderContext.world.entitiesForRendering()) {
+		for (entity in worldRenderContext.level.entitiesForRendering()) {
 			var boundingBox = entity.boundingBox
 
 			val settings = when {

@@ -4,11 +4,11 @@ import com.google.gson.Gson
 import com.google.gson.JsonIOException
 import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
+import net.minecraft.core.BlockPos
+import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.entity.TrappedChestBlockEntity
-import net.minecraft.world.item.Item
-import net.minecraft.resources.ResourceLocation
-import net.minecraft.core.BlockPos
 import net.minecraft.world.level.levelgen.Heightmap
 import net.wapic.wpcmod.features.dungeons.funnymap.core.RoomData
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Room
@@ -71,7 +71,7 @@ object ScanUtils {
 
 	fun getCore(x: Int, z: Int): Int {
 		val sb = StringBuilder(150)
-		val chunk = MC.world?.getChunk(x shr 4, z shr 4) ?: return 0
+		val chunk = MC.level?.getChunk(x shr 4, z shr 4) ?: return 0
 		val height = chunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z).coerceIn(11..140)
 		sb.append(CharArray(140 - height) { '0' })
 		var bedrock = 0

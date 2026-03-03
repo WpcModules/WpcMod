@@ -2,8 +2,8 @@ package net.wapic.wpcmod.features.dungeons
 
 import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.world.entity.Entity
-import net.minecraft.world.entity.decoration.ArmorStand
 import net.minecraft.world.entity.ambient.Bat
+import net.minecraft.world.entity.decoration.ArmorStand
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.phys.AABB
 import net.wapic.wpcmod.WpcMod
@@ -33,7 +33,7 @@ object DungeonESP : MobGlowCache() {
 		if(!isEnabled()) return
 		worldRenderContext.profiler.push("dungeon-esp")
 
-		for (entity in worldRenderContext.world.entitiesForRendering()) {
+		for (entity in worldRenderContext.level.entitiesForRendering()) {
 			val entityConfig = when {
 				entity is ArmorStand && entity.headTexture.equalsOneOf(
 					HeadTextures.BLOOD_KEY,

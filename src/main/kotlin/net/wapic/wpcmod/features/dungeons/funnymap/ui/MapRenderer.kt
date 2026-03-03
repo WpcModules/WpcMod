@@ -42,15 +42,15 @@ object MapRenderer {
 			matrixStack.rotate(Math.toRadians(player.yRot + 180.0).toFloat())
 		}
 
-		val tr = MC.textRenderer
-		val fontHeight = tr.lineHeight + 1
+		val font = MC.font
+		val fontHeight = font.lineHeight + 1
 		val yTextOffset = text.size * fontHeight / -2f
 
 		for (i in 0..<text.size) {
 			drawContext.drawString(
-				tr,
+				font,
 				text[i],
-				tr.width(text[i]) / -2,
+				font.width(text[i]) / -2,
 				yTextOffset.toInt() + i * fontHeight,
 				color,
 				true
@@ -85,6 +85,8 @@ object MapRenderer {
 	fun drawPlayerHead(drawContext: GuiGraphics, name: String, player: DungeonPlayer) {
 		val matrixStack = drawContext.pose()
 		matrixStack.pushMatrix()
+		val playerYaw = MC.player?.yRot ?: return
+
 		try {
 			// Translates to the player's location which is updated every tick.
 			if (player.isPlayer || name == MC.player?.name?.string) {
@@ -99,7 +101,6 @@ object MapRenderer {
 			}
 
 			matrixStack.scale(config.playerHeadScale, config.playerHeadScale)
-
 			matrixStack.rotate(Math.toRadians(player.yaw + 180.0).toFloat())
 
 			if (config.mapVanillaMarker && (player.isPlayer || name == MC.player?.name?.string)) {
@@ -113,15 +114,18 @@ object MapRenderer {
 			if (config.playerHeads == FunnyConfig.PlayerNameType.ALWAYS ||
 				(config.playerHeads == FunnyConfig.PlayerNameType.HOLDING_LEAP && MC.heldItem.skyBlockID.equalsOneOf("SPIRIT_LEAP", "INFINITE_SPIRIT_LEAP", "HAUNT_ABILITY"))
 				) {
-				if(!config.mapRotate) {
-					matrixStack.rotate(-Math.toRadians(player.yaw + 180.0).toFloat())
+				matrixStack.rotate(-Math.toRadians(player.yaw + 180.0).toFloat())
+
+				if (config.mapRotate) {
+					matrixStack.rotate(Math.toRadians(playerYaw + 180.0).toFloat())
 				}
+
 				matrixStack.translate(0f, config.playerHeadScale * 4f)
 				matrixStack.scale(config.playerNameScale, config.playerNameScale)
 				drawContext.drawString(
-					MC.textRenderer,
+					MC.font,
 					name,
-					-MC.textRenderer.width(name) / 2,
+					-MC.font.width(name) / 2,
 					0,
 					CommonColors.WHITE,
 					true

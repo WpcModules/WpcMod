@@ -16,7 +16,6 @@ import net.wapic.wpcmod.features.entity.MobGlowCache
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.DungeonUtils.DungeonFloor
-import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 import net.wapic.wpcmod.util.render.WorldRenderContext
 
@@ -62,7 +61,8 @@ object LividSolver : MobGlowCache() {
 
 	fun onRenderWorld(worldRenderContext: WorldRenderContext) {
 		if (!shouldRun()) return
-		livid = MC.world?.entitiesForRendering()?.find { it is RemotePlayer && it.plainTextName == correctLivid }
+		livid = worldRenderContext.level.entitiesForRendering()
+			?.find { it is RemotePlayer && it.plainTextName == correctLivid }
 
 		livid?.let {
 			val deltaTicks = worldRenderContext.tickCounter.getGameTimeDeltaPartialTick(true)

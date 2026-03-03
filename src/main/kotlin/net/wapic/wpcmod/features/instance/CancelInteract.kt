@@ -28,7 +28,7 @@ object CancelInteract {
 		}
 
 		if (player.mainHandItem.skyBlockID == ENDER_PEARL) {
-			return MC.interactionManager?.useItem(player, hand) ?: InteractionResult.PASS
+			return MC.gameMode?.useItem(player, hand) ?: InteractionResult.PASS
 		}
 
 		return InteractionResult.PASS

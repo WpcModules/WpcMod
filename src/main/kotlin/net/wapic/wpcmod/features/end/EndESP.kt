@@ -2,12 +2,11 @@ package net.wapic.wpcmod.features.end
 
 import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
-import net.minecraft.world.level.block.Blocks
-import net.minecraft.client.Minecraft
 import net.minecraft.client.multiplayer.ClientLevel
+import net.minecraft.core.BlockPos
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon
-import net.minecraft.core.BlockPos
+import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.phys.AABB
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldRenderEvent
@@ -52,7 +51,7 @@ object EndESP : MobGlowCache() {
 
 		worldRenderContext.profiler.push("end-esp")
 
-		MC.world?.entitiesForRendering()?.forEach { entity ->
+		worldRenderContext.level.entitiesForRendering().forEach { entity ->
 			val settings = when (entity) {
 				is EnderDragon -> config.dragon
 				else -> return@forEach

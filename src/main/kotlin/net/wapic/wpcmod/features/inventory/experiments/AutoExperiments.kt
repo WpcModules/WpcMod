@@ -1,15 +1,15 @@
 package net.wapic.wpcmod.features.inventory.experiments
 
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
-import net.minecraft.world.level.block.Blocks
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.gui.screens.inventory.ContainerScreen
 import net.minecraft.world.Container
-import net.minecraft.world.item.Item
-import net.minecraft.world.item.Items
 import net.minecraft.world.inventory.ChestMenu
 import net.minecraft.world.inventory.ClickType
+import net.minecraft.world.item.Item
+import net.minecraft.world.item.Items
+import net.minecraft.world.level.block.Blocks
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.MC
@@ -111,7 +111,7 @@ object AutoExperiments {
 
 		if (hasAdded && inventory.getItem(49).item == Items.CLOCK && chronomatronOrder.size > clicks && System.currentTimeMillis() - lastClickTime > config.clickDelay) {
 			handledScreen?.let {
-				MC.interactionManager?.handleInventoryMouseClick(
+				MC.gameMode?.handleInventoryMouseClick(
 					it.containerId,
 					chronomatronOrder[clicks],
 					GLFW.GLFW_MOUSE_BUTTON_MIDDLE,
@@ -141,7 +141,7 @@ object AutoExperiments {
 		if (inventory.getItem(49).item == Items.CLOCK && ultrasequencerOrder.contains(clicks) && System.currentTimeMillis() - lastClickTime > config.clickDelay) {
 			handledScreen?.let { screenHandler ->
 				ultrasequencerOrder[clicks]?.let {
-					MC.interactionManager?.handleInventoryMouseClick(
+					MC.gameMode?.handleInventoryMouseClick(
 						screenHandler.containerId,
 						it,
 						GLFW.GLFW_MOUSE_BUTTON_MIDDLE,

@@ -23,7 +23,7 @@ object TagESP : MobGlowCache() {
 
 	private fun onRenderWorld(worldRenderContext: WorldRenderContext) {
 		if(!isEnabled()) return
-		for (entity in worldRenderContext.world.entitiesForRendering()) {
+		for (entity in worldRenderContext.level.entitiesForRendering()) {
 			if (!isTagged(entity)) continue
 
 			if (config.box)

@@ -49,7 +49,7 @@ object ChatEmotes {
 	)
 
 	val pattern = Regex("(?<=\\s|^)(" + chatEmoteMap.keys.joinToString("|") { Regex.escape(it) } + ")(?=\\s|$)")
-	val commandPattern = Regex("^(m(sg|essage)?|w(hisper)?|r(eply)?|[pacg]c(hat)?)\\s")
+	val commandPattern = Regex("^(m(sg|essage)?|w(hisper)?|r(eply)?|[pacg]c(hat)?)\\s.*$")
 
 	fun init() {
 		ClientSendMessageEvents.MODIFY_CHAT.register(::onSendMessage)
@@ -62,7 +62,7 @@ object ChatEmotes {
 	}
 
 	private fun onSendCommand(message: String): String {
-		if (!config.chatEmotes || !message.contains(commandPattern)) return message
+		if (!config.chatEmotes || !commandPattern.matches(message)) return message
 		return replaceEmotes(message)
 	}
 

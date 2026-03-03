@@ -52,7 +52,7 @@ class ShortcutListWidget : ContainerObjectSelectionList<Entry> {
 
 	inner class ShortcutEntry internal constructor(private val binding: Shortcut) : Entry() {
 
-		private val commandField: EditBox = EditBox(MC.textRenderer, 120, 20, Component.nullToEmpty(binding.getCommand()))
+		private val commandField: EditBox = EditBox(MC.font, 120, 20, Component.nullToEmpty(binding.getCommand()))
 		private val editButton: Button
 		private val deleteButton: Button
 		private var duplicate = false

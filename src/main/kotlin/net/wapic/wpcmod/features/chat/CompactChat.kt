@@ -2,13 +2,13 @@ package net.wapic.wpcmod.features.chat
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
-import net.minecraft.client.GuiMessage
-import net.minecraft.network.chat.MutableComponent
-import net.minecraft.network.chat.Style
-import net.minecraft.network.chat.Component
 import net.minecraft.ChatFormatting
 import net.minecraft.SharedConstants
 import net.minecraft.Util
+import net.minecraft.client.GuiMessage
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.MutableComponent
+import net.minecraft.network.chat.Style
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.mixin.accessors.ChatComponentAccessor
 import net.wapic.wpcmod.util.MC
@@ -116,7 +116,7 @@ object CompactChat {
 		fun isOld(): Boolean = Util.getMillis() >= lastSeen + config.compactTimeout * 1000
 
 		fun remove() {
-			val hud = MC.inGameHud.chat as ChatComponentAccessor
+			val hud = MC.gui.chat as ChatComponentAccessor
 			lastLine?.let(hud.allMessages::remove)
 			lastVisible.forEach(hud.trimmedMessages::remove)
 			lastVisible.clear()

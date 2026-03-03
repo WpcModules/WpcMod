@@ -70,7 +70,7 @@ open class TerminalHandler(val type: TerminalTypes) {
 			)
 			return
 		}
-		MC.interactionManager?.handleInventoryMouseClick(
+		MC.gameMode?.handleInventoryMouseClick(
 			screenHandler.containerId,
 			slotIndex,
 			button,

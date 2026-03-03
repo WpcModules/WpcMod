@@ -24,7 +24,7 @@ object RatESP : MobGlowCache() {
 	private fun onRenderWorld(worldRenderContext: WorldRenderContext) {
 		if(!isEnabled()) return
 		worldRenderContext.profiler.push("rat-esp")
-		for (entity in worldRenderContext.world.entitiesForRendering()) {
+		for (entity in worldRenderContext.level.entitiesForRendering()) {
 			if(!isRat(entity)) continue
 
 			val box = entity.boundingBox.setMinY(entity.boundingBox.minY + 1.4)

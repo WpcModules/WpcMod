@@ -68,7 +68,7 @@ object ArrowAlign {
 		packet.dispatch(object : ServerboundInteractPacket.Handler {
 			override fun onInteraction(hand: InteractionHand) {
 				val entity =
-					MC.world?.getEntity((packet as ServerboundInteractPacketAccessor).entityId) as? ItemFrame
+					MC.level?.getEntity((packet as ServerboundInteractPacketAccessor).entityId) as? ItemFrame
 						?: return
 				if (entity.item?.item != Items.ARROW) return
 
@@ -120,7 +120,7 @@ object ArrowAlign {
     }
 
     private fun getFrames(): List<Int> {
-        val itemFrames = MC.world?.entitiesForRendering()?.mapNotNull {
+		val itemFrames = MC.level?.entitiesForRendering()?.mapNotNull {
             if (it is ItemFrame && it.item?.item?.asItem() == Items.ARROW) it else null
         }?.takeIf { it.isNotEmpty() } ?: return List(25) { -1 }
 

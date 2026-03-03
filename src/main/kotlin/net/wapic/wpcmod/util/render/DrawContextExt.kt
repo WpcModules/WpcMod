@@ -1,8 +1,8 @@
 package net.wapic.wpcmod.util.render
 
 import io.github.notenoughupdates.moulconfig.ChromaColour
-import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.resources.ResourceLocation
 import net.wapic.wpcmod.util.MC
 import org.joml.Matrix3x2f
@@ -20,7 +20,7 @@ fun GuiGraphics.drawTexture(
 ) = this.blit(RenderPipelines.GUI_TEXTURED, sprite, x, y, u, v, width, height, textureWidth, textureHeight)
 
 fun GuiGraphics.drawText(text: String, x: Int, y: Int, color: Int, shadow: Boolean) =
-	this.drawString(MC.textRenderer, text, x, y, color, shadow)
+	this.drawString(MC.font, text, x, y, color, shadow)
 
 fun GuiGraphics.fillWithOutline(
 	x: Int,

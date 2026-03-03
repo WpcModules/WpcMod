@@ -1,16 +1,15 @@
 package net.wapic.wpcmod.features.general
 
 import net.fabricmc.fabric.api.event.player.UseBlockCallback
-import net.minecraft.world.level.block.Blocks
-import net.minecraft.world.entity.player.Player
-import net.minecraft.world.InteractionResult
 import net.minecraft.world.InteractionHand
-import net.minecraft.world.phys.BlockHitResult
+import net.minecraft.world.InteractionResult
+import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.phys.BlockHitResult
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.ItemUtils.skyBlockID
-import net.wapic.wpcmod.util.MC
 
 object PreventPlacingItems {
 
@@ -79,7 +78,7 @@ object PreventPlacingItems {
 
 		if (item.contains("ABIPHONE") || item in placeableItems) {
 
-			val block = MC.world?.getBlockState(hitResult.blockPos)
+			val block = player.level().getBlockState(hitResult.blockPos)
 			if (block?.block in interactables || DungeonUtils.inDungeons && (block?.block == Blocks.COAL_BLOCK || block?.block == Blocks.RED_TERRACOTTA)) {
 				return InteractionResult.PASS
 			}

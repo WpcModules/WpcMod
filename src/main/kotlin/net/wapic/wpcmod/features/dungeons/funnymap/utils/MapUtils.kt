@@ -1,10 +1,10 @@
 package net.wapic.wpcmod.features.dungeons.funnymap.utils
 
-import net.minecraft.world.item.MapItem
+import net.minecraft.network.protocol.game.ClientboundMapItemDataPacket
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
+import net.minecraft.world.item.MapItem
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData
-import net.minecraft.network.protocol.game.ClientboundMapItemDataPacket
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.DungeonScan
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.DungeonUtils.inDungeons
@@ -33,11 +33,11 @@ object MapUtils {
 		MC.runOnThread {
 			val map = getMapItem()
 			map?.let {
-				mapData = MapItem.getSavedData(it, MC.world)
+				mapData = MapItem.getSavedData(it, MC.level)
 			}
 
 			if (mapData == null) {
-				mapData = MapItem.getSavedData(packet.mapId, MC.world)
+				mapData = MapItem.getSavedData(packet.mapId, MC.level)
 			}
 
 			mapData?.let {

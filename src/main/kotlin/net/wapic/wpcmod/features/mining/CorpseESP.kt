@@ -24,6 +24,7 @@ object CorpseESP {
 	val config get() = WpcMod.config.mining.esp.corpse
 	var corpses: List<Corpse> = emptyList()
 	val corpseRegex = Regex("^ (Lapis|Umber|Tungsten): (NOT )?LOOTED$")
+	val corpseLootedRegex = Regex("^\\s+(LAPIS|UMBER|TUNGSTEN) CORPSE LOOT!\\s+$")
 	val corpseToColor = mapOf(
 		Items.SEA_LANTERN to ChromaColour.fromStaticRGB(0, 0, 170, 255),
 		Items.LEATHER_HELMET to ChromaColour.fromStaticRGB(255, 170, 0, 255),
@@ -40,9 +41,8 @@ object CorpseESP {
 	}
 
 	fun onMessageReceived(text: Component, actionBar: Boolean) {
-		if (actionBar) return
-		val corpseLootedRegex = Regex("^\\s+(LAPIS|UMBER|TUNGSTEN) CORPSE LOOT!\\s+$")
-		if (text.string.matches(corpseLootedRegex)) {
+		if (actionBar || Utils.getLocation() != Island.MINESHAFT) return
+		if (corpseLootedRegex.matches(text.string)) {
 			corpses.minBy { it.entity.distanceTo(MC.player) }.isLooted = true
 		}
 	}
@@ -50,18 +50,18 @@ object CorpseESP {
 	fun onTick(client: Minecraft) {
 		if (!config.box && !config.tracer) return
 		if (Utils.getLocation() != Island.MINESHAFT) return
-		val entities = client.level?.entitiesForRendering() ?: return
+		val level = client.level ?: return
 
 		if (corpses.size < getTotalCorpses()) {
-			corpses = entities.filterIsInstance<ArmorStand>().filter(::isCorpse).map {
+			corpses = level.entitiesForRendering().filterIsInstance<ArmorStand>().filter(::isCorpse).map {
 				Corpse(it, corpseToColor[it.getItemBySlot(EquipmentSlot.HEAD).item] ?: config.color, false)
 			}
 		}
 	}
 
 	fun onRenderWorld(context: WorldRenderContext) {
+		if (Utils.getLocation() != Island.MINESHAFT || corpses.isEmpty()) return
 		if (!config.box && !config.tracer) return
-		if (corpses.isEmpty()) return
 
 		for (corpse in corpses) {
 			if (corpse.isLooted) continue
@@ -83,6 +83,6 @@ object CorpseESP {
 	}
 
 	fun getTotalCorpses(): Int {
-		return TabListUtil.getTabList().count { it.second.string.matches(corpseRegex) }
+		return TabListUtil.getTabList().count { corpseRegex.matches(it.second.string) }
 	}
 }

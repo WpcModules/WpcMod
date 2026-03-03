@@ -252,9 +252,9 @@ object TerminalSolver {
                 val amount = slot.item?.count?.toString() ?: ""
                 if (config.showNumbers)
 					drawContext.drawString(
-						MC.textRenderer,
+						MC.font,
 						amount,
-						slot.x + 8 - MC.textRenderer.width(amount) / 2,
+						slot.x + 8 - MC.font.width(amount) / 2,
 						slot.y + 4,
 						CommonColors.WHITE,
 						true
@@ -273,7 +273,14 @@ object TerminalSolver {
                     }
 
                     drawContext.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, color.getEffectiveColourRGB())
-                    drawContext.drawString(MC.textRenderer, text.toString(), slot.x + 8 - MC.textRenderer.width(text.toString()) / 2, slot.y + 4, CommonColors.WHITE, true)
+					drawContext.drawString(
+						MC.font,
+						text.toString(),
+						slot.x + 8 - MC.font.width(text.toString()) / 2,
+						slot.y + 4,
+						CommonColors.WHITE,
+						true
+					)
                 }
             }
 

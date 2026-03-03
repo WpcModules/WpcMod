@@ -28,8 +28,8 @@ object RubixGui : TermGui() {
 			val slotCenter = (slotSize / 2) * config.customTermSize
 			val textScale = config.customTermSize / 1.75f
 
-			val textX = slotX + slotCenter - MC.textRenderer.width(text) * textScale / 2
-			val textY = slotY + slotCenter - MC.textRenderer.lineHeight * textScale / 2
+			val textX = slotX + slotCenter - MC.font.width(text) * textScale / 2
+			val textY = slotY + slotCenter - MC.font.lineHeight * textScale / 2
 
 			val matrixStack = drawContext.pose()
 

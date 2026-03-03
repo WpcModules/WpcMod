@@ -1,26 +1,26 @@
 package net.wapic.wpcmod.util.render
 
-import io.github.notenoughupdates.moulconfig.ChromaColour
-import net.minecraft.client.gui.Font
-import net.minecraft.client.renderer.state.CameraRenderState
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.VertexConsumer
+import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.client.DeltaTracker
+import net.minecraft.client.gui.Font
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.renderer.LightTexture
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.ShapeRenderer
+import net.minecraft.client.renderer.state.CameraRenderState
 import net.minecraft.util.FormattedCharSequence
+import net.minecraft.util.profiling.ProfilerFiller
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
-import net.minecraft.util.profiling.ProfilerFiller
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.VecUtils.unaryMinus
 
 class WorldRenderContext {
 	val matrixStack: PoseStack
-	val world: ClientLevel
+	val level: ClientLevel
 	val consumer: MultiBufferSource.BufferSource
 	val tickCounter: DeltaTracker
 	val camera: CameraRenderState
@@ -35,7 +35,7 @@ class WorldRenderContext {
 		profiler: ProfilerFiller
 	) {
 		this.matrixStack = matrixStack
-		this.world = world
+		this.level = world
 		this.consumer = consumer
 		this.tickCounter = tickCounter
 		this.camera = camera
@@ -54,8 +54,8 @@ class WorldRenderContext {
 		matrixStack.mulPose(camera.orientation)
 		matrixStack.scale(scale, -scale, scale)
 
-		MC.textRenderer.drawInBatch(
-			text, -MC.textRenderer.width(text) / 2f, 0f, -1, true, matrix, consumer,
+		MC.font.drawInBatch(
+			text, -MC.font.width(text) / 2f, 0f, -1, true, matrix, consumer,
 			if (depth) Font.DisplayMode.NORMAL else Font.DisplayMode.SEE_THROUGH,
 			0, LightTexture.FULL_BRIGHT
 		)
@@ -64,26 +64,6 @@ class WorldRenderContext {
 
 		matrixStack.popPose()
 	}
-
-/*	fun WorldRenderContext.drawBeaconBeam(position: BlockPos, color: Color) {
-		val matrix = matrixStack() ?: return
-		val bufferSource = consumers() as? VertexConsumerProvider.Immediate ?: return
-		val camera = camera().pos
-
-		matrix.push()
-		matrix.multiplyPositionMatrix(positionMatrix())
-		matrix.translate(position.x - camera.x, position.y - camera.y, position.z - camera.z)
-
-		val length = camera.subtract(position.toCenterPos()).horizontalLength().toFloat()
-		val scale = if (MC.player != null && MC.player?.isUsingSpyglass == true) 1.0f else maxOf(1.0f, length / 96.0f)
-
-		BeaconBlockEntityRenderer.renderBeam(
-			matrix, bufferSource, BeaconBlockEntityRenderer.BEAM_TEXTURE,
-			tickCounter().getTickProgress(true), scale, world().time, 0, 319, color.rgb, 0.2f * scale, 0.25f * scale
-		)
-
-		matrix.pop()
-	}*/
 
 	fun drawBoundingBox(
 		pos: Vec3,

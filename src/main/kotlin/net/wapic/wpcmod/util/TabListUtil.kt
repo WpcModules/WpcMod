@@ -20,7 +20,7 @@ object TabListUtil {
 	fun getTabList(): List<Pair<PlayerInfo, Component>> {
 		return MC.player?.connection?.onlinePlayers?.let {
 			tabListOrder.immutableSortedCopy(it)
-		}?.map { Pair(it, MC.inGameHud.tabList.getNameForDisplay(it)) } ?: emptyList()
+		}?.map { Pair(it, MC.gui.tabList.getNameForDisplay(it)) } ?: emptyList()
 	}
 
 	fun getDungeonTabList(): List<Pair<PlayerInfo, Component>>? {

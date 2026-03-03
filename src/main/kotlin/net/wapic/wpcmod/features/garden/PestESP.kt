@@ -24,7 +24,7 @@ object PestESP : MobGlowCache() {
 		if (!config.tracer && !config.box) return
 		val deltaTicks = worldRenderContext.tickCounter.getGameTimeDeltaPartialTick(true)
 
-		val entities = worldRenderContext.world.entitiesForRendering().filter(::isPest)
+		val entities = worldRenderContext.level.entitiesForRendering().filter(::isPest)
 
 		for (entity in entities) {
 			val pos = entity.getEyePosition(deltaTicks)

@@ -8,7 +8,6 @@ import net.minecraft.world.entity.projectile.FishingHook
 import net.minecraft.world.inventory.InventoryMenu
 import net.minecraft.world.item.Items
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.mixin.accessors.MinecraftAccessor
 import net.wapic.wpcmod.util.EntityUtils.getArmorStandsByEntity
 import net.wapic.wpcmod.util.MC
 import kotlin.random.Random
@@ -44,7 +43,7 @@ object AutoFish {
 			val minDelay = config.minDelay.toLong()
 			val maxDelay = minDelay + 100L
 
-			repeat(castCount) {
+			repeat(castCount) { i ->
 				val castDelay = Random.nextLong(minDelay, maxDelay)
 				delay(castDelay)
 
@@ -52,11 +51,7 @@ object AutoFish {
 				val inSkyBlockMenu = client.player?.containerMenu !is InventoryMenu
 				val isSafe = !(config.safeMode && inSkyBlockMenu)
 
-				if (isHoldingRod && isSafe) {
-					MC.runOnThread {
-						(client as MinecraftAccessor).doItemUse_WpcMod()
-					}
-				}
+				if (isHoldingRod && isSafe) MC.useItem()
 			}
 
 			delay(350) // Delay to prevent false positive from old armor stand

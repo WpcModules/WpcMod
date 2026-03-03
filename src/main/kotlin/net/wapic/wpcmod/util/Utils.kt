@@ -46,7 +46,7 @@ object Utils {
 	}
 
 	fun runCommand(command: String) {
-		MC.networkHandler?.sendCommand(command.removePrefix("/"))
+		MC.connection?.sendCommand(command.removePrefix("/"))
 	}
 
 	private fun onTick() {
@@ -91,8 +91,8 @@ object Utils {
 			}
 		}
 
-		return chunks.filter { chunk -> MC.world?.getChunk(chunk.x, chunk.z) !is EmptyLevelChunk }
-			.map { chunk -> MC.world?.getChunk(chunk.x,chunk.z) }
+		return chunks.filter { chunk -> MC.level?.getChunk(chunk.x, chunk.z) !is EmptyLevelChunk }
+			.map { chunk -> MC.level?.getChunk(chunk.x, chunk.z) }
 	}
 
 }

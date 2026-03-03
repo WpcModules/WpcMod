@@ -1,8 +1,8 @@
 package net.wapic.wpcmod.features.kuudra
 
+import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.util.CommonColors
-import net.minecraft.ChatFormatting
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.hud.SimpleHudElement
 import net.wapic.wpcmod.util.Island
@@ -39,7 +39,7 @@ object KuudraDisplay : SimpleHudElement("Kuudra Display", 75, 11) {
 
 				val health = "$formatting${(it.health / 1000).toFixed(2)}K / §a100K §cHP"
 
-				drawContext.drawString(MC.textRenderer, health, 0, 0, CommonColors.WHITE)
+				drawContext.drawString(MC.font, health, 0, 0, CommonColors.WHITE)
 			}
 		}
 

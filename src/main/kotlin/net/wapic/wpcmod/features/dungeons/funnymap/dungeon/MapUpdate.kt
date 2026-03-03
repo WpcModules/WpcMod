@@ -1,11 +1,11 @@
 package net.wapic.wpcmod.features.dungeons.funnymap.dungeon
 
-import net.minecraft.world.level.block.Blocks
 import net.minecraft.client.multiplayer.PlayerInfo
-import net.minecraft.world.level.saveddata.maps.MapDecorationTypes
-import net.minecraft.network.chat.Component
 import net.minecraft.core.BlockPos
+import net.minecraft.network.chat.Component
+import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.chunk.EmptyLevelChunk
+import net.minecraft.world.level.saveddata.maps.MapDecorationTypes
 import net.wapic.wpcmod.features.dungeons.ScoreCalculation
 import net.wapic.wpcmod.features.dungeons.funnymap.core.DungeonPlayer
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.*
@@ -34,7 +34,7 @@ object MapUpdate {
 				val name = second.string.trim().substringAfterLast("] ").split(" ")[0]
 				if (name != "") {
 					FunnyMap.dungeonTeammates[name] = DungeonPlayer(first.skin).apply {
-						MC.world?.players()?.find { it.name.string == name }?.let { setData(it) }
+						MC.level?.players()?.find { it.name.string == name }?.let { setData(it) }
 						colorPrefix = second.string.substringBefore(name, "f").last()
 						this.name = name
 						icon = "icon-$iconNum"
@@ -63,7 +63,7 @@ object MapUpdate {
 					iconNum++
 				}
 				if (!playerLoaded) {
-					MC.world?.players()?.find { it.name.string == name }?.let { setData(it) }
+					MC.level?.players()?.find { it.name.string == name }?.let { setData(it) }
 				}
 
 				val room = getCurrentRoom()
@@ -140,8 +140,8 @@ object MapUpdate {
 						if (room.opened) {
 							room.opened = false
 						}
-					} else if (!room.opened && MC.world?.getChunk(room.x shr 4, room.z shr 4) !is EmptyLevelChunk &&
-						MC.world?.getBlockState(BlockPos(room.x, 69, room.z))?.block == Blocks.AIR
+					} else if (!room.opened && MC.level?.getChunk(room.x shr 4, room.z shr 4) !is EmptyLevelChunk &&
+						MC.level?.getBlockState(BlockPos(room.x, 69, room.z))?.block == Blocks.AIR
 					) {
 						room.opened = true
 					}
