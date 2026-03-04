@@ -3,40 +3,66 @@ package net.wapic.wpcmod.features.fishing
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
+import net.fabricmc.fabric.api.event.player.UseItemCallback
 import net.minecraft.client.Minecraft
+import net.minecraft.client.multiplayer.ClientLevel
+import net.minecraft.client.player.LocalPlayer
+import net.minecraft.world.InteractionHand
+import net.minecraft.world.InteractionResult
+import net.minecraft.world.entity.player.Player
 import net.minecraft.world.entity.projectile.FishingHook
 import net.minecraft.world.inventory.InventoryMenu
 import net.minecraft.world.item.Items
+import net.minecraft.world.level.Level
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.EntityUtils.getArmorStandsByEntity
 import net.wapic.wpcmod.util.MC
+import java.lang.ref.WeakReference
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.random.Random
 
 object AutoFish {
 
 	private val config get() = WpcMod.config.fishing.autofish
-	@Volatile
-	private var preventFutureRodUse: Boolean = false
+	private var isProcessing = AtomicBoolean(false)
 	private val slugDelayInTicks: Int get() = if (config.slugPet) 200 else 400
+	private var lastRodCast = 0
+	private var cachedHook: WeakReference<FishingHook>? = null
 
 	fun init() {
 		ClientTickEvents.END_CLIENT_TICK.register(::onTick)
+		UseItemCallback.EVENT.register(::onUseItem)
+	}
+
+	private fun onUseItem(player: Player, level: Level, hand: InteractionHand): InteractionResult {
+		if (player.isHolding(Items.FISHING_ROD)) {
+			lastRodCast = player.tickCount
+		}
+		return InteractionResult.PASS
 	}
 
 	private fun onTick(client: Minecraft) {
-		if(!config.enabled || preventFutureRodUse) return
+		if (!config.enabled || isProcessing.get() || lastRodCast == 0) return
+		val player = client.player ?: return
+		val level = client.level ?: return
+		if (player.tickCount - lastRodCast < 10) return
 
-		val fishHook = client.player?.fishing ?: return
+		val fishHook = getActiveHook(player, level)
+		if (fishHook == null) {
+			lastRodCast = 0
+			return
+		}
 
 		if (config.slugFish && fishHook.tickCount < slugDelayInTicks) return
 
 		if (fishHook.hasCaughtFish) {
-			preventFutureRodUse = true
 			useRod(client)
 		}
 	}
 
 	private fun useRod(client: Minecraft) = WpcMod.coroutineScope.launch {
+		if (!isProcessing.compareAndSet(false, true)) return@launch
+
 		try {
 			val castCount = if (config.disableRecast) 1 else 2
 
@@ -51,13 +77,29 @@ object AutoFish {
 				val inSkyBlockMenu = client.player?.containerMenu !is InventoryMenu
 				val isSafe = !(config.safeMode && inSkyBlockMenu)
 
-				if (isHoldingRod && isSafe) MC.useItem()
+				if (isHoldingRod && isSafe) {
+					MC.useItem()
+				}
 			}
 
 			delay(350) // Delay to prevent false positive from old armor stand
 		} finally {
-			preventFutureRodUse = false
+			isProcessing.set(false)
+			cachedHook = null
 		}
+	}
+
+	private fun getActiveHook(player: LocalPlayer, level: ClientLevel): FishingHook? {
+		cachedHook?.get()?.takeIf { it.isAlive }?.let {
+			return it
+		}
+
+		val hook = player.fishing ?: level.entitiesForRendering()
+			.filterIsInstance<FishingHook>()
+			.firstOrNull { it.owner == player }
+		if (hook != null) cachedHook = WeakReference(hook)
+
+		return hook
 	}
 
 	private val FishingHook.hasCaughtFish: Boolean get() = getArmorStandsByEntity(this).any { it.name.string == "!!!" }
