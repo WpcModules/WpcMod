@@ -42,14 +42,15 @@ object CorpseESP {
 
 	fun onMessageReceived(text: Component, actionBar: Boolean) {
 		if (actionBar || Utils.getLocation() != Island.MINESHAFT) return
-		if (corpseLootedRegex.matches(text.string)) {
-			corpses.minBy { it.entity.distanceTo(MC.player) }.isLooted = true
+		if (corpseLootedRegex.matches(text.string) && corpses.isNotEmpty()) {
+			val player = MC.player ?: return
+			corpses.minByOrNull { it.entity.distanceTo(player) }?.isLooted = true
 		}
 	}
 
 	fun onTick(client: Minecraft) {
-		if (!config.box && !config.tracer) return
 		if (Utils.getLocation() != Island.MINESHAFT) return
+		if (!config.box && !config.tracer) return
 		val level = client.level ?: return
 
 		if (corpses.size < getTotalCorpses()) {
