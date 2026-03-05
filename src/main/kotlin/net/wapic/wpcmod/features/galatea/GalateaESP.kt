@@ -101,7 +101,7 @@ object GalateaESP : MobGlowCache() {
 			}
 
 			if (settings.box)
-				worldRenderContext.drawBoundingBox(entity.boundingBox, settings.color)
+				worldRenderContext.drawBoundingBox(boundingBox, settings.color)
 
 			if (settings.tracer)
 				worldRenderContext.drawTracer(boundingBox.center, settings.color)
