@@ -20,6 +20,7 @@ import net.wapic.wpcmod.config.inventory.InventoryConfig
 import net.wapic.wpcmod.config.kuudra.KuudraConfig
 import net.wapic.wpcmod.config.mining.MiningConfig
 import net.wapic.wpcmod.config.render.RenderConfig
+import net.wapic.wpcmod.config.slayer.SlayerConfig
 
 class WpcConfig : Config() {
 
@@ -63,6 +64,9 @@ class WpcConfig : Config() {
 
 	@Category(name = "Dungeons", desc = "Configuration options for Dungeons")
 	var dungeon: DungeonConfig = DungeonConfig()
+
+	@Category(name = "Slayer", desc = "Configuration options for Slayers")
+	var slayer: SlayerConfig = SlayerConfig()
 
 	@Category(name = "Mining", desc = "Features that involve dwarven mines/hollows/glacite tunnels")
 	var mining: MiningConfig = MiningConfig()

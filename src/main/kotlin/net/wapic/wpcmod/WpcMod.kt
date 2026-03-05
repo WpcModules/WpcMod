@@ -57,6 +57,7 @@ import net.wapic.wpcmod.features.kuudra.RendAnnounce
 import net.wapic.wpcmod.features.mining.ChestESP
 import net.wapic.wpcmod.features.mining.CorpseESP
 import net.wapic.wpcmod.features.mining.PigeonSwapper
+import net.wapic.wpcmod.features.slayer.GummyBearTimer
 import net.wapic.wpcmod.hud.HudManager
 import net.wapic.wpcmod.listeners.NetworkListener
 import net.wapic.wpcmod.util.*
@@ -182,6 +183,9 @@ object WpcMod : ModInitializer {
 		// Kuudra
 		KuudraESP.init()
 		RendAnnounce.init()
+
+		// Slayers
+		GummyBearTimer.init()
 
 		// Galatea
 		GalateaESP.init()
