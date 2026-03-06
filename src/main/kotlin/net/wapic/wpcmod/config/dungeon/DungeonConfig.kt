@@ -1,7 +1,7 @@
 package net.wapic.wpcmod.config.dungeon
 
-import io.github.notenoughupdates.moulconfig.ChromaColour
 import io.github.notenoughupdates.moulconfig.annotations.*
+import net.wapic.wpcmod.config.components.GlowableESPConfig
 import net.wapic.wpcmod.features.instance.AutoGFS
 
 class DungeonConfig {
@@ -33,32 +33,11 @@ class DungeonConfig {
 	@ConfigOption(name = "Livid Solver", desc = "")
 	var lividSolver: LividSolverConfig = LividSolverConfig()
 
-	class LividSolverConfig {
-		@ConfigOption(
-			name = "Enable Livid Solver",
-			desc = "Global toggle to enable livid solver"
-		)
+	class LividSolverConfig : GlowableESPConfig() {
+
+		@ConfigOption(name = "Use Livid Color", desc = "Use the color of livid instead of a predetermined color")
 		@ConfigEditorBoolean
-		var enabled = false
-
-		@ConfigOption(name = "Color", desc = "The color to use for glow, box, and tracer.")
-		@ConfigEditorColour
-		var color = ChromaColour(1f, 1f, 1f, 0, 255)
-
-		@ConfigOption(name = "Box", desc = "Draw a box around the object")
-		@ConfigEditorBoolean
-		var box: Boolean = false
-
-		@ConfigOption(name = "Glow", desc = "Render a glow around the entity")
-		@ConfigEditorBoolean
-		var glow: Boolean = false
-
-		@ConfigOption(
-			name = "Tracer Width",
-			desc = "Width of the tracer\n0 Disables the tracer"
-		)
-		@ConfigEditorSlider(maxValue = 5f, minStep = 0.1f, minValue = 0f)
-		var lineWidth = 2f
+		var useLividColor = false
 	}
 
 	@Accordion

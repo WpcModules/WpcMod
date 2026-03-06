@@ -3,6 +3,7 @@ package net.wapic.wpcmod.config.components
 import io.github.notenoughupdates.moulconfig.ChromaColour
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorBoolean
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorColour
+import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorSlider
 import io.github.notenoughupdates.moulconfig.annotations.ConfigOption
 
 abstract class NonGlowableESPConfig {
@@ -18,4 +19,8 @@ abstract class NonGlowableESPConfig {
 	@ConfigOption(name = "Tracer", desc = "Draw a line from your crosshair to the object")
 	@ConfigEditorBoolean
 	var tracer: Boolean = false
+
+	@ConfigOption(name = "Tracer Width", desc = "The width of the tracer drawn")
+	@ConfigEditorSlider(maxValue = 5f, minStep = 0.1f, minValue = 1f)
+	var tracerWidth = 2f
 }

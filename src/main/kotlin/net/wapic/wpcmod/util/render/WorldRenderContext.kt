@@ -222,7 +222,7 @@ class WorldRenderContext {
 	fun drawTracer(
 		pos: Vec3,
 		color: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255),
-		lineWidth: Double = 2.0
+		lineWidth: Float = 2f
 	) {
 		drawTracer(pos.x, pos.y, pos.z, color, lineWidth)
 	}
@@ -230,7 +230,7 @@ class WorldRenderContext {
 	fun drawTracer(
 		x: Double, y: Double, z: Double,
 		color: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255),
-		lineWidth: Double = 2.0
+		lineWidth: Float = 2f
 	) {
 		val viewBobbing = MC.options.bobView().get()
 		MC.options.bobView().set(false)
@@ -245,7 +245,7 @@ class WorldRenderContext {
 		x1: Double, y1: Double, z1: Double,
 		x2: Double, y2: Double, z2: Double,
 		color: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255),
-		lineWidth: Double = 2.0
+		lineWidth: Float = 2f
 	) {
 
 		matrixStack.pushPose()
@@ -254,7 +254,7 @@ class WorldRenderContext {
 
 		val entry: PoseStack.Pose = matrixStack.last()
 
-		val layer: RenderType = RenderLayers.getLines(lineWidth)
+		val layer: RenderType = RenderLayers.getLines(lineWidth.toDouble())
 		val bufferBuilder: VertexConsumer = consumer.getBuffer(layer)
 
 		val normal = Vec3(x2, y2, z2).toVector3f().sub(x1.toFloat(), y1.toFloat(), z1.toFloat()).normalize()
