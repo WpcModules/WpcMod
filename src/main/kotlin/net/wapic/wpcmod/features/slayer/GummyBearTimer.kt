@@ -11,9 +11,10 @@ import net.wapic.wpcmod.util.MC
 object GummyBearTimer : SimpleHudElement("Gummy Bear Timer", 110, 11) {
 
 	private val config get() = WpcMod.config.slayer
-	override val isEnabled: Boolean get() = config.gummyBearTimer
+	override val isEnabled: Boolean get() = config.gummyBearTimer.enable
 
-	private const val GUMMY_BEAR_LENGTH = 60*60 * 1000 // 1 hour
+	private const val GUMMY_BEAR_LENGTH = 3_600_000
+	private const val GUMMY_BEAR_MESSAGE = "You ate a Re-heated Gummy Polar Bear!"
 
 	private var endTime: Long = -1
 
@@ -22,7 +23,8 @@ object GummyBearTimer : SimpleHudElement("Gummy Bear Timer", 110, 11) {
 	}
 
 	private fun onMessageReceived(message: Component, actionBar: Boolean) {
-		if (message.string == "You ate a Re-heated Gummy Polar Bear!") {
+		if(actionBar) return
+		if (message.string == GUMMY_BEAR_MESSAGE) {
 			if (endTime < 0)
 				endTime = System.currentTimeMillis() + GUMMY_BEAR_LENGTH
 			else
@@ -38,6 +40,11 @@ object GummyBearTimer : SimpleHudElement("Gummy Bear Timer", 110, 11) {
 		applyTransformations(matrixStack)
 
 		val timeLeft = ((endTime - System.currentTimeMillis()) / 1000).toInt()
+		if(timeLeft < 0 && !config.gummyBearTimer.showExpired) {
+			matrixStack.popMatrix()
+			return
+		}
+
 		val s = if (timeLeft < 0) "§cDepleted" else convertSecondsToTime(timeLeft)
 		drawContext.drawString(MC.font, "§fGummy Bear: §a${s}", 0, 0, CommonColors.WHITE)
 
