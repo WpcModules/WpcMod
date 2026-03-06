@@ -15,7 +15,7 @@ import net.wapic.wpcmod.util.MC
 
 object CompactChat {
 
-	private val config get() = WpcMod.config.chat
+	private val config get() = WpcMod.config.chat.compactChat
 
 	private val messages = mutableMapOf<Component, Message>()
 	private var currentDividerSet: MutableList<Message>? = null
@@ -25,7 +25,8 @@ object CompactChat {
 	fun init() {
 		ClientTickEvents.END_CLIENT_TICK.register { _ -> prune() }
 		ClientReceiveMessageEvents.ALLOW_GAME.register { message, _ ->
-			return@register if (!config.removeBlank) true else (ChatFormatting.stripFormatting(message.string)?.isBlank() == false)
+			return@register if (!config.removeBlank) true else ChatFormatting.stripFormatting(message.string)
+				?.isBlank() == false
 		}
 	}
 
@@ -57,7 +58,7 @@ object CompactChat {
 
 	@JvmStatic
 	fun compact(text: Component): Message? {
-		if (!config.compactChat) return null
+		if (!config.enabled) return null
 
 		var message: Message? = messages[text]?.takeUnless { it.isOld() }
 		if (message == null) {
@@ -81,7 +82,7 @@ object CompactChat {
 
 	@JvmStatic
 	fun prune() {
-		if (compactingTicks++ % PRUNE_TICK == 0 && config.compactChat) {
+		if (compactingTicks++ % PRUNE_TICK == 0 && config.enabled) {
 			messages.values.removeIf(Message::isOld)
 		}
 	}
