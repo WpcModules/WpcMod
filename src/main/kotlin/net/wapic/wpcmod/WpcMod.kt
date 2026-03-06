@@ -4,10 +4,7 @@ import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import moe.nea.libautoupdate.CurrentVersion
-import moe.nea.libautoupdate.UpdateContext
-import moe.nea.libautoupdate.UpdateSource
-import moe.nea.libautoupdate.UpdateTarget
+import moe.nea.libautoupdate.*
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
@@ -101,9 +98,6 @@ object WpcMod : ModInitializer {
 	override fun onInitialize() {
 		ConfigManager.firstLoad()
 
-		val future = updateContext.checkUpdate("upstream")
-		val potentialUpdate = future.get()
-
 		ClientCommandRegistrationCallback.EVENT.register { dispatcher, registryAccess ->
 			val mainCommand = dispatcher.register(
 				WpcModCommand.getCommand()
@@ -117,20 +111,26 @@ object WpcMod : ModInitializer {
 					.then(GFSCommand.getCommand())
 			)
 
+			dispatcher.register(ClientCommandManager.literal("itistimetofuckingupdate").executes {
+				val potentialUpdate = getPotentialUpdate()
+				ChatUtils.sendMessage("Launching update...")
+				potentialUpdate.launchUpdate().whenComplete { void, throwable ->
+					if (throwable != null) return@whenComplete ChatUtils.sendMessage("Update ${potentialUpdate.update.versionName} complete! new version will be available after restart")
+					throwable?.printStackTrace()
+				}
+				return@executes 1
+			})
+
 			dispatcher.register(ClientCommandManager.literal("wpcmod").redirect(mainCommand))
 		}
 
 		ClientPlayConnectionEvents.JOIN.register { handler, sender, client ->
-			if ((potentialUpdate.isUpdateAvailable || FabricLoader.getInstance().isDevelopmentEnvironment) && !updateNotified) {
+			if (updateNotified) return@register
+
+			val potentialUpdate = getPotentialUpdate()
+			if (potentialUpdate.isUpdateAvailable || FabricLoader.getInstance().isDevelopmentEnvironment) {
 				updateNotified = true
-				ChatUtils.sendMessage(
-					"Update found: §e${updateContext.currentVersion.display()}§r. -> §e${potentialUpdate.update.versionName}§r Click here to update",
-					Style.EMPTY.withHoverEvent(
-						HoverEvent.ShowText(Component.nullToEmpty("Click to update"))
-					).withClickEvent(
-						ClickEvent.RunCommand("/wpcmod update")
-					).withColor(ChatFormatting.WHITE)
-				)
+				sendUpdateMessage(potentialUpdate)
 			}
 		}
 
@@ -223,5 +223,17 @@ object WpcMod : ModInitializer {
 
 		// Dev
 		SkyBlockID.init()
+	}
+
+	fun getPotentialUpdate(): PotentialUpdate = updateContext.checkUpdate("upstream").get()
+	fun sendUpdateMessage(potentialUpdate: PotentialUpdate) {
+		ChatUtils.sendMessage(
+			"Update found: §e${updateContext.currentVersion.display()}§r -> §e${potentialUpdate.update.versionName}§r Click here to update",
+			Style.EMPTY.withHoverEvent(
+				HoverEvent.ShowText(Component.nullToEmpty("Click to update"))
+			).withClickEvent(
+				ClickEvent.RunCommand("/itistimetofuckingupdate")
+			).withColor(ChatFormatting.WHITE)
+		)
 	}
 }

@@ -8,14 +8,10 @@ import net.wapic.wpcmod.util.ChatUtils
 object UpdateCommand : Command("update") {
 
 	override fun executes(context: CommandContext<FabricClientCommandSource>): Int {
-		val future = WpcMod.updateContext.checkUpdate("upstream")
-		val potentialUpdate = future.get()
+		val potentialUpdate = WpcMod.getPotentialUpdate()
 
 		if (potentialUpdate.isUpdateAvailable) {
-			ChatUtils.sendMessage("Launching update...")
-			potentialUpdate.launchUpdate().thenRun {
-				ChatUtils.sendMessage("Download complete! Update will apply after you restart")
-			}
+			WpcMod.sendUpdateMessage(potentialUpdate)
 		} else {
 			ChatUtils.sendMessage("No Updates Available")
 		}
