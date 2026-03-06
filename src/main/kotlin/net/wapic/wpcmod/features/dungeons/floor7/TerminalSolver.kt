@@ -146,25 +146,25 @@ object TerminalSolver {
     }
 
     fun onGuiClick(screen: Screen, mouseX: Int, mouseY: Int, button: Int, callbackInfoReturnable: CallbackInfoReturnable<Boolean>) = with(currentTerm) {
-        if (!config.enabled || this == null) return
+		if (!config.enabled || this == null) return@with
 
         if (config.renderType == RenderType.CUSTOM && !(type == TerminalTypes.MELODY && config.cancelMelodySolver)) {
             currentTerm?.type?.getGUI()?.mouseClicked(screen, button)
             callbackInfoReturnable.cancel()
-            return
+			return@with
         }
     }
 
 	fun onSlotClick(slot: Slot?, slotId: Int, button: Int, slotActionType: ClickType, callbackInfo: CallbackInfo) =
 		with(currentTerm) {
-			if (!config.enabled || this == null) return
+			if (!config.enabled || this == null) return@with
 
 			if (config.renderType == RenderType.CUSTOM && !(type == TerminalTypes.MELODY && config.cancelMelodySolver) || (config.blockIncorrectClicks && !canClick(
 					slotId,
 					button
 				))
 			) {
-				return callbackInfo.cancel()
+				return@with callbackInfo.cancel()
 			}
 
 			if (config.middleClickGUI) {
@@ -173,7 +173,7 @@ object TerminalSolver {
 					if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) GLFW.GLFW_MOUSE_BUTTON_3 else button,
 					config.hideClicked && !isClicked
 				)
-				return callbackInfo.cancel()
+				return@with callbackInfo.cancel()
 			}
 
 			if (config.hideClicked && !isClicked) {
@@ -213,13 +213,13 @@ object TerminalSolver {
 	}
 
 	fun drawSlot(drawContext: GuiGraphics, screen: Screen, slot: Slot, callbackInfo: CallbackInfo) = with(currentTerm) {
-		if (!config.enabled || config.renderType == RenderType.CUSTOM || this?.type == null || type == TerminalTypes.MELODY) return
+		if (!config.enabled || config.renderType == RenderType.CUSTOM || this?.type == null || type == TerminalTypes.MELODY) return@with
 
         val slotIndex = slot.index
-		val inventorySize = (screen as? AbstractContainerScreen<*>)?.menu?.slots?.size ?: return
+		val inventorySize = (screen as? AbstractContainerScreen<*>)?.menu?.slots?.size ?: return@with
 
         callbackInfo.cancel()
-        if (slotIndex !in solution || slotIndex > inventorySize - 37) return
+		if (slotIndex !in solution || slotIndex > inventorySize - 37) return@with
 
         when (type) {
             TerminalTypes.PANES -> drawContext.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, config.panesColor.getEffectiveColourRGB())
@@ -283,8 +283,6 @@ object TerminalSolver {
 					)
                 }
             }
-
-			else -> return@with
 		}
     }
 

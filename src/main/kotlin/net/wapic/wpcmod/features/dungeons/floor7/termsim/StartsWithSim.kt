@@ -1,9 +1,9 @@
 package net.wapic.wpcmod.features.dungeons.floor7.termsim
 
 import net.minecraft.core.component.DataComponents
-import net.minecraft.world.item.ItemStack
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.world.inventory.Slot
+import net.minecraft.world.item.ItemStack
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.dungeons.floor7.TerminalSolver
 import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalTypes
@@ -41,7 +41,7 @@ class StartsWithSim(
 
     override fun slotClick(slot: Slot, button: Int) = with(slot.item) {
 		if (hoverName.string?.startsWith(letter, true) == false || hasFoil())
-			return ChatUtils.sendMessage("§cThat item does not start with: \'$letter\' ${slot.item}!")
+			return@with ChatUtils.sendMessage("§cThat item does not start with: \'$letter\' ${slot.item}!")
 
 		createNewGui {
 			if (it == slot) apply { set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true) } else it.item
