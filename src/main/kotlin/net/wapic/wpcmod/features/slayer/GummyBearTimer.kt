@@ -23,7 +23,7 @@ object GummyBearTimer : SimpleHudElement("Gummy Bear Timer", 110, 11) {
 	}
 
 	private fun onMessageReceived(message: Component, actionBar: Boolean) {
-		if(actionBar) return
+		if (actionBar) return
 		if (message.string == GUMMY_BEAR_MESSAGE) {
 			if (endTime < 0)
 				endTime = System.currentTimeMillis() + GUMMY_BEAR_LENGTH
@@ -35,15 +35,12 @@ object GummyBearTimer : SimpleHudElement("Gummy Bear Timer", 110, 11) {
 	override fun render(drawContext: GuiGraphics, deltaTicks: Float) {
 		if (!isEnabled) return
 
+		val timeLeft = ((endTime - System.currentTimeMillis()) / 1000).toInt()
+		if(timeLeft < 0 && !config.gummyBearTimer.showExpired) return
+
 		val matrixStack = drawContext.pose()
 		matrixStack.pushMatrix()
 		applyTransformations(matrixStack)
-
-		val timeLeft = ((endTime - System.currentTimeMillis()) / 1000).toInt()
-		if(timeLeft < 0 && !config.gummyBearTimer.showExpired) {
-			matrixStack.popMatrix()
-			return
-		}
 
 		val s = if (timeLeft < 0) "§cDepleted" else convertSecondsToTime(timeLeft)
 		drawContext.drawString(MC.font, "§fGummy Bear: §a${s}", 0, 0, CommonColors.WHITE)
