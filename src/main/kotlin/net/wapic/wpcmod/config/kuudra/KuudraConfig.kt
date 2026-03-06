@@ -6,11 +6,14 @@ import io.github.notenoughupdates.moulconfig.annotations.ConfigOption
 
 class KuudraConfig {
 
-	@ConfigOption(name = "Auto GFS Ender Pearls", desc = "Automatically retrieve ender pearls from sack using /gfs")
+	@ConfigOption(
+		name = "Auto GFS Ender Pearls",
+		desc = "Automatically retrieve ender pearls at the start of the run using /gfs"
+	)
 	@ConfigEditorBoolean
 	var autoGfs: Boolean = false
 
-	@ConfigOption(name = "Health Display", desc = "Show the health of kuudra in the middle of the screen in P5")
+	@ConfigOption(name = "Health Display", desc = "Show the health of kuudra on the screen in P5")
 	@ConfigEditorBoolean
 	var healthDisplay: Boolean = false
 

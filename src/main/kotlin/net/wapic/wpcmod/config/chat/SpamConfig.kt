@@ -17,7 +17,7 @@ class SpamConfig {
 	@ConfigEditorDropdown
 	var joinOrLeave: SpamType = SpamType.SHOW
 
-	@ConfigOption(name = "Kill Combo", desc = "&a+5 Kill Combo +3% ✯ Magic Find")
+	@ConfigOption(name = "Kill Combo", desc = "+5 Kill Combo +3% ✯ Magic Find")
 	@ConfigEditorDropdown
 	var killCombo: SpamType = SpamType.SHOW
 

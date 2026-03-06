@@ -13,25 +13,25 @@ class ESPConfig {
 	@ConfigOption(name = "Starred Mobs", desc = "Any entity with a star in their name")
 	var starMob = StarMobConfig()
 
-	class StarMobConfig(): GlowableESPConfig()
+	class StarMobConfig : GlowableESPConfig()
 
 	@Accordion
 	@ConfigOption(name = "Dungeon Keys", desc = "Wither and blood keys")
 	var doorKeys = DoorKeysConfig()
 
-	class DoorKeysConfig() : GlowableESPConfig()
+	class DoorKeysConfig : GlowableESPConfig()
 
 	@Accordion
 	@ConfigOption(name = "Bats", desc = "Any Bat entity even non secret ones")
 	var bat = BatConfig()
 
-	class BatConfig(): GlowableESPConfig()
+	class BatConfig : GlowableESPConfig()
 
 	@Accordion
 	@ConfigOption(name = "Mini Bosses", desc = "Mini Bosses are mobs like Lost Adventurer and Frozen Adventurer")
 	var miniboss = MiniBossConfig()
 
-	class MiniBossConfig(): GlowableESPConfig()
+	class MiniBossConfig : GlowableESPConfig()
 
 	@Accordion
 	@ConfigOption(name = "Wither Doors", desc = "Wither Doors")

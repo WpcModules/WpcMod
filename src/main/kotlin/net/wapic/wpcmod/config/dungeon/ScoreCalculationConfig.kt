@@ -22,11 +22,11 @@ class ScoreCalculationConfig {
 	@ConfigEditorBoolean
 	var princeMessage: Boolean = false
 
-	@ConfigOption(name = "Score Message 270", desc = "Send score message in party chat")
+	@ConfigOption(name = "Notify 270 Score", desc = "Configure 270 score notification")
 	@ConfigEditorDropdown
 	var scoreMessage270: ScoreMessageType = ScoreMessageType.MESSAGE
 
-	@ConfigOption(name = "Score Message 300", desc = "Send score message only at 300 score")
+	@ConfigOption(name = "Notify 300 Score", desc = "Configure 300 score notification")
 	@ConfigEditorDropdown
 	var scoreMessage300: ScoreMessageType = ScoreMessageType.MESSAGE_AND_TITLE
 

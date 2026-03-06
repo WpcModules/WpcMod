@@ -11,7 +11,7 @@ class ESPConfig {
 	@ConfigOption(name = "Kuudra", desc = "")
 	var kuudra = KuudraConfig()
 
-	class KuudraConfig(): GlowableESPConfig() {
+	class KuudraConfig : GlowableESPConfig() {
 		@ConfigOption(name = "Kill Phase Only", desc = "Only enable ESP during kill phase")
 		@ConfigEditorBoolean
 		var killPhaseOnly: Boolean = false

@@ -9,7 +9,7 @@ import net.wapic.wpcmod.config.components.NonGlowableESPConfig
 class ESPConfig {
 
 	@Accordion
-	@ConfigOption(name = "Chest", desc = "Chests")
+	@ConfigOption(name = "Crystal Hollows Chests", desc = "Chests")
 	var chest: ChestConfig = ChestConfig()
 
 	class ChestConfig : NonGlowableESPConfig() {

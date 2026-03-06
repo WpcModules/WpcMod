@@ -11,47 +11,47 @@ class ESPConfig {
 	@ConfigOption(name = "Shulker", desc = "Shulker Settings")
 	var shulker = ShulkerConfig()
 
-	class ShulkerConfig(): GlowableESPConfig()
+	class ShulkerConfig : GlowableESPConfig()
 
 	@Accordion
 	@ConfigOption(name = "Panda", desc = "Panda Settings")
 	var panda = PandaConfig()
 
-	class PandaConfig(): GlowableESPConfig()
+	class PandaConfig : GlowableESPConfig()
 
 	@Accordion
 	@ConfigOption(name = "Frog", desc = "Frog Settings")
 	var frog = FrogConfig()
 
-	class FrogConfig(): GlowableESPConfig()
+	class FrogConfig : GlowableESPConfig()
 
 	@Accordion
 	@ConfigOption(name = "Axolotl", desc = "Axolotl Settings")
 	var axolotl = AxolotlConfig()
 
-	class AxolotlConfig(): GlowableESPConfig()
+	class AxolotlConfig : GlowableESPConfig()
 
 	@Accordion
 	@ConfigOption(name = "Pufferfish", desc = "Pufferfish Settings")
 	var pufferfish = PufferfishConfig()
 
-	class PufferfishConfig(): GlowableESPConfig()
+	class PufferfishConfig : GlowableESPConfig()
 
 	@Accordion
 	@ConfigOption(name = "Shellwise", desc = "Shellwise Settings")
 	var shellwise = ShellwiseConfig()
 
-	class ShellwiseConfig(): GlowableESPConfig()
+	class ShellwiseConfig : GlowableESPConfig()
 
 	@Accordion
 	@ConfigOption(name = "Invisibug", desc = "Invisibug Settings")
 	var invisibug = InvisibugConfig()
 
-	class InvisibugConfig() : NonGlowableESPConfig()
+	class InvisibugConfig : NonGlowableESPConfig()
 
 	@Accordion
 	@ConfigOption(name = "Forest Node", desc = "Forest Node Settings")
 	var forestNode = ForestNodeConfig()
 
-	class ForestNodeConfig() : NonGlowableESPConfig()
+	class ForestNodeConfig : NonGlowableESPConfig()
 }

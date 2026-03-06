@@ -68,7 +68,7 @@ class WpcConfig : Config() {
 	@Category(name = "Slayer", desc = "Configuration options for Slayers")
 	var slayer: SlayerConfig = SlayerConfig()
 
-	@Category(name = "Mining", desc = "Features that involve dwarven mines/hollows/glacite tunnels")
+	@Category(name = "Mining", desc = "Features that involve Dwarven Mines, Crystal Hollows, Glacite tunnels")
 	var mining: MiningConfig = MiningConfig()
 
 	@Category(name = "Garden", desc = "Configuration options for features in the Garden")

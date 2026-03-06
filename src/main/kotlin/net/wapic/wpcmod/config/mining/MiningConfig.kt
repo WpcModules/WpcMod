@@ -9,7 +9,7 @@ class MiningConfig {
 	@Category(name = "ESP", desc = "Configure ESP features for mining")
 	var esp: ESPConfig = ESPConfig()
 
-	@ConfigOption(name = "Pigeon Swapper", desc = "Auto-swap to pigeon")
+	@ConfigOption(name = "Pigeon Swapper", desc = "Auto-swap to pickaxe or drill after using Royal Pigeon")
 	@ConfigEditorBoolean
 	var pigeonSwapper: Boolean = false
 

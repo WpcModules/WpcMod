@@ -33,11 +33,14 @@ class FishingConfig {
 		var minDelay: Float = 100f
 
 		@ConfigEditorBoolean
-		@ConfigOption(name = "Slug Fish", desc = "wait 20s to catch")
+		@ConfigOption(name = "Slug Fish", desc = "Don't reel in until slug fish timer has passed (20 seconds)")
 		var slugFish: Boolean = false
 
 		@ConfigEditorBoolean
-		@ConfigOption(name = "Assume Slug Pet", desc = "Assumes you have a LVL 100 Slug pet for slug fish")
+		@ConfigOption(
+			name = "Assume Slug Pet",
+			desc = "Assumes you have a LVL 100 Slug pet for slug fish (shortens slug fish to 10 seconds)"
+		)
 		var slugPet: Boolean = false
 	}
 }

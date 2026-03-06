@@ -24,6 +24,6 @@ class GeneralConfig {
 	@ConfigEditorButton(buttonText = "Open")
 	val shortcutEditor = Runnable { MC.screen = ShortcutScreen() }
 
-	@Category(name = "ESP", desc = "Configure ESP Features")
+	@Category(name = "ESP", desc = "Configure general ESP features")
 	var esp: ESPConfig = ESPConfig()
 }
