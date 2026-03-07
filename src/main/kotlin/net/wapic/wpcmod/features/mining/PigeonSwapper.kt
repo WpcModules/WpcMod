@@ -8,7 +8,7 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.Island
-import net.wapic.wpcmod.util.ItemUtils.skyBlockID
+import net.wapic.wpcmod.util.ItemUtils.skyblockId
 import net.wapic.wpcmod.util.Utils
 
 object PigeonSwapper {
@@ -24,7 +24,7 @@ object PigeonSwapper {
 
 	private fun onUse(player: Player, world: Level, hand: InteractionHand): InteractionResult {
 		if (!config.pigeonSwapper || Utils.getLocation() !in allowedAreas) return InteractionResult.PASS
-		if (player.mainHandItem?.skyBlockID != ROYAL_PIGEON_ID) return InteractionResult.PASS
+		if (player.mainHandItem.skyblockId != ROYAL_PIGEON_ID) return InteractionResult.PASS
 
 		val inventory = player.inventory ?: return InteractionResult.PASS
 		val drillItem = inventory.find { it.hoverName.string.contains("Drill") } ?: return InteractionResult.PASS

@@ -9,7 +9,7 @@ import net.wapic.wpcmod.features.dungeons.funnymap.core.DungeonPlayer
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.RoomState
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.DungeonScan
 import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils
-import net.wapic.wpcmod.util.ItemUtils.skyBlockID
+import net.wapic.wpcmod.util.ItemUtils.skyblockId
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.Utils.equalsOneOf
@@ -112,7 +112,11 @@ object MapRenderer {
 
 			// Handle player names
 			if (config.playerHeads == FunnyConfig.PlayerNameType.ALWAYS ||
-				(config.playerHeads == FunnyConfig.PlayerNameType.HOLDING_LEAP && MC.heldItem.skyBlockID.equalsOneOf("SPIRIT_LEAP", "INFINITE_SPIRIT_LEAP", "HAUNT_ABILITY"))
+				(config.playerHeads == FunnyConfig.PlayerNameType.HOLDING_LEAP && MC.heldItem.skyblockId.equalsOneOf(
+					"SPIRIT_LEAP",
+					"INFINITE_SPIRIT_LEAP",
+					"HAUNT_ABILITY"
+				))
 				) {
 				matrixStack.rotate(-Math.toRadians(player.yaw + 180.0).toFloat())
 

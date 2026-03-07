@@ -2,9 +2,9 @@ package net.wapic.wpcmod.util
 
 import com.mojang.authlib.properties.Property
 import net.minecraft.core.component.DataComponents
-import net.minecraft.world.item.component.ItemLore
-import net.minecraft.world.item.ItemStack
 import net.minecraft.network.chat.Component
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.component.ItemLore
 import kotlin.jvm.optionals.getOrNull
 
 object ItemUtils {
@@ -14,7 +14,7 @@ object ItemUtils {
 
 	val ItemStack.lore: List<Component> get() = getOrDefault(DataComponents.LORE, ItemLore.EMPTY).lines
 
-	val ItemStack.skyBlockID: String?
+	val ItemStack.skyblockId: String?
 		get() = get(DataComponents.CUSTOM_DATA)?.copyTag()?.getString("id")?.getOrNull()
 
 	fun ItemStack.getSearchName(): String {

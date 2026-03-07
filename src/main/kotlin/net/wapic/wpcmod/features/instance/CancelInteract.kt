@@ -8,7 +8,7 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.phys.BlockHitResult
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.Island
-import net.wapic.wpcmod.util.ItemUtils.skyBlockID
+import net.wapic.wpcmod.util.ItemUtils.skyblockId
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils
 
@@ -27,7 +27,7 @@ object CancelInteract {
 			return InteractionResult.PASS
 		}
 
-		if (player.mainHandItem.skyBlockID == ENDER_PEARL) {
+		if (player.mainHandItem.skyblockId == ENDER_PEARL) {
 			return MC.gameMode?.useItem(player, hand) ?: InteractionResult.PASS
 		}
 

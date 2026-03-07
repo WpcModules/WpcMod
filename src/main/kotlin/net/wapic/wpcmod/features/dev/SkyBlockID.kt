@@ -1,12 +1,12 @@
 package net.wapic.wpcmod.features.dev
 
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback
+import net.minecraft.network.chat.Component
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.TooltipFlag
-import net.minecraft.network.chat.Component
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.util.ItemUtils.skyBlockID
+import net.wapic.wpcmod.util.ItemUtils.skyblockId
 
 object SkyBlockID {
 
@@ -20,7 +20,7 @@ object SkyBlockID {
 		stack: ItemStack, tooltipContext: Item.TooltipContext, type: TooltipFlag, lines: MutableList<Component>
 	) {
 		if (!config.showSkyBlockID) return
-		val skyBlockID = stack.skyBlockID ?: return
+		val skyBlockID = stack.skyblockId ?: return
 		lines.add(Component.nullToEmpty(skyBlockID))
 	}
 }

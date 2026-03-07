@@ -9,7 +9,7 @@ import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.phys.BlockHitResult
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.DungeonUtils
-import net.wapic.wpcmod.util.ItemUtils.skyBlockID
+import net.wapic.wpcmod.util.ItemUtils.skyblockId
 
 object PreventPlacingItems {
 
@@ -74,7 +74,7 @@ object PreventPlacingItems {
 
 	private fun onUseBlock(player: Player, world: Level, hand: InteractionHand, hitResult: BlockHitResult): InteractionResult {
 		if (!config.preventPlacing || player.mainHandItem.isEmpty) return InteractionResult.PASS
-		val item = player.mainHandItem.skyBlockID ?: return InteractionResult.PASS
+		val item = player.mainHandItem.skyblockId ?: return InteractionResult.PASS
 
 		if (item.contains("ABIPHONE") || item in placeableItems) {
 

@@ -5,7 +5,7 @@ import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.Util
 import net.minecraft.client.Minecraft
 import net.minecraft.network.chat.Component
-import net.wapic.wpcmod.util.ItemUtils.skyBlockID
+import net.wapic.wpcmod.util.ItemUtils.skyblockId
 
 object SackUtils {
 
@@ -37,7 +37,7 @@ object SackUtils {
 
 	fun queueGetFromSack(item: String, maxStackSize: Int) {
 		val inv = MC.player?.inventory ?: return
-		val stackSize = inv.find { it.skyBlockID == item.uppercase() }?.count ?: 0
+		val stackSize = inv.find { it.skyblockId == item.uppercase() }?.count ?: 0
 
 		if (stackSize < maxStackSize || stackSize != maxStackSize) {
 			gfsQueue.add("gfs $item ${maxStackSize - stackSize}")
@@ -48,7 +48,7 @@ object SackUtils {
 		if(gfsLock || Util.getMillis() - lastCommand <= COMMAND_DELAY) return
 
 		val inv = MC.player?.inventory ?: return
-		val stackSize = inv.find { it.skyBlockID == item.uppercase() }?.count ?: 0
+		val stackSize = inv.find { it.skyblockId == item.uppercase() }?.count ?: 0
 
 		if (stackSize < maxStackSize || stackSize != maxStackSize) {
 			Utils.runCommand("gfs $item ${maxStackSize - stackSize}")

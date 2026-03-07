@@ -1,20 +1,20 @@
 package net.wapic.wpcmod.features.dungeons
 
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback
+import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
+import net.minecraft.world.InteractionHand
+import net.minecraft.world.InteractionResult
+import net.minecraft.world.entity.player.Player
+import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.ButtonBlock
 import net.minecraft.world.level.block.ChestBlock
 import net.minecraft.world.level.block.LeverBlock
 import net.minecraft.world.level.block.PlayerHeadBlock
-import net.minecraft.world.entity.player.Player
-import net.minecraft.world.InteractionResult
-import net.minecraft.world.InteractionHand
-import net.minecraft.core.BlockPos
-import net.minecraft.core.Direction
-import net.minecraft.world.level.Level
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.dungeon.DungeonConfig.InteractableBlocks
 import net.wapic.wpcmod.util.DungeonUtils
-import net.wapic.wpcmod.util.ItemUtils.skyBlockID
+import net.wapic.wpcmod.util.ItemUtils.skyblockId
 
 object DungeonBreaker {
 
@@ -33,7 +33,7 @@ object DungeonBreaker {
 		direction: Direction
 	): InteractionResult {
 		if (!DungeonUtils.inDungeons || !config.enabled) return InteractionResult.PASS
-		if (player.mainHandItem.skyBlockID != DUNGEON_BREAKER_ID) return InteractionResult.PASS
+		if (player.mainHandItem.skyblockId != DUNGEON_BREAKER_ID) return InteractionResult.PASS
 
 		val block = world.getBlockState(pos).block
 		val isPreventedBlock = when (block) {
