@@ -1,11 +1,11 @@
 package net.wapic.wpcmod.util
 
 import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.EntitySelector
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.entity.decoration.ArmorStand
-import net.minecraft.world.entity.EntitySelector
 import net.wapic.wpcmod.util.ItemUtils.headTexture
 
 object EntityUtils {
@@ -21,5 +21,10 @@ object EntityUtils {
 			entity.boundingBox.inflate(0.0, 1.0, 0.0),
 			EntitySelector.ENTITY_NOT_BEING_RIDDEN
 		)
+	}
+
+	fun getNearestNonArmorStandEntity(entity: ArmorStand): Entity? {
+		return MC.level?.getEntities(entity, entity.boundingBox.inflate(0.0, 2.0, 0.0))
+			?.firstOrNull { it !is ArmorStand }
 	}
 }

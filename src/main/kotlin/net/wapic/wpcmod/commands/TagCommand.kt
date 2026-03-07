@@ -4,29 +4,23 @@ import com.mojang.brigadier.arguments.StringArgumentType.string
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.wapic.wpcmod.features.entity.TagESP
 import net.wapic.wpcmod.util.ChatUtils
 
 object TagCommand : Command("tag") {
 
-	private val commandClearPlayers = literal("clear").executes {
-		TagESP.clearTagList()
-		return@executes 0
-	}
-
-	private val playerArgument = argument("player", string()).executes {
+	private val playerArgument = argument("entityName", string()).executes {
 		TagESP.modifyTagList(it)
-		return@executes 0
+		return@executes 1
 	}
 
 	override fun executes(context: CommandContext<FabricClientCommandSource>): Int {
-		ChatUtils.sendMessage("Tagged Players: ${TagESP.getTagList()}")
+		ChatUtils.sendMessage("Tagged entities: ${TagESP.getTagList()}")
 		return super.executes(context)
 	}
 
 	override fun getCommand(): LiteralArgumentBuilder<FabricClientCommandSource> {
-		return command.then(commandClearPlayers).then(playerArgument)
+		return command.then(playerArgument)
 	}
 }
