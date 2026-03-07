@@ -5,10 +5,6 @@ import io.github.notenoughupdates.moulconfig.annotations.*
 
 class FunnyConfig {
 
-	@ConfigOption(name = "Auto Scan", desc = "Automatically scan when entering dungeon.")
-	@ConfigEditorBoolean
-	var autoScan = true
-
 	@ConfigOption(name = "Chat Info", desc = "Show dungeon overview information after scanning.")
 	@ConfigEditorBoolean
 	var scanChatInfo = true
@@ -31,7 +27,7 @@ class FunnyConfig {
 
 	@ConfigOption(name = "Hide In Boss", desc = "Hides the map in boss.")
 	@ConfigEditorBoolean
-	var hideInBoss = false
+	var hideInBoss = true
 
 	@ConfigOption(
 		name = "Show Player Names",
@@ -86,7 +82,7 @@ class FunnyConfig {
 
 	@ConfigOption(name = "Room Checkmarks", desc = "Adds room checkmarks based on room state.")
 	@ConfigEditorBoolean
-	var mapCheckmark = false
+	var mapCheckmark = true
 
 	@ConfigOption(name = "Center Room Checkmarks", desc = "Center room checkmarks.")
 	@ConfigEditorBoolean

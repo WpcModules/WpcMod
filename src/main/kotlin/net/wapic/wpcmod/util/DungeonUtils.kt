@@ -52,7 +52,7 @@ object DungeonUtils {
 	}
 
 	private fun onMessageReceived(message: Component, actionBar: Boolean) {
-		if (actionBar) return
+		if (actionBar || !inDungeons) return
 
 		if (message.string == DUNGEON_START_MESSAGE) {
 			WpcMod.logger.debug("Dungeon Started")
@@ -169,7 +169,6 @@ object DungeonUtils {
 		NECRON("P4"),
 		WITHER_KING("P5"),
 		UNKNOWN("UNKNOWN");
-
 
 		companion object {
 			fun fromStateName(stateName: String): F7Phase {

@@ -30,18 +30,20 @@ object MapUtils {
 
 	fun updateMapData(packet: ClientboundMapItemDataPacket) {
 		if (!inDungeons) return
+		val level = MC.level ?: return
+
 		MC.runOnThread {
 			val map = getMapItem()
 			map?.let {
-				mapData = MapItem.getSavedData(it, MC.level)
+				mapData = MapItem.getSavedData(it, level)
 			}
 
 			if (mapData == null) {
-				mapData = MapItem.getSavedData(packet.mapId, MC.level)
+				mapData = MapItem.getSavedData(packet.mapId, level)
 			}
 
 			mapData?.let {
-				packet.applyToMap(mapData)
+				packet.applyToMap(it)
 				mapDataUpdated = true
 			}
 		}

@@ -1,5 +1,6 @@
 package net.wapic.wpcmod.features.dungeons.funnymap.dungeon
 
+import net.minecraft.Util
 import net.minecraft.core.BlockPos
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.chunk.EmptyLevelChunk
@@ -35,7 +36,7 @@ object DungeonScan {
 	var hasScanned = false
 
 	val shouldScan: Boolean
-		get() = config.autoScan && !isScanning && !hasScanned && System.currentTimeMillis() - lastScanTime >= 250 && DungeonUtils.currentFloor != DungeonUtils.DungeonFloor.NONE
+		get() = !isScanning && !hasScanned && Util.getMillis() - lastScanTime >= 250 && DungeonUtils.currentFloor != DungeonUtils.DungeonFloor.NONE
 
 	fun scan() {
 		isScanning = true
@@ -100,7 +101,7 @@ object DungeonScan {
 			hasScanned = true
 		}
 
-		lastScanTime = System.currentTimeMillis()
+		lastScanTime = Util.getMillis()
 		isScanning = false
 	}
 

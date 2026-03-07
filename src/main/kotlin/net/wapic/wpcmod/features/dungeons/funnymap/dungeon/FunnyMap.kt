@@ -2,9 +2,9 @@ package net.wapic.wpcmod.features.dungeons.funnymap.dungeon
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
+import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
 import net.minecraft.network.chat.Component
-import net.minecraft.util.profiling.ProfilerFiller
 import net.minecraft.util.profiling.Profiler
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldChangeEvent
@@ -36,7 +36,7 @@ object FunnyMap {
 
 	fun onTick(client: Minecraft) {
 		if (!inDungeons) return
-		val profiler: ProfilerFiller = Profiler.get()
+		val profiler = Profiler.get()
 		profiler.push("funnyMap")
 
 		profiler.push("findMimic")
@@ -46,28 +46,24 @@ object FunnyMap {
 				Info.mimicFound = true
 			}
 		}
-		profiler.pop()
 
-		profiler.push("calibrate map")
+		profiler.popPush("calibrateMap")
 		if (!MapUtils.calibrated) {
 			MapUtils.calibrated = MapUtils.calibrateMap()
 		}
-		profiler.pop()
 
-		profiler.push("updateRooms")
+		profiler.popPush("updateRooms")
 		if (MapUtils.mapDataUpdated) {
 			MapUpdate.updateRooms()
 			MapUtils.mapDataUpdated = false
 		}
-		profiler.pop()
 
-		profiler.push("updatePlayers")
+		profiler.popPush("updatePlayers")
 		TabListUtil.getDungeonTabList()?.let {
 			MapUpdate.updatePlayers(it)
 		}
-		profiler.pop()
 
-		profiler.push("scan")
+		profiler.popPush("scan")
 		if (DungeonScan.shouldScan) {
 			DungeonScan.scan()
 		}
@@ -80,18 +76,19 @@ object FunnyMap {
 	}
 
 	fun onDungeonStart() {
-		MapUpdate.getPlayers()
+		TabListUtil.getDungeonTabList()?.let(MapUpdate::getPlayers)
 		Info.startTime = System.currentTimeMillis()
 	}
 
 	fun onMessageReceived(text: Component, isActionBar: Boolean) {
 		if (!inDungeons || isActionBar) return
+		val message = ChatFormatting.stripFormatting(text.string) ?: return
 
-		if (keyPickupRegex.matches(text.string)) {
+		if (keyPickupRegex.matches(message)) {
 			Info.keys++
 		}
 
-		if (keyUseRegex.matches(text.string)) {
+		if (keyUseRegex.matches(message)) {
 			Info.keys--
 		}
 

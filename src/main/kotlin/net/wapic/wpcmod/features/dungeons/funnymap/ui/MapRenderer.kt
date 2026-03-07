@@ -83,19 +83,17 @@ object MapRenderer {
 	}
 
 	fun drawPlayerHead(drawContext: GuiGraphics, name: String, player: DungeonPlayer) {
+		val realPlayer = MC.player ?: return
 		val matrixStack = drawContext.pose()
 		matrixStack.pushMatrix()
-		val playerYaw = MC.player?.yRot ?: return
 
 		try {
-			// Translates to the player's location which is updated every tick.
 			if (player.isPlayer || name == MC.player?.name?.string) {
-				MC.player?.let {
-					matrixStack.translate(
-						((it.x - DungeonScan.START_X + 13) * MapUtils.coordMultiplier + MapUtils.startCorner.first).toFloat(),
-						((it.z - DungeonScan.START_Z + 13) * MapUtils.coordMultiplier + MapUtils.startCorner.second).toFloat(),
-					)
-				}
+				matrixStack.translate(
+					((realPlayer.x - DungeonScan.START_X + 13) * MapUtils.coordMultiplier + MapUtils.startCorner.first).toFloat(),
+					((realPlayer.z - DungeonScan.START_Z + 13) * MapUtils.coordMultiplier + MapUtils.startCorner.second).toFloat(),
+				)
+				player.yaw = realPlayer.yRot
 			} else {
 				matrixStack.translate(player.mapX.toFloat(), player.mapZ.toFloat())
 			}
@@ -121,7 +119,7 @@ object MapRenderer {
 				matrixStack.rotate(-Math.toRadians(player.yaw + 180.0).toFloat())
 
 				if (config.mapRotate) {
-					matrixStack.rotate(Math.toRadians(playerYaw + 180.0).toFloat())
+					matrixStack.rotate(Math.toRadians(realPlayer.yRot + 180.0).toFloat())
 				}
 
 				matrixStack.translate(0f, config.playerHeadScale * 4f)
