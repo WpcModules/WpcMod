@@ -116,7 +116,7 @@ object AutoExperiments {
 					chronomatronOrder[clicks],
 					GLFW.GLFW_MOUSE_BUTTON_MIDDLE,
 					ClickType.CLONE,
-					MC.player
+					MC.player ?: return
 				)
 				lastClickTime = System.currentTimeMillis()
 				clicks++
@@ -146,7 +146,7 @@ object AutoExperiments {
 						it,
 						GLFW.GLFW_MOUSE_BUTTON_MIDDLE,
 						ClickType.CLONE,
-						MC.player
+						MC.player ?: return
 					)
 				}
 				lastClickTime = System.currentTimeMillis()
