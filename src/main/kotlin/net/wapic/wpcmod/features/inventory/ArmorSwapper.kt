@@ -1,14 +1,15 @@
 package net.wapic.wpcmod.features.inventory
 
+import com.mojang.blaze3d.platform.InputConstants
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
+import net.minecraft.client.KeyMapping
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.screens.inventory.ContainerScreen
-import net.minecraft.client.KeyMapping
-import com.mojang.blaze3d.platform.InputConstants
-import net.minecraft.world.item.Items
 import net.minecraft.world.inventory.ClickType
 import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.util.ItemUtils.skyblockId
+import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils
 import org.lwjgl.glfw.GLFW
 
@@ -18,15 +19,24 @@ object ArmorSwapper {
 
 	private val armorSwapBind: KeyMapping =
 		KeyBindingHelper.registerKeyBinding(KeyMapping("Armor Swap", InputConstants.KEY_V, WpcMod.category))
-	private val wardrobeTitle = Regex("Wardrobe \\((?<page>\\d)/\\d\\)")
-	private var sorrowPiece = Regex("(?:Ancient|Renowned) Sorrow Boots")
+	private val wardrobeTitle = Regex("Wardrobe \\(\\d/\\d\\)")
+	private const val SORROW_SKYBLOCK_ID = "SORROW_BOOTS"
 	private var shouldSwap = false
 
-	private var sorrowSlot: Int? = null
 	private var lastArmorSlot: Int? = null
 
 	fun init() {
 		ClientTickEvents.END_CLIENT_TICK.register(::onTick)
+	}
+
+	private fun clickSlot(screen: ContainerScreen, slot: Int) {
+		MC.gameMode?.handleInventoryMouseClick(
+			screen.menu.containerId,
+			slot,
+			GLFW.GLFW_MOUSE_BUTTON_LEFT,
+			ClickType.PICKUP,
+			MC.player ?: return
+		)
 	}
 
 	private fun onTick(client: Minecraft) {
@@ -38,50 +48,30 @@ object ArmorSwapper {
 		if (!shouldSwap) return
 
 		val screen = (client.screen as? ContainerScreen) ?: return
-		if (!screen.title.string.contains(wardrobeTitle)) return
+		if (!screen.title.string.matches(wardrobeTitle)) return
 		val inv = screen.menu.container
 
-		for (index in 27..<inv.containerSize) {
-			val stack = inv.getItem(index)
-			if (stack.item == Items.AIR) continue
-
-			if (stack.hoverName.string.matches(sorrowPiece)) {
-				sorrowSlot = index + 9
+		lastArmorSlot?.let {
+			if (inv.getItem(it).hoverName.string.contains("Ready")) {
+				clickSlot(screen, it)
+				lastArmorSlot = null
+				shouldSwap = false
+				screen.onClose()
 			}
-
-			if (stack.hoverName.string.contains("Equipped")) {
-				if (sorrowSlot == index) {
-					lastArmorSlot?.let {
-						client.gameMode?.handleInventoryMouseClick(
-							screen.menu.containerId,
-							it,
-							GLFW.GLFW_MOUSE_BUTTON_LEFT,
-							ClickType.PICKUP,
-							client.player
-						)
-					}
-
-					screen.onClose()
-					shouldSwap = false
-					sorrowSlot = null
-					lastArmorSlot = null
-				} else {
-					lastArmorSlot = index
-					WpcMod.logger.info("set lastArmorSlot: $lastArmorSlot")
-				}
-			}
+			return
 		}
 
-		sorrowSlot?.let {
-			if (inv.getItem(it) == null) return
-			if (!inv.getItem(it).hoverName.string.contains("Ready")) return
+		val equippedArmorSlot = inv.indexOfFirst { it.hoverName.string.contains("Equipped") }
+		if (equippedArmorSlot == -1) return
 
-			client.gameMode?.handleInventoryMouseClick(
-				screen.menu.containerId, it, GLFW.GLFW_MOUSE_BUTTON_LEFT, ClickType.PICKUP, client.player
-			)
-			screen.onClose()
+		val sorrowSlot = inv.indexOfFirst { it.skyblockId == SORROW_SKYBLOCK_ID }
+		if (sorrowSlot == -1) return
+
+		lastArmorSlot = equippedArmorSlot
+		if (inv.getItem(sorrowSlot + 9).hoverName.string.contains("Ready")) {
+			clickSlot(screen, sorrowSlot + 9)
 			shouldSwap = false
-			sorrowSlot = null
+			screen.onClose()
 		}
 	}
 }
