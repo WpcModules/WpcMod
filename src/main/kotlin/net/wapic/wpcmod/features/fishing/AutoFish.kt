@@ -15,6 +15,7 @@ import net.minecraft.world.inventory.InventoryMenu
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.Level
 import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.util.EntityUtils.getArmorStandsByEntity
 import net.wapic.wpcmod.util.MC
 import java.lang.ref.WeakReference
@@ -32,6 +33,12 @@ object AutoFish {
 	fun init() {
 		ClientTickEvents.END_CLIENT_TICK.register(::onTick)
 		UseItemCallback.EVENT.register(::onUseItem)
+		WorldChangeEvent.BEFORE.register(::reset)
+	}
+
+	private fun reset(level: ClientLevel) {
+		cachedHook = null
+		lastRodCast = 0
 	}
 
 	private fun onUseItem(player: Player, level: Level, hand: InteractionHand): InteractionResult {
