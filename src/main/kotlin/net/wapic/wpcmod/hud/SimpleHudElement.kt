@@ -29,7 +29,7 @@ open class SimpleHudElement(
 	init {
 		val identifier = modIdentifier(label.lowercase(Locale.US).replace(" ", "_"))
 		HudElementRegistry.attachElementBefore(VanillaHudElements.DEMO_TIMER, identifier) { context, tickCounter ->
-			render(context, tickCounter.gameTimeDeltaTicks)
+			render(context, tickCounter.getGameTimeDeltaPartialTick(true))
 		}
 	}
 
