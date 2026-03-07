@@ -8,6 +8,7 @@ import net.wapic.wpcmod.events.WorldRenderEvent
 import net.wapic.wpcmod.util.EntityUtils.headTexture
 import net.wapic.wpcmod.util.HeadTextures
 import net.wapic.wpcmod.util.Island
+import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.render.WorldRenderContext
 
@@ -19,29 +20,24 @@ object RatESP : MobGlowCache() {
 		WorldRenderEvent.EVENT.register(::onRenderWorld)
 	}
 
-	private fun isRat(entity: Entity): Boolean = entity is ArmorStand && entity.headTexture == HeadTextures.RAT
+	private fun isRat(entity: ArmorStand?): Boolean = entity?.headTexture == HeadTextures.RAT
 
 	private fun onRenderWorld(worldRenderContext: WorldRenderContext) {
 		if(!isEnabled()) return
 		worldRenderContext.profiler.push("rat-esp")
-		for (entity in worldRenderContext.level.entitiesForRendering()) {
-			if(!isRat(entity)) continue
+		val entities = MC.entitiesOf<ArmorStand>().filter(::isRat)
+		val tickDelta = worldRenderContext.tickCounter.getGameTimeDeltaPartialTick(true)
 
-			val box = entity.boundingBox.setMinY(entity.boundingBox.minY + 1.4)
-			if (config.box) worldRenderContext.drawBoundingBox(box, config.color)
-			if (config.tracer) worldRenderContext.drawTracer(box.center, config.color)
+		for (entity in entities) {
+			val pos = entity.getEyePosition(tickDelta)
+			if (config.box) worldRenderContext.drawBoundingBox(pos, entity.bbWidth, entity.bbWidth, config.color)
+			if (config.tracer) worldRenderContext.drawTracer(pos, config.color)
 		}
 		worldRenderContext.profiler.pop()
 	}
 
-	override fun compute(entity: Entity): ChromaColour? {
-		return when {
-			config.glow && isRat(entity) -> config.color
-			else -> null
-		}
-	}
+	override fun compute(entity: Entity): ChromaColour? =
+		config.color.takeIf { config.glow && isRat(entity as? ArmorStand) }
 
-	override fun isEnabled(): Boolean {
-		return Utils.getLocation() == Island.HUB
-	}
+	override fun isEnabled(): Boolean = Utils.getLocation() == Island.HUB && (config.tracer || config.box)
 }
