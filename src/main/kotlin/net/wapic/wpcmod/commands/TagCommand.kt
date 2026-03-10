@@ -10,7 +10,7 @@ import net.wapic.wpcmod.util.ChatUtils
 
 object TagCommand : Command("tag") {
 
-	private val playerArgument = argument("entityName", string()).executes {
+	private val entityArgument = argument("entityName", string()).executes {
 		TagESP.modifyTagList(it)
 		return@executes 1
 	}
@@ -21,6 +21,6 @@ object TagCommand : Command("tag") {
 	}
 
 	override fun getCommand(): LiteralArgumentBuilder<FabricClientCommandSource> {
-		return command.then(playerArgument)
+		return command.then(entityArgument)
 	}
 }

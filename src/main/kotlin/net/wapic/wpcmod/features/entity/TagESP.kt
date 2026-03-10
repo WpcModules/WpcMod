@@ -15,7 +15,9 @@ import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.events.WorldRenderEvent
 import net.wapic.wpcmod.util.ChatUtils
+import net.wapic.wpcmod.util.EntityUtils.getArmorStandsByEntity
 import net.wapic.wpcmod.util.EntityUtils.getNearestNonArmorStandEntity
+import net.wapic.wpcmod.util.EntityUtils.headTexture
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.render.WorldRenderContext
 import java.util.*
@@ -24,27 +26,30 @@ object TagESP : MobGlowCache() {
 
 	private val config get() = WpcMod.config.general.esp.tag
 	private val tagList = hashSetOf<String>()
-	private var taggedEntities: List<Entity> = emptyList()
-	private val isActive get() = (config.box || config.tracer) && isEnabled()
+	private var taggedEntities: Set<Entity> = emptySet()
+
+	private val shouldRender get() = config.box || config.tracer
+	private val shouldScan get() = (shouldRender || config.glow) && tagList.isNotEmpty()
 
 	fun init() {
 		WorldRenderEvent.EVENT.register(::onRenderWorld)
 		ClientTickEvents.END_CLIENT_TICK.register(::onTick)
-		WorldChangeEvent.BEFORE.register { taggedEntities = emptyList() }
+		WorldChangeEvent.BEFORE.register { clearCache() }
 	}
 
 	private fun onTick(client: Minecraft) {
-		if (!isActive) return
+		if (!shouldScan) return
+
 		val profiler = Profiler.get()
 		profiler.push("tagESP")
-		taggedEntities = MC.level?.entitiesForRendering()?.filter(::isTagged)?.mapNotNull {
-			return@mapNotNull if (it !is ArmorStand) it else getNearestNonArmorStandEntity(it)
-		} ?: return
+		taggedEntities = MC.entities?.filter(::isTagged)?.mapNotNull { entity ->
+			return@mapNotNull if (entity is ArmorStand) findRelatedEntity(entity) else entity
+		}?.toSet() ?: return
 		profiler.pop()
 	}
 
 	private fun onRenderWorld(worldRenderContext: WorldRenderContext) {
-		if (!isActive) return
+		if (!shouldRender) return
 
 		val profiler = worldRenderContext.profiler
 		profiler.push("tagESP")
@@ -64,7 +69,7 @@ object TagESP : MobGlowCache() {
 
 		if (tagList.contains(entityName)) {
 			tagList.remove(entityName)
-			if (tagList.isEmpty()) taggedEntities = emptyList()
+			if (tagList.isEmpty()) clearCache()
 			ChatUtils.sendMessage("$entityName is no longer tagged")
 		} else {
 			tagList.add(entityName)
@@ -72,10 +77,15 @@ object TagESP : MobGlowCache() {
 		}
 	}
 
+	fun clearCache() {
+		taggedEntities = emptySet()
+	}
+
 	fun clearTagList() {
+		val amountRemoved = tagList.count()
 		tagList.clear()
-		taggedEntities = emptyList()
-		ChatUtils.sendMessage("Tag list has been cleared")
+		clearCache()
+		ChatUtils.sendMessage("Removed $amountRemoved item${if (amountRemoved == 1) "" else "s"} from the tag list")
 	}
 
 	fun getTagList(): String = tagList.joinToString()
@@ -85,19 +95,22 @@ object TagESP : MobGlowCache() {
 		val plainTextName = entity.plainTextName.lowercase(Locale.ENGLISH)
 
 		if (entity is ArmorStand && tagList.any { displayName.contains(it) }) {
-			return getNearestNonArmorStandEntity(entity) != null
+			return findRelatedEntity(entity) != null
 		}
 
 		return plainTextName in tagList || displayName in tagList
 	}
 
-	private fun getRenderPos(entity: Entity, deltaTicks: Float): Vec3 {
-		val pos = entity.getPosition(deltaTicks)
-		return pos.relative(Direction.UP, entity.bbHeight / 2.0)
+	private fun findRelatedEntity(entity: ArmorStand): Entity? {
+		return getNearestNonArmorStandEntity(entity)
+			?: getArmorStandsByEntity(entity).find { it.headTexture.isNotEmpty() }
 	}
 
-	override fun compute(entity: Entity): ChromaColour? =
-		config.color.takeIf { entity in taggedEntities && config.glow }
+	private fun getRenderPos(entity: Entity, deltaTicks: Float): Vec3 {
+		return entity.getPosition(deltaTicks).relative(Direction.UP, entity.bbHeight / 2.0)
+	}
 
-	override fun isEnabled(): Boolean = tagList.isNotEmpty()
+	override fun compute(entity: Entity): ChromaColour? = config.color.takeIf { entity in taggedEntities }
+
+	override fun isEnabled(): Boolean = tagList.isNotEmpty() && config.glow
 }
