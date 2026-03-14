@@ -14,14 +14,13 @@ import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.*
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.*
-import net.wapic.wpcmod.hud.SimpleHudElement
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.MC
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
 
-object TerminalSolver : SimpleHudElement("Terminal Debug", 512, 512) {
+object TerminalSolver {
 	private val config get() = WpcMod.config.dungeon.floor7.terminalSolvers
 
     var currentTerm: TerminalHandler? = null
