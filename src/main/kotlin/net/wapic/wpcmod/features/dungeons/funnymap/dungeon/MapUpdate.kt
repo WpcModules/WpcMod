@@ -72,15 +72,14 @@ object MapUpdate {
 				}
 
 				if (player == null) {
-					MapUtils.mapData?.decorations?.filterIndexed { index, decoration -> index == iconNum - 1 }
-						?.forEach { decoration ->
-							isPlayer = decoration.type == MapDecorationTypes.FRAME
-							if (!isPlayer) {
-								yaw = decoration.rot * 22.5f
-								mapX = (decoration.x + 128) shr 1
-								mapZ = (decoration.y + 128) shr 1
-							}
+					MapUtils.mapData?.decorations?.elementAtOrNull(iconNum - 1)?.let { decoration ->
+						isPlayer = decoration.type == MapDecorationTypes.FRAME
+						if (!isPlayer) {
+							yaw = decoration.rot * 22.5f
+							mapX = (decoration.x + 128) shr 1
+							mapZ = (decoration.y + 128) shr 1
 						}
+					}
 				}
 
 				val room = getCurrentRoom()

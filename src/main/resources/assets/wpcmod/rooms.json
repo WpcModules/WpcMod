@@ -1068,7 +1068,8 @@
     "name": "Sand Dragon",
     "type": "RARE",
     "cores": [
-      1506475761
+      1506475761,
+      -357448989
     ],
     "crypts": 1,
     "secrets": 1
