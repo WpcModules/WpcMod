@@ -1,9 +1,9 @@
 package net.wapic.wpcmod.events.skyblock
 
-import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalHandler
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
 import net.minecraft.client.gui.screens.Screen
+import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalHandler
 
 object DungeonEvents {
 
@@ -89,13 +89,13 @@ object DungeonEvents {
 	val TERMINAL_UPDATED: Event<TerminalUpdate> = EventFactory.createArrayBacked(TerminalUpdate::class.java) { listeners ->
 		TerminalUpdate { terminal ->
 			for (listener in listeners) {
-				listener.onOpen(terminal)
+				listener.onUpdate(terminal)
 			}
 		}
 	}
 
 	fun interface TerminalUpdate {
-		fun onOpen(terminal: TerminalHandler)
+		fun onUpdate(terminal: TerminalHandler)
 	}
 
 	@JvmField

@@ -2,12 +2,11 @@ package net.wapic.wpcmod.features.dungeons.floor7.terminalhandler
 
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
-import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket
 
-class PanesHandler: TerminalHandler(TerminalTypes.PANES) {
+class PanesHandler : TerminalHandler(TerminalTypes.PANES) {
 
-    override fun handleSlotUpdate(packet: ClientboundContainerSetSlotPacket): Boolean {
-        if (packet.slot != type.windowSize - 1) return false
+	override fun handleSlotUpdate(syncId: Int, slotId: Int, itemStack: ItemStack): Boolean {
+		if (slotId != type.windowSize - 1) return false
         solution.clear()
         solution.addAll(solvePanes(items))
         return true

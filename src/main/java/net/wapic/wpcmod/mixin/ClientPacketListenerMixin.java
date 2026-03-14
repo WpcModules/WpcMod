@@ -47,7 +47,8 @@ public abstract class ClientPacketListenerMixin {
 	@Inject(at = @At("HEAD"), method = "handleOpenScreen")
 	private void onOpenScreen(ClientboundOpenScreenPacket packet, CallbackInfo ci) {
 		String title = packet.getTitle().getString();
-		GuiEvents.OPEN.invoker().onOpen(title);
+		int containerId = packet.getContainerId();
+		GuiEvents.OPEN.invoker().onOpen(title, containerId);
 	}
 
 	@Inject(at = @At("HEAD"), method = "handleSetPlayerTeamPacket")

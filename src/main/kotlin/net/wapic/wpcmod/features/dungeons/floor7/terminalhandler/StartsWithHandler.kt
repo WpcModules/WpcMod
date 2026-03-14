@@ -1,17 +1,21 @@
 package net.wapic.wpcmod.features.dungeons.floor7.terminalhandler
 
 import net.minecraft.world.item.ItemStack
-import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket
+import net.wapic.wpcmod.util.ChatUtils
 
-class StartsWithHandler(private val letter: String): TerminalHandler(TerminalTypes.STARTS_WITH) {
+class StartsWithHandler(val letter: String) : TerminalHandler(TerminalTypes.STARTS_WITH) {
 
 	private val clickedSlots = mutableSetOf<Int>()
 	private var lastContainerId = -1
 
-    override fun handleSlotUpdate(packet: ClientboundContainerSetSlotPacket): Boolean {
-        if (packet.slot != type.windowSize - 1) return false
+	override fun handleSlotUpdate(syncId: Int, slotId: Int, itemStack: ItemStack): Boolean {
+		if (slotId != type.windowSize - 1) return false
+		val solvedItems = solveStartsWith(items, letter)
+		if (solvedItems.isEmpty() && clickedSlots.isEmpty()) {
+			ChatUtils.sendMessage("No items found starting with '$letter'")
+		}
         solution.clear()
-        solution.addAll(solveStartsWith(items, letter))
+		solution.addAll(solvedItems)
         return true
     }
 
@@ -30,10 +34,6 @@ class StartsWithHandler(private val letter: String): TerminalHandler(TerminalTyp
 
     private fun solveStartsWith(items: Array<ItemStack?>, letter: String): List<Int> =
 		items.mapIndexedNotNull { index, item ->
-			if (item?.hoverName?.string?.startsWith(
-					letter,
-					true
-				) == true && index !in clickedSlots
-			) index else null
+			if (item?.hoverName?.string?.startsWith(letter, true) == true && index !in clickedSlots) index else null
 		}
 }

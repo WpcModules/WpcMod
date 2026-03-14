@@ -1,29 +1,36 @@
 package net.wapic.wpcmod.features.dungeons.floor7.termGUI
 
 import io.github.notenoughupdates.moulconfig.ChromaColour
+import net.minecraft.Util
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
+import net.minecraft.util.CommonColors
+import net.minecraft.world.item.Items
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.dungeons.floor7.TerminalSolver
+import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.SelectAllHandler
+import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.StartsWithHandler
+import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalHandler
+import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalTypes
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.render.drawRoundedRect
+import net.wapic.wpcmod.util.render.drawText
 
-abstract class TermGui {
+abstract class TermGui(val type: TerminalTypes) {
     protected val itemIndexMap: MutableMap<Int, Box> = mutableMapOf()
     inline val currentSolution get() = TerminalSolver.currentTerm?.solution.orEmpty()
 
 	val config get() = WpcMod.config.dungeon.floor7.terminalSolvers
-	val slotSize: Int = 16
 
     abstract fun renderTerminal(drawContext: GuiGraphics, slotCount: Int)
 
-    protected fun renderBackground(drawContext: GuiGraphics, slotCount: Int, slotWidth: Int) {
+	protected fun renderBackground(drawContext: GuiGraphics, slotCount: Int) {
 		val matrixStack = drawContext.pose()
-		val totalSlotSpace = (slotSize + config.gap) * config.customTermSize
+		val totalSlotSpace = (SLOT_SIZE + config.gap) * config.customTermSize
 
-		val width = (slotWidth + 1) * totalSlotSpace
-		val height = (slotCount / 9 + 1) * totalSlotSpace
+		val width = (type.width + 0.5f) * totalSlotSpace
+		val height = (slotCount / 9 + 0.5f) * totalSlotSpace
 		val x = (drawContext.guiWidth() - width) / 2
 		val y = (drawContext.guiHeight() - height) / 2 + getRowOffset(slotCount) * config.customTermSize
 
@@ -37,7 +44,7 @@ abstract class TermGui {
 
 	protected fun renderSlot(drawContext: GuiGraphics, index: Int, color: ChromaColour): Pair<Float, Float> {
 		val matrixStack = drawContext.pose()
-		val scaledSlotSize = slotSize * config.customTermSize
+		val scaledSlotSize = SLOT_SIZE * config.customTermSize
 		val totalSlotSpace = scaledSlotSize + config.gap * config.customTermSize
 
 		val x = (index % 9 - 4) * totalSlotSpace + (drawContext.guiWidth() - scaledSlotSize) / 2
@@ -49,44 +56,75 @@ abstract class TermGui {
 		matrixStack.translate(x, y)
 		matrixStack.scale(config.customTermSize)
 
-		drawContext.drawRoundedRect(0, 0, slotSize, slotSize, config.slotRoundness, color)
+		drawContext.drawRoundedRect(0, 0, SLOT_SIZE, SLOT_SIZE, config.slotRoundness, color)
 
 		matrixStack.popMatrix()
         return x to y
     }
 
-    fun mouseClicked(screen: Screen, button: Int) {
+	protected fun renderDebug(drawContext: GuiGraphics, currentHandler: TerminalHandler) {
+		val x = 2
+		val y = 2
+
+		val lines = buildList {
+			when (type) {
+				TerminalTypes.STARTS_WITH -> add("${type.name} '${(currentHandler as StartsWithHandler).letter}' Debug Info")
+				TerminalTypes.SELECT_ALL -> add("${type.name} '${(currentHandler as SelectAllHandler).color}' Debug Info")
+				else -> add("${type.name} Debug Info")
+			}
+			add("Time open: ${Util.getMillis() - currentHandler.timeOpened}ms")
+			add("Is Clicked: ${currentHandler.isClicked}")
+			add("Container ID: ${currentHandler.containerId}")
+			add("Solution: ${currentHandler.solution.joinToString()}")
+		}
+
+		for ((index, line) in lines.withIndex()) {
+			drawContext.drawText(line, x, y + index * 10, CommonColors.WHITE, true)
+		}
+
+		drawContext.drawText("Items in terminal:", x, y + lines.size * 10, CommonColors.WHITE, true)
+		var itemIndex = 1
+		currentHandler.items.forEachIndexed { index, stack ->
+			if (stack == null || stack.item == Items.BLACK_STAINED_GLASS_PANE) return@forEachIndexed
+			drawContext.drawText(
+				"${if (index in currentSolution) "§a" else "§c"}${stack.hoverName.string}",
+				x,
+				y + lines.size * 12 + itemIndex * 10,
+				CommonColors.WHITE,
+				true
+			)
+			itemIndex++
+		}
+	}
+
+	fun mouseClicked(screen: Screen, button: Int, handler: TerminalHandler) {
         getHoveredItem()?.let { slot ->
-            TerminalSolver.currentTerm?.let {
-                if (System.currentTimeMillis() - it.timeOpened >= 350 && it.canClick(slot, button)) {
-                    it.click(slot, button, config.hideClicked && !it.isClicked)
-					DungeonEvents.TERMINAL_CLICKED.invoker().onClick(screen, slot, button)
-                }
-            }
-        }
-    }
+			if (Util.getMillis() - handler.timeOpened >= 350 && handler.canClick(slot, button)) {
+				handler.click(slot, button, config.hideClicked && !handler.isClicked)
+				DungeonEvents.TERMINAL_CLICKED.invoker().onClick(screen, slot, button)
+			}
+		}
+	}
 
-    fun closeGui() {
-
-    }
-
-    open fun render(drawContext: GuiGraphics) {
+	open fun render(drawContext: GuiGraphics, currentHandler: TerminalHandler) {
         setCurrentGui(this)
         itemIndexMap.clear()
 
-        renderTerminal(drawContext, TerminalSolver.currentTerm?.type?.windowSize?.minus(10) ?: 0)
+		if (config.debug) renderDebug(drawContext, currentHandler)
+		renderTerminal(drawContext, type.windowSize - 10)
     }
 
 	private fun getRowOffset(slotCount: Int): Int {
         return when (slotCount) {
-			26 -> -(slotSize / 2)
-			44, 54 -> slotSize / 2
+			26 -> -(SLOT_SIZE / 2)
+			44, 54 -> SLOT_SIZE / 2
 			else -> 0
         }
     }
 
     companion object {
         private var currentGui: TermGui? = null
+		protected const val SLOT_SIZE: Int = 16
 
         fun setCurrentGui(gui: TermGui) {
             currentGui = gui

@@ -1,16 +1,14 @@
 package net.wapic.wpcmod.features.dungeons.floor7.termsim
 
-import net.wapic.wpcmod.features.dungeons.floor7.TerminalSolver
-import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalTypes
-import net.minecraft.world.level.block.StainedGlassPaneBlock
 import net.minecraft.core.component.DataComponents
+import net.minecraft.network.chat.Component
+import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.BlockItem
+import net.minecraft.world.item.DyeColor
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
-import net.minecraft.world.inventory.Slot
-import net.minecraft.network.chat.Component
-import net.minecraft.world.item.DyeColor
-import net.wapic.wpcmod.events.skyblock.DungeonEvents
+import net.minecraft.world.level.block.StainedGlassPaneBlock
+import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalTypes
 import kotlin.math.floor
 
 object RubixSim : TermSimGUI(
@@ -37,8 +35,9 @@ object RubixSim : TermSimGUI(
         }
 
         playTermSimSound()
-        if (indices.all { guiInventorySlots[it]?.item?.item == guiInventorySlots[12]?.item?.item })
-            TerminalSolver.lastTermOpened?.let { DungeonEvents.TERMINAL_SOLVED.invoker().onSolve(it) }
+        if (indices.all { guiInventorySlots[it]?.item?.item == guiInventorySlots[12]?.item?.item }) {
+            this@RubixSim.onTerminalSolved()
+        }
     }
 
     private fun getPane(): ItemStack {

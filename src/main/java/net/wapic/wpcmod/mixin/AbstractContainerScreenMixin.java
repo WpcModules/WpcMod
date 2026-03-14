@@ -1,11 +1,11 @@
 package net.wapic.wpcmod.mixin;
 
-import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.world.inventory.Slot;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.Slot;
 import net.wapic.wpcmod.events.GuiEvents;
 import net.wapic.wpcmod.events.TooltipEvents;
 import org.jetbrains.annotations.Nullable;
@@ -52,6 +52,7 @@ public abstract class AbstractContainerScreenMixin {
 	private void drawMouseOverTooltip(GuiGraphics drawContext, int x, int y, CallbackInfo ci) {
 		TooltipEvents.RENDER.invoker().onRenderTooltip((Screen) (Object) this, x, y, drawContext, ci);
 	}
+
 	@Inject(method = "render", at = @At("HEAD"), cancellable = true)
 	private void render(GuiGraphics context, int mouseX, int mouseY, float deltaTicks, CallbackInfo ci) {
 		GuiEvents.RENDER.invoker().onRender((Screen) (Object) this, context, mouseX, mouseY, deltaTicks, ci);

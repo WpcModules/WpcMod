@@ -2,13 +2,14 @@ package net.wapic.wpcmod.features.dungeons.floor7.termGUI
 
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.util.CommonColors
+import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalTypes
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.render.drawText
 
-object RubixGui : TermGui() {
+object RubixGui : TermGui(TerminalTypes.RUBIX) {
 
     override fun renderTerminal(drawContext: GuiGraphics, slotCount: Int) {
-        renderBackground(drawContext, slotCount, 3)
+		renderBackground(drawContext, slotCount)
 
         currentSolution.distinct().forEach { index ->
             val amount = currentSolution.count { it == index }
@@ -25,7 +26,7 @@ object RubixGui : TermGui() {
 			val (slotX, slotY) = renderSlot(drawContext, index, color)
 
 			val text = clicksRequired.toString()
-			val slotCenter = (slotSize / 2) * config.customTermSize
+			val slotCenter = (SLOT_SIZE / 2) * config.customTermSize
 			val textScale = config.customTermSize / 1.75f
 
 			val textX = slotX + slotCenter - MC.font.width(text) * textScale / 2

@@ -1,13 +1,11 @@
 package net.wapic.wpcmod.features.dungeons.floor7.termsim
 
-import net.wapic.wpcmod.features.dungeons.floor7.TerminalSolver
-import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalTypes
 import net.minecraft.core.component.DataComponents
+import net.minecraft.network.chat.Component
+import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
-import net.minecraft.world.inventory.Slot
-import net.minecraft.network.chat.Component
-import net.wapic.wpcmod.events.skyblock.DungeonEvents
+import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalTypes
 
 object MelodySim : TermSimGUI(
     TerminalTypes.MELODY.windowName, TerminalTypes.MELODY.windowSize
@@ -50,7 +48,9 @@ object MelodySim : TermSimGUI(
         updateGui()
 
         playTermSimSound()
-        if (currentRow >= 5) TerminalSolver.lastTermOpened?.let { DungeonEvents.TERMINAL_SOLVED.invoker().onSolve(it) }
+        if (currentRow >= 5) {
+            this@MelodySim.onTerminalSolved()
+        }
     }
 
     private fun updateGui() {

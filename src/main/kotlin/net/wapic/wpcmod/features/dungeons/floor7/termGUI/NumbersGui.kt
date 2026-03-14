@@ -4,14 +4,15 @@ import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.util.CommonColors
 import net.wapic.wpcmod.features.dungeons.floor7.TerminalSolver
+import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalTypes
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 import net.wapic.wpcmod.util.render.drawText
 
-object NumbersGui : TermGui() {
+object NumbersGui : TermGui(TerminalTypes.NUMBERS) {
 
     override fun renderTerminal(drawContext: GuiGraphics, slotCount: Int) {
-        renderBackground(drawContext, slotCount, 7)
+		renderBackground(drawContext, slotCount)
 
         for (index in 9..slotCount) {
             if ((index % 9).equalsOneOf(0, 8)) continue
@@ -33,7 +34,7 @@ object NumbersGui : TermGui() {
 				val matrixStack = drawContext.pose()
 				val text = amount.toString()
 
-				val slotCenter = (slotSize / 2) * config.customTermSize
+				val slotCenter = (SLOT_SIZE / 2) * config.customTermSize
 				val textScale = config.customTermSize / 1.75f
 
 				val textX = slotX + slotCenter - MC.font.width(text) * textScale / 2

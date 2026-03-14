@@ -1,16 +1,14 @@
 package net.wapic.wpcmod.features.dungeons.floor7.termsim
 
-import net.wapic.wpcmod.features.dungeons.floor7.TerminalSolver
-import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalTypes
 import net.minecraft.core.component.DataComponents
+import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.inventory.Slot
+import net.minecraft.world.item.DyeColor
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
-import net.minecraft.core.registries.BuiltInRegistries
-import net.minecraft.world.inventory.Slot
-import net.minecraft.world.item.DyeColor
-import net.minecraft.resources.ResourceLocation
-import net.wapic.wpcmod.events.skyblock.DungeonEvents
+import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalTypes
 import net.wapic.wpcmod.util.ChatUtils
 import kotlin.math.floor
 
@@ -18,7 +16,7 @@ class SelectAllSim(
     private val color: DyeColor = DyeColor.entries.random()
 ) : TermSimGUI(
     "Select all the ${color.name.replace("_", " ")} items!",
-    TerminalTypes.SELECT.windowSize
+	TerminalTypes.SELECT_ALL.windowSize
 ) {
 
 	override fun create() {
@@ -27,10 +25,14 @@ class SelectAllSim(
 			if (floor(slot.containerSlot / 9.0) in 1.0..4.0 && slot.containerSlot % 9 in 1..7) {
 				val item = ItemStack(getPossibleItems(color).random())
 
-				if (slot.containerSlot == guaranteed) item
-				else {
-					if (Math.random() > 0.75) item
-					else ItemStack(getPossibleItems(DyeColor.entries.filter { it != color }.random()).random())
+				if (slot.containerSlot == guaranteed) {
+					item
+				} else {
+					if (Math.random() > 0.75) {
+						item
+					} else {
+						ItemStack(getPossibleItems(DyeColor.entries.filter { it != color }.random()).random())
+					}
 				}
 			} else blackPane
 		}
@@ -40,15 +42,15 @@ class SelectAllSim(
 		val stack = slot.item ?: return
 		val possibleItems = getPossibleItems(color)
 		if (!possibleItems.contains(stack.item)) return ChatUtils.sendMessage("§cThat item is not: ${color.name.uppercase()}!")
-
 		createNewGui {
 			if (it == slot) { stack.apply { set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true) } } else it.item
 		}
 
 		playTermSimSound()
 
-		if (guiInventorySlots.none { it?.item?.hasFoil() == false && possibleItems.contains(it.item?.item) })
-			TerminalSolver.lastTermOpened?.let { DungeonEvents.TERMINAL_SOLVED.invoker().onSolve(it) }
+		if (guiInventorySlots.none { it?.item?.hasFoil() == false && possibleItems.contains(it.item?.item) }) {
+			this@SelectAllSim.onTerminalSolved()
+		}
 	}
 
 	private fun getPossibleItems(color: DyeColor): List<Item> {

@@ -4,30 +4,16 @@ import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
-import net.wapic.wpcmod.events.skyblock.DungeonEvents
-import net.wapic.wpcmod.features.dungeons.floor7.TerminalSolver
 import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalTypes
 import net.wapic.wpcmod.util.ChatUtils
 import kotlin.math.floor
 
 class StartsWithSim(
-	private val letter: String = listOf(
-		"A",
-		"B",
-		"C",
-		"G",
-		"D",
-		"M",
-		"N",
-		"R",
-		"S",
-		"T",
-		"W"
-	).random()
+	private val letter: String = listOf("A", "B", "C", "G", "D", "M", "N", "R", "S", "T", "W").random()
 ) : TermSimGUI(
-    "What starts with: \'$letter\'?",
-    TerminalTypes.STARTS_WITH.windowSize
+	"What starts with: \'$letter\'?", TerminalTypes.STARTS_WITH.windowSize
 ) {
+
     override fun create() {
         createNewGui {
             when {
@@ -39,26 +25,31 @@ class StartsWithSim(
         }
     }
 
-    override fun slotClick(slot: Slot, button: Int) = with(slot.item) {
-		if (hoverName.string?.startsWith(letter, true) == false || hasFoil())
-			return@with ChatUtils.sendMessage("§cThat item does not start with: \'$letter\' ${slot.item}!")
+	override fun slotClick(slot: Slot, button: Int) {
+		if (slot.item.hoverName.string?.startsWith(letter, true) == false || slot.item.hasFoil())
+			return ChatUtils.sendMessage("§cThat item does not start with: \'$letter\' ${slot.item.hoverName}!")
 
 		createNewGui {
-			if (it == slot) apply { set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true) } else it.item
+			if (it == slot) slot.item.apply { set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true) } else it.item
 		}
 
         playTermSimSound()
 
-        if (guiInventorySlots.none { it?.item?.hoverName?.string?.startsWith(letter, true) == true && !it.item.hasFoil() })
-            TerminalSolver.lastTermOpened?.let { DungeonEvents.TERMINAL_SOLVED.invoker().onSolve(it) }
+		if (guiInventorySlots.none {
+				it?.item?.hoverName?.string?.startsWith(
+					letter,
+					true
+				) == true && !it.item.hasFoil()
+			}) {
+			this@StartsWithSim.onTerminalSolved()
+		}
     }
 
     private fun getLetterItemStack(filterNot: Boolean = false): ItemStack {
-        val matchingItem = BuiltInRegistries.ITEM
-            .filter { item ->
-				val id = item?.name?.string ?: return@filter false
-				id.startsWith(letter, true) != filterNot && !id.contains("pane", true)
-            }.random()
+		val matchingItem = BuiltInRegistries.ITEM.filter { item ->
+			val id = item?.name?.string ?: return@filter false
+			id.startsWith(letter, true) != filterNot && !id.contains("pane", true)
+		}.random()
 
         return ItemStack(matchingItem)
     }

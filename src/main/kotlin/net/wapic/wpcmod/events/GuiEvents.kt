@@ -4,8 +4,8 @@ import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
-import net.minecraft.world.inventory.Slot
 import net.minecraft.world.inventory.ClickType
+import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
@@ -97,15 +97,15 @@ object GuiEvents {
 
 	@JvmField
 	val OPEN: Event<OpenedEvent> = EventFactory.createArrayBacked(OpenedEvent::class.java) { listeners ->
-		OpenedEvent { title ->
+		OpenedEvent { title, containerId ->
 			for (listener in listeners) {
-				listener.onOpen(title)
+				listener.onOpen(title, containerId)
 			}
 		}
 	}
 
 	fun interface OpenedEvent {
-		fun onOpen(title: String)
+		fun onOpen(title: String, containerId: Int)
 	}
 
 	@JvmField

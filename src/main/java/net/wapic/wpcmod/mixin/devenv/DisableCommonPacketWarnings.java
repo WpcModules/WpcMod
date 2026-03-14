@@ -1,5 +1,6 @@
 package net.wapic.wpcmod.mixin.devenv;
 
+import com.moulberry.mixinconstraints.annotations.IfDevEnvironment;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
@@ -12,6 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Objects;
 
+@IfDevEnvironment
 @Mixin(ClientPacketListener.class)
 public class DisableCommonPacketWarnings {
 

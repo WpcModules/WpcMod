@@ -1,13 +1,11 @@
 package net.wapic.wpcmod.features.dungeons.floor7.termsim
 
-import net.wapic.wpcmod.features.dungeons.floor7.TerminalSolver
-import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalTypes
 import net.minecraft.core.component.DataComponents
+import net.minecraft.network.chat.Component
+import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
-import net.minecraft.world.inventory.Slot
-import net.minecraft.network.chat.Component
-import net.wapic.wpcmod.events.skyblock.DungeonEvents
+import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalTypes
 import kotlin.math.floor
 
 object NumbersSim : TermSimGUI(
@@ -30,7 +28,8 @@ object NumbersSim : TermSimGUI(
 			} else it.item ?: blackPane
         }
         playTermSimSound()
-        if (guiInventorySlots.none { it?.item?.item == Items.RED_STAINED_GLASS_PANE })
-            TerminalSolver.lastTermOpened?.let { DungeonEvents.TERMINAL_SOLVED.invoker().onSolve(it) }
+		if (guiInventorySlots.none { it?.item?.item == Items.RED_STAINED_GLASS_PANE }) {
+			this@NumbersSim.onTerminalSolved()
+		}
     }
 }

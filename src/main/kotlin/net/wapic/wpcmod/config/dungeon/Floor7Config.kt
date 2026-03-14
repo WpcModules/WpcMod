@@ -75,29 +75,13 @@ class Floor7Config {
 		@ConfigEditorBoolean
 		var enabled = false
 
-		@ConfigOption(name = "GUI Type", desc = "Type of GUI to render for terminals")
-		@ConfigEditorDropdown
-		var renderType: RenderType = RenderType.NORMAL
-
-		@ConfigOption(name = "Stop Tooltip", desc = "Stops tooltips from rendering in terminals.")
+		@ConfigOption(name = "Debug Mode", desc = "Render debug info for terminals.")
 		@ConfigEditorBoolean
-		var cancelToolTip: Boolean = false
+		var debug = false
 
 		@ConfigOption(name = "Hide Clicked", desc = "Visually hides your first click before a gui updates instantly to improve perceived response time. Does not affect actual click time.")
 		@ConfigEditorBoolean
 		var hideClicked: Boolean = false
-
-		@ConfigOption(name = "Middle Click GUI", desc = "Replaces right click with middle click in terminals.")
-		@ConfigEditorBoolean
-		var middleClickGUI: Boolean = false
-
-		@ConfigOption(name = "Block Incorrect Clicks", desc = "Blocks incorrect clicks in terminals.")
-		@ConfigEditorBoolean
-		var blockIncorrectClicks: Boolean = false
-
-		@ConfigOption(name = "Stop Melody Solver", desc = "Stops rendering the melody solver.")
-		@ConfigEditorBoolean
-		var cancelMelodySolver: Boolean = false
 
 		@ConfigOption(name = "Show Numbers", desc = "Shows numbers in the order terminal.")
 		@ConfigEditorBoolean
@@ -182,13 +166,6 @@ class Floor7Config {
 		@ConfigOption(name = "Melody Pointer", desc = "Color of the location for pressing for melody.")
 		@ConfigEditorColour
 		var melodyPointerColor = ChromaColour.fromRGB(0, 255, 0, 0, 255)
-
-		enum class RenderType(val label: String) {
-			NORMAL("Normal"),
-			CUSTOM("Custom");
-
-			override fun toString(): String = label
-		}
 	}
 
 	@Accordion

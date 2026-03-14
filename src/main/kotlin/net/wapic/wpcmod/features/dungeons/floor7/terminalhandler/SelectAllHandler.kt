@@ -1,14 +1,13 @@
 package net.wapic.wpcmod.features.dungeons.floor7.terminalhandler
 
+import net.minecraft.world.item.DyeColor
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
-import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket
-import net.minecraft.world.item.DyeColor
 
-class SelectAllHandler(private val color: DyeColor): TerminalHandler(TerminalTypes.SELECT) {
+class SelectAllHandler(val color: DyeColor) : TerminalHandler(TerminalTypes.SELECT_ALL) {
 
-    override fun handleSlotUpdate(packet: ClientboundContainerSetSlotPacket): Boolean {
-        if (packet.slot != type.windowSize - 1) return false
+	override fun handleSlotUpdate(syncId: Int, slotId: Int, itemStack: ItemStack): Boolean {
+		if (slotId != type.windowSize - 1) return false
         solution.clear()
         solution.addAll(solveSelectAll(items, color))
         return true

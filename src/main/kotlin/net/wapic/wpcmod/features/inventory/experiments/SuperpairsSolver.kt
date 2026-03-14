@@ -4,11 +4,11 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.world.entity.player.Inventory
+import net.minecraft.world.inventory.ClickType
+import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
-import net.minecraft.world.inventory.Slot
-import net.minecraft.world.inventory.ClickType
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.GuiEvents
 import net.wapic.wpcmod.events.ReplaceItemEvent
@@ -51,7 +51,7 @@ object SuperpairsSolver {
 		ReplaceItemEvent.EVENT.register(::onReplaceItem)
 	}
 
-	fun onInventoryOpen(title: String) {
+	fun onInventoryOpen(title: String, containerId: Int) {
 		if (!config.superpairsSolver) return
 		inSuperpairs = title.matches(superpairsTitle)
 	}

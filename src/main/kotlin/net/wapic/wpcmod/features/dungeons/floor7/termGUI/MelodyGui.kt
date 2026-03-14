@@ -3,19 +3,22 @@ package net.wapic.wpcmod.features.dungeons.floor7.termGUI
 import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.client.gui.GuiGraphics
 import net.wapic.wpcmod.features.dungeons.floor7.TerminalSolver
+import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalHandler
+import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalTypes
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 
-object MelodyGui : TermGui() {
+object MelodyGui : TermGui(TerminalTypes.MELODY) {
 
-    override fun render(drawContext: GuiGraphics) {
+    override fun render(drawContext: GuiGraphics, currentHandler: TerminalHandler) {
         setCurrentGui(this)
         itemIndexMap.clear()
 
-        renderTerminal(drawContext, TerminalSolver.currentTerm?.type?.windowSize ?: 0)
+        if (config.debug) renderDebug(drawContext, currentHandler)
+        renderTerminal(drawContext, type.windowSize)
     }
 
     override fun renderTerminal(drawContext: GuiGraphics, slotCount: Int) {
-        renderBackground(drawContext, slotCount, 7)
+        renderBackground(drawContext, slotCount)
 
         TerminalSolver.currentTerm?.items?.forEachIndexed { index, item ->
             if ((index % 9).equalsOneOf(0, 6, 8) || ((index / 9).equalsOneOf(0, 6) && index % 9 == 7)) return@forEachIndexed

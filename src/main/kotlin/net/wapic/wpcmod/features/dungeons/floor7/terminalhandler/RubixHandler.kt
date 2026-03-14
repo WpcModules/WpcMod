@@ -1,15 +1,14 @@
 package net.wapic.wpcmod.features.dungeons.floor7.terminalhandler
 
-import net.minecraft.world.level.block.StainedGlassPaneBlock
 import net.minecraft.world.item.BlockItem
-import net.minecraft.world.item.ItemStack
-import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket
 import net.minecraft.world.item.DyeColor
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.block.StainedGlassPaneBlock
 
 class RubixHandler : TerminalHandler(TerminalTypes.RUBIX) {
 
-    override fun handleSlotUpdate(packet: ClientboundContainerSetSlotPacket): Boolean {
-        if (items.lastOrNull() == null || packet.slot != type.windowSize - 1) return false
+    override fun handleSlotUpdate(syncId: Int, slotId: Int, itemStack: ItemStack): Boolean {
+        if (items.lastOrNull() == null || slotId != type.windowSize - 1) return false
         solution.clear()
         solution.addAll(solveRubix(items))
         return true

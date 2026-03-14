@@ -2,15 +2,20 @@ package net.wapic.wpcmod.features.dungeons.floor7.terminalhandler
 
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
-import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket
 
-class MelodyHandler: TerminalHandler(TerminalTypes.MELODY) {
+class MelodyHandler : TerminalHandler(TerminalTypes.MELODY) {
 
-    override fun handleSlotUpdate(packet: ClientboundContainerSetSlotPacket): Boolean {
-        return packet.item?.let {
-            solution.clear()
-            solution.addAll(solveMelody(items))
-        } != null
+    override fun handleSlotUpdate(syncId: Int, slotId: Int, itemStack: ItemStack): Boolean {
+        solution.clear()
+        solution.addAll(solveMelody(items))
+        return true
+    }
+
+    override fun click(slotIndex: Int, button: Int, simulateClick: Boolean) {
+        val greenPane = items.indexOfLast { it?.item == Items.LIME_STAINED_GLASS_PANE }.takeIf { it != -1 }
+        val magentaPane = items.indexOfFirst { it?.item == Items.MAGENTA_STAINED_GLASS_PANE }.takeIf { it != -1 }
+        if (greenPane?.rem(9) != magentaPane?.rem(9)) return
+        super.click(slotIndex, button, simulateClick)
     }
 
     private fun solveMelody(items: Array<ItemStack?>): List<Int> {

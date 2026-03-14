@@ -4,13 +4,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.minecraft.client.gui.screens.inventory.ContainerScreen
 import net.minecraft.core.component.DataComponents
-import net.minecraft.network.PacketListener
 import net.minecraft.network.chat.Component
-import net.minecraft.network.protocol.Packet
-import net.minecraft.network.protocol.game.ClientboundContainerClosePacket
-import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket
-import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket
-import net.minecraft.network.protocol.game.ServerboundContainerClickPacket
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.world.SimpleContainer
 import net.minecraft.world.inventory.ChestMenu
@@ -20,11 +14,10 @@ import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.events.PacketEvents
+import net.wapic.wpcmod.events.GuiEvents
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
-import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalHandler
+import net.wapic.wpcmod.features.dungeons.floor7.TerminalSolver
 import net.wapic.wpcmod.util.MC
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 
 open class TermSimGUI(
     val name: String,
@@ -47,12 +40,7 @@ open class TermSimGUI(
     val guiInventorySlots get() = menu?.slots?.subList(0, size) ?: emptyList()
     private var doesAcceptClick = true
     protected var ping = 0L
-	private var syncId = 0
-
-	init {
-		PacketEvents.SEND_BEFORE.register(::onPacketSend)
-		DungeonEvents.TERMINAL_SOLVED.register(::onTerminalSolved)
-	}
+	private var containerId = 0
 
     open fun create() {
         guiInventorySlots.forEach { it.setSlot(blackPane) }
@@ -66,9 +54,10 @@ open class TermSimGUI(
 		}
     }
 
-	private fun onTerminalSolved(terminalHandler: TerminalHandler) {
+	protected fun onTerminalSolved() {
         if (MC.screen !== this) return
-		PacketEvents.RECEIVE.invoker().onPacketReceive(ClientboundContainerClosePacket(menu.containerId))
+		TerminalSolver.lastTermOpened?.let { DungeonEvents.TERMINAL_SOLVED.invoker().onSolve(it) }
+		GuiEvents.CLOSE.invoker().onClose()
         StartGUI.open(ping)
     }
 
@@ -79,12 +68,11 @@ open class TermSimGUI(
         super.onClose()
     }
 
-	private fun onPacketSend(packet: Packet<out PacketListener>, callbackInfo: CallbackInfo) {
-        val packet = packet as? ServerboundContainerClickPacket ?: return
-		if (MC.screen !== this || packet.clickType == ClickType.PICKUP_ALL) return
-        delaySlotClick(guiInventorySlots.getOrNull(packet.slotNum.toInt()) ?: return, packet.buttonNum.toInt())
-        callbackInfo.cancel()
-    }
+	fun handleClick(slotId: Int, button: Int) {
+		if (MC.screen !== this) return
+		val slot = guiInventorySlots.getOrNull(slotId) ?: return
+		delaySlotClick(slot, button)
+	}
 
 	private fun delaySlotClick(slot: Slot, button: Int) = WpcMod.coroutineScope.launch {
 		if (MC.screen == StartGUI) return@launch slotClick(slot, button)
@@ -102,13 +90,12 @@ open class TermSimGUI(
     }
 
     protected fun createNewGui(block: (Slot) -> ItemStack) {
-		PacketEvents.RECEIVE.invoker()
-			.onPacketReceive(ClientboundOpenScreenPacket(syncId++, MenuType.GENERIC_9x3, Component.literal(name)))
+		GuiEvents.OPEN.invoker().onOpen(name, containerId++)
         guiInventorySlots.forEach { it.setSlot(block(it)) }
     }
 
     protected fun Slot.setSlot(stack: ItemStack) {
-		PacketEvents.RECEIVE.invoker().onPacketReceive(ClientboundContainerSetSlotPacket(-2, 0, index, stack))
+		GuiEvents.SLOT_UPDATE_AFTER.invoker().onSlotUpdateAfter(containerId, index, stack)
         setByPlayer(stack)
     }
 
