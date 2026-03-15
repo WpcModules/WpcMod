@@ -4,7 +4,10 @@ import io.github.notenoughupdates.moulconfig.annotations.*
 
 class ChatConfig {
 
-	@ConfigOption(name = "Longer Chat History", desc = "Set the chat history limit higher than you'll ever scroll")
+	@ConfigOption(
+		name = "Longer Chat History",
+		desc = "Set the chat history limit higher than you'll ever scroll\n§cDoes nothing if devonian is installed"
+	)
 	@ConfigEditorBoolean
 	var longerChatHistory: Boolean = false
 

@@ -4,12 +4,12 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
-import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.GuiMessage;
 import net.minecraft.client.GuiMessageTag;
+import net.minecraft.client.gui.components.ChatComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MessageSignature;
 import net.minecraft.util.FormattedCharSequence;
-import net.minecraft.network.chat.Component;
 import net.wapic.wpcmod.WpcMod;
 import net.wapic.wpcmod.features.chat.CompactChat;
 import org.jetbrains.annotations.Nullable;
@@ -20,11 +20,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Map;
 
-@Mixin(value = ChatComponent.class, priority = Integer.MAX_VALUE)
+@Mixin(value = ChatComponent.class)
 public abstract class ChatComponentMixin {
 	private final @Unique ThreadLocal<CompactChat.@Nullable Message> CURRENT = new ThreadLocal<>();
 
-	@ModifyConstant(method = {"addMessageToQueue(Lnet/minecraft/client/GuiMessage;)V", "addMessageToDisplayQueue"}, constant = @Constant(intValue = 100))
+	@ModifyConstant(method = {"addMessageToQueue(Lnet/minecraft/client/GuiMessage;)V", "addMessageToDisplayQueue"}, constant = @Constant(intValue = 100), require = 0)
 	private int modifyMaxChatSize(int value) {
 		return WpcMod.config.getChat().getLongerChatHistory() ? 10000 : value;
 	}
