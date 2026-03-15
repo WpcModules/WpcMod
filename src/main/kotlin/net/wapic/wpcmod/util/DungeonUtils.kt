@@ -65,7 +65,6 @@ object DungeonUtils {
 
 		if (message.string.removeFormatting().trim() == DUNGEON_END_MESSAGE) {
 			WpcMod.logger.debug("Dungeon Ended")
-			bossSpawned = false
 			DungeonEvents.END.invoker().onEnd()
 		}
 

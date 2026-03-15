@@ -24,7 +24,7 @@ object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
 
 	private val config get() = WpcMod.config.dungeon.floor7.inactiveWaypoints
 	override val isEnabled: Boolean get() = config.enabled
-	override val isActive: Boolean get() = isEnabled && DungeonUtils.bossSpawned && shouldRender
+	override val isActive: Boolean get() = isEnabled && shouldRender
 
     private var inactiveList = setOf<ArmorStand>()
     private var firstInSection = false

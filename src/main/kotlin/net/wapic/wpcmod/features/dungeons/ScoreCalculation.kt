@@ -72,7 +72,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 		DungeonFloor.MASTER_MODE_FLOOR_4 to FloorRequirement(speed = 8 * 60),
 		DungeonFloor.MASTER_MODE_FLOOR_5 to FloorRequirement(speed = 8 * 60),
 		DungeonFloor.MASTER_MODE_FLOOR_6 to FloorRequirement(),
-		DungeonFloor.MASTER_MODE_FLOOR_7 to FloorRequirement(speed = 15 * 60),
+		DungeonFloor.MASTER_MODE_FLOOR_7 to FloorRequirement(speed = 14 * 60),
 	)
 
 	private val floorRequirement get() = floorRequirements[DungeonUtils.currentFloor] ?: FloorRequirement()
@@ -99,11 +99,10 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 		get() = if (DungeonScan.hasScanned && FunnyMap.Info.secretCount > 0) FunnyMap.Info.secretCount else field
 
 	private val secretsNeeded get() = if (totalSecrets == 0) 1 else ceil(totalSecrets * floorRequirement.secretPercentage).toInt()
-	private val secretsClearedPercentage get() = foundSecrets / secretsNeeded.toDouble()
 	private val secretScore: Int
 		get() {
 			if (totalSecrets <= 0) return 0
-			val score = (40f * secretsClearedPercentage).coerceIn(0.0, 40.0)
+			val score = (40.0 * foundSecrets / secretsNeeded).coerceIn(0.0, 40.0)
 			return score.applyEntranceModifier()
 		}
 
@@ -114,15 +113,16 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 	private var firstDeathHadSpirit = false
 		get() = if (config.assumeSpirit) true else field
 
-	private val deathPenalty get() = (2 * deaths) - if (firstDeathHadSpirit) 1 else 0
+	private val deathPenalty get() = (2 * deaths) - if (firstDeathHadSpirit && deaths > 0) 1 else 0
 
 	// Puzzle
 	private var missingPuzzles = 0
+	private var totalPuzzles = 0
 	private var failedPuzzles = 0
 	private val puzzlePenalty get() = 10 * (missingPuzzles + failedPuzzles)
 
 	private val skillScore
-		get() = (20.0 + roomClearPercentage * 80.0 - puzzlePenalty - deathPenalty).applyEntranceModifier()
+		get() = (20.0 + (80.0 * roomClearPercentage) - puzzlePenalty - deathPenalty).applyEntranceModifier()
 			.coerceIn(20, 100)
 
 	// Speed
@@ -305,7 +305,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 
 				name.contains("Puzzles:") -> {
 					val matcher = missingPuzzlePattern.find(name) ?: return@forEach
-					missingPuzzles = matcher.groups["count"]?.value?.toIntOrNull() ?: 0
+					missingPuzzles = (matcher.groups["count"]?.value?.toIntOrNull() ?: 0).also { totalPuzzles = it }
 				}
 
 				name.contains("✔") -> {
@@ -399,36 +399,57 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 		drawContext.pose().pushMatrix()
 		applyTransformations(drawContext.pose())
 
-		if (config.scoreHudType == ScoreHudType.FULL) {
-			val lines = buildList {
-				add("§9Dungeon Status")
-				add("§f* §eDeaths: §c$deaths")
-				add("§f* §eMissing Puzzles: §c$missingPuzzles")
-				add("§f* §eFailed Puzzles: §c$failedPuzzles")
-				add("§f* §eSecrets: §a$foundSecrets§7/§a$secretsNeeded §7(§6Total: $totalSecrets§7)")
-				add("§f* §eCrypts: §a$crypts §7(§6Total: ${FunnyMap.Info.cryptCount})")
-				add("§f* §ePrince: ${if (princeKilled) "§a✔" else "§c✖"}")
-				if (isMimicFloor) add("§f* §eMimic: ${if (mimicKilled) "§a✔" else "§c✖"}")
+		when (config.scoreHudType) {
+			ScoreHudType.FULL -> {
+				val lines = buildList {
+					add("§9Dungeon Status")
+					add("§f* §eDeaths: §c$deaths")
+					add("§f* §eMissing Puzzles: §c$missingPuzzles")
+					add("§f* §eFailed Puzzles: §c$failedPuzzles")
+					add("§f* §eSecrets: §a$foundSecrets§7/§a$secretsNeeded §7(§6Total: $totalSecrets§7)")
+					add("§f* §eCrypts: §a$crypts §7(§6Total: ${FunnyMap.Info.cryptCount})")
+					add("§f* §ePrince: ${if (princeKilled) "§a✔" else "§c✖"}")
+					if (isMimicFloor) add("§f* §eMimic: ${if (mimicKilled) "§a✔" else "§c✖"}")
 
-				add("")
+					add("")
 
-				add("§9Score")
-				add("§f* §eSkill Score: §a$skillScore")
-				add("§f* §eExplore Score: §a$exploreScore §7(§e$roomClearScore §7+ §6$secretScore§7)")
-				add("§f* §eSpeed Score: §a$speedScore")
-				add("§f* §eBonus Score: §a$bonusScore")
-				add("§f* §eTotal Score: §a$totalScore")
-				add("§f* §eRank: $rank")
+					add("§9Score")
+					add("§f* §eSkill Score: §a$skillScore")
+					add("§f* §eExplore Score: §a$exploreScore §7(§e$roomClearScore §7+ §6$secretScore§7)")
+					add("§f* §eSpeed Score: §a$speedScore")
+					add("§f* §eBonus Score: §a$bonusScore")
+					add("§f* §eTotal Score: §a$totalScore")
+					add("§f* §eRank: $rank")
+				}
+
+				for ((index, line) in lines.withIndex()) {
+					drawContext.drawText(line, 2, 2 + (index * 10), CommonColors.WHITE, true)
+				}
 			}
 
-			for ((index, line) in lines.withIndex()) {
-				drawContext.drawText(line, 2, 2 + (index * 10), CommonColors.WHITE, true)
+			ScoreHudType.MINIMIZED -> {
+				drawContext.drawText(
+					"§7Secrets: §a$foundSecrets§7/§e$secretsNeeded §7(§c$totalSecrets§7)  Crypts: §a$crypts",
+					2,
+					2,
+					CommonColors.WHITE,
+					true
+				)
+				drawContext.drawText(
+					"§7Puzzles: §a${totalPuzzles - missingPuzzles}§7/§a$totalPuzzles  §7Deaths: §c$deaths  §7Score: §a$totalScore §7($rank§7)",
+					2,
+					12,
+					CommonColors.WHITE,
+					true
+				)
 			}
 
-		} else {
-			drawContext.drawText("§eScore: §a$totalScore §7($rank§7)", 2, 2, CommonColors.WHITE, true)
+			ScoreHudType.SCORE_ONLY -> {
+				drawContext.drawText("§eScore: §a$totalScore §7($rank§7)", 2, 2, CommonColors.WHITE, true)
+			}
+
+			else -> {}
 		}
-
 		drawContext.pose().popMatrix()
 	}
 }

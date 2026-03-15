@@ -52,6 +52,7 @@ class ScoreCalculationConfig {
 
 	enum class ScoreHudType(val label: String) {
 		DISABLED("Disabled"),
+		SCORE_ONLY("Score Only"),
 		MINIMIZED("Minimized"),
 		FULL("Full");
 
