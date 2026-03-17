@@ -33,7 +33,7 @@ object ChestESP {
 			if (config.box)
 				worldRenderContext.drawBoundingBox(chest, config.color)
 			if (config.tracer)
-				worldRenderContext.drawTracer(chest.center, config.color)
+				worldRenderContext.drawTracer(chest.center, config.color, config.tracerWidth)
 		}
 
 		worldRenderContext.profiler.pop()

@@ -3,23 +3,29 @@ package net.wapic.wpcmod.mixin;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.world.entity.Entity;
-import net.wapic.wpcmod.features.entity.MobGlow;
+import net.wapic.wpcmod.config.components.GlowableESPConfig;
+import net.wapic.wpcmod.features.entity.EspCache;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(EntityRenderer.class)
-public class EntityRendererMixin {
+public abstract class EntityRendererMixin {
 
 	@Inject(method = "extractRenderState", at = @At("TAIL"))
 	private void onUpdateRenderState(Entity entity, EntityRenderState state, float tickProgress, CallbackInfo ci) {
-		boolean shouldGlow = MobGlow.INSTANCE.hasOrCompute(entity);
-		if (shouldGlow) {
-			if (!entity.isCurrentlyGlowing()) {
-				state.setData(MobGlow.ENTITY_HAS_CUSTOM_GLOW, true);
+		GlowableESPConfig config = EspCache.INSTANCE.getOrCompute(entity);
+		if (config != null) {
+			boolean shouldGlow = config.getGlow();
+
+			if (shouldGlow) {
+				int color = config.getColor().getEffectiveColourRGB();
+				if (!entity.isCurrentlyGlowing()) {
+					state.setData(EspCache.ENTITY_HAS_CUSTOM_GLOW, true);
+				}
+				state.outlineColor = color;
 			}
-			state.outlineColor = MobGlow.INSTANCE.getMobGlowOrDefault(entity, EntityRenderState.NO_OUTLINE);
 		}
 	}
 }

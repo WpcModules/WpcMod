@@ -4,6 +4,7 @@ import io.github.notenoughupdates.moulconfig.annotations.Accordion
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorBoolean
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorSlider
 import io.github.notenoughupdates.moulconfig.annotations.ConfigOption
+import net.wapic.wpcmod.config.components.GlowableESPConfig
 import net.wapic.wpcmod.config.components.NonGlowableESPConfig
 
 class ESPConfig {
@@ -22,7 +23,7 @@ class ESPConfig {
 	@ConfigOption(name = "Mineshaft Corpses", desc = "")
 	var corpse: CorpseConfig = CorpseConfig()
 
-	class CorpseConfig : NonGlowableESPConfig() {
+	class CorpseConfig : GlowableESPConfig() {
 		@ConfigOption(name = "Use Corpse Colour", desc = "Use the corpse type for color instead of the color option")
 		@ConfigEditorBoolean
 		var corpseColor: Boolean = false

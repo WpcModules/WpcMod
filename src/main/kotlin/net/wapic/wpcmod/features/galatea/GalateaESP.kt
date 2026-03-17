@@ -1,6 +1,5 @@
 package net.wapic.wpcmod.features.galatea
 
-import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback
 import net.fabricmc.fabric.api.event.player.UseBlockCallback
 import net.minecraft.client.multiplayer.ClientLevel
@@ -21,16 +20,19 @@ import net.minecraft.world.item.Items
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.config.components.GlowableESPConfig
 import net.wapic.wpcmod.events.ParticleEvents
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.events.WorldRenderEvent
-import net.wapic.wpcmod.features.entity.MobGlowCache
+import net.wapic.wpcmod.features.entity.EspFeature
+import net.wapic.wpcmod.util.EntityUtils.getRenderPos
 import net.wapic.wpcmod.util.Island
+import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.render.WorldRenderContext
 import java.util.concurrent.CopyOnWriteArraySet
 
-object GalateaESP : MobGlowCache() {
+object GalateaESP : EspFeature() {
 
 	private var forestNodes = CopyOnWriteArraySet<AABB>()
 	private val config get() = WpcMod.config.galatea.esp
@@ -78,63 +80,51 @@ object GalateaESP : MobGlowCache() {
 		return entity.deltaMovement != Vec3.ZERO && entity.boundingBox.size == 0.0 && entity.y > 92 && entity is ArmorStand
 	}
 
+	private fun renderInvisibugESP(worldRenderContext: WorldRenderContext) {
+		val deltaTicks = worldRenderContext.tickCounter.getGameTimeDeltaPartialTick(true)
+		val invisibugs = MC.entitiesOf<ArmorStand>().filter(::isInvisibug)
+
+		for (entity in invisibugs) {
+			val pos = entity.getRenderPos(deltaTicks)
+			with(config.invisibug) {
+				if (box) worldRenderContext.drawBoundingBox(pos, 1f, 1f, color)
+				if (tracer) worldRenderContext.drawTracer(pos, color, tracerWidth)
+			}
+		}
+	}
+
+	private fun renderForestNodeESP(worldRenderContext: WorldRenderContext) {
+		for (node in forestNodes) {
+			with(config.forestNode) {
+				if (box) worldRenderContext.drawBoundingBox(node.setMinY(node.maxY), color)
+				if (tracer) worldRenderContext.drawTracer(node.setMinY(node.maxY).center, color)
+			}
+		}
+	}
 
 	private fun renderWorld(worldRenderContext: WorldRenderContext) {
 		if (!isEnabled()) return
 
 		worldRenderContext.profiler.push("galatea-esp")
-		for (entity in worldRenderContext.level.entitiesForRendering()) {
-			var boundingBox = entity.boundingBox
-
-			val settings = when {
-				entity is Shulker -> config.shulker
- 				entity is Axolotl -> config.axolotl
-				entity is Frog -> config.frog
-				entity is Panda -> config.panda
-				entity is Pufferfish -> config.pufferfish
-				entity is Turtle -> config.shellwise
-				isInvisibug(entity) -> {
-					boundingBox = entity.boundingBox.inflate(0.5).move(0.0, 0.75, 0.0)
-					config.invisibug
-				}
-				else -> continue
-			}
-
-			if (settings.box)
-				worldRenderContext.drawBoundingBox(boundingBox, settings.color)
-
-			if (settings.tracer)
-				worldRenderContext.drawTracer(boundingBox.center, settings.color)
+		if (config.invisibug.box || config.invisibug.tracer) {
+			renderInvisibugESP(worldRenderContext)
 		}
 
 		worldRenderContext.profiler.popPush("forest-nodes")
 		if(config.forestNode.box || config.forestNode.tracer) {
-			for (node in forestNodes) {
-				if (config.forestNode.box) {
-					worldRenderContext.drawBoundingBox(
-						node.setMinY(node.maxY),
-						config.forestNode.color
-					)
-				}
-				if (config.forestNode.tracer) {
-					worldRenderContext.drawTracer(
-						node.setMinY(node.maxY).center,
-						config.forestNode.color
-					)
-				}
-			}
+			renderForestNodeESP(worldRenderContext)
 		}
 		worldRenderContext.profiler.pop()
 	}
 
-	override fun compute(entity: Entity): ChromaColour? {
-		return when {
-			entity is Shulker && config.shulker.glow -> config.shulker.color
-			entity is Axolotl && config.axolotl.glow -> config.axolotl.color
-			entity is Frog && config.frog.glow -> config.frog.color
-			entity is Panda && config.panda.glow -> config.panda.color
-			entity is Pufferfish && config.pufferfish.glow -> config.pufferfish.color
-			entity is Turtle && config.shellwise.glow -> config.shellwise.color
+	override fun compute(entity: Entity): GlowableESPConfig? {
+		return when (entity) {
+			is Shulker -> config.shulker
+			is Axolotl -> config.axolotl
+			is Frog -> config.frog
+			is Panda -> config.panda
+			is Pufferfish -> config.pufferfish
+			is Turtle -> config.shellwise
 			else -> null
 		}
 	}

@@ -20,9 +20,8 @@ object MC {
 	fun runOnThread(run: () -> Unit) = instance.execute(run)
 	fun useItem() = runOnThread { (instance as? MinecraftAccessor)?.doItemUse_WpcMod() }
 
-	inline val entities get() = instance.level?.entitiesForRendering()
-	inline fun <reified T> entitiesOf(): List<T> =
-		instance.level?.entitiesForRendering()?.filterIsInstance<T>().orEmpty()
+	inline val entities get() = instance.level?.entitiesForRendering() ?: emptyList()
+	inline fun <reified T> entitiesOf(): List<T> = entities.filterIsInstance<T>()
 
 	inline val instance: Minecraft get() = Minecraft.getInstance()
 	inline val player: LocalPlayer? get() = instance.player

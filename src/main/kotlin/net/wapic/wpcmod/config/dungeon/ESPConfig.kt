@@ -43,6 +43,10 @@ class ESPConfig {
 		@ConfigEditorBoolean
 		var box: Boolean = false
 
+		@ConfigOption(name = "Show All Doors", desc = "Show all doors or only the next door")
+		@ConfigEditorBoolean
+		var showAll: Boolean = false
+
 		@ConfigOption(name = "Has Key Color", desc = "Color for when you have the key")
 		@ConfigEditorColour
 		var hasKeyColor = ChromaColour.fromRGB(0, 255, 0, 0, 128)

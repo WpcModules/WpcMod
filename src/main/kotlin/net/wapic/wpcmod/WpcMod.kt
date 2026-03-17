@@ -31,7 +31,7 @@ import net.wapic.wpcmod.features.dungeons.*
 import net.wapic.wpcmod.features.dungeons.floor7.*
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
 import net.wapic.wpcmod.features.end.EndESP
-import net.wapic.wpcmod.features.entity.MobGlow
+import net.wapic.wpcmod.features.entity.EspCache
 import net.wapic.wpcmod.features.entity.RatESP
 import net.wapic.wpcmod.features.entity.TagESP
 import net.wapic.wpcmod.features.events.diana.AutoAnswerSphinx
@@ -146,7 +146,7 @@ object WpcMod : ModInitializer {
 		KuudraUtils.init()
 		DungeonUtils.init()
 		NetworkListener.init()
-		MobGlow.init()
+		EspCache.init()
 		HudManager.init()
 
 		// General

@@ -1,43 +1,24 @@
 package net.wapic.wpcmod.features.kuudra
 
-import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.world.entity.Entity
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.events.WorldRenderEvent
-import net.wapic.wpcmod.features.entity.MobGlowCache
+import net.wapic.wpcmod.config.components.GlowableESPConfig
+import net.wapic.wpcmod.features.entity.EspFeature
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.KuudraUtils
+import net.wapic.wpcmod.util.KuudraUtils.Phase
 import net.wapic.wpcmod.util.Utils
-import net.wapic.wpcmod.util.render.WorldRenderContext
 
-object KuudraESP : MobGlowCache() {
+object KuudraESP : EspFeature() {
+
 	private val config get() = WpcMod.config.kuudra.esp
 
-	fun init() {
-		WorldRenderEvent.EVENT.register(::onRenderWorld)
-	}
+	fun init() = Unit
 
-	fun onRenderWorld(worldRenderContext: WorldRenderContext) {
-		if(!isEnabled()) return
-		worldRenderContext.profiler.push("kuudra-esp")
-
-		KuudraUtils.kuudraEntity?.let {
-			if(config.kuudra.killPhaseOnly && KuudraUtils.phase != KuudraUtils.Phase.KILL) return
-
-			if (config.kuudra.box)
-				worldRenderContext.drawBoundingBox(it.boundingBox, config.kuudra.color)
-			if (config.kuudra.tracer)
-				worldRenderContext.drawTracer(it.boundingBox.center, config.kuudra.color)
-		}
-		worldRenderContext.profiler.pop()
-	}
-
-	override fun compute(entity: Entity): ChromaColour? {
-		if (config.kuudra.glow && entity == KuudraUtils.kuudraEntity) {
-			if(config.kuudra.killPhaseOnly && KuudraUtils.phase != KuudraUtils.Phase.KILL) return null
-			return config.kuudra.color
-		}
-		return null
+	override fun compute(entity: Entity): GlowableESPConfig? {
+		if (entity != KuudraUtils.kuudraEntity) return null
+		if (config.kuudra.killPhaseOnly && KuudraUtils.phase != Phase.KILL) return null
+		return config.kuudra
 	}
 
 	override fun isEnabled(): Boolean {
