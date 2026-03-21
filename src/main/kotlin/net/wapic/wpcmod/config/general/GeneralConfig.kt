@@ -22,7 +22,10 @@ class GeneralConfig {
 	@Transient
 	@ConfigOption(name = "Command Keybind Editor", desc = "Open the screen to manage command keybinds")
 	@ConfigEditorButton(buttonText = "Open")
-	val shortcutEditor = Runnable { MC.screen = ShortcutScreen() }
+	val shortcutEditor = Runnable {
+		val screen = MC.screen ?: return@Runnable
+		MC.screen = ShortcutScreen(screen)
+	}
 
 	@Category(name = "ESP", desc = "Configure general ESP features")
 	var esp: ESPConfig = ESPConfig()

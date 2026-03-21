@@ -1,11 +1,17 @@
 package net.wapic.wpcmod.render;
 
-import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.wapic.wpcmod.mixin.accessors.BufferBuilderAccessor;
+import org.joml.Matrix3x2fc;
+import org.joml.Matrix4fc;
+import org.joml.Vector3f;
+import org.joml.Vector3fc;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.ByteBuffer;
@@ -81,6 +87,21 @@ public class DirectVertexConsumer implements VertexConsumer {
 	}
 
 	@Override
+	public void addVertex(float x, float y, float z, int color, float u, float v, int packedOverlay, int packedLight, float normalX, float normalY, float normalZ) {
+		addVertex(x, y, z);
+		setColor(color);
+		setUv(u, v);
+		setOverlay(packedOverlay);
+		setLight(packedLight);
+		setNormal(normalX, normalY, normalZ);
+	}
+
+	@Override
+	public VertexConsumer setColor(float red, float green, float blue, float alpha) {
+		return setColor((int) (red * 255.0F), (int) (green * 255.0F), (int) (blue * 255.0F), (int) (alpha * 255.0F));
+	}
+
+	@Override
 	public VertexConsumer setColor(int red, int green, int blue, int alpha) {
 		return setColor(ARGB.color(alpha, red, green, blue));
 	}
@@ -117,6 +138,51 @@ public class DirectVertexConsumer implements VertexConsumer {
 	}
 
 	@Override
+	public void putBulkData(PoseStack.Pose pose, BakedQuad quad, float red, float green, float blue, float alpha, int packedLight, int packedOverlay) {
+		VertexConsumer.super.putBulkData(pose, quad, red, green, blue, alpha, packedLight, packedOverlay);
+	}
+
+	@Override
+	public void putBulkData(PoseStack.Pose pose, BakedQuad quad, float[] brightness, float red, float green, float blue, float alpha, int[] lightmap, int packedOverlay) {
+		VertexConsumer.super.putBulkData(pose, quad, brightness, red, green, blue, alpha, lightmap, packedOverlay);
+	}
+
+	@Override
+	public VertexConsumer addVertex(Vector3fc pos) {
+		return VertexConsumer.super.addVertex(pos);
+	}
+
+	@Override
+	public VertexConsumer addVertex(PoseStack.Pose pose, Vector3f pos) {
+		return VertexConsumer.super.addVertex(pose, pos);
+	}
+
+	@Override
+	public VertexConsumer addVertex(PoseStack.Pose pose, float x, float y, float z) {
+		return VertexConsumer.super.addVertex(pose, x, y, z);
+	}
+
+	@Override
+	public VertexConsumer addVertex(Matrix4fc pose, float x, float y, float z) {
+		return VertexConsumer.super.addVertex(pose, x, y, z);
+	}
+
+	@Override
+	public VertexConsumer addVertexWith2DPose(Matrix3x2fc pose, float x, float y) {
+		return VertexConsumer.super.addVertexWith2DPose(pose, x, y);
+	}
+
+	@Override
+	public VertexConsumer setNormal(PoseStack.Pose pose, float normalX, float normalY, float normalZ) {
+		return VertexConsumer.super.setNormal(pose, normalX, normalY, normalZ);
+	}
+
+	@Override
+	public VertexConsumer setNormal(PoseStack.Pose pose, Vector3f normalVector) {
+		return VertexConsumer.super.setNormal(pose, normalVector);
+	}
+
+	@Override
 	public VertexConsumer setUv2(int u, int v) {
 		return setUv1(u, v);
 	}
@@ -136,6 +202,11 @@ public class DirectVertexConsumer implements VertexConsumer {
 		into.put(floatToByte(x));
 		into.put(floatToByte(y));
 		into.put(floatToByte(z));
+		return this;
+	}
+
+	@Override
+	public VertexConsumer setLineWidth(float lineWidth) {
 		return this;
 	}
 }

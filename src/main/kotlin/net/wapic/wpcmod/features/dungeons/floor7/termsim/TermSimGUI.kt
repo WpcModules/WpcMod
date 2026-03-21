@@ -37,7 +37,7 @@ open class TermSimGUI(
     Component.literal(name)
 ) {
     val blackPane = ItemStack(Items.BLACK_STAINED_GLASS_PANE).apply { set(DataComponents.CUSTOM_NAME, Component.literal("")) }
-    val guiInventorySlots get() = menu?.slots?.subList(0, size) ?: emptyList()
+	val guiInventorySlots get() = menu.slots.subList(0, size)
     private var doesAcceptClick = true
     protected var ping = 0L
 	private var containerId = 0
@@ -76,7 +76,7 @@ open class TermSimGUI(
 
 	private fun delaySlotClick(slot: Slot, button: Int) = WpcMod.coroutineScope.launch {
 		if (MC.screen == StartGUI) return@launch slotClick(slot, button)
-		if (!doesAcceptClick || slot.container != inv || slot.item?.item == Items.BLACK_STAINED_GLASS_PANE) return@launch
+		if (!doesAcceptClick || slot.container != inv || slot.item.item == Items.BLACK_STAINED_GLASS_PANE) return@launch
         doesAcceptClick = false
 
 		delay((ping).coerceAtLeast(0))
@@ -85,9 +85,9 @@ open class TermSimGUI(
 		slotClick(slot, button)
     }
 
-    override fun slotClicked(slot: Slot?, slotId: Int, button: Int, actionType: ClickType) {
-        slot?.let { delaySlotClick(it, button) }
-    }
+	override fun slotClicked(slot: Slot, slotId: Int, mouseButton: Int, type: ClickType) {
+		delaySlotClick(slot, mouseButton)
+	}
 
     protected fun createNewGui(block: (Slot) -> ItemStack) {
 		GuiEvents.OPEN.invoker().onOpen(name, containerId++)

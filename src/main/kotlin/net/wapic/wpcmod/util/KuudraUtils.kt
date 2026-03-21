@@ -3,8 +3,8 @@ package net.wapic.wpcmod.util
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.client.multiplayer.ClientLevel
-import net.minecraft.world.entity.monster.MagmaCube
 import net.minecraft.network.chat.Component
+import net.minecraft.world.entity.monster.MagmaCube
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.events.skyblock.KuudraEvents
@@ -42,7 +42,7 @@ object KuudraUtils {
 		if (kuudraEntity == null) {
 			world.entitiesForRendering().find { it is MagmaCube && it.size == 30 && it.skyBlockMaxHealth == 100000.0f }?.let {
 				kuudraEntity = it as MagmaCube
-				WpcMod.logger.debug("set KuudraEntity to {}", it)
+				WpcMod.LOGGER.debug("set KuudraEntity to {}", it)
 			}
 		}
 	}
@@ -64,7 +64,7 @@ object KuudraUtils {
 		}
 
 		if (message.string.removeFormatting().trim() == KUUDRA_END_MESSAGE) {
-			WpcMod.logger.debug("Kuudra Ended")
+			WpcMod.LOGGER.debug("Kuudra Ended")
 			KuudraEvents.END.invoker().onEnd()
 			phase = null
 		}

@@ -28,7 +28,7 @@ object AutoAcceptPartyInvite {
 		val players = config.split(",").map { it.trim().uppercase() }
 
 		if (name.uppercase() in players) {
-			WpcMod.logger.debug("Auto accepting invite from $name")
+			WpcMod.LOGGER.debug("Auto accepting invite from $name")
 			Utils.addToCommandQueue("party accept $name")
 		}
 	}

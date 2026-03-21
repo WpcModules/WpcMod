@@ -1,10 +1,10 @@
 package net.wapic.wpcmod.features.dungeons.floor7.termGUI
 
 import io.github.notenoughupdates.moulconfig.ChromaColour
-import net.minecraft.Util
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.util.CommonColors
+import net.minecraft.util.Util
 import net.minecraft.world.item.Items
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.skyblock.DungeonEvents

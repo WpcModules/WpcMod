@@ -48,7 +48,7 @@ public class MouseHandlerMixin {
 			if (vector2i.x == 0 && vector2i.y == 0) return;
 
 			float flySpeed = Mth.clamp(Freecam.Companion.getCamera().getFlySpeed() + vector2i.y, 0.0F, 40F);
-			WpcMod.INSTANCE.getLogger().info("Set freecam flying speed: {}", flySpeed);
+			WpcMod.INSTANCE.getLOGGER().info("Set freecam flying speed: {}", flySpeed);
 			Freecam.Companion.getCamera().setFlySpeed(flySpeed);
 
 			ci.cancel();

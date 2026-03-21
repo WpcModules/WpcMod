@@ -24,8 +24,8 @@ public abstract class AbstractContainerScreenMixin {
 	protected Slot hoveredSlot;
 
 	@Inject(at = @At("HEAD"), method = "renderSlot", cancellable = true)
-	protected void drawSlot$Before(GuiGraphics context, Slot slot, CallbackInfo ci) {
-		GuiEvents.DRAW_SLOT_BACKGROUND.invoker().onDrawSlot(context, (Screen) (Object) this, slot, ci);
+	protected void drawSlot$Before(GuiGraphics guiGraphics, Slot slot, int mouseX, int mouseY, CallbackInfo ci) {
+		GuiEvents.DRAW_SLOT_BACKGROUND.invoker().onDrawSlot(guiGraphics, (Screen) (Object) this, slot, ci);
 	}
 
 	@Inject(at = @At("HEAD"), method = "slotClicked(Lnet/minecraft/world/inventory/Slot;IILnet/minecraft/world/inventory/ClickType;)V", cancellable = true)

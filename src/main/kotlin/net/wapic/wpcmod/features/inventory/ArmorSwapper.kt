@@ -41,6 +41,7 @@ object ArmorSwapper {
 
 	private fun onTick(client: Minecraft) {
 		if (armorSwapBind.consumeClick() && config.armorSwapper) {
+			WpcMod.LOGGER.debug("Armor swap triggered")
 			Utils.addToCommandQueue("wardrobe")
 			shouldSwap = true
 		}
@@ -53,25 +54,29 @@ object ArmorSwapper {
 
 		lastArmorSlot?.let {
 			if (inv.getItem(it).hoverName.string.contains("Ready")) {
+				WpcMod.LOGGER.debug("equipping last armor")
 				clickSlot(screen, it)
+				screen.onClose()
 				lastArmorSlot = null
 				shouldSwap = false
-				screen.onClose()
 			}
 			return
 		}
 
 		val equippedArmorSlot = inv.indexOfFirst { it.hoverName.string.contains("Equipped") }
 		if (equippedArmorSlot == -1) return
+		WpcMod.LOGGER.debug("found equipped armor: $equippedArmorSlot")
 
 		val sorrowSlot = inv.indexOfFirst { it.skyblockId == SORROW_SKYBLOCK_ID }
 		if (sorrowSlot == -1) return
+		WpcMod.LOGGER.debug("found sorrow armor: $sorrowSlot")
 
-		lastArmorSlot = equippedArmorSlot
 		if (inv.getItem(sorrowSlot + 9).hoverName.string.contains("Ready")) {
+			WpcMod.LOGGER.debug("equipping sorrow")
+			lastArmorSlot = equippedArmorSlot
 			clickSlot(screen, sorrowSlot + 9)
-			shouldSwap = false
 			screen.onClose()
+			shouldSwap = false
 		}
 	}
 }

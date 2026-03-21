@@ -39,7 +39,7 @@ object DungeonESP : EspFeature() {
 				val color =
 					if (FunnyMap.Info.keys > 0 && door.state != RoomState.UNDISCOVERED) config.witherDoor.hasKeyColor else config.witherDoor.noKeyColor
 				val box = AABB(door.x - 1.0, 69.0, door.z - 1.0, door.x + 2.0, 73.0, door.z + 2.0)
-				worldRenderContext.drawFilledBoxWithOutline(box, color.darker(), color.brighter(), 4.0)
+				worldRenderContext.drawFilledBoxWithOutline(box, color.darker(), color.brighter(), 4f)
 			}
 		}
 		worldRenderContext.profiler.pop()
@@ -47,7 +47,7 @@ object DungeonESP : EspFeature() {
 
 	fun isStarredMob(entity: Entity): Boolean {
 		val armorStands = getArmorStandsByEntity(entity)
-		return armorStands.isNotEmpty() && armorStands.first().name?.string?.contains("✯") ?: false
+		return armorStands.isNotEmpty() && armorStands.first().name.string.contains("✯")
 	}
 
 	override fun compute(entity: Entity): GlowableESPConfig? {

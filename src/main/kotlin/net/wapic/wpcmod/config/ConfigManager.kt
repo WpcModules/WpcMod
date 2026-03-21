@@ -40,32 +40,31 @@ object ConfigManager {
 	}
 
 	fun firstLoadFile(defaultValue: Any): Any {
-		WpcMod.logger.info("Attempting to load config file")
 		var output: Any? = defaultValue
 
 		if (file.exists()) {
 			try {
-				WpcMod.logger.info("Loading ${file.name}")
+				WpcMod.LOGGER.info("Loading ${file.name}")
 				val text = readText()
 				output = gson.fromJson(text, defaultValue.javaClass)
 			} catch (e: Throwable) {
-				WpcMod.logger.error("Failed to read config file", e)
+				WpcMod.LOGGER.error("Failed to read config file", e)
 				val backup = file.resolveSibling("config-failed.json")
 				try {
-					WpcMod.logger.warn("Creating a backup of old file and loading default config", e)
+					WpcMod.LOGGER.warn("Creating a backup of old file and loading default config", e)
 					file.copyTo(backup)
 				} catch (e: Exception) {
-					WpcMod.logger.error("Failed to backup config file", e)
+					WpcMod.LOGGER.error("Failed to backup config file", e)
 				}
 			}
 		}
 
 		if (output == null) {
-			WpcMod.logger.info("Null file, falling back to default config")
+			WpcMod.LOGGER.info("Null file, falling back to default config")
 			return defaultValue
 		}
 
-		WpcMod.logger.info("Config loaded successfully")
+		WpcMod.LOGGER.info("Config loaded successfully")
 		return output
 	}
 
@@ -74,7 +73,7 @@ object ConfigManager {
 			if (!WpcMod.configDir.exists()) {
 				WpcMod.configDir.mkdirs()
 			}
-			WpcMod.logger.info("Saving config file")
+			WpcMod.LOGGER.info("Saving config file")
 			tempFile.writeText(gson.toJson(jsonHolder))
 			if (file.exists()) file.copyTo(backupFile, overwrite = true)
 			Files.move(
@@ -84,7 +83,7 @@ object ConfigManager {
 		} catch (e: Exception) {
 			tempFile.delete()
 			if (backupFile.exists()) backupFile.copyTo(file, overwrite = true)
-			WpcMod.logger.error("Failed to save config file", e)
+			WpcMod.LOGGER.error("Failed to save config file", e)
 			throw e
 		}
 	}

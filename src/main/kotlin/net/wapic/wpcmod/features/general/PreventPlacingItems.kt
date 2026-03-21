@@ -79,7 +79,7 @@ object PreventPlacingItems {
 		if (item.contains("ABIPHONE") || item in placeableItems) {
 
 			val block = player.level().getBlockState(hitResult.blockPos)
-			if (block?.block in interactables || DungeonUtils.inDungeons && (block?.block == Blocks.COAL_BLOCK || block?.block == Blocks.RED_TERRACOTTA)) {
+			if (block.block in interactables || DungeonUtils.inDungeons && (block.block == Blocks.COAL_BLOCK || block.block == Blocks.RED_TERRACOTTA)) {
 				return InteractionResult.PASS
 			}
 

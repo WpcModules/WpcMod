@@ -1,20 +1,24 @@
 package net.wapic.wpcmod.util
 
 import com.google.gson.JsonParser
-import org.apache.http.client.methods.HttpGet
-import org.apache.http.impl.client.HttpClients
-import org.apache.http.util.EntityUtils
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
+import java.time.Duration
 
 object APIUtils {
 
 	fun fetch(uri: String): String? {
-		HttpClients.createMinimal().use {
-			try {
-				val httpGet = HttpGet(uri)
-				return EntityUtils.toString(it.execute(httpGet).entity)
-			} catch (e: Exception) {
-				return null
-			}
+		val client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build()
+		val request = HttpRequest.newBuilder().uri(URI.create(uri)).GET().build()
+
+		try {
+			val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+			if (response.statusCode() != 200) return null
+			return response.body()
+		} catch (e: Exception) {
+			return null
 		}
 	}
 

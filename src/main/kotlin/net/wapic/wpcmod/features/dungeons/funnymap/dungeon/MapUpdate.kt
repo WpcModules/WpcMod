@@ -1,9 +1,9 @@
 package net.wapic.wpcmod.features.dungeons.funnymap.dungeon
 
-import net.minecraft.Util
 import net.minecraft.client.multiplayer.PlayerInfo
 import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
+import net.minecraft.util.Util
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.chunk.EmptyLevelChunk
 import net.minecraft.world.level.saveddata.maps.MapDecorationTypes

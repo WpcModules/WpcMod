@@ -44,7 +44,7 @@ object AutoAnswerSphinx {
 		}
 
 		nextAnswer?.let { answer ->
-			WpcMod.logger.info("${message.string} $answer")
+			WpcMod.LOGGER.debug("${message.string} $answer")
 			if (message.string.matches(Regex("§7\\s{3}[ABC]\\) §f$answer"))) {
 				val clickEvent = message.style.clickEvent as? ClickEvent.RunCommand
 				nextAnswer = null

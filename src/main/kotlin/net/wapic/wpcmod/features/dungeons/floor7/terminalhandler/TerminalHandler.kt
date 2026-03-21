@@ -1,7 +1,7 @@
 package net.wapic.wpcmod.features.dungeons.floor7.terminalhandler
 
-import net.minecraft.Util
 import net.minecraft.client.gui.screens.inventory.ContainerScreen
+import net.minecraft.util.Util
 import net.minecraft.world.inventory.ClickType
 import net.minecraft.world.item.ItemStack
 import net.wapic.wpcmod.features.dungeons.floor7.termsim.TermSimGUI

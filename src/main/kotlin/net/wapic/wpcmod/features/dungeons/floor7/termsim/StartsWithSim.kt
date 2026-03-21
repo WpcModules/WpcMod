@@ -26,7 +26,7 @@ class StartsWithSim(
     }
 
 	override fun slotClick(slot: Slot, button: Int) {
-		if (slot.item.hoverName.string?.startsWith(letter, true) == false || slot.item.hasFoil())
+		if (!slot.item.hoverName.string.startsWith(letter, true) || slot.item.hasFoil())
 			return ChatUtils.sendMessage("§cThat item does not start with: \'$letter\' ${slot.item.hoverName}!")
 
 		createNewGui {
@@ -47,7 +47,7 @@ class StartsWithSim(
 
     private fun getLetterItemStack(filterNot: Boolean = false): ItemStack {
 		val matchingItem = BuiltInRegistries.ITEM.filter { item ->
-			val id = item?.name?.string ?: return@filter false
+			val id = item.name.string
 			id.startsWith(letter, true) != filterNot && !id.contains("pane", true)
 		}.random()
 

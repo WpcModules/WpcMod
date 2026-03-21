@@ -1,10 +1,10 @@
 package net.wapic.wpcmod.mixin;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
-import net.minecraft.client.renderer.fog.FogRenderer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.fog.FogRenderer;
 import net.minecraft.world.effect.MobEffects;
 import net.wapic.wpcmod.WpcMod;
 import org.joml.Vector4f;
@@ -16,8 +16,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(FogRenderer.class)
 public class FogRendererMixin {
 
-	@Inject(at = @At("HEAD"), method = "setupFog(Lnet/minecraft/client/Camera;IZLnet/minecraft/client/DeltaTracker;FLnet/minecraft/client/multiplayer/ClientLevel;)Lorg/joml/Vector4f;", cancellable = true)
-	private static void applyFog(Camera camera, int viewDistance, boolean thick, DeltaTracker tickCounter, float skyDarkness, ClientLevel world, CallbackInfoReturnable<Vector4f> cir) {
+	@Inject(at = @At("HEAD"), method = "setupFog", cancellable = true)
+	private static void applyFog(Camera camera, int renderDistance, DeltaTracker deltaTracker, float darkenWorldAmount, ClientLevel level, CallbackInfoReturnable<Vector4f> cir) {
 		Minecraft client = Minecraft.getInstance();
 		if (client.player != null) {
 			boolean isBlind = client.player.hasEffect(MobEffects.BLINDNESS);

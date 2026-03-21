@@ -77,12 +77,12 @@ object HudManager {
 
 	fun loadLocations() {
 		if (!file.exists()) {
-			WpcMod.logger.error("Could not find hud locations file. is this your first time launching?")
+			WpcMod.LOGGER.warn("Could not find hud locations file. is this your first time launching?")
 			return
 		}
 
 		try {
-			WpcMod.logger.info("Loading hud locations file")
+			WpcMod.LOGGER.info("Loading hud locations")
 			val loadedElements = gson.fromJson(readFile(), Array<SimpleHudElement>::class.java).toList()
 
 			loadedElements.forEach {
@@ -92,15 +92,15 @@ object HudManager {
 				element?.scale = it.scale
 			}
 
-			WpcMod.logger.info("Loaded hud locations successfully")
+			WpcMod.LOGGER.info("Loaded hud locations successfully")
 		} catch (e: Throwable) {
-			WpcMod.logger.error("Failed to read hud locations file", e)
-			val backup = file.resolveSibling("hud-locations-failed.json")
+			WpcMod.LOGGER.error("Failed to read hud locations", e)
 			try {
-				WpcMod.logger.warn("Creating a backup of old file and loading default hud locations", e)
+				val backup = file.resolveSibling("hud-locations-failed.json")
+				WpcMod.LOGGER.warn("Creating a backup of old hud locations and loading defaults")
 				file.copyTo(backup)
 			} catch (e: Exception) {
-				WpcMod.logger.error("Failed to backup hud locations file", e)
+				WpcMod.LOGGER.error("Failed to backup hud locations", e)
 			}
 		}
 	}
@@ -110,7 +110,7 @@ object HudManager {
 			if (!WpcMod.configDir.exists()) {
 				WpcMod.configDir.mkdirs()
 			}
-			WpcMod.logger.info("Saving hud locations file")
+			WpcMod.LOGGER.info("Saving hud locations")
 
 			tempFile.writeText(gson.toJson(hudElements))
 
@@ -124,11 +124,11 @@ object HudManager {
 			)
 
 			backupFile.delete()
-			WpcMod.logger.info("Hud locations saved Successfully")
+			WpcMod.LOGGER.info("Hud locations saved successfully")
 		} catch (e: Exception) {
 			tempFile.delete()
 			if (backupFile.exists()) backupFile.copyTo(file, overwrite = true)
-			WpcMod.logger.error("Failed to save hud locations file", e)
+			WpcMod.LOGGER.error("Failed to save hud locations", e)
 			throw e
 		}
 	}

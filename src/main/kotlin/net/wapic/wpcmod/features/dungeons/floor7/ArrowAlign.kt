@@ -70,7 +70,7 @@ object ArrowAlign {
 				val entity =
 					MC.level?.getEntity((packet as ServerboundInteractPacketAccessor).entityId) as? ItemFrame
 						?: return
-				if (entity.item?.item != Items.ARROW) return
+				if (entity.item.item != Items.ARROW) return
 
 				val frameIndex = ((entity.blockY - frameGridCorner.y) + (entity.blockZ - frameGridCorner.z) * 5)
 				if (entity.blockX != frameGridCorner.x || currentFrameRotations?.get(frameIndex) == -1 || frameIndex !in 0..24) return
@@ -121,7 +121,7 @@ object ArrowAlign {
 
     private fun getFrames(): List<Int> {
 		val itemFrames = MC.level?.entitiesForRendering()?.mapNotNull {
-            if (it is ItemFrame && it.item?.item?.asItem() == Items.ARROW) it else null
+			if (it is ItemFrame && it.item.item.asItem() == Items.ARROW) it else null
         }?.takeIf { it.isNotEmpty() } ?: return List(25) { -1 }
 
         return (0..24).map { index ->

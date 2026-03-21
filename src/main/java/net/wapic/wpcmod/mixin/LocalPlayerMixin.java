@@ -2,13 +2,14 @@ package net.wapic.wpcmod.mixin;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.ClientInput;
 import net.minecraft.client.player.KeyboardInput;
-import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.wapic.wpcmod.events.GuiEvents;
 import net.wapic.wpcmod.features.general.Freecam;
+import net.wapic.wpcmod.util.MC;
 import net.wapic.wpcmod.util.freecam.DummyInput;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -30,7 +31,7 @@ public class LocalPlayerMixin extends AbstractClientPlayer {
 	protected Minecraft minecraft;
 
 	@Unique
-	private final KeyboardInput dummy = new DummyInput(null);
+	private final KeyboardInput dummy = new DummyInput(MC.INSTANCE.getOptions());
 	@Unique
 	private ClientInput realInput;
 

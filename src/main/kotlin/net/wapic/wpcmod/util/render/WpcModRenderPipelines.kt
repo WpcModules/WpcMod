@@ -6,7 +6,6 @@ import com.mojang.blaze3d.platform.DepthTestFunction
 import com.mojang.blaze3d.vertex.VertexFormat
 import com.mojang.blaze3d.vertex.VertexFormatElement
 import net.minecraft.client.renderer.RenderPipelines
-import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import net.wapic.wpcmod.util.Utils.modIdentifier
 
 object WpcModRenderPipelines {
@@ -21,7 +20,7 @@ object WpcModRenderPipelines {
 		RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
 			.withLocation(modIdentifier("pipeline/wpcmod_filled_box"))
 			.withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
-			.withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.TRIANGLE_STRIP).build()
+			.build()
 	)
 
 	val GUI_THING: RenderPipeline = RenderPipelines.register(

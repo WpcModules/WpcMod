@@ -26,7 +26,7 @@ object PigeonSwapper {
 		if (!config.pigeonSwapper || Utils.getLocation() !in allowedAreas) return InteractionResult.PASS
 		if (player.mainHandItem.skyblockId != ROYAL_PIGEON_ID) return InteractionResult.PASS
 
-		val inventory = player.inventory ?: return InteractionResult.PASS
+		val inventory = player.inventory
 		val drillItem = inventory.find { it.hoverName.string.contains("Drill") } ?: return InteractionResult.PASS
 
 		inventory.selectedSlot = inventory.findSlotMatchingItem(drillItem)

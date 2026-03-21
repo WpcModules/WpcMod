@@ -97,11 +97,11 @@ class ShortcutListWidget : ContainerObjectSelectionList<Entry> {
 			}
 		}
 
-		override fun children(): MutableList<out GuiEventListener?> {
+		override fun children(): List<GuiEventListener> {
 			return ImmutableList.of(this.commandField, this.editButton, this.deleteButton)
 		}
 
-		override fun narratables(): MutableList<out NarratableEntry?> {
+		override fun narratables(): MutableList<NarratableEntry> {
 			return ImmutableList.of(this.commandField, this.editButton, this.deleteButton)
 		}
 

@@ -2,7 +2,7 @@ package net.wapic.wpcmod.features.dungeons.floor7.termsim
 
 import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.BuiltInRegistries
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.DyeColor
 import net.minecraft.world.item.Item
@@ -39,7 +39,7 @@ class SelectAllSim(
 	}
 
 	override fun slotClick(slot: Slot, button: Int) {
-		val stack = slot.item ?: return
+		val stack = slot.item
 		val possibleItems = getPossibleItems(color)
 		if (!possibleItems.contains(stack.item)) return ChatUtils.sendMessage("§cThat item is not: ${color.name.uppercase()}!")
 		createNewGui {
@@ -48,22 +48,42 @@ class SelectAllSim(
 
 		playTermSimSound()
 
-		if (guiInventorySlots.none { it?.item?.hasFoil() == false && possibleItems.contains(it.item?.item) }) {
+		if (guiInventorySlots.none { it?.item?.hasFoil() == false && possibleItems.contains(it.item.item) }) {
 			this@SelectAllSim.onTerminalSolved()
 		}
 	}
 
 	private fun getPossibleItems(color: DyeColor): List<Item> {
 		return listOf(
-			BuiltInRegistries.ITEM.getValue(ResourceLocation.fromNamespaceAndPath("minecraft", "${color.name.lowercase()}_stained_glass")),
-			BuiltInRegistries.ITEM.getValue(ResourceLocation.fromNamespaceAndPath("minecraft", "${color.name.lowercase()}_wool")),
-			BuiltInRegistries.ITEM.getValue(ResourceLocation.fromNamespaceAndPath("minecraft", "${color.name.lowercase()}_terracotta")),
+			BuiltInRegistries.ITEM.getValue(
+				Identifier.fromNamespaceAndPath(
+					"minecraft",
+					"${color.name.lowercase()}_stained_glass"
+				)
+			),
+			BuiltInRegistries.ITEM.getValue(
+				Identifier.fromNamespaceAndPath(
+					"minecraft",
+					"${color.name.lowercase()}_wool"
+				)
+			),
+			BuiltInRegistries.ITEM.getValue(
+				Identifier.fromNamespaceAndPath(
+					"minecraft",
+					"${color.name.lowercase()}_terracotta"
+				)
+			),
 			when (color) {
 				DyeColor.WHITE -> Items.BONE_MEAL
 				DyeColor.BLUE -> Items.LAPIS_LAZULI
 				DyeColor.BLACK -> Items.INK_SAC
 				DyeColor.BROWN -> Items.COCOA_BEANS
-				else -> BuiltInRegistries.ITEM.getValue(ResourceLocation.fromNamespaceAndPath("minecraft", "${color.name.lowercase()}_dye"))
+				else -> BuiltInRegistries.ITEM.getValue(
+					Identifier.fromNamespaceAndPath(
+						"minecraft",
+						"${color.name.lowercase()}_dye"
+					)
+				)
 			}
 		)
 	}

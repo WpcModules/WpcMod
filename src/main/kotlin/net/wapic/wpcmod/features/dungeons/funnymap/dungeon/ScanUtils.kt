@@ -5,7 +5,7 @@ import com.google.gson.JsonIOException
 import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
 import net.minecraft.core.BlockPos
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.entity.TrappedChestBlockEntity
@@ -24,7 +24,7 @@ object ScanUtils {
 	init {
 		try {
 			roomList = Gson().fromJson(
-				MC.resourceManager.getResourceOrThrow(ResourceLocation.fromNamespaceAndPath("wpcmod", "rooms.json"))
+				MC.resourceManager.getResourceOrThrow(Identifier.fromNamespaceAndPath("wpcmod", "rooms.json"))
 				.open().bufferedReader(),
 				object : TypeToken<Set<RoomData>>() {}.type)
 		} catch (e: JsonSyntaxException) {

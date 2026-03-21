@@ -1,24 +1,26 @@
 package net.wapic.wpcmod.features.general.shortcut
 
-import net.minecraft.client.input.MouseButtonEvent
-import net.minecraft.client.gui.screens.options.OptionsSubScreen
+import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.gui.components.Button
 import net.minecraft.client.gui.layouts.LinearLayout
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.gui.screens.options.OptionsSubScreen
 import net.minecraft.client.input.KeyEvent
-import com.mojang.blaze3d.platform.InputConstants
+import net.minecraft.client.input.MouseButtonEvent
 import net.minecraft.network.chat.CommonComponents
 import net.minecraft.network.chat.Component
-import net.minecraft.Util
+import net.minecraft.util.Util
 import net.wapic.wpcmod.util.MC
 
-class ShortcutScreen : OptionsSubScreen(null, MC.options, Component.nullToEmpty("Command Shortcuts")) {
+class ShortcutScreen(parent: Screen) :
+	OptionsSubScreen(parent, MC.options, Component.nullToEmpty("Command Shortcuts")) {
 
 	var selectedShortcut: Shortcut? = null
 	private var shortcutsList: ShortcutListWidget? = null
 	var lastKeyCodeUpdateTime: Long = 0
 
 	override fun addContents() {
-		this.shortcutsList = this.layout.addToContents(ShortcutListWidget(this, this.minecraft!!))
+		this.shortcutsList = this.layout.addToContents(ShortcutListWidget(this, this.minecraft))
 	}
 
 	override fun addOptions() {

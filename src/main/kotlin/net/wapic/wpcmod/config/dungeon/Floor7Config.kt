@@ -193,10 +193,6 @@ class Floor7Config {
 		@ConfigEditorBoolean
 		val renderText: Boolean = true
 
-		@ConfigOption(name = "Render Beacon",desc = "Renders a beacon beam on the inactive waypoint.")
-		@ConfigEditorBoolean
-		val renderBeacon: Boolean = true
-
 		@ConfigOption(name = "Render Box",desc = "Renders a box around the inactive waypoint.")
 		@ConfigEditorBoolean
 		val renderBox: Boolean = true

@@ -1,13 +1,13 @@
 package net.wapic.wpcmod.features.dungeons.floor7
 
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
-import net.minecraft.Util
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.PacketListener
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.game.ServerboundContainerClickPacket
+import net.minecraft.util.Util
 import net.minecraft.world.item.DyeColor
 import net.minecraft.world.item.ItemStack
 import net.wapic.wpcmod.WpcMod
@@ -91,7 +91,7 @@ object TerminalSolver {
 				StartsWithHandler(letter)
 			}
 		}.also {
-			WpcMod.logger.debug("Opened terminal: {}", it.type.name)
+			WpcMod.LOGGER.debug("Opened terminal: {}", it.type.name)
 			DungeonEvents.TERMINAL_OPENED.invoker().onOpen(it)
 			lastTermOpened = it
 		}
@@ -99,7 +99,7 @@ object TerminalSolver {
 
 	fun onGuiClose() {
 		currentTerm?.let {
-			WpcMod.logger.debug("Left terminal: {}", it.type.name)
+			WpcMod.LOGGER.debug("Left terminal: {}", it.type.name)
 			DungeonEvents.TERMINAL_CLOSED.invoker().onClose(it)
 			currentTerm = null
 		}
@@ -145,7 +145,7 @@ object TerminalSolver {
 			if (slotId !in 0 until it.type.windowSize) return
 			it.items[slotId] = itemStack
 			if (it.handleSlotUpdate(syncId, slotId, itemStack)) {
-				WpcMod.logger.debug("Updated terminal: {}", it.type.name)
+				WpcMod.LOGGER.debug("Updated terminal: {}", it.type.name)
 				DungeonEvents.TERMINAL_UPDATED.invoker().onUpdate(it)
 			}
 		}
@@ -163,7 +163,7 @@ object TerminalSolver {
 			if (name != MC.player?.name?.string) return
 
 			lastTermOpened?.let {
-				WpcMod.logger.debug("Solved terminal {}", it.type)
+				WpcMod.LOGGER.debug("Solved terminal {}", it.type)
 				DungeonEvents.TERMINAL_SOLVED.invoker().onSolve(it)
 			}
 		}

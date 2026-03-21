@@ -4,11 +4,11 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.ChatFormatting
 import net.minecraft.SharedConstants
-import net.minecraft.Util
 import net.minecraft.client.GuiMessage
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.network.chat.Style
+import net.minecraft.util.Util
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.mixin.accessors.ChatComponentAccessor
 import net.wapic.wpcmod.util.MC
@@ -41,7 +41,7 @@ object CompactChat {
 	private fun processDivider(message: Message) {
 		currentDividerSet?.let {
 			if (Util.getMillis() > it.first().lastSeen + 5000) {
-				WpcMod.logger.warn("Second divider wasn't received after 5 seconds!")
+				WpcMod.LOGGER.warn("Second divider wasn't received after 5 seconds!")
 				currentDividerSet = null
 			}
 		}

@@ -8,20 +8,26 @@ import net.minecraft.client.gui.Font
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.renderer.LightTexture
 import net.minecraft.client.renderer.MultiBufferSource
-import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.ShapeRenderer
+import net.minecraft.client.renderer.rendertype.RenderType
 import net.minecraft.client.renderer.state.CameraRenderState
+import net.minecraft.gizmos.GizmoStyle
+import net.minecraft.gizmos.Gizmos
+import net.minecraft.util.ARGB
 import net.minecraft.util.FormattedCharSequence
 import net.minecraft.util.profiling.ProfilerFiller
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
+import net.minecraft.world.phys.shapes.Shapes
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.VecUtils.unaryMinus
+import org.joml.Vector3f
+import org.joml.minus
 
 class WorldRenderContext {
 	val matrixStack: PoseStack
 	val level: ClientLevel
-	val consumer: MultiBufferSource.BufferSource
+	val bufferSource: MultiBufferSource.BufferSource
 	val tickCounter: DeltaTracker
 	val camera: CameraRenderState
 	val profiler: ProfilerFiller
@@ -29,19 +35,18 @@ class WorldRenderContext {
 	constructor(
 		matrixStack: PoseStack,
 		world: ClientLevel,
-		consumer: MultiBufferSource.BufferSource,
+		bufferSource: MultiBufferSource.BufferSource,
 		tickCounter: DeltaTracker,
 		camera: CameraRenderState,
 		profiler: ProfilerFiller
 	) {
 		this.matrixStack = matrixStack
 		this.level = world
-		this.consumer = consumer
+		this.bufferSource = bufferSource
 		this.tickCounter = tickCounter
 		this.camera = camera
 		this.profiler = profiler
 	}
-
 
 	fun drawText(text: FormattedCharSequence, pos: Vec3, scale: Float, depth: Boolean) {
 		matrixStack.pushPose()
@@ -55,62 +60,23 @@ class WorldRenderContext {
 		matrixStack.scale(scale, -scale, scale)
 
 		MC.font.drawInBatch(
-			text, -MC.font.width(text) / 2f, 0f, -1, true, matrix, consumer,
+			text, -MC.font.width(text) / 2f, 0f, -1, true, matrix, bufferSource,
 			if (depth) Font.DisplayMode.NORMAL else Font.DisplayMode.SEE_THROUGH,
 			0, LightTexture.FULL_BRIGHT
 		)
 
-		consumer.endBatch()
+		bufferSource.endBatch()
 
 		matrixStack.popPose()
 	}
 
-	fun drawBoundingBox(
-		pos: Vec3,
-		width: Float, height: Float,
-		color: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255),
-		lineWidth: Double = 2.0
-	) {
-		val width = width / 2.0
-		val height = height / 2.0
-		drawBox(
-			pos.x - width,
-			pos.y - height,
-			pos.z - width,
-			pos.x + width,
-			pos.y + height,
-			pos.z + width,
-			color,
-			lineWidth,
-		)
-	}
-
-	fun drawBoundingBox(
-		boundingBox: AABB,
-		color: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255),
-		lineWidth: Double = 2.0
-	) {
-		drawBox(
-			boundingBox.minX,
-			boundingBox.minY,
-			boundingBox.minZ,
-			boundingBox.maxX,
-			boundingBox.maxY,
-			boundingBox.maxZ,
-			color,
-			lineWidth,
-		)
-	}
 
 	fun drawFilledBoxWithOutline(
-		pos: Vec3,
-		width: Double, height: Double,
+		pos: Vec3, width: Float, height: Float,
 		color: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255),
 		outlineColor: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255),
-		lineWidth: Double = 2.0
+		lineWidth: Float = 2f
 	) {
-		val width = width / 2
-		val height = height / 2
 		with(pos) {
 			drawFilledBox(x - width, y - height, z - width, x + width, y + height, z + width, color)
 			drawBox(x - width, y - height, z - width, x + width, y + height, z + width, outlineColor, lineWidth)
@@ -118,105 +84,76 @@ class WorldRenderContext {
 	}
 
 	fun drawFilledBoxWithOutline(
-		minX: Double,
-		minY: Double,
-		minZ: Double,
-		maxX: Double,
-		maxY: Double,
-		maxZ: Double,
+		minX: Double, minY: Double, minZ: Double,
+		maxX: Double, maxY: Double, maxZ: Double,
 		color: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255),
 		outlineColor: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255),
-		lineWidth: Double = 2.0
+		lineWidth: Float = 2f
 	) {
 		drawFilledBox(minX, minY, minZ, maxX, maxY, maxZ, color)
 		drawBox(minX, minY, minZ, maxX, maxY, maxZ, outlineColor, lineWidth)
 	}
 
 	fun drawFilledBoxWithOutline(
-		boundingBox: AABB,
+		aabb: AABB,
 		color: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255),
 		outlineColor: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255),
-		lineWidth: Double = 2.0
+		lineWidth: Float = 2f
 	) {
 		drawFilledBoxWithOutline(
-			boundingBox.minX, boundingBox.minY, boundingBox.minZ,
-			boundingBox.maxX, boundingBox.maxY, boundingBox.maxZ,
+			aabb.minX, aabb.minY, aabb.minZ,
+			aabb.maxX, aabb.maxY, aabb.maxZ,
 			color, outlineColor,
 			lineWidth
 		)
 	}
 
 	fun drawFilledBoundingBox(
-		boundingBox: AABB,
-		color: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255)
+		aabb: AABB,
+		color: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255),
 	) {
+		drawFilledBox(aabb.minX, aabb.minY, aabb.minZ, aabb.maxX, aabb.maxY, aabb.maxZ, color)
+	}
+
+	fun drawFilledBoundingBox(
+		pos: Vec3, width: Float, height: Float,
+		color: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255),
+	) {
+		val width = width / 2
+		val height = height / 2
 		drawFilledBox(
-			boundingBox.minX, boundingBox.minY, boundingBox.minZ,
-			boundingBox.maxX, boundingBox.maxY, boundingBox.maxZ,
+			pos.x - width, pos.y - height, pos.z - width,
+			pos.x + width, pos.y + height, pos.z + width,
 			color,
 		)
 	}
 
-	fun drawFilledBox(
-		minX: Double, minY: Double, minZ: Double,
-		maxX: Double, maxY: Double, maxZ: Double,
-		color: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255)
+	fun drawBoundingBox(
+		pos: Vec3, width: Float, height: Float,
+		color: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255),
+		lineWidth: Float = 2f
 	) {
-
-		matrixStack.pushPose()
-		matrixStack.mulPose(matrixStack.last().pose())
-		matrixStack.translate(-camera.pos)
-
-		val layer: RenderType = RenderLayers.FILLED_BOX
-		val bufferBuilder = consumer.getBuffer(layer)
-		val color = color.getEffectiveColour()
-
-		ShapeRenderer.addChainedFilledBoxVertices(
-			matrixStack,
-			bufferBuilder,
-			minX, minY, minZ,
-			maxX, maxY, maxZ,
-			color.red * 255f,
-			color.green * 255f,
-			color.blue * 255f,
-			color.alpha * 255f
+		val width = width / 2.0
+		val height = height / 2.0
+		drawBox(
+			pos.x - width, pos.y - height, pos.z - width,
+			pos.x + width, pos.y + height, pos.z + width,
+			color,
+			lineWidth,
 		)
-
-		consumer.endBatch()
-
-		matrixStack.popPose()
 	}
 
-	fun drawBox(
-		minX: Double, minY: Double, minZ: Double,
-		maxX: Double, maxY: Double, maxZ: Double,
+	fun drawBoundingBox(
+		aabb: AABB,
 		color: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255),
-		lineWidth: Double = 2.0
+		lineWidth: Float = 2f
 	) {
-		matrixStack.pushPose()
-		matrixStack.translate(-camera.pos)
-
-		val layer: RenderType = RenderLayers.getLines(lineWidth)
-		WpcModRenderPipelines.LINES
-		val bufferBuilder: VertexConsumer = consumer.getBuffer(layer)
-		val color = color.getEffectiveColour()
-
-		ShapeRenderer.renderLineBox(
-			matrixStack.last(),
-			bufferBuilder,
-			minX,
-			minY,
-			minZ,
-			maxX,
-			maxY,
-			maxZ,
-			color.red * 255f,
-			color.green * 255f,
-			color.blue * 255f,
-			color.alpha * 255f
+		drawBox(
+			aabb.minX, aabb.minY, aabb.minZ,
+			aabb.maxX, aabb.maxY, aabb.maxZ,
+			color,
+			lineWidth,
 		)
-
-		matrixStack.popPose()
 	}
 
 	fun drawTracer(
@@ -235,38 +172,76 @@ class WorldRenderContext {
 		val viewBobbing = MC.options.bobView().get()
 		MC.options.bobView().set(false)
 
-		val cameraPoint: Vec3 = camera.pos.add(Vec3.directionFromRotation(MC.player?.xRot ?: 0f, MC.player?.yRot ?: 0f))
-		drawLine(cameraPoint.x, cameraPoint.y, cameraPoint.z, x, y, z, color, lineWidth)
+		val forward = camera.orientation.transform(Vector3f(0f, 0f, -1f))
+
+		val cameraPos = camera.pos.toVector3f().add(forward)
+		val targetPos = Vec3(x, y, z).toVector3f()
+
+		drawLine(cameraPos, targetPos, color, lineWidth)
 
 		MC.options.bobView().set(viewBobbing)
 	}
 
-	fun drawLine(
-		x1: Double, y1: Double, z1: Double,
-		x2: Double, y2: Double, z2: Double,
+	fun drawFilledBox(
+		minX: Double, minY: Double, minZ: Double,
+		maxX: Double, maxY: Double, maxZ: Double,
+		color: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255),
+	) {
+		draw(WpcModRenderTypes.FILLED_BOX) { consumer ->
+			val color = color.getEffectiveColour()
+			val aabb = AABB(minX, minY, minZ, maxX, maxY, maxZ)
+			Gizmos.cuboid(aabb, GizmoStyle.fill(ARGB.color(color.alpha, color.rgb))).setAlwaysOnTop()
+		}
+	}
+
+	fun drawBox(
+		minX: Double, minY: Double, minZ: Double,
+		maxX: Double, maxY: Double, maxZ: Double,
 		color: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255),
 		lineWidth: Float = 2f
 	) {
+		draw(WpcModRenderTypes.LINES) { consumer ->
+			val color = color.getEffectiveColour()
+			val shape = Shapes.create(minX, minY, minZ, maxX, maxY, maxZ)
 
+			ShapeRenderer.renderShape(matrixStack, consumer, shape, 0.0, 0.0, 0.0, color.rgb, lineWidth)
+		}
+	}
+
+	fun drawLine(
+		firstPos: Vector3f,
+		secondPos: Vector3f,
+		color: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255),
+		lineWidth: Float = 2f
+	) {
+		draw(WpcModRenderTypes.LINES) { consumer ->
+			val pose: PoseStack.Pose = matrixStack.last()
+
+			val normal = (secondPos - firstPos).normalize()
+
+			val color = color.getEffectiveColour()
+
+			consumer.addVertex(pose, secondPos)
+				.setColor(color.red, color.green, color.blue, color.alpha)
+				.setNormal(pose, normal)
+				.setLineWidth(lineWidth)
+
+			consumer.addVertex(pose, firstPos)
+				.setColor(color.red, color.green, color.blue, color.alpha)
+				.setNormal(pose, normal)
+				.setLineWidth(lineWidth)
+		}
+	}
+
+	private fun draw(renderType: RenderType, render: (consumer: VertexConsumer) -> Unit) {
 		matrixStack.pushPose()
-		matrixStack.mulPose(matrixStack.last().pose())
 		matrixStack.translate(-camera.pos)
 
-		val entry: PoseStack.Pose = matrixStack.last()
+		val consumer = bufferSource.getBuffer(renderType)
 
-		val layer: RenderType = RenderLayers.getLines(lineWidth.toDouble())
-		val bufferBuilder: VertexConsumer = consumer.getBuffer(layer)
+		render(consumer)
 
-		val normal = Vec3(x2, y2, z2).toVector3f().sub(x1.toFloat(), y1.toFloat(), z1.toFloat()).normalize()
-		val color = color.getEffectiveColour()
-
-		bufferBuilder.addVertex(entry, x1.toFloat(), y1.toFloat(), z1.toFloat())
-			.setColor(color.red, color.green, color.blue, color.alpha).setNormal(entry, normal)
-
-		bufferBuilder.addVertex(entry, x2.toFloat(), y2.toFloat(), z2.toFloat())
-			.setColor(color.red, color.green, color.blue, color.alpha).setNormal(entry, normal)
-
-		consumer.endBatch(layer)
+		bufferSource.endBatch(renderType)
 		matrixStack.popPose()
 	}
 }

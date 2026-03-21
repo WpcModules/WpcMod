@@ -3,19 +3,16 @@ package net.wapic.wpcmod.mixin;
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
 import com.mojang.blaze3d.framegraph.FrameGraphBuilder;
 import com.mojang.blaze3d.framegraph.FramePass;
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import com.mojang.blaze3d.pipeline.RenderTarget;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LevelTargetBundle;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderBuffers;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.state.LevelRenderState;
-import com.mojang.blaze3d.resource.ResourceHandle;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.wapic.wpcmod.events.WorldRenderEvent;
 import net.wapic.wpcmod.util.render.WorldRenderContext;
@@ -62,18 +59,12 @@ public abstract class LevelRendererMixin {
 
 		this.targets.main = framePass.readsAndWrites(this.targets.main);
 
-		ResourceHandle<RenderTarget> handle = this.targets.main;
 		framePass.executes(() -> {
-			RenderSystem.setShaderFog(fogBuffer);
 			PoseStack matrixStack = new PoseStack();
 			MultiBufferSource.BufferSource immediate = this.renderBuffers.bufferSource();
-			RenderSystem.outputColorTextureOverride = handle.get().getColorTextureView();
-			RenderSystem.outputDepthTextureOverride = handle.get().getDepthTextureView();
 			WorldRenderContext worldRenderContext = new WorldRenderContext(matrixStack, level, immediate, tickCounter, levelRenderState.cameraRenderState, profiler);
 			WorldRenderEvent.EVENT.invoker().onRenderWorld(worldRenderContext);
 			immediate.endBatch();
-			RenderSystem.outputColorTextureOverride = null;
-			RenderSystem.outputDepthTextureOverride = null;
 			this.checkPoseStack(matrixStack);
 		});
 	}

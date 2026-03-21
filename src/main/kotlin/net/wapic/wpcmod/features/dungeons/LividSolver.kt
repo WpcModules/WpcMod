@@ -55,6 +55,7 @@ object LividSolver : EspFeature() {
 
 		correctColor = (newState.block as? StainedGlassBlock)?.color
 			?: return ChatUtils.sendMessage("Unable to find correct livid")
+		WpcMod.LOGGER.debug("Correct livid color set to: {}", correctColor)
 	}
 
 	private fun reset(world: ClientLevel) {

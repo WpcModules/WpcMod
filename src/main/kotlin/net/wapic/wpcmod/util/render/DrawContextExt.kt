@@ -3,12 +3,12 @@ package net.wapic.wpcmod.util.render
 import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.RenderPipelines
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.wapic.wpcmod.util.MC
 import org.joml.Matrix3x2f
 
 fun GuiGraphics.drawTexture(
-	sprite: ResourceLocation,
+	sprite: Identifier,
 	x: Int,
 	y: Int,
 	u: Float,
@@ -31,12 +31,8 @@ fun GuiGraphics.fillWithOutline(
 	outlineColor: ChromaColour
 ) {
 	val color = color.getEffectiveColourRGB()
-	val outlineColor = outlineColor.getEffectiveColourRGB()
 	fill(x, y, x + width, y + height, color)
-	fill(x, y, x + width, y + 1, outlineColor)
-	fill(x, y + height - 1, x + width, y + height, outlineColor)
-	fill(x, y + 1, x + 1, y + height - 1, outlineColor)
-	fill(x + width - 1, y + 1, x + width, y + height - 1, outlineColor)
+	drawBorder(x, y, width, height, outlineColor)
 }
 
 fun GuiGraphics.drawBorder(x: Int, y: Int, width: Int, height: Int, color: ChromaColour) {

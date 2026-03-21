@@ -62,6 +62,7 @@ import net.wapic.wpcmod.util.Utils.modIdentifier
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
+import java.util.concurrent.CompletableFuture
 import kotlin.coroutines.EmptyCoroutineContext
 
 object WpcMod : ModInitializer {
@@ -77,7 +78,7 @@ object WpcMod : ModInitializer {
 	val configDir = File("config/wpcmod")
 
 	val version: Version by lazy { metadata.version }
-	val logger: Logger = LoggerFactory.getLogger("WpcMod")
+	val LOGGER: Logger = LoggerFactory.getLogger("WpcMod")
 
 	val globalJob = Job()
 	val coroutineScope = CoroutineScope(EmptyCoroutineContext + CoroutineName("WpcMod") + SupervisorJob(globalJob))
@@ -92,6 +93,7 @@ object WpcMod : ModInitializer {
 		CurrentVersion.ofTag(version.friendlyString),
 		MOD_ID
 	)
+	private var potentialUpdate: PotentialUpdate? = null
 
 	val category: KeyMapping.Category = KeyMapping.Category.register(modIdentifier(MOD_ID))
 
@@ -112,12 +114,7 @@ object WpcMod : ModInitializer {
 			)
 
 			dispatcher.register(ClientCommandManager.literal("itistimetofuckingupdate").executes {
-				val potentialUpdate = getPotentialUpdate()
-				ChatUtils.sendMessage("Launching update...")
-				potentialUpdate.launchUpdate().whenComplete { void, throwable ->
-					if (throwable != null) return@whenComplete ChatUtils.sendMessage("Update ${potentialUpdate.update.versionName} complete! new version will be available after restart")
-					throwable?.printStackTrace()
-				}
+				startUpdate()
 				return@executes 1
 			})
 
@@ -125,12 +122,10 @@ object WpcMod : ModInitializer {
 		}
 
 		ClientPlayConnectionEvents.JOIN.register { handler, sender, client ->
-			if (updateNotified) return@register
-
-			val potentialUpdate = getPotentialUpdate()
-			if (potentialUpdate.isUpdateAvailable || FabricLoader.getInstance().isDevelopmentEnvironment) {
+			if (!updateNotified) {
 				updateNotified = true
-				sendUpdateMessage(potentialUpdate)
+				val updateFound = checkUpdate()
+				if (updateFound) sendUpdateMessage()
 			}
 		}
 
@@ -225,10 +220,34 @@ object WpcMod : ModInitializer {
 		SkyBlockID.init()
 	}
 
-	fun getPotentialUpdate(): PotentialUpdate = updateContext.checkUpdate("upstream").get()
-	fun sendUpdateMessage(potentialUpdate: PotentialUpdate) {
+	fun checkUpdate(): Boolean {
+		var updateFound = false
+		updateContext.checkUpdate("upstream").thenAcceptAsync {
+			potentialUpdate = it
+			updateFound = it.isUpdateAvailable
+		}
+		if (!updateFound) LOGGER.info("No update available")
+		return updateFound
+	}
+
+	fun startUpdate() {
+		val potentialUpdate = potentialUpdate ?: return ChatUtils.sendMessage("No updates available.")
+		CompletableFuture.supplyAsync {
+			LOGGER.info("Starting update...")
+			ChatUtils.sendMessage("Starting update...")
+			potentialUpdate.prepareUpdate()
+		}.thenAcceptAsync(
+			{
+				LOGGER.info("${potentialUpdate.update.versionName} Update complete!")
+				potentialUpdate.executePreparedUpdate()
+				ChatUtils.sendMessage("Update complete!")
+			}, MC.instance
+		)
+	}
+
+	fun sendUpdateMessage() {
 		ChatUtils.sendMessage(
-			"Update found: §e${updateContext.currentVersion.display()}§r -> §e${potentialUpdate.update.versionName}§r Click here to update",
+			"Update found: §e${updateContext.currentVersion.display()}§r -> §e${potentialUpdate?.update?.versionName}§r Click here to update",
 			Style.EMPTY.withHoverEvent(
 				HoverEvent.ShowText(Component.nullToEmpty("Click to update"))
 			).withClickEvent(

@@ -3,8 +3,8 @@ package net.wapic.wpcmod.util
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.hypixel.modapi.HypixelModAPI
 import net.hypixel.modapi.packet.impl.clientbound.event.ClientboundLocationPacket
-import net.minecraft.Util
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
+import net.minecraft.util.Util
 import net.minecraft.world.level.ChunkPos
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.chunk.EmptyLevelChunk
@@ -30,7 +30,7 @@ object Utils {
 	}
 
 	fun Any?.equalsOneOf(vararg other: Any): Boolean = other.any { this == it }
-	fun modIdentifier(path: String): ResourceLocation = ResourceLocation.fromNamespaceAndPath(WpcMod.MOD_ID, path)
+	fun modIdentifier(path: String): Identifier = Identifier.fromNamespaceAndPath(WpcMod.MOD_ID, path)
 	fun Number.toFixed(decimals: Int = 2): String = "%.${decimals}f".format(Locale.ENGLISH, this)
 
 	fun copyToClipboard(string: String) {
@@ -65,7 +65,7 @@ object Utils {
 
 	private fun onHypixelLocationPacket(packet: ClientboundLocationPacket) {
 		location = Island.fromDisplayName(packet.map.getOrNull())
-		WpcMod.logger.info("Location set to: $location")
+		WpcMod.LOGGER.debug("Location set to: {}", location)
 	}
 
 	fun getLoadedBlockEntities(): List<BlockEntity> {

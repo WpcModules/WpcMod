@@ -55,16 +55,16 @@ object DungeonUtils {
 		if (actionBar || !inDungeons) return
 
 		if (message.string == DUNGEON_START_MESSAGE) {
-			WpcMod.logger.debug("Dungeon Started")
+			WpcMod.LOGGER.debug("Dungeon Started")
 			DungeonEvents.START.invoker().onStart()
 			if (currentFloor == DungeonFloor.NONE) {
-				WpcMod.logger.error("Current dungeon floor was not found!")
+				WpcMod.LOGGER.warn("Current dungeon floor was not found!")
 				ChatUtils.sendMessage("Current dungeon floor could not be detected, some features may not work properly")
 			}
 		}
 
 		if (message.string.removeFormatting().trim() == DUNGEON_END_MESSAGE) {
-			WpcMod.logger.debug("Dungeon Ended")
+			WpcMod.LOGGER.debug("Dungeon Ended")
 			DungeonEvents.END.invoker().onEnd()
 		}
 

@@ -2,9 +2,9 @@ package net.wapic.wpcmod.util
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
-import net.minecraft.Util
 import net.minecraft.client.Minecraft
 import net.minecraft.network.chat.Component
+import net.minecraft.util.Util
 import net.wapic.wpcmod.util.ItemUtils.skyblockId
 
 object SackUtils {
