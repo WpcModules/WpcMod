@@ -84,12 +84,14 @@ dependencies {
 	modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}"
 
     // Dev Runtimes
+	modLocalRuntime "me.djtheredstoner:DevAuth-fabric:${project.devauth_version}"
 	modLocalRuntime "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
 	modLocalRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
 	modLocalRuntime "maven.modrinth:hypixel-mod-api:${project.hypixel_mod_api_version}"
-    modLocalRuntime "me.djtheredstoner:DevAuth-fabric:${project.devauth_version}"
 	modLocalRuntime "maven.modrinth:sodium:${project.sodium_version}"
 	modLocalRuntime "maven.modrinth:no-chat-reports:${project.no_chat_reports_version}"
+	modLocalRuntime "maven.modrinth:betterf3:${project.betterf3_version}"
+	modLocalRuntime "maven.modrinth:zoomify:${project.zoomify_version}"
 
 	configurations.shadowModImpl.dependencies.each {
 		modImplementation(it)
