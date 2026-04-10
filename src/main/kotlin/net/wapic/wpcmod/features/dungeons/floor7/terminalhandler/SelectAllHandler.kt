@@ -24,8 +24,11 @@ class SelectAllHandler(val color: DyeColor) : TerminalHandler(TerminalTypes.SELE
 				(itemStack.item.name.string.startsWith(color.name.replace("_", " "), true) || when(color) {
 					DyeColor.BLACK -> itemStack.item == Items.INK_SAC
 					DyeColor.BLUE -> itemStack.item == Items.LAPIS_LAZULI
-					DyeColor.WHITE -> itemStack.item == Items.BONE_MEAL
+					DyeColor.WHITE -> itemStack.item == Items.BONE_MEAL || itemStack.item == Items.BONE_MEAL
 					DyeColor.BROWN -> itemStack.item == Items.COCOA_BEANS
+					DyeColor.GREEN -> itemStack.item == Items.CACTUS
+					DyeColor.RED -> itemStack.item == Items.POPPY
+					DyeColor.YELLOW -> itemStack.item == Items.DANDELION
 					else -> false
 				})
 			) {
