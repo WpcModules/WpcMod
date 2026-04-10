@@ -23,9 +23,10 @@ object ScoreboardUtil {
 		val mc = Minecraft.getInstance()
 		val scoreboard = mc.level?.scoreboard ?: return emptyList()
 		val objective = scoreboard.getDisplayObjective(DisplaySlot.SIDEBAR) ?: return emptyList()
-		val scores = scoreboard.listPlayerScores(objective).filter { input ->
-			input?.owner != null && !input.isHidden
-		}.sortedWith(SCOREBOARD_ENTRY_COMPARATOR).take(15)
+		val scores =
+			scoreboard.listPlayerScores(objective).filter { !it.isHidden }.sortedWith(SCOREBOARD_ENTRY_COMPARATOR)
+				.take(15)
+
 		return scores.map { e ->
 			PlayerTeam.formatNameForTeam(scoreboard.getPlayersTeam(e.owner()), e.ownerName()).string
 		}.asReversed()

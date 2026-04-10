@@ -40,33 +40,33 @@ object ShortcutHandler {
 	}
 
 	fun loadShortcuts() {
-		if (saveFile.exists()) {
-			try {
-				WpcMod.LOGGER.info("Loading shortcuts")
+		try {
+			if (!saveFile.exists()) return WpcMod.LOGGER.info("No shortcuts found!")
+			WpcMod.LOGGER.info("Loading shortcuts")
 
-				loadedShortcuts.addAll(gson.fromJson(saveFile.reader(), Array<Shortcut>::class.java).toList())
-				loadedShortcuts.forEach(Shortcut::addToMap)
-			} catch (e: Throwable) {
-				WpcMod.LOGGER.error("Failed to read shortcuts", e)
-				try {
-					val backup = saveFile.resolveSibling("shortcuts-failed.json")
-					WpcMod.LOGGER.warn("Creating a backup of old shortcuts and continuing with empty shortcuts", e)
-					saveFile.copyTo(backup)
-				} catch (e: Exception) {
-					WpcMod.LOGGER.error("Failed to backup old shortcuts", e)
-				}
+			loadedShortcuts.addAll(gson.fromJson(saveFile.reader(), Array<Shortcut>::class.java).toList())
+			loadedShortcuts.forEach(Shortcut::addToMap)
+		} catch (e: Throwable) {
+			WpcMod.LOGGER.error("Failed to read shortcuts", e)
+			try {
+				val backup = saveFile.resolveSibling("shortcuts-failed.json")
+				WpcMod.LOGGER.warn("Creating a backup of old shortcuts and continuing with empty shortcuts", e)
+				saveFile.copyTo(backup)
+			} catch (e: Exception) {
+				WpcMod.LOGGER.error("Failed to backup old shortcuts", e)
 			}
 		}
 	}
 
 	fun saveShortcuts() {
 		try {
-			WpcMod.LOGGER.info("Saving shortcuts file")
+			WpcMod.LOGGER.info("Saving shortcuts")
 			saveFile.parentFile.mkdirs()
 			saveFile.createNewFile()
 			saveFile.writeText(gson.toJson(loadedShortcuts))
+			WpcMod.LOGGER.info("Shortcuts saved successfully")
 		} catch (e: Exception) {
-			WpcMod.LOGGER.error("Failed to save shortcuts file", e)
+			WpcMod.LOGGER.error("Failed to save shortcuts", e)
 			throw e
 		}
 	}

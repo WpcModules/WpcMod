@@ -51,10 +51,10 @@ object ConfigManager {
 				WpcMod.LOGGER.error("Failed to read config file", e)
 				val backup = file.resolveSibling("config-failed.json")
 				try {
-					WpcMod.LOGGER.warn("Creating a backup of old file and loading default config", e)
+					WpcMod.LOGGER.warn("Creating a backup of old config and loading default config", e)
 					file.copyTo(backup)
 				} catch (e: Exception) {
-					WpcMod.LOGGER.error("Failed to backup config file", e)
+					WpcMod.LOGGER.error("Failed to backup config", e)
 				}
 			}
 		}
@@ -73,17 +73,18 @@ object ConfigManager {
 			if (!WpcMod.configDir.exists()) {
 				WpcMod.configDir.mkdirs()
 			}
-			WpcMod.LOGGER.info("Saving config file")
+			WpcMod.LOGGER.info("Saving config")
 			tempFile.writeText(gson.toJson(jsonHolder))
 			if (file.exists()) file.copyTo(backupFile, overwrite = true)
 			Files.move(
 				tempFile.toPath(), file.toPath(), StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING
 			)
 			backupFile.delete()
+			WpcMod.LOGGER.info("Config saved successfully")
 		} catch (e: Exception) {
 			tempFile.delete()
 			if (backupFile.exists()) backupFile.copyTo(file, overwrite = true)
-			WpcMod.LOGGER.error("Failed to save config file", e)
+			WpcMod.LOGGER.error("Failed to save config", e)
 			throw e
 		}
 	}
