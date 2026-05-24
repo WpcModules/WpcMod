@@ -88,6 +88,8 @@ object SuperpairsSolver {
 		if (slot?.container is Inventory || !inSuperpairs || !config.superpairsSolver || slot?.item?.item in ignoredItems) return
 
 		slot?.let { slot ->
+			if (slot.containerSlot in foundPairs) return
+
 			if (slotId !in superpairsMap.keys) {
 				if (skyHanniRegex.matches(slot.item.hoverName.string)) {
 					slotsToRead.add(slot)
@@ -95,6 +97,7 @@ object SuperpairsSolver {
 				}
 				superpairsMap[slotId] = slot.item
 			}
+
 			if (lastClickedSlot?.containerSlot != slotId) checkForPair(slot)
 		}
 	}
