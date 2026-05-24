@@ -71,7 +71,10 @@ object SuperpairsSolver {
 	) {
 		if (!config.superpairsSolver || !inSuperpairs) return
 		if (superpairsMap.isEmpty() || slot !in superpairsMap.keys) return
+
 		val replacementItem = superpairsMap[slot] ?: return
+		if (replacementItem.item == Items.AIR) return
+
 		callbackInfoReturnable.returnValue = replacementItem
 	}
 
