@@ -19,23 +19,27 @@ class SelectAllHandler(val color: DyeColor) : TerminalHandler(TerminalTypes.SELE
 
     private fun solveSelectAll(items: Array<ItemStack?>, color: DyeColor): List<Int> {
 		return items.mapIndexedNotNull { index, itemStack ->
-			if (itemStack?.hasFoil() == false &&
-				itemStack.item != Items.BLACK_STAINED_GLASS_PANE &&
-				(itemStack.item.name.string.startsWith(color.name.replace("_", " "), true) || when(color) {
-					DyeColor.BLACK -> itemStack.item == Items.INK_SAC
-					DyeColor.BLUE -> itemStack.item == Items.LAPIS_LAZULI
-					DyeColor.WHITE -> itemStack.item == Items.BONE_MEAL || itemStack.item == Items.BONE_MEAL
-					DyeColor.BROWN -> itemStack.item == Items.COCOA_BEANS
-					DyeColor.GREEN -> itemStack.item == Items.CACTUS
-					DyeColor.RED -> itemStack.item == Items.POPPY
-					DyeColor.YELLOW -> itemStack.item == Items.DANDELION
+			itemStack?.let { stack ->
+				val colorName = color.name.replace("_", " ")
+
+				val nameMatches = stack.hoverName.string.startsWith(colorName, true)
+				val itemMatches = when (color) {
+					DyeColor.BLACK -> stack.item == Items.INK_SAC
+					DyeColor.BLUE -> stack.item == Items.LAPIS_LAZULI
+					DyeColor.WHITE -> stack.item == Items.BONE_MEAL || stack.item == Items.WHITE_WOOL
+					DyeColor.BROWN -> stack.item == Items.COCOA_BEANS
+					DyeColor.GREEN -> stack.item == Items.CACTUS
+					DyeColor.RED -> stack.item == Items.POPPY || stack.item == Items.ROSE_BUSH
+					DyeColor.YELLOW -> stack.item == Items.DANDELION
+					DyeColor.LIGHT_GRAY -> stack.hoverName.string.startsWith("silver", true)
 					else -> false
-				})
-			) {
-				index
-			} else {
-				null
+				}
+
+				val isCorrectColor = nameMatches || itemMatches
+				val isValidItem = !stack.hasFoil() && stack.item != Items.BLACK_STAINED_GLASS_PANE
+
+				return@mapIndexedNotNull if (isValidItem && isCorrectColor) index else null
 			}
-        }
+		}
     }
 }
