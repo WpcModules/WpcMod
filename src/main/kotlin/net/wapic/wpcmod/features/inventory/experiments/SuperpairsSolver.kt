@@ -78,8 +78,6 @@ object SuperpairsSolver {
 		if (superpairsMap.isEmpty() || slot !in superpairsMap.keys) return
 
 		val replacementItem = superpairsMap[slot] ?: return
-		if (replacementItem.item == Items.AIR) return
-
 		callbackInfoReturnable.returnValue = replacementItem
 	}
 
@@ -90,17 +88,16 @@ object SuperpairsSolver {
 		slotActionType: ClickType,
 		callbackInfo: CallbackInfo
 	) {
-		if (slot?.container is Inventory || !inSuperpairs || !config.superpairsSolver || slot?.item?.item in ignoredItems) return
+		if (!inSuperpairs || !config.superpairsSolver) return
+		if (slot?.container is Inventory || slot?.containerSlot in foundPairs || slot?.item?.item in ignoredItems) return
 
 		slot?.let { slot ->
-			if (slot.containerSlot in foundPairs) return
-
 			if (slotId !in superpairsMap.keys) {
 				if (skyHanniRegex.matches(slot.item.hoverName.string)) {
 					slotsToRead.add(slot)
 					return
 				}
-				superpairsMap[slotId] = slot.item
+				if (slot.item.item != Items.AIR) superpairsMap[slotId] = slot.item
 			}
 
 			if (lastClickedSlot?.containerSlot != slotId) checkForPair(slot)
@@ -159,7 +156,7 @@ object SuperpairsSolver {
 			}
 		}
 
-		slotsToRead.find { it.containerSlot == slotId }?.let { slot ->
+		slotsToRead.find { it.containerSlot == slotId && it.item.item != Items.AIR }?.let { slot ->
 			superpairsMap[slotId] = itemStack
 			checkForPair(slot)
 			slotsToRead.removeIf { it.containerSlot == slotId }
