@@ -24,13 +24,17 @@ object FunnyMapCommands : Command("dungeon") {
 		}
 
 		val roomCentre = ScanUtils.getRoomCentre(pos.x.toInt(), pos.z.toInt())
-		val data = ScanUtils.getRoomData(roomCentre.first, roomCentre.second)
+		val currentCore = ScanUtils.getCore(roomCentre.first, roomCentre.second)
+		val data = ScanUtils.getRoomData(currentCore)
 
 		if (data != null) {
-			Utils.copyToClipboard(data.toString())
-			ChatUtils.sendMessage("Copied room data to clipboard.", Style.EMPTY.withColor(ChatFormatting.GREEN))
+			Utils.copyToClipboard("$data")
+			ChatUtils.sendMessage(
+				"Copied room data to clipboard from core: $currentCore",
+				Style.EMPTY.withColor(ChatFormatting.GREEN)
+			)
 		} else {
-			Utils.copyToClipboard("${ScanUtils.getCore(roomCentre.first, roomCentre.second)}")
+			Utils.copyToClipboard("$currentCore")
 			ChatUtils.sendMessage("§cExisting room data not found. §aCopied room core to clipboard.")
 		}
 		return@executes 0
