@@ -1,5 +1,6 @@
 package net.wapic.wpcmod.features.inventory.experiments
 
+import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
@@ -15,7 +16,6 @@ import net.wapic.wpcmod.util.ItemUtils.isSimilar
 import net.wapic.wpcmod.util.MC
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
-import java.awt.Color
 
 object SuperpairsSolver {
 
@@ -38,13 +38,6 @@ object SuperpairsSolver {
 	private var activeInstantFinds: Int = 0
 
 	private val skyHanniRegex = Regex("\\?|(?:Click a(?: seco)?n[dy]|Next) button(?: is instantly rewarded)?!?")
-
-	private enum class SuperpairColor(val color: Color) {
-		FOUND_PAIR(Color.GREEN),
-		DISCOVERED_PAIR(Color.RED),
-		UNDISCOVERED_PAIR(Color.YELLOW),
-		POWER_UP(Color.PINK);
-	}
 
 	fun init() {
 		GuiEvents.OPEN.register(::onInventoryOpen)
@@ -127,6 +120,7 @@ object SuperpairsSolver {
 		if (slot.item.item == Items.DIAMOND) {
 			activeInstantFinds++
 			lastClickedSlot = null
+			foundPairs.add(slot.containerSlot)
 			return
 		}
 
@@ -156,7 +150,7 @@ object SuperpairsSolver {
 			}
 		}
 
-		slotsToRead.find { it.containerSlot == slotId && it.item.item != Items.AIR }?.let { slot ->
+		slotsToRead.find { it.containerSlot == slotId && it.item.item != Items.AIR && it.containerSlot !in foundPairs }?.let { slot ->
 			superpairsMap[slotId] = itemStack
 			checkForPair(slot)
 			slotsToRead.removeIf { it.containerSlot == slotId }
@@ -169,12 +163,17 @@ object SuperpairsSolver {
 
 		val inv = MC.player?.containerMenu?.items
 
-		val color: SuperpairColor? = when {
-			slot.item.item in powerUps -> SuperpairColor.POWER_UP
-			slot.containerSlot in foundPairs -> SuperpairColor.FOUND_PAIR
-			else -> inv?.count { it.isSimilar(slot.item) }?.let { if(it > 1) SuperpairColor.DISCOVERED_PAIR else SuperpairColor.UNDISCOVERED_PAIR }
+		val color: ChromaColour? = when {
+			slot.item.item in powerUps -> config.superpairColors.powerUp
+			slot.containerSlot in foundPairs -> config.superpairColors.foundPair
+			else -> inv?.count { it.isSimilar(slot.item) }?.let {
+				if(it > 1)
+					config.superpairColors.discoveredPair
+				else
+					config.superpairColors.undiscoveredPair
+			}
 		}
 
-		color?.let { drawContext.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, it.color.rgb) }
+		color?.let { drawContext.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, it.getEffectiveColourRGB()) }
 	}
 }
