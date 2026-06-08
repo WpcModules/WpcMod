@@ -23,6 +23,7 @@ import net.wapic.wpcmod.commands.*
 import net.wapic.wpcmod.config.ConfigManager
 import net.wapic.wpcmod.config.WpcConfig
 import net.wapic.wpcmod.features.chat.AutoAcceptPartyInvite
+import net.wapic.wpcmod.features.chat.AutoAcceptTrapper
 import net.wapic.wpcmod.features.chat.ChatEmotes
 import net.wapic.wpcmod.features.chat.CompactChat
 import net.wapic.wpcmod.features.chat.SpamFilter
@@ -34,6 +35,7 @@ import net.wapic.wpcmod.features.end.EndESP
 import net.wapic.wpcmod.features.entity.EspCache
 import net.wapic.wpcmod.features.entity.RatESP
 import net.wapic.wpcmod.features.entity.TagESP
+import net.wapic.wpcmod.features.entity.TrapperESP
 import net.wapic.wpcmod.features.events.diana.AutoAnswerSphinx
 import net.wapic.wpcmod.features.fishing.AutoFish
 import net.wapic.wpcmod.features.galatea.GalateaESP
@@ -150,6 +152,7 @@ object WpcMod : ModInitializer {
 		Freecam()
 		RatESP.init()
 		TagESP.init()
+		TrapperESP.init()
 
 		//Experiments
 		AutoExperiments.init()
@@ -209,6 +212,7 @@ object WpcMod : ModInitializer {
 		SpamFilter.init()
 		ChatEmotes.init()
 		AutoAcceptPartyInvite.init()
+		AutoAcceptTrapper.init()
 
 		// Inventory
 		ArmorSwapper.init()

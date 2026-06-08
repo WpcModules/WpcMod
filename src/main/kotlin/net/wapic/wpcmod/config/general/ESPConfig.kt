@@ -17,4 +17,10 @@ class ESPConfig {
 	var tag = Tag()
 
 	class Tag : GlowableESPConfig()
+
+	@Accordion
+	@ConfigOption(name = "Trapper Animal ESP", desc = "ESP for trapper animals")
+	var trapperAnimals = TrapperConfig()
+
+	class TrapperConfig : GlowableESPConfig()
 }
