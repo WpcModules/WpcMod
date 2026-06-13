@@ -36,7 +36,10 @@ object GummyBearTimer : SimpleHudElement("Gummy Bear Timer", 110, 11) {
 		if (!isEnabled) return
 
 		val timeLeft = ((endTime - System.currentTimeMillis()) / 1000).toInt()
-		if(timeLeft < 0 && !config.gummyBearTimer.showExpired) return
+		if (timeLeft < 0) {
+			if (endTime.toInt() != -1) endTime = -1
+			if (!config.gummyBearTimer.showExpired) return
+		}
 
 		val matrixStack = drawContext.pose()
 		matrixStack.pushMatrix()
