@@ -2,7 +2,7 @@ package net.wapic.wpcmod.features.dungeons.floor7
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.network.chat.Component
 import net.minecraft.util.CommonColors
@@ -18,7 +18,6 @@ import net.wapic.wpcmod.util.Utils.equalsOneOf
 import net.wapic.wpcmod.util.render.WorldRenderContext
 import net.wapic.wpcmod.util.render.brighter
 import net.wapic.wpcmod.util.render.darker
-import net.wapic.wpcmod.util.render.drawText
 
 object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
 
@@ -47,7 +46,7 @@ object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
 		WorldChangeEvent.BEFORE.register(::onWorldLoad)
 		WorldRenderEvent.EVENT.register(::onRenderWorld)
 
-		ClientTickEvents.END_WORLD_TICK.register {
+		ClientTickEvents.END_LEVEL_TICK.register {
 			if (DungeonUtils.getF7Phase() != DungeonUtils.F7Phase.GOLDOR || !config.enabled) return@register
 			inactiveList = it.entitiesForRendering().filterIsInstance<ArmorStand>().filter { entity ->
 				entity.name.string.equalsOneOf("Inactive Terminal", "Inactive", "Not Activated", "CLICK HERE")
@@ -55,7 +54,7 @@ object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
 		}
     }
 
-	override fun render(drawContext: GuiGraphics, deltaTicks: Float) {
+	override fun render(drawContext: GuiGraphicsExtractor, deltaTicks: Float) {
 		if (!isActive) return
 		val matrixStack = drawContext.pose()
 		matrixStack.pushMatrix()
@@ -68,7 +67,8 @@ object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
 		)
 
 		for ((index, line) in lines.withIndex()) {
-			drawContext.drawText(
+			drawContext.text(
+				MC.font,
 				line,
 				1, 2 + MC.font.lineHeight * index,
 				CommonColors.WHITE,

@@ -6,8 +6,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import moe.nea.libautoupdate.*
 import net.fabricmc.api.ModInitializer
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents
 import net.fabricmc.loader.api.FabricLoader
@@ -22,11 +22,7 @@ import net.minecraft.network.chat.Style
 import net.wapic.wpcmod.commands.*
 import net.wapic.wpcmod.config.ConfigManager
 import net.wapic.wpcmod.config.WpcConfig
-import net.wapic.wpcmod.features.chat.AutoAcceptPartyInvite
-import net.wapic.wpcmod.features.chat.AutoAcceptTrapper
-import net.wapic.wpcmod.features.chat.ChatEmotes
-import net.wapic.wpcmod.features.chat.CompactChat
-import net.wapic.wpcmod.features.chat.SpamFilter
+import net.wapic.wpcmod.features.chat.*
 import net.wapic.wpcmod.features.dev.SkyBlockID
 import net.wapic.wpcmod.features.dungeons.*
 import net.wapic.wpcmod.features.dungeons.floor7.*
@@ -115,12 +111,12 @@ object WpcMod : ModInitializer {
 					.then(GFSCommand.getCommand())
 			)
 
-			dispatcher.register(ClientCommandManager.literal("itistimetofuckingupdate").executes {
+			dispatcher.register(ClientCommands.literal("itistimetofuckingupdate").executes {
 				startUpdate()
 				return@executes 1
 			})
 
-			dispatcher.register(ClientCommandManager.literal("wpcmod").redirect(mainCommand))
+			dispatcher.register(ClientCommands.literal("wpcmod").redirect(mainCommand))
 		}
 
 		ClientPlayConnectionEvents.JOIN.register { handler, sender, client ->

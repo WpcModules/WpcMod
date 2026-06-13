@@ -3,7 +3,7 @@ package net.wapic.wpcmod.features.general.shortcut
 import com.google.common.collect.ImmutableList
 import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.components.Button
 import net.minecraft.client.gui.components.ContainerObjectSelectionList
 import net.minecraft.client.gui.components.EditBox
@@ -79,17 +79,23 @@ class ShortcutListWidget : ContainerObjectSelectionList<Entry> {
 			this.update()
 		}
 
-		override fun renderContent(context: GuiGraphics, mouseX: Int, mouseY: Int, hovered: Boolean, tickProgress: Float) {
+		override fun extractContent(
+			context: GuiGraphicsExtractor,
+			mouseX: Int,
+			mouseY: Int,
+			hovered: Boolean,
+			tickProgress: Float
+		) {
 			val i: Int = this@ShortcutListWidget.scrollBarX() - this.deleteButton.width - 10
 			val j = y - 2
 			this.deleteButton.setPosition(i, j)
-			this.deleteButton.render(context, mouseX, mouseY, tickProgress)
+			this.deleteButton.extractRenderState(context, mouseX, mouseY, tickProgress)
 			val k = i - 5 - this.editButton.width
 			this.editButton.setPosition(k, j)
-			this.editButton.render(context, mouseX, mouseY, tickProgress)
+			this.editButton.extractRenderState(context, mouseX, mouseY, tickProgress)
 			val l = k - 90 - this.commandField.width
 			this.commandField.setPosition(l, j)
-			this.commandField.render(context, mouseX, mouseY, tickProgress)
+			this.commandField.extractRenderState(context, mouseX, mouseY, tickProgress)
 
 			if (this.duplicate) {
 				val m = this.editButton.x - 6

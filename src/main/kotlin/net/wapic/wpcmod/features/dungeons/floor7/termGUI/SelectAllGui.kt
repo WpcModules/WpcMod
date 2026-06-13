@@ -1,12 +1,12 @@
 package net.wapic.wpcmod.features.dungeons.floor7.termGUI
 
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalTypes
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 
 object SelectAllGui : TermGui(TerminalTypes.SELECT_ALL) {
 
-    override fun renderTerminal(drawContext: GuiGraphics, slotCount: Int) {
+	override fun renderTerminal(drawContext: GuiGraphicsExtractor, slotCount: Int) {
 		renderBackground(drawContext, slotCount)
 
         for (index in 9..slotCount) {

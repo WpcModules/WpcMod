@@ -3,7 +3,7 @@ package net.wapic.wpcmod.hud
 import com.google.gson.annotations.Expose
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.network.chat.Component
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.modIdentifier
@@ -33,7 +33,7 @@ open class SimpleHudElement(
 		}
 	}
 
-	open fun render(drawContext: GuiGraphics, deltaTicks: Float) {}
+	open fun render(drawContext: GuiGraphicsExtractor, deltaTicks: Float) {}
 
 	fun getLabel(): Component {
 		return Component.nullToEmpty(label)

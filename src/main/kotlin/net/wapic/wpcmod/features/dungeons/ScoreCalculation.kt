@@ -4,7 +4,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.Style
@@ -29,7 +29,6 @@ import net.wapic.wpcmod.util.DungeonUtils.DungeonFloor
 import net.wapic.wpcmod.util.DungeonUtils.isMimicFloor
 import net.wapic.wpcmod.util.EntityUtils.headTexture
 import net.wapic.wpcmod.util.Utils.equalsOneOf
-import net.wapic.wpcmod.util.render.drawText
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.roundToInt
@@ -395,7 +394,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 		}
 	}
 
-	override fun render(drawContext: GuiGraphics, deltaTicks: Float) {
+	override fun render(drawContext: GuiGraphicsExtractor, deltaTicks: Float) {
 		if (!isActive || config.scoreHudType == ScoreHudType.DISABLED) return
 		drawContext.pose().pushMatrix()
 		applyTransformations(drawContext.pose())
@@ -424,19 +423,21 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 				}
 
 				for ((index, line) in lines.withIndex()) {
-					drawContext.drawText(line, 2, 2 + (index * 10), CommonColors.WHITE, true)
+					drawContext.text(MC.font, line, 2, 2 + (index * 10), CommonColors.WHITE, true)
 				}
 			}
 
 			ScoreHudType.MINIMIZED -> {
-				drawContext.drawText(
+				drawContext.text(
+					MC.font,
 					"§7Secrets: §a$foundSecrets§7/§e$secretsNeeded §7(§c$totalSecrets§7)  Crypts: §a$crypts",
 					2,
 					2,
 					CommonColors.WHITE,
 					true
 				)
-				drawContext.drawText(
+				drawContext.text(
+					MC.font,
 					"§7Puzzles: §a${totalPuzzles - missingPuzzles}§7/§a$totalPuzzles  §7Deaths: §c$deaths  §7Score: §a$totalScore §7($rank§7)",
 					2,
 					12,
@@ -446,7 +447,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 			}
 
 			ScoreHudType.SCORE_ONLY -> {
-				drawContext.drawText("§eScore: §a$totalScore §7($rank§7)", 2, 2, CommonColors.WHITE, true)
+				drawContext.text(MC.font, "§eScore: §a$totalScore §7($rank§7)", 2, 2, CommonColors.WHITE, true)
 			}
 
 			else -> {}

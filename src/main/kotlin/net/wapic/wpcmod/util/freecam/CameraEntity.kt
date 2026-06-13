@@ -4,6 +4,7 @@ import net.minecraft.client.ClientRecipeBook
 import net.minecraft.client.Minecraft
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.multiplayer.ClientPacketListener
+import net.minecraft.client.multiplayer.chat.ChatAbilities
 import net.minecraft.client.player.LocalPlayer
 import net.minecraft.stats.StatsCounter
 import net.minecraft.util.Mth
@@ -20,7 +21,7 @@ class CameraEntity(
 	netHandler: ClientPacketListener,
 	statHandler: StatsCounter,
 	recipeBook: ClientRecipeBook
-) : LocalPlayer(mc, world, netHandler, statHandler, recipeBook, Input.EMPTY, false) {
+) : LocalPlayer(mc, world, netHandler, statHandler, recipeBook, Input.EMPTY, false, ChatAbilities.NO_RESTRICTIONS) {
 	var flySpeed = 10f
 
 	override fun isSpectator(): Boolean {

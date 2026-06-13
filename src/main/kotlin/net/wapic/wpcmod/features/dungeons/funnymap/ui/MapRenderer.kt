@@ -1,7 +1,7 @@
 package net.wapic.wpcmod.features.dungeons.funnymap.ui
 
 import io.github.notenoughupdates.moulconfig.ChromaColour
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.util.CommonColors
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.dungeon.FunnyConfig
@@ -29,7 +29,7 @@ object MapRenderer {
 	private val whiteResource = Utils.modIdentifier("dungeon/white_check.png")
 	private val mapIcons = Utils.modIdentifier("dungeon/marker.png")
 
-	fun renderCenteredText(drawContext: GuiGraphics, text: List<String>, x: Int, y: Int, color: Int) {
+	fun renderCenteredText(drawContext: GuiGraphicsExtractor, text: List<String>, x: Int, y: Int, color: Int) {
 		if (text.isEmpty()) return
 		val player = MC.player ?: return
 		val matrixStack = drawContext.pose()
@@ -46,11 +46,11 @@ object MapRenderer {
 		val fontHeight = font.lineHeight + 1
 		val yTextOffset = text.size * fontHeight / -2f
 
-		for (i in 0..<text.size) {
-			drawContext.drawString(
+		for ((i, element) in text.withIndex()) {
+			drawContext.text(
 				font,
-				text[i],
-				font.width(text[i]) / -2,
+				element,
+				font.width(element) / -2,
 				yTextOffset.toInt() + i * fontHeight,
 				color,
 				true
@@ -60,7 +60,7 @@ object MapRenderer {
 		matrixStack.popMatrix()
 	}
 
-	fun drawCheckmark(drawContext: GuiGraphics, x: Float, y: Float, state: RoomState) {
+	fun drawCheckmark(drawContext: GuiGraphicsExtractor, x: Float, y: Float, state: RoomState) {
 		if (!config.mapCheckmark) return
 		val checkmark = when (state) {
 			RoomState.CLEARED -> whiteResource
@@ -82,7 +82,7 @@ object MapRenderer {
 		}
 	}
 
-	fun drawPlayerHead(drawContext: GuiGraphics, name: String, player: DungeonPlayer) {
+	fun drawPlayerHead(drawContext: GuiGraphicsExtractor, name: String, player: DungeonPlayer) {
 		val realPlayer = MC.player ?: return
 		val matrixStack = drawContext.pose()
 		matrixStack.pushMatrix()
@@ -124,7 +124,7 @@ object MapRenderer {
 
 				matrixStack.translate(0f, config.playerHeadScale * 4f)
 				matrixStack.scale(config.playerNameScale, config.playerNameScale)
-				drawContext.drawString(
+				drawContext.text(
 					MC.font,
 					name,
 					-MC.font.width(name) / 2,

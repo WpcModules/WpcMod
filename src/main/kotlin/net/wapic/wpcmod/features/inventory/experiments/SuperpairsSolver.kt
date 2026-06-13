@@ -2,10 +2,10 @@ package net.wapic.wpcmod.features.inventory.experiments
 
 import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.world.entity.player.Inventory
-import net.minecraft.world.inventory.ClickType
+import net.minecraft.world.inventory.ContainerInput
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
@@ -78,7 +78,7 @@ object SuperpairsSolver {
 		slot: Slot?,
 		slotId: Int,
 		button: Int,
-		slotActionType: ClickType,
+		slotActionType: ContainerInput,
 		callbackInfo: CallbackInfo
 	) {
 		if (!inSuperpairs || !config.superpairsSolver) return
@@ -157,7 +157,7 @@ object SuperpairsSolver {
 		}
 	}
 
-	fun onDrawSlot(drawContext: GuiGraphics, screen: Screen, slot: Slot, callbackInfo: CallbackInfo) {
+	fun onDrawSlot(drawContext: GuiGraphicsExtractor, screen: Screen, slot: Slot, callbackInfo: CallbackInfo) {
 		if (slot.container is Inventory || !inSuperpairs || !config.superpairsSolver) return
 		if (slot.item.item in ignoredItems || skyHanniRegex.matches(slot.item.hoverName.string)) return
 

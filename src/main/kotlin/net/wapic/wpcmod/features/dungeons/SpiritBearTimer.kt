@@ -1,12 +1,12 @@
 package net.wapic.wpcmod.features.dungeons
 
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
-import net.minecraft.world.level.block.state.BlockState
-import net.minecraft.world.level.block.Blocks
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
+import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
 import net.minecraft.util.CommonColors
-import net.minecraft.core.BlockPos
+import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.level.block.state.BlockState
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.BlockEvents
 import net.wapic.wpcmod.events.ServerTickEvent
@@ -15,9 +15,9 @@ import net.wapic.wpcmod.hud.SimpleHudElement
 import net.wapic.wpcmod.util.DungeonUtils.DungeonFloor
 import net.wapic.wpcmod.util.DungeonUtils.bossSpawned
 import net.wapic.wpcmod.util.DungeonUtils.currentFloor
+import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 import net.wapic.wpcmod.util.Utils.toFixed
-import net.wapic.wpcmod.util.render.drawText
 
 object SpiritBearTimer : SimpleHudElement("Spirit Bear Timer", 90, 12) {
 
@@ -43,17 +43,18 @@ object SpiritBearTimer : SimpleHudElement("Spirit Bear Timer", 90, 12) {
 		}
 	}
 
-	override fun render(drawContext: GuiGraphics, deltaTicks: Float) {
+	override fun render(drawContext: GuiGraphicsExtractor, deltaTicks: Float) {
 		if (!isActive || spawnTime <= 0) return
 		val matrixStack = drawContext.pose()
 		matrixStack.pushMatrix()
 		applyTransformations(matrixStack)
 
-		drawContext.drawText(
+		drawContext.text(
+			MC.font,
 			"§dSpirit Bear: ${(spawnTime / 20f).toFixed()}s",
-			x = 2, y = 2,
+			2, 2,
 			CommonColors.WHITE,
-			shadow = true
+			true
 		)
 
 		matrixStack.popMatrix()

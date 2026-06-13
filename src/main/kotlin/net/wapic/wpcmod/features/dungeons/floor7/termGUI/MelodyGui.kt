@@ -1,7 +1,7 @@
 package net.wapic.wpcmod.features.dungeons.floor7.termGUI
 
 import io.github.notenoughupdates.moulconfig.ChromaColour
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.wapic.wpcmod.features.dungeons.floor7.TerminalSolver
 import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalHandler
 import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalTypes
@@ -9,7 +9,7 @@ import net.wapic.wpcmod.util.Utils.equalsOneOf
 
 object MelodyGui : TermGui(TerminalTypes.MELODY) {
 
-    override fun render(drawContext: GuiGraphics, currentHandler: TerminalHandler) {
+	override fun render(drawContext: GuiGraphicsExtractor, currentHandler: TerminalHandler) {
         setCurrentGui(this)
         itemIndexMap.clear()
 
@@ -17,7 +17,7 @@ object MelodyGui : TermGui(TerminalTypes.MELODY) {
         renderTerminal(drawContext, type.windowSize)
     }
 
-    override fun renderTerminal(drawContext: GuiGraphics, slotCount: Int) {
+	override fun renderTerminal(drawContext: GuiGraphicsExtractor, slotCount: Int) {
         renderBackground(drawContext, slotCount)
 
         TerminalSolver.currentTerm?.items?.forEachIndexed { index, item ->

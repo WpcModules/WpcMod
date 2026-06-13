@@ -2,9 +2,9 @@ package net.wapic.wpcmod.events
 
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.screens.Screen
-import net.minecraft.world.inventory.ClickType
+import net.minecraft.world.inventory.ContainerInput
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
@@ -23,7 +23,7 @@ object GuiEvents {
 		}
 
 	fun interface DrawSlotBefore {
-		fun onDrawSlot(drawContext: GuiGraphics, screen: Screen, slot: Slot, ci: CallbackInfo)
+		fun onDrawSlot(drawContext: GuiGraphicsExtractor, screen: Screen, slot: Slot, ci: CallbackInfo)
 	}
 
 	@JvmField
@@ -37,7 +37,7 @@ object GuiEvents {
 
 	fun interface SlotClick {
 		fun onSlotClick(
-			slot: Slot?, slotId: Int, button: Int, slotActionType: ClickType, callbackInfo: CallbackInfo
+			slot: Slot?, slotId: Int, button: Int, slotActionType: ContainerInput, callbackInfo: CallbackInfo
 		)
 	}
 
@@ -79,7 +79,14 @@ object GuiEvents {
 	}
 
 	fun interface Render {
-		fun onRender(screen: Screen, drawContext: GuiGraphics, mouseX: Int, mouseY: Int, deltaTicks: Float, cir: CallbackInfo)
+		fun onRender(
+			screen: Screen,
+			drawContext: GuiGraphicsExtractor,
+			mouseX: Int,
+			mouseY: Int,
+			deltaTicks: Float,
+			cir: CallbackInfo
+		)
 	}
 
 	@JvmField
@@ -92,7 +99,7 @@ object GuiEvents {
 	}
 
 	fun interface DrawBackground {
-		fun onDrawBackground(screen: Screen, drawContext: GuiGraphics, callbackInfo: CallbackInfo)
+		fun onDrawBackground(screen: Screen, drawContext: GuiGraphicsExtractor, callbackInfo: CallbackInfo)
 	}
 
 	@JvmField

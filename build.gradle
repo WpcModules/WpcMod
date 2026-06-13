@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
 	id 'idea'
 	id 'java'
-	id 'fabric-loom' version "${loom_version}"
+	id 'net.fabricmc.fabric-loom' version "${loom_version}"
 	id 'maven-publish'
 	id "org.jetbrains.kotlin.jvm" version "${kotlin_version}"
 	id "com.gradleup.shadow" version "9.3.0"
@@ -43,10 +43,6 @@ repositories {
         }
     }
 	maven {
-		name = 'ParchmentMC'
-		url = 'https://maven.parchmentmc.org'
-	}
-	maven {
 		name = "Terraformers"
 		url = "https://maven.terraformersmc.com/"
 	}
@@ -57,66 +53,55 @@ repositories {
 }
 
 configurations {
-	shadowModImpl
-	shadowImpl
+	shadowImplementation
 }
 
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings loom.layered() {
-		officialMojangMappings()
-		parchment "org.parchmentmc.data:parchment-${project.minecraft_version}:${project.parchment_version}@zip"
-	}
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
-	modImplementation "net.fabricmc:fabric-language-kotlin:${project.fabric_kotlin_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+	implementation "net.fabricmc:fabric-language-kotlin:${project.fabric_kotlin_version}"
 
-	shadowModImpl "org.notenoughupdates.moulconfig:modern-${project.minecraft_version}:${project.moulconfig_version}"
+	shadowImplementation "org.notenoughupdates.moulconfig:${project.moulconfig_version}"
+	shadowImplementation "moe.nea:libautoupdate:${project.libautoupdate_version}"
 
 	include(implementation("com.moulberry:mixinconstraints:${project.mixinconstraints_version}"))
-	shadowImpl "moe.nea:libautoupdate:${project.libautoupdate_version}"
+	include(implementation("net.hypixel:mod-api:1.0.2"))
 
-	include(modImplementation("net.hypixel:mod-api:1.0.1"))
-
-	modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}"
+	//compileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}"
 
     // Dev Runtimes
-	modLocalRuntime "me.djtheredstoner:DevAuth-fabric:${project.devauth_version}"
-	modLocalRuntime "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
-	modLocalRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
-	modLocalRuntime "maven.modrinth:hypixel-mod-api:${project.hypixel_mod_api_version}"
-	modLocalRuntime "maven.modrinth:sodium:${project.sodium_version}"
-	modLocalRuntime "maven.modrinth:no-chat-reports:${project.no_chat_reports_version}"
-	modLocalRuntime "maven.modrinth:betterf3:${project.betterf3_version}"
-	modLocalRuntime "maven.modrinth:zoomify:${project.zoomify_version}"
+	localRuntime "me.djtheredstoner:DevAuth-fabric:${project.devauth_version}"
+	//localRuntime "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
+	localRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
+	localRuntime "maven.modrinth:hypixel-mod-api:${project.hypixel_mod_api_version}"
+	localRuntime "maven.modrinth:sodium:${project.sodium_version}"
+	localRuntime "maven.modrinth:no-chat-reports:${project.no_chat_reports_version}"
+	localRuntime "maven.modrinth:betterf3:${project.betterf3_version}"
+	localRuntime "maven.modrinth:zoomify:${project.zoomify_version}"
+	localRuntime "maven.modrinth:cloth-config:${project.cloth_config_version}"
+	localRuntime "maven.modrinth:yacl:${project.yacl_version}"
 
-	configurations.shadowModImpl.dependencies.each {
-		modImplementation(it)
-	}
-
-	configurations.shadowImpl.dependencies.each {
+	configurations.shadowImplementation.dependencies.each {
 		implementation(it)
 	}
+}
+
+compileKotlin {
+	exclude '**/ReiCompatibility.kt'
 }
 
 shadowJar {
 	destinationDirectory.set(layout.buildDirectory.dir("badjars"))
 	archiveClassifier.set("all-dev")
-	configurations = [project.configurations.shadowModImpl] + [project.configurations.shadowImpl]
+	configurations = [project.configurations.shadowImplementation]
 	exclude("META-INF/versions/**")
-	mergeServiceFiles()
 	relocate('io.github.notenoughupdates.moulconfig', 'net.wapic.wpcmod.deps.moulconfig')
     relocate('moe.nea.libautoupdate', 'net.wapic.wpcmod.deps.libautoupdate')
-}
-
-remapJar {
-	archiveClassifier.set("")
-	dependsOn shadowJar
-	inputFile.set(tasks.shadowJar.archiveFile)
-	destinationDirectory.set(rootProject.layout.buildDirectory.dir("libs"))
+	mergeServiceFiles()
 }
 
 processResources {
@@ -128,12 +113,12 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 21
+	it.options.release = 25
 }
 
 tasks.withType(KotlinCompile).configureEach {
     compilerOptions {
-        jvmTarget = JvmTarget.JVM_21
+		jvmTarget = JvmTarget.JVM_25
     }
 }
 
@@ -143,15 +128,18 @@ java {
 	// If you remove this line, sources will not be generated.
 	withSourcesJar()
 
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
 }
 
 jar {
-	archiveClassifier.set("nodeps")
+	archiveClassifier.set("")
+	dependsOn shadowJar
+	inputs.file(tasks.shadowJar.archiveFile)
+	destinationDirectory.set(rootProject.layout.buildDirectory.dir("libs"))
 }
 
-tasks.assemble.dependsOn(tasks.remapJar)
+tasks.assemble.dependsOn(tasks.jar)
 
 // configure the maven publication
 publishing {

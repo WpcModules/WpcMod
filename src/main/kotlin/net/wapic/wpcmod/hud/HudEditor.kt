@@ -1,9 +1,9 @@
 package net.wapic.wpcmod.hud
 
 import io.github.notenoughupdates.moulconfig.ChromaColour
-import net.minecraft.client.input.MouseButtonEvent
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.input.MouseButtonEvent
 import net.minecraft.network.chat.Component
 import net.minecraft.util.CommonColors
 import net.wapic.wpcmod.util.MC
@@ -27,14 +27,14 @@ class HudEditor : Screen {
 		this.elements = elements.filter { it.isEnabled }
 	}
 
-	override fun render(context: GuiGraphics, mouseX: Int, mouseY: Int, deltaTicks: Float) {
-		super.render(context, mouseX, mouseY, deltaTicks)
+	override fun extractRenderState(context: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, deltaTicks: Float) {
+		super.extractRenderState(context, mouseX, mouseY, deltaTicks)
 
 		elements.forEach {
 			context.pose().pushMatrix()
 			it.applyTransformations(context.pose())
 			context.fillWithOutline(0, 0, it.getUnscaledWidth(), it.getUnscaledHeight(), backgroundColour, borderColour)
-			context.drawCenteredString(
+			context.centeredText(
 				this.font,
 				it.label,
 				it.getUnscaledWidth() / 2,
@@ -45,7 +45,7 @@ class HudEditor : Screen {
 		}
 	}
 
-	override fun renderBackground(context: GuiGraphics, mouseX: Int, mouseY: Int, deltaTicks: Float) { }
+	override fun extractBackground(context: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, deltaTicks: Float) {}
 
 	fun getHoveredElement(mouseX: Double, mouseY: Double): SimpleHudElement? {
 		return elements.find {

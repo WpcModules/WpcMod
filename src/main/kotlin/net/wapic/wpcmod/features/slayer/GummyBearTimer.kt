@@ -1,7 +1,7 @@
 package net.wapic.wpcmod.features.slayer
 
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.network.chat.Component
 import net.minecraft.util.CommonColors
 import net.wapic.wpcmod.WpcMod
@@ -32,7 +32,7 @@ object GummyBearTimer : SimpleHudElement("Gummy Bear Timer", 110, 11) {
 		}
 	}
 
-	override fun render(drawContext: GuiGraphics, deltaTicks: Float) {
+	override fun render(drawContext: GuiGraphicsExtractor, deltaTicks: Float) {
 		if (!isEnabled) return
 
 		val timeLeft = ((endTime - System.currentTimeMillis()) / 1000).toInt()
@@ -46,7 +46,7 @@ object GummyBearTimer : SimpleHudElement("Gummy Bear Timer", 110, 11) {
 		applyTransformations(matrixStack)
 
 		val s = if (timeLeft < 0) "§cDepleted" else convertSecondsToTime(timeLeft)
-		drawContext.drawString(MC.font, "§fGummy Bear: §a${s}", 0, 0, CommonColors.WHITE)
+		drawContext.text(MC.font, "§fGummy Bear: §a${s}", 0, 0, CommonColors.WHITE)
 
 		matrixStack.popMatrix()
 	}

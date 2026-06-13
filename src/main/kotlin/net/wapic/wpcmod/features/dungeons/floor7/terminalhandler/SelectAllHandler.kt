@@ -31,7 +31,7 @@ class SelectAllHandler(val color: DyeColor) : TerminalHandler(TerminalTypes.SELE
 		return items.mapIndexedNotNull { index, itemStack ->
 			if (itemStack?.hasFoil() == true || itemStack?.item == Items.BLACK_STAINED_GLASS_PANE) return@mapIndexedNotNull null
 
-			val isCorrectColor = itemStack?.item?.name?.string?.startsWith(color.name.replace("_", " "), true) == true
+			val isCorrectColor = itemStack?.hoverName?.string?.startsWith(color.name.replace("_", " "), true) == true
 			val hasOverride = overrides[color]?.contains(itemStack?.item) == true
 
 			return@mapIndexedNotNull if (isCorrectColor || hasOverride) index else null

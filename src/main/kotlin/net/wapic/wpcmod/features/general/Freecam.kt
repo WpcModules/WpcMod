@@ -2,7 +2,7 @@ package net.wapic.wpcmod.features.general
 
 import com.mojang.blaze3d.platform.InputConstants
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper
 import net.fabricmc.fabric.api.event.player.*
 import net.minecraft.client.KeyMapping
 import net.minecraft.client.Minecraft
@@ -19,7 +19,7 @@ import net.wapic.wpcmod.util.freecam.CameraEntity.Companion.createCameraEntity
 
 class Freecam {
 	private val bind: KeyMapping =
-		KeyBindingHelper.registerKeyBinding(KeyMapping("freecam", InputConstants.KEY_B, WpcMod.category))
+		KeyMappingHelper.registerKeyMapping(KeyMapping("freecam", InputConstants.KEY_B, WpcMod.category))
 	private var cameraMotion: Vec3 = Vec3.ZERO
 
 	init {

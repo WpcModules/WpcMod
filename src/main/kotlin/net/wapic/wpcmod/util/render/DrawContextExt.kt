@@ -1,13 +1,12 @@
 package net.wapic.wpcmod.util.render
 
 import io.github.notenoughupdates.moulconfig.ChromaColour
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.resources.Identifier
-import net.wapic.wpcmod.util.MC
 import org.joml.Matrix3x2f
 
-fun GuiGraphics.drawTexture(
+fun GuiGraphicsExtractor.drawTexture(
 	sprite: Identifier,
 	x: Int,
 	y: Int,
@@ -19,10 +18,7 @@ fun GuiGraphics.drawTexture(
 	textureHeight: Int
 ) = this.blit(RenderPipelines.GUI_TEXTURED, sprite, x, y, u, v, width, height, textureWidth, textureHeight)
 
-fun GuiGraphics.drawText(text: String, x: Int, y: Int, color: Int, shadow: Boolean) =
-	this.drawString(MC.font, text, x, y, color, shadow)
-
-fun GuiGraphics.fillWithOutline(
+fun GuiGraphicsExtractor.fillWithOutline(
 	x: Int,
 	y: Int,
 	width: Int,
@@ -35,7 +31,7 @@ fun GuiGraphics.fillWithOutline(
 	drawBorder(x, y, width, height, outlineColor)
 }
 
-fun GuiGraphics.drawBorder(x: Int, y: Int, width: Int, height: Int, color: ChromaColour) {
+fun GuiGraphicsExtractor.drawBorder(x: Int, y: Int, width: Int, height: Int, color: ChromaColour) {
 	val color = color.getEffectiveColourRGB()
 	fill(x, y, x + width, y + 1, color)
 	fill(x, y + height - 1, x + width, y + height, color)
@@ -43,9 +39,9 @@ fun GuiGraphics.drawBorder(x: Int, y: Int, width: Int, height: Int, color: Chrom
 	fill(x + width - 1, y + 1, x + width, y + height - 1, color)
 }
 
-fun GuiGraphics.drawRoundedRect(x: Int, y: Int, width: Int, height: Int, radius: Float, color: ChromaColour) {
+fun GuiGraphicsExtractor.drawRoundedRect(x: Int, y: Int, width: Int, height: Int, radius: Float, color: ChromaColour) {
 	val matrix = Matrix3x2f(pose())
-	this.guiRenderState.submitGuiElement(
+	this.guiRenderState.addGuiElement(
 		RoundedRectangleRenderState(
 			matrix,
 			x,

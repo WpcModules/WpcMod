@@ -1,10 +1,10 @@
 package net.wapic.wpcmod.mixin;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import net.wapic.wpcmod.events.GuiEvents;
 import net.wapic.wpcmod.events.TooltipEvents;
@@ -23,24 +23,24 @@ public abstract class AbstractContainerScreenMixin {
 	@Nullable
 	protected Slot hoveredSlot;
 
-	@Inject(at = @At("HEAD"), method = "renderSlot", cancellable = true)
-	protected void drawSlot$Before(GuiGraphics guiGraphics, Slot slot, int mouseX, int mouseY, CallbackInfo ci) {
-		GuiEvents.DRAW_SLOT_BACKGROUND.invoker().onDrawSlot(guiGraphics, (Screen) (Object) this, slot, ci);
+	@Inject(at = @At("HEAD"), method = "extractSlot", cancellable = true)
+	protected void drawSlot$Before(GuiGraphicsExtractor graphics, Slot slot, int mouseX, int mouseY, CallbackInfo ci) {
+		GuiEvents.DRAW_SLOT_BACKGROUND.invoker().onDrawSlot(graphics, (Screen) (Object) this, slot, ci);
 	}
 
-	@Inject(at = @At("HEAD"), method = "slotClicked(Lnet/minecraft/world/inventory/Slot;IILnet/minecraft/world/inventory/ClickType;)V", cancellable = true)
-	private void mouseClicked(Slot slot, int slotId, int button, ClickType slotActionType, CallbackInfo ci) {
-		GuiEvents.SLOT_CLICKED.invoker().onSlotClick(slot, slotId, button, slotActionType, ci);
+	@Inject(at = @At("HEAD"), method = "slotClicked", cancellable = true)
+	private void mouseClicked(Slot slot, int slotId, int buttonNum, ContainerInput containerInput, CallbackInfo ci) {
+		GuiEvents.SLOT_CLICKED.invoker().onSlotClick(slot, slotId, buttonNum, containerInput, ci);
 	}
 
 	@Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
-	private void onMouseClicked(MouseButtonEvent click, boolean doubled, CallbackInfoReturnable<Boolean> cir) {
-		GuiEvents.MOUSE_CLICK.invoker().onMouseClick((Screen) (Object) this, (int) click.x(), (int) click.y(), click.button(), cir);
+	private void onMouseClicked(MouseButtonEvent event, boolean doubleClick, CallbackInfoReturnable<Boolean> cir) {
+		GuiEvents.MOUSE_CLICK.invoker().onMouseClick((Screen) (Object) this, (int) event.x(), (int) event.y(), event.button(), cir);
 	}
 
 	@Inject(at = @At("HEAD"), method = "mouseScrolled")
-	private void mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount, CallbackInfoReturnable<Boolean> cir) {
-		GuiEvents.MOUSE_SCROLL.invoker().onMouseScroll(mouseX, mouseY, verticalAmount, horizontalAmount, hoveredSlot);
+	private void mouseScrolled(double x, double y, double scrollX, double scrollY, CallbackInfoReturnable<Boolean> cir) {
+		GuiEvents.MOUSE_SCROLL.invoker().onMouseScroll(x, y, scrollY, scrollX, hoveredSlot);
 	}
 
 	@Inject(at = @At("HEAD"), method = "onStopHovering")
@@ -48,18 +48,18 @@ public abstract class AbstractContainerScreenMixin {
 		TooltipEvents.RESET.invoker().onTooltipReset();
 	}
 
-	@Inject(at = @At("HEAD"), method = "renderTooltip", cancellable = true)
-	private void drawMouseOverTooltip(GuiGraphics drawContext, int x, int y, CallbackInfo ci) {
-		TooltipEvents.RENDER.invoker().onRenderTooltip((Screen) (Object) this, x, y, drawContext, ci);
+	@Inject(at = @At("HEAD"), method = "extractTooltip", cancellable = true)
+	private void drawMouseOverTooltip(GuiGraphicsExtractor graphics, int mouseX, int mouseY, CallbackInfo ci) {
+		TooltipEvents.RENDER.invoker().onRenderTooltip((Screen) (Object) this, mouseX, mouseY, graphics, ci);
 	}
 
-	@Inject(method = "render", at = @At("HEAD"), cancellable = true)
-	private void render(GuiGraphics context, int mouseX, int mouseY, float deltaTicks, CallbackInfo ci) {
-		GuiEvents.RENDER.invoker().onRender((Screen) (Object) this, context, mouseX, mouseY, deltaTicks, ci);
+	@Inject(method = "extractRenderState", at = @At("HEAD"), cancellable = true)
+	private void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo ci) {
+		GuiEvents.RENDER.invoker().onRender((Screen) (Object) this, graphics, mouseX, mouseY, a, ci);
 	}
 
-	@Inject(method = "renderBackground", at = @At("HEAD"), cancellable = true)
-	private void renderBackground(GuiGraphics context, int mouseX, int mouseY, float deltaTicks, CallbackInfo ci) {
-		GuiEvents.DRAW_BACKGROUND.invoker().onDrawBackground((Screen) (Object) this, context, ci);
+	@Inject(method = "extractContents", at = @At("HEAD"), cancellable = true)
+	private void renderBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo ci) {
+		GuiEvents.DRAW_BACKGROUND.invoker().onDrawBackground((Screen) (Object) this, graphics, ci);
 	}
 }

@@ -6,8 +6,7 @@ import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.gui.screens.inventory.ContainerScreen
 import net.minecraft.world.Container
 import net.minecraft.world.inventory.ChestMenu
-import net.minecraft.world.inventory.ClickType
-import net.minecraft.world.item.Item
+import net.minecraft.world.inventory.ContainerInput
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.block.Blocks
 import net.wapic.wpcmod.WpcMod
@@ -33,7 +32,7 @@ object AutoExperiments {
 
 	private var handledScreen: ChestMenu? = null
 
-	private val ultraSequenceItems = listOf<Item>(
+	private val ultraSequenceItems = listOf(
 		Items.WHITE_DYE,
 		Items.BROWN_DYE,
 		Items.BLACK_DYE,
@@ -79,7 +78,7 @@ object AutoExperiments {
 		}
 
 
-		ScreenEvents.afterRender(screen).register { screen, _, _, _, _ -> onScreenRender(screen) }
+		ScreenEvents.afterExtract(screen).register { screen, _, _, _, _ -> onScreenRender(screen) }
 	}
 
 	private fun onScreenRender(screen: Screen) {
@@ -111,11 +110,11 @@ object AutoExperiments {
 
 		if (hasAdded && inventory.getItem(49).item == Items.CLOCK && chronomatronOrder.size > clicks && System.currentTimeMillis() - lastClickTime > config.clickDelay) {
 			handledScreen?.let {
-				MC.gameMode?.handleInventoryMouseClick(
+				MC.gameMode?.handleContainerInput(
 					it.containerId,
 					chronomatronOrder[clicks],
 					GLFW.GLFW_MOUSE_BUTTON_MIDDLE,
-					ClickType.CLONE,
+					ContainerInput.CLONE,
 					MC.player ?: return
 				)
 				lastClickTime = System.currentTimeMillis()
@@ -141,11 +140,11 @@ object AutoExperiments {
 		if (inventory.getItem(49).item == Items.CLOCK && ultrasequencerOrder.contains(clicks) && System.currentTimeMillis() - lastClickTime > config.clickDelay) {
 			handledScreen?.let { screenHandler ->
 				ultrasequencerOrder[clicks]?.let {
-					MC.gameMode?.handleInventoryMouseClick(
+					MC.gameMode?.handleContainerInput(
 						screenHandler.containerId,
 						it,
 						GLFW.GLFW_MOUSE_BUTTON_MIDDLE,
-						ClickType.CLONE,
+						ContainerInput.CLONE,
 						MC.player ?: return
 					)
 				}

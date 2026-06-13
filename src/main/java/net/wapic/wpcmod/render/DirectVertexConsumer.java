@@ -4,13 +4,11 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.wapic.wpcmod.mixin.accessors.BufferBuilderAccessor;
 import org.joml.Matrix3x2fc;
 import org.joml.Matrix4fc;
-import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.lwjgl.system.MemoryUtil;
 
@@ -138,22 +136,12 @@ public class DirectVertexConsumer implements VertexConsumer {
 	}
 
 	@Override
-	public void putBulkData(PoseStack.Pose pose, BakedQuad quad, float red, float green, float blue, float alpha, int packedLight, int packedOverlay) {
-		VertexConsumer.super.putBulkData(pose, quad, red, green, blue, alpha, packedLight, packedOverlay);
-	}
-
-	@Override
-	public void putBulkData(PoseStack.Pose pose, BakedQuad quad, float[] brightness, float red, float green, float blue, float alpha, int[] lightmap, int packedOverlay) {
-		VertexConsumer.super.putBulkData(pose, quad, brightness, red, green, blue, alpha, lightmap, packedOverlay);
-	}
-
-	@Override
 	public VertexConsumer addVertex(Vector3fc pos) {
 		return VertexConsumer.super.addVertex(pos);
 	}
 
 	@Override
-	public VertexConsumer addVertex(PoseStack.Pose pose, Vector3f pos) {
+	public VertexConsumer addVertex(PoseStack.Pose pose, Vector3fc pos) {
 		return VertexConsumer.super.addVertex(pose, pos);
 	}
 
@@ -178,7 +166,7 @@ public class DirectVertexConsumer implements VertexConsumer {
 	}
 
 	@Override
-	public VertexConsumer setNormal(PoseStack.Pose pose, Vector3f normalVector) {
+	public VertexConsumer setNormal(PoseStack.Pose pose, Vector3fc normalVector) {
 		return VertexConsumer.super.setNormal(pose, normalVector);
 	}
 

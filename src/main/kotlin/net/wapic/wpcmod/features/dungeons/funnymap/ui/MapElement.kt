@@ -1,9 +1,9 @@
 package net.wapic.wpcmod.features.dungeons.funnymap.ui
 
 import com.mojang.blaze3d.platform.InputConstants
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper
 import net.minecraft.client.KeyMapping
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.util.CommonColors
 import net.minecraft.util.profiling.Profiler
 import net.wapic.wpcmod.WpcMod
@@ -25,14 +25,15 @@ import net.wapic.wpcmod.util.render.fillWithOutline
 
 object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 
-	private val legitPeekBind: KeyMapping = KeyBindingHelper.registerKeyBinding(KeyMapping("Legit Peek", InputConstants.KEY_J, WpcMod.category))
+	private val legitPeekBind: KeyMapping =
+		KeyMappingHelper.registerKeyMapping(KeyMapping("Legit Peek", InputConstants.KEY_J, WpcMod.category))
 	private val config get() = WpcMod.config.dungeon.funnyMap
 	override val isEnabled: Boolean get() = config.mapEnabled
 	override val isActive: Boolean get() = (isEnabled && DungeonUtils.inDungeons) && !(config.hideInBoss && DungeonUtils.bossSpawned)
 
 	val legitRender: Boolean get() = config.legitMode && !legitPeekBind.isDown
 
-	override fun render(drawContext: GuiGraphics, deltaTicks: Float) {
+	override fun render(drawContext: GuiGraphicsExtractor, deltaTicks: Float) {
 		if (!isActive) return
 		val player = MC.player ?: return
 		val matrixStack = drawContext.pose()
@@ -83,7 +84,7 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 		profiler.pop()
 	}
 
-	private fun renderRooms(drawContext: GuiGraphics) {
+	private fun renderRooms(drawContext: GuiGraphicsExtractor) {
 		val matrixStack = drawContext.pose()
 		matrixStack.pushMatrix()
 		matrixStack.translate(MapUtils.startCorner.first.toFloat(), MapUtils.startCorner.second.toFloat())
@@ -139,7 +140,7 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 		matrixStack.popMatrix()
 	}
 
-	private fun renderText(drawContext: GuiGraphics) {
+	private fun renderText(drawContext: GuiGraphicsExtractor) {
 		val matrixStack = drawContext.pose()
 		matrixStack.pushMatrix()
 		matrixStack.translate(MapUtils.startCorner.first.toFloat(), MapUtils.startCorner.second.toFloat())
@@ -184,7 +185,7 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 		matrixStack.popMatrix()
 	}
 
-	fun renderPlayerHeads(drawContext: GuiGraphics) {
+	fun renderPlayerHeads(drawContext: GuiGraphicsExtractor) {
 		try {
 			if (FunnyMap.dungeonTeammates.isEmpty()) {
 				MC.player?.let {

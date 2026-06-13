@@ -1,31 +1,35 @@
 package net.wapic.wpcmod.util.render
 
 import com.mojang.blaze3d.pipeline.BlendFunction
+import com.mojang.blaze3d.pipeline.ColorTargetState
+import com.mojang.blaze3d.pipeline.DepthStencilState
 import com.mojang.blaze3d.pipeline.RenderPipeline
-import com.mojang.blaze3d.platform.DepthTestFunction
+import com.mojang.blaze3d.platform.CompareOp
 import com.mojang.blaze3d.vertex.VertexFormat
 import com.mojang.blaze3d.vertex.VertexFormatElement
 import net.minecraft.client.renderer.RenderPipelines
 import net.wapic.wpcmod.util.Utils.modIdentifier
 
 object WpcModRenderPipelines {
+	private val DepthTestFunction = DepthStencilState(CompareOp.LESS_THAN_OR_EQUAL, false, 0f, 0f)
 
 	val LINES: RenderPipeline = RenderPipelines.register(
 		RenderPipeline.builder(RenderPipelines.LINES_SNIPPET)
 			.withLocation(modIdentifier("pipeline/wpcmod_lines"))
-			.withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST).build()
+			.withDepthStencilState(DepthStencilState.DEFAULT)
+			.build()
 	)
 
 	val FILLED_BOX: RenderPipeline = RenderPipelines.register(
 		RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
 			.withLocation(modIdentifier("pipeline/wpcmod_filled_box"))
-			.withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
+			.withDepthStencilState(DepthTestFunction)
 			.build()
 	)
 
 	val GUI_THING: RenderPipeline = RenderPipelines.register(
 		RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET)
-			.withBlend(BlendFunction.TRANSLUCENT)
+			.withColorTargetState(ColorTargetState(BlendFunction.TRANSLUCENT))
 			.withVertexFormat(
 				VertexFormat.builder()
 					.add("Position", VertexFormatElement.POSITION)
@@ -36,7 +40,7 @@ object WpcModRenderPipelines {
 							getNextVFId(),
 							0,
 							VertexFormatElement.Type.FLOAT,
-							VertexFormatElement.Usage.UV,
+							false,
 							2
 						)
 					)
@@ -46,7 +50,7 @@ object WpcModRenderPipelines {
 							getNextVFId(),
 							0,
 							VertexFormatElement.Type.FLOAT,
-							VertexFormatElement.Usage.UV,
+							false,
 							4
 						)
 					)

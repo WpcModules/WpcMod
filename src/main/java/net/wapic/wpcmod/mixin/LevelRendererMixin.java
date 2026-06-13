@@ -11,13 +11,14 @@ import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LevelTargetBundle;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderBuffers;
+import net.minecraft.client.renderer.chunk.ChunkSectionsToRender;
 import net.minecraft.client.renderer.culling.Frustum;
-import net.minecraft.client.renderer.state.LevelRenderState;
+import net.minecraft.client.renderer.state.level.LevelRenderState;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.wapic.wpcmod.events.WorldRenderEvent;
 import net.wapic.wpcmod.util.render.WorldRenderContext;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -33,7 +34,7 @@ public abstract class LevelRendererMixin {
 	private ClientLevel level;
 
 	@Shadow
-	protected abstract void checkPoseStack(PoseStack matrices);
+	protected abstract void checkPoseStack(PoseStack poseStack);
 
 	@Shadow
 	@Final
@@ -52,17 +53,17 @@ public abstract class LevelRendererMixin {
 	private RenderBuffers renderBuffers;
 
 	@Inject(method = "addMainPass", at = @At("TAIL"))
-	private void onRenderWorld(FrameGraphBuilder frameGraphBuilder, Frustum frustum, Matrix4f posMatrix, GpuBufferSlice fogBuffer, boolean renderBlockOutline, LevelRenderState state, DeltaTracker tickCounter, ProfilerFiller profiler, CallbackInfo ci) {
+	private void onRenderWorld(FrameGraphBuilder frame, Frustum frustum, Matrix4fc modelViewMatrix, GpuBufferSlice terrainFog, boolean renderOutline, LevelRenderState levelRenderState, DeltaTracker deltaTracker, ProfilerFiller profiler, ChunkSectionsToRender chunkSectionsToRender, CallbackInfo ci) {
 		if(level == null || minecraft.player == null) return;
 
-		FramePass framePass = frameGraphBuilder.addPass("wpcmod:render_world");
+		FramePass framePass = frame.addPass("wpcmod:render_world");
 
 		this.targets.main = framePass.readsAndWrites(this.targets.main);
 
 		framePass.executes(() -> {
 			PoseStack matrixStack = new PoseStack();
 			MultiBufferSource.BufferSource immediate = this.renderBuffers.bufferSource();
-			WorldRenderContext worldRenderContext = new WorldRenderContext(matrixStack, level, immediate, tickCounter, levelRenderState.cameraRenderState, profiler);
+			WorldRenderContext worldRenderContext = new WorldRenderContext(matrixStack, level, immediate, deltaTracker, levelRenderState.cameraRenderState, profiler);
 			WorldRenderEvent.EVENT.invoker().onRenderWorld(worldRenderContext);
 			immediate.endBatch();
 			this.checkPoseStack(matrixStack);

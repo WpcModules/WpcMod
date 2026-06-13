@@ -1,7 +1,7 @@
 package net.wapic.wpcmod.features.dungeons.floor7.termGUI
 
 import io.github.notenoughupdates.moulconfig.ChromaColour
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.util.CommonColors
 import net.minecraft.util.Util
@@ -15,7 +15,6 @@ import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalHandler
 import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalTypes
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.render.drawRoundedRect
-import net.wapic.wpcmod.util.render.drawText
 
 abstract class TermGui(val type: TerminalTypes) {
     protected val itemIndexMap: MutableMap<Int, Box> = mutableMapOf()
@@ -23,9 +22,9 @@ abstract class TermGui(val type: TerminalTypes) {
 
 	val config get() = WpcMod.config.dungeon.floor7.terminalSolvers
 
-    abstract fun renderTerminal(drawContext: GuiGraphics, slotCount: Int)
+	abstract fun renderTerminal(drawContext: GuiGraphicsExtractor, slotCount: Int)
 
-	protected fun renderBackground(drawContext: GuiGraphics, slotCount: Int) {
+	protected fun renderBackground(drawContext: GuiGraphicsExtractor, slotCount: Int) {
 		val matrixStack = drawContext.pose()
 		val totalSlotSpace = (SLOT_SIZE + config.gap) * config.customTermSize
 
@@ -42,7 +41,7 @@ abstract class TermGui(val type: TerminalTypes) {
 		matrixStack.popMatrix()
     }
 
-	protected fun renderSlot(drawContext: GuiGraphics, index: Int, color: ChromaColour): Pair<Float, Float> {
+	protected fun renderSlot(drawContext: GuiGraphicsExtractor, index: Int, color: ChromaColour): Pair<Float, Float> {
 		val matrixStack = drawContext.pose()
 		val scaledSlotSize = SLOT_SIZE * config.customTermSize
 		val totalSlotSpace = scaledSlotSize + config.gap * config.customTermSize
@@ -62,7 +61,7 @@ abstract class TermGui(val type: TerminalTypes) {
         return x to y
     }
 
-	protected fun renderDebug(drawContext: GuiGraphics, currentHandler: TerminalHandler) {
+	protected fun renderDebug(drawContext: GuiGraphicsExtractor, currentHandler: TerminalHandler) {
 		val x = 2
 		val y = 2
 
@@ -79,14 +78,15 @@ abstract class TermGui(val type: TerminalTypes) {
 		}
 
 		for ((index, line) in lines.withIndex()) {
-			drawContext.drawText(line, x, y + index * 10, CommonColors.WHITE, true)
+			drawContext.text(MC.font, line, x, y + index * 10, CommonColors.WHITE, true)
 		}
 
-		drawContext.drawText("Items in terminal:", x, y + lines.size * 10, CommonColors.WHITE, true)
+		drawContext.text(MC.font, "Items in terminal:", x, y + lines.size * 10, CommonColors.WHITE, true)
 		var itemIndex = 1
 		currentHandler.items.forEachIndexed { index, stack ->
 			if (stack == null || stack.item == Items.BLACK_STAINED_GLASS_PANE) return@forEachIndexed
-			drawContext.drawText(
+			drawContext.text(
+				MC.font,
 				"${if (index in currentSolution) "§a" else "§c"}${stack.hoverName.string}",
 				x,
 				y + lines.size * 12 + itemIndex * 10,
@@ -106,7 +106,7 @@ abstract class TermGui(val type: TerminalTypes) {
 		}
 	}
 
-	open fun render(drawContext: GuiGraphics, currentHandler: TerminalHandler) {
+	open fun render(drawContext: GuiGraphicsExtractor, currentHandler: TerminalHandler) {
         setCurrentGui(this)
         itemIndexMap.clear()
 

@@ -6,14 +6,14 @@ import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.client.DeltaTracker
 import net.minecraft.client.gui.Font
 import net.minecraft.client.multiplayer.ClientLevel
-import net.minecraft.client.renderer.LightTexture
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.rendertype.RenderType
-import net.minecraft.client.renderer.state.CameraRenderState
+import net.minecraft.client.renderer.state.level.CameraRenderState
 import net.minecraft.gizmos.GizmoStyle
 import net.minecraft.gizmos.Gizmos
 import net.minecraft.util.ARGB
 import net.minecraft.util.FormattedCharSequence
+import net.minecraft.util.LightCoordsUtil
 import net.minecraft.util.profiling.ProfilerFiller
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
@@ -60,7 +60,7 @@ class WorldRenderContext {
 		MC.font.drawInBatch(
 			text, -MC.font.width(text) / 2f, 0f, -1, true, matrix, bufferSource,
 			if (depth) Font.DisplayMode.NORMAL else Font.DisplayMode.SEE_THROUGH,
-			0, LightTexture.FULL_BRIGHT
+			0, LightCoordsUtil.FULL_BRIGHT
 		)
 
 		bufferSource.endBatch()

@@ -27,7 +27,7 @@ object KuudraUtils {
 	private const val KUUDRA_END_MESSAGE: String = "KUUDRA DOWN!"
 
 	fun init() {
-		ClientTickEvents.END_WORLD_TICK.register(::onTick)
+		ClientTickEvents.END_LEVEL_TICK.register(::onTick)
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 
 		WorldChangeEvent.BEFORE.register {

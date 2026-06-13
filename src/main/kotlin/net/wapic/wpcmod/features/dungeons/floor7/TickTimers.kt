@@ -1,7 +1,7 @@
 package net.wapic.wpcmod.features.dungeons.floor7
 
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.network.chat.Component
 import net.minecraft.util.CommonColors
@@ -85,7 +85,7 @@ object TickTimers : SimpleHudElement("Tick Timers", 120, 12) {
         return "${if (config.showPrefix) "$prefix " else ""}$color$timeDisplay"
     }
 
-	override fun render(drawContext: GuiGraphics, deltaTicks: Float) {
+	override fun render(drawContext: GuiGraphicsExtractor, deltaTicks: Float) {
 		if (!isActive) return
 		val profiler = Profiler.get()
 		profiler.push("TickTimers")
@@ -102,11 +102,11 @@ object TickTimers : SimpleHudElement("Tick Timers", 120, 12) {
 
 		when {
 			padTickTime >= 0 ->
-				drawContext.drawString(MC.font, formatTimer(padTickTime, 20, "§bPad:"), 1, 1, CommonColors.RED, true)
+				drawContext.text(MC.font, formatTimer(padTickTime, 20, "§bPad:"), 1, 1, CommonColors.RED, true)
 			goldorStartTime >= 0 || goldorTickTime >= 0 ->
-				drawContext.drawString(MC.font, formatTimer(time, max, prefix), 1, 1, CommonColors.RED, true)
+				drawContext.text(MC.font, formatTimer(time, max, prefix), 1, 1, CommonColors.RED, true)
 			necronTime >= 0 ->
-				drawContext.drawString(
+				drawContext.text(
 					MC.font,
 					formatTimer(necronTime.toInt(), 60, "§4Necron dropping in"),
 					1,

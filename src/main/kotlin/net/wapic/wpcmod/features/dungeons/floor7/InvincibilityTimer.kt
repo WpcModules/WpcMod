@@ -1,7 +1,7 @@
 package net.wapic.wpcmod.features.dungeons.floor7
 
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.network.chat.Component
 import net.minecraft.util.CommonColors
 import net.wapic.wpcmod.WpcMod
@@ -10,9 +10,9 @@ import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.hud.SimpleHudElement
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.DungeonUtils
+import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.Utils.toFixed
-import net.wapic.wpcmod.util.render.drawText
 
 object InvincibilityTimer : SimpleHudElement("Invincibility Timer", 160, 33) {
 
@@ -31,7 +31,7 @@ object InvincibilityTimer : SimpleHudElement("Invincibility Timer", 160, 33) {
 		InvincibilityType.entries.firstOrNull { it.regex.matches(text.string) }?.proc()
 	}
 
-	override fun render(drawContext: GuiGraphics, deltaTicks: Float) {
+	override fun render(drawContext: GuiGraphicsExtractor, deltaTicks: Float) {
 		if (!isActive) return
 		val matrixStack = drawContext.pose()
 		matrixStack.pushMatrix()
@@ -40,7 +40,7 @@ object InvincibilityTimer : SimpleHudElement("Invincibility Timer", 160, 33) {
 		InvincibilityType.entries.filter { it.currentCooldown > 0 || it.activeTime > 0 }.forEachIndexed { index, type ->
 			val time =
 				if (type.activeTime > 0) "Immunity: ${(type.activeTime / 20f).toFixed()}" else "Cooldown: ${(type.currentCooldown / 20f).toFixed()}"
-			drawContext.drawText("§6${type} ${time}s", 2, 2 + index * 10, CommonColors.WHITE, true)
+			drawContext.text(MC.font, "§6${type} ${time}s", 2, 2 + index * 10, CommonColors.WHITE, true)
 		}
 
 		matrixStack.popMatrix()

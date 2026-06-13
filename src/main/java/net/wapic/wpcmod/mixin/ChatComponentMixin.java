@@ -4,9 +4,10 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
-import net.minecraft.client.GuiMessage;
-import net.minecraft.client.GuiMessageTag;
 import net.minecraft.client.gui.components.ChatComponent;
+import net.minecraft.client.multiplayer.chat.GuiMessage;
+import net.minecraft.client.multiplayer.chat.GuiMessageSource;
+import net.minecraft.client.multiplayer.chat.GuiMessageTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MessageSignature;
 import net.minecraft.util.FormattedCharSequence;
@@ -24,38 +25,38 @@ import java.util.Map;
 public abstract class ChatComponentMixin {
 	private final @Unique ThreadLocal<CompactChat.@Nullable Message> CURRENT = new ThreadLocal<>();
 
-	@ModifyConstant(method = {"addMessageToQueue(Lnet/minecraft/client/GuiMessage;)V", "addMessageToDisplayQueue"}, constant = @Constant(intValue = 100), require = 0)
+	@ModifyConstant(method = {"addMessageToQueue", "addMessageToDisplayQueue"}, constant = @Constant(intValue = 100), require = 0)
 	private int modifyMaxChatSize(int value) {
 		return WpcMod.config.getChat().getLongerChatHistory() ? 10000 : value;
 	}
 
 	@ModifyVariable(
-			method = "addMessage(Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/MessageSignature;Lnet/minecraft/client/GuiMessageTag;)V",
+			method = "addMessage",
 			at = @At("HEAD"),
 			argsOnly = true
 	)
-	public Component compacting$compactText(Component text) {
-		var message = CompactChat.compact(text);
+	public Component compacting$compactText(Component contents) {
+		var message = CompactChat.compact(contents);
 		if (message == null) {
 			CURRENT.remove();
-			return text;
+			return contents;
 		}
 		CURRENT.set(message);
 		if (message.shouldCompact()) {
 			return message.getTextWithCounter();
 		}
-		return text;
+		return contents;
 	}
 
 	@WrapOperation(
-			method = "addMessage(Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/MessageSignature;Lnet/minecraft/client/GuiMessageTag;)V",
+			method = "addMessage",
 			at = @At(
 					value = "NEW",
-					target = "(ILnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/MessageSignature;Lnet/minecraft/client/GuiMessageTag;)Lnet/minecraft/client/GuiMessage;"
+					target = "(ILnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/MessageSignature;Lnet/minecraft/client/multiplayer/chat/GuiMessageSource;Lnet/minecraft/client/multiplayer/chat/GuiMessageTag;)Lnet/minecraft/client/multiplayer/chat/GuiMessage;"
 			)
 	)
-	public GuiMessage compacting$associateHudLine(int creationTick, Component text, MessageSignature messageSignatureData, GuiMessageTag messageIndicator, Operation<GuiMessage> original) {
-		var line = original.call(creationTick, text, messageSignatureData, messageIndicator);
+	public GuiMessage compacting$associateHudLine(int addedTime, Component content, MessageSignature signature, GuiMessageSource source, GuiMessageTag tag, Operation<GuiMessage> original) {
+		var line = original.call(addedTime, content, signature, source, tag);
 		var message = CURRENT.get();
 		if (message != null) {
 			message.setLastLine(line);
@@ -67,12 +68,11 @@ public abstract class ChatComponentMixin {
 			method = "addMessageToDisplayQueue",
 			at = @At(
 					value = "NEW",
-					target = "(ILnet/minecraft/util/FormattedCharSequence;Lnet/minecraft/client/GuiMessageTag;Z)Lnet/minecraft/client/GuiMessage$Line;"
+					target = "(Lnet/minecraft/client/multiplayer/chat/GuiMessage;Lnet/minecraft/util/FormattedCharSequence;Z)Lnet/minecraft/client/multiplayer/chat/GuiMessage$Line;"
 			)
 	)
-	public GuiMessage.Line compacting$associateVisibleLine(int tick, FormattedCharSequence text, GuiMessageTag indicator,
-														   boolean endOfEntry, Operation<GuiMessage.Line> original) {
-		var visible = original.call(tick, text, indicator, endOfEntry);
+	public GuiMessage.Line compacting$associateVisibleLine(GuiMessage parent, FormattedCharSequence content, boolean endOfEntry, Operation<GuiMessage.Line> original) {
+		var visible = original.call(parent, content, endOfEntry);
 		var message = CURRENT.get();
 		if (message != null) {
 			message.getLastVisible().add(visible);
@@ -81,7 +81,7 @@ public abstract class ChatComponentMixin {
 	}
 
 	@Inject(method = "clearMessages", at = @At("TAIL"))
-	public void compacting$clearMessages(boolean clearHistory, CallbackInfo ci) {
+	public void compacting$clearMessages(boolean history, CallbackInfo ci) {
 		CompactChat.clear();
 		CURRENT.remove();
 	}
@@ -98,7 +98,7 @@ public abstract class ChatComponentMixin {
 			method = "refreshTrimmedMessages",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/client/gui/components/ChatComponent;addMessageToDisplayQueue(Lnet/minecraft/client/GuiMessage;)V"
+					target = "Lnet/minecraft/client/gui/components/ChatComponent;addMessageToDisplayQueue(Lnet/minecraft/client/multiplayer/chat/GuiMessage;)V"
 			)
 	)
 	public void compacting$wrapRefresh(

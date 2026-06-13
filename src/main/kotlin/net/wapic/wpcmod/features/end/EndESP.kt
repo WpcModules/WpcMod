@@ -24,7 +24,7 @@ object EndESP : EspFeature() {
 
 	fun init() {
 		WorldRenderEvent.EVENT.register(::renderWorld)
-		ClientTickEvents.END_WORLD_TICK.register(::worldTick)
+		ClientTickEvents.END_LEVEL_TICK.register(::worldTick)
 	}
 
 	private fun worldTick(world: ClientLevel) {

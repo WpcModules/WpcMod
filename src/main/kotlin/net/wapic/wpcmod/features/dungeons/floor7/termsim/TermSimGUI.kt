@@ -8,7 +8,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.world.SimpleContainer
 import net.minecraft.world.inventory.ChestMenu
-import net.minecraft.world.inventory.ClickType
+import net.minecraft.world.inventory.ContainerInput
 import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
@@ -85,7 +85,7 @@ open class TermSimGUI(
 		slotClick(slot, button)
     }
 
-	override fun slotClicked(slot: Slot, slotId: Int, mouseButton: Int, type: ClickType) {
+	override fun slotClicked(slot: Slot, slotId: Int, mouseButton: Int, type: ContainerInput) {
 		delaySlotClick(slot, mouseButton)
 	}
 

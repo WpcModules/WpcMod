@@ -6,7 +6,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements
 import net.minecraft.client.DeltaTracker
 import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.network.chat.Component
 import net.minecraft.util.CommonColors
 import net.minecraft.util.Mth
@@ -66,14 +66,14 @@ object SpamFilter {
 		}
 	}
 
-	fun onRenderHud(drawContext: GuiGraphics, tickCounter: DeltaTracker) {
+	fun onRenderHud(drawContext: GuiGraphicsExtractor, tickCounter: DeltaTracker) {
 		var y = drawContext.guiHeight() - 48
 
 		for (notification in notifyQueue.toList()) {
 			val width = MC.font.width(notification.text)
 			val x1 = (drawContext.guiWidth() - width) + notification.x
 			drawContext.fill(x1, y - 2, x1 + width, y + 10, 0xaa121212.toInt())
-			drawContext.drawString(MC.font, notification.text, x1, y, CommonColors.WHITE, false)
+			drawContext.text(MC.font, notification.text, x1, y, CommonColors.WHITE, false)
 			y -= 12
 			notification.x = Mth.lerpInt(tickCounter.gameTimeDeltaTicks, notification.x, -12)
 		}

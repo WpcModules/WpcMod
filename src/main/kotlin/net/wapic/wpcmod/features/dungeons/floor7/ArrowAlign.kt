@@ -1,25 +1,25 @@
 package net.wapic.wpcmod.features.dungeons.floor7
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
+import net.fabricmc.fabric.api.event.player.UseEntityCallback
 import net.minecraft.client.Minecraft
 import net.minecraft.core.BlockPos
-import net.minecraft.network.PacketListener
 import net.minecraft.network.chat.Component
-import net.minecraft.network.protocol.Packet
-import net.minecraft.network.protocol.game.ServerboundInteractPacket
 import net.minecraft.world.InteractionHand
+import net.minecraft.world.InteractionResult
+import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.decoration.ItemFrame
+import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.Items
+import net.minecraft.world.level.Level
+import net.minecraft.world.phys.EntityHitResult
 import net.minecraft.world.phys.Vec3
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.events.PacketEvents
 import net.wapic.wpcmod.events.WorldRenderEvent
-import net.wapic.wpcmod.mixin.accessors.ServerboundInteractPacketAccessor
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.DungeonUtils.F7Phase
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.render.WorldRenderContext
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 
 object ArrowAlign {
 	private val config get() = WpcMod.config.dungeon.floor7.arrowAlign
@@ -31,9 +31,9 @@ object ArrowAlign {
     private var targetSolution: List<Int>? = null
 
 	fun init() {
-		PacketEvents.SEND_BEFORE.register(::onPacketSend)
 		ClientTickEvents.END_CLIENT_TICK.register(::onTick)
 		WorldRenderEvent.EVENT.register(::onRenderWorld)
+		UseEntityCallback.EVENT.register(::onEntityInteract)
     }
 
 	fun onTick(client: Minecraft) {
@@ -61,39 +61,34 @@ object ArrowAlign {
 		}
 	}
 
-	fun onPacketSend(packet: Packet<out PacketListener>, ci: CallbackInfo) {
-		if (DungeonUtils.getF7Phase() != F7Phase.GOLDOR || !config.enabled) return
+	//TODO: fix interaction results
+	fun onEntityInteract(
+		player: Player,
+		level: Level,
+		hand: InteractionHand,
+		entity: Entity,
+		hitResult: EntityHitResult
+	): InteractionResult {
+		if (DungeonUtils.getF7Phase() != F7Phase.GOLDOR || !config.enabled) return InteractionResult.PASS
+		if (entity !is ItemFrame || entity.item.item != Items.ARROW) return InteractionResult.PASS
 
-        val packet = packet as? ServerboundInteractPacket ?: return
-		packet.dispatch(object : ServerboundInteractPacket.Handler {
-			override fun onInteraction(hand: InteractionHand) {
-				val entity =
-					MC.level?.getEntity((packet as ServerboundInteractPacketAccessor).entityId) as? ItemFrame
-						?: return
-				if (entity.item.item != Items.ARROW) return
+		val frameIndex = ((entity.blockY - frameGridCorner.y) + (entity.blockZ - frameGridCorner.z) * 5)
+		if (entity.blockX != frameGridCorner.x || currentFrameRotations?.get(frameIndex) == -1 || frameIndex !in 0..24) return InteractionResult.PASS
 
-				val frameIndex = ((entity.blockY - frameGridCorner.y) + (entity.blockZ - frameGridCorner.z) * 5)
-				if (entity.blockX != frameGridCorner.x || currentFrameRotations?.get(frameIndex) == -1 || frameIndex !in 0..24) return
+		if (!clicksRemaining.containsKey(frameIndex) && MC.player?.isShiftKeyDown == config.invertSneak && config.blockWrongClick) {
+			return InteractionResult.FAIL
+		}
 
-				if (!clicksRemaining.containsKey(frameIndex) && MC.player?.isShiftKeyDown == config.invertSneak && config.blockWrongClick) {
-					ci.cancel()
-					return
-				}
+		recentClickTimestamps[frameIndex] = System.currentTimeMillis()
+		currentFrameRotations =
+			currentFrameRotations?.toMutableList()?.apply { this[frameIndex] = (this[frameIndex] + 1) % 8 }
 
-				recentClickTimestamps[frameIndex] = System.currentTimeMillis()
-				currentFrameRotations =
-					currentFrameRotations?.toMutableList()?.apply { this[frameIndex] = (this[frameIndex] + 1) % 8 }
-
-				if (calculateClicksNeeded(
-						currentFrameRotations?.get(frameIndex) ?: return,
-						targetSolution?.get(frameIndex) ?: return
-					) == 0
-				) clicksRemaining.remove(frameIndex)
-			}
-
-			override fun onInteraction(hand: InteractionHand, pos: Vec3) {}
-			override fun onAttack() {}
-		})
+		if (calculateClicksNeeded(
+				currentFrameRotations?.get(frameIndex) ?: return InteractionResult.PASS,
+				targetSolution?.get(frameIndex) ?: return InteractionResult.PASS
+			) == 0
+		) clicksRemaining.remove(frameIndex)
+		return InteractionResult.PASS
 	}
 
     fun onRenderWorld(worldRenderContext: WorldRenderContext) {

@@ -1,14 +1,13 @@
 package net.wapic.wpcmod.features.dungeons.floor7.termGUI
 
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.util.CommonColors
 import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalTypes
 import net.wapic.wpcmod.util.MC
-import net.wapic.wpcmod.util.render.drawText
 
 object RubixGui : TermGui(TerminalTypes.RUBIX) {
 
-    override fun renderTerminal(drawContext: GuiGraphics, slotCount: Int) {
+	override fun renderTerminal(drawContext: GuiGraphicsExtractor, slotCount: Int) {
 		renderBackground(drawContext, slotCount)
 
         currentSolution.distinct().forEach { index ->
@@ -37,7 +36,7 @@ object RubixGui : TermGui(TerminalTypes.RUBIX) {
 			matrixStack.pushMatrix()
 			matrixStack.translate(textX, textY)
 			matrixStack.scale(textScale)
-			drawContext.drawText(text, 0, 0, CommonColors.WHITE, true)
+			drawContext.text(MC.font, text, 0, 0, CommonColors.WHITE, true)
 			matrixStack.popMatrix()
         }
     }

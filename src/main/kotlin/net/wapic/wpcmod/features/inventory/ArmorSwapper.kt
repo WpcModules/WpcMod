@@ -2,11 +2,11 @@ package net.wapic.wpcmod.features.inventory
 
 import com.mojang.blaze3d.platform.InputConstants
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper
 import net.minecraft.client.KeyMapping
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.screens.inventory.ContainerScreen
-import net.minecraft.world.inventory.ClickType
+import net.minecraft.world.inventory.ContainerInput
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.ItemUtils.skyblockId
 import net.wapic.wpcmod.util.MC
@@ -18,7 +18,7 @@ object ArmorSwapper {
 	private val config get() = WpcMod.config.inventory
 
 	private val armorSwapBind: KeyMapping =
-		KeyBindingHelper.registerKeyBinding(KeyMapping("Armor Swap", InputConstants.KEY_V, WpcMod.category))
+		KeyMappingHelper.registerKeyMapping(KeyMapping("Armor Swap", InputConstants.KEY_V, WpcMod.category))
 	private val wardrobeTitle = Regex("Wardrobe \\(\\d/\\d\\)")
 	private const val SORROW_SKYBLOCK_ID = "SORROW_BOOTS"
 	private var shouldSwap = false
@@ -30,11 +30,11 @@ object ArmorSwapper {
 	}
 
 	private fun clickSlot(screen: ContainerScreen, slot: Int) {
-		MC.gameMode?.handleInventoryMouseClick(
+		MC.gameMode?.handleContainerInput(
 			screen.menu.containerId,
 			slot,
 			GLFW.GLFW_MOUSE_BUTTON_LEFT,
-			ClickType.PICKUP,
+			ContainerInput.PICKUP,
 			MC.player ?: return
 		)
 	}

@@ -1,7 +1,7 @@
 package net.wapic.wpcmod.features.kuudra
 
 import net.minecraft.ChatFormatting
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.util.CommonColors
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.hud.SimpleHudElement
@@ -19,7 +19,7 @@ object KuudraDisplay : SimpleHudElement("Kuudra Display", 75, 11) {
 	override val isEnabled: Boolean get() = config.healthDisplay
 	override val isActive: Boolean get() = isEnabled && Utils.getLocation() == Island.KUUDRA
 
-	override fun render(drawContext: GuiGraphics, deltaTicks: Float) {
+	override fun render(drawContext: GuiGraphicsExtractor, deltaTicks: Float) {
 		if (!isActive) return
 
 		val matrixStack = drawContext.pose()
@@ -39,7 +39,7 @@ object KuudraDisplay : SimpleHudElement("Kuudra Display", 75, 11) {
 
 				val health = "$formatting${(it.health / 1000).toFixed(2)}K / §a100K §cHP"
 
-				drawContext.drawString(MC.font, health, 0, 0, CommonColors.WHITE)
+				drawContext.text(MC.font, health, 0, 0, CommonColors.WHITE)
 			}
 		}
 

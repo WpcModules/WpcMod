@@ -1,7 +1,7 @@
 package net.wapic.wpcmod.features.dungeons.floor7
 
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.PacketListener
 import net.minecraft.network.chat.Component
@@ -107,7 +107,7 @@ object TerminalSolver {
 
 	fun onGuiRender(
 		screen: Screen,
-		gui: GuiGraphics,
+		gui: GuiGraphicsExtractor,
 		mouseX: Int,
 		mouseY: Int,
 		deltaTicks: Float,
@@ -117,7 +117,7 @@ object TerminalSolver {
 		callbackInfo.cancel()
 	}
 
-	fun onDrawBackground(screen: Screen, gui: GuiGraphics, callbackInfo: CallbackInfo) {
+	fun onDrawBackground(screen: Screen, gui: GuiGraphicsExtractor, callbackInfo: CallbackInfo) {
 		if (!config.enabled) return
 		currentTerm?.let {
 			it.type.getGUI().render(gui, it)
@@ -151,7 +151,13 @@ object TerminalSolver {
 		}
 	}
 
-	fun onTooltipDraw(screen: Screen, mouseX: Int, mouseY: Int, drawContext: GuiGraphics, callbackInfo: CallbackInfo) {
+	fun onTooltipDraw(
+		screen: Screen,
+		mouseX: Int,
+		mouseY: Int,
+		drawContext: GuiGraphicsExtractor,
+		callbackInfo: CallbackInfo
+	) {
 		if (!config.enabled || currentTerm == null) return
 		callbackInfo.cancel()
 	}
