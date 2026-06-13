@@ -8,7 +8,6 @@ import net.minecraft.client.gui.Font
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.renderer.LightTexture
 import net.minecraft.client.renderer.MultiBufferSource
-import net.minecraft.client.renderer.ShapeRenderer
 import net.minecraft.client.renderer.rendertype.RenderType
 import net.minecraft.client.renderer.state.CameraRenderState
 import net.minecraft.gizmos.GizmoStyle
@@ -18,7 +17,6 @@ import net.minecraft.util.FormattedCharSequence
 import net.minecraft.util.profiling.ProfilerFiller
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
-import net.minecraft.world.phys.shapes.Shapes
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.VecUtils.unaryMinus
 import org.joml.Vector3f
@@ -148,12 +146,11 @@ class WorldRenderContext {
 		color: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255),
 		lineWidth: Float = 2f
 	) {
-		drawBox(
-			aabb.minX, aabb.minY, aabb.minZ,
-			aabb.maxX, aabb.maxY, aabb.maxZ,
-			color,
-			lineWidth,
-		)
+		draw(WpcModRenderTypes.LINES) { consumer ->
+			val color = color.getEffectiveColour()
+
+			Gizmos.cuboid(aabb, GizmoStyle.stroke(ARGB.color(color.alpha, color.rgb), lineWidth)).setAlwaysOnTop()
+		}
 	}
 
 	fun drawTracer(
@@ -201,10 +198,8 @@ class WorldRenderContext {
 		lineWidth: Float = 2f
 	) {
 		draw(WpcModRenderTypes.LINES) { consumer ->
-			val color = color.getEffectiveColour()
-			val shape = Shapes.create(minX, minY, minZ, maxX, maxY, maxZ)
-
-			ShapeRenderer.renderShape(matrixStack, consumer, shape, 0.0, 0.0, 0.0, color.rgb, lineWidth)
+			val shape = AABB(minX, minY, minZ, maxX, maxY, maxZ)
+			drawBoundingBox(shape, color, lineWidth)
 		}
 	}
 
