@@ -43,4 +43,8 @@ class ChatConfig {
 
 	@Category(name = "Spam Filter", desc = "Configure how to handle chat spam")
 	var spam: SpamConfig = SpamConfig()
+
+	@ConfigOption(name = "Auto Accept Trapper", desc = "Auto accept trevor the trapper quest")
+	@ConfigEditorBoolean
+	var autoAcceptTrapper: Boolean = false
 }
