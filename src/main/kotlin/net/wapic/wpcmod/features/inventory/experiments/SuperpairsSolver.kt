@@ -1,12 +1,12 @@
 package net.wapic.wpcmod.features.inventory.experiments
 
+import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.inventory.ClickType
 import net.minecraft.world.inventory.Slot
-import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.wapic.wpcmod.WpcMod
@@ -16,7 +16,6 @@ import net.wapic.wpcmod.util.ItemUtils.isSimilar
 import net.wapic.wpcmod.util.MC
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
-import java.awt.Color
 
 object SuperpairsSolver {
 
@@ -26,9 +25,8 @@ object SuperpairsSolver {
 	private val superpairsTitle = Regex("Superpairs ?\\(.+\\)")
 	private var inSuperpairs: Boolean = false
 
-	private val powerUps = listOf<Item>(Items.DIAMOND, Items.FEATHER, Items.LAPIS_BLOCK)
-	private val ignoredItems =
-		listOf<Item>(Items.CLOCK, Items.BOOKSHELF, Items.BLACK_STAINED_GLASS_PANE, Items.CAULDRON)
+	private val powerUps = listOf(Items.DIAMOND, Items.FEATHER, Items.LAPIS_BLOCK)
+	private val ignoredItems = listOf(Items.CLOCK, Items.BOOKSHELF, Items.BLACK_STAINED_GLASS_PANE, Items.CAULDRON)
 
 	private val superpairsMap = mutableMapOf<Int, ItemStack>()
 	private val slotsToRead = mutableSetOf<Slot>()
@@ -71,6 +69,7 @@ object SuperpairsSolver {
 	) {
 		if (!config.superpairsSolver || !inSuperpairs) return
 		if (superpairsMap.isEmpty() || slot !in superpairsMap.keys) return
+
 		val replacementItem = superpairsMap[slot] ?: return
 		callbackInfoReturnable.returnValue = replacementItem
 	}
@@ -82,7 +81,8 @@ object SuperpairsSolver {
 		slotActionType: ClickType,
 		callbackInfo: CallbackInfo
 	) {
-		if (slot?.container is Inventory || !inSuperpairs || !config.superpairsSolver || slot?.item?.item in ignoredItems) return
+		if (!inSuperpairs || !config.superpairsSolver) return
+		if (slot?.container is Inventory || slot?.containerSlot in foundPairs || slot?.item?.item in ignoredItems) return
 
 		slot?.let { slot ->
 			if (slotId !in superpairsMap.keys) {
@@ -90,8 +90,9 @@ object SuperpairsSolver {
 					slotsToRead.add(slot)
 					return
 				}
-				superpairsMap[slotId] = slot.item
+				if (slot.item.item != Items.AIR) superpairsMap[slotId] = slot.item
 			}
+
 			if (lastClickedSlot?.containerSlot != slotId) checkForPair(slot)
 		}
 	}
@@ -119,6 +120,7 @@ object SuperpairsSolver {
 		if (slot.item.item == Items.DIAMOND) {
 			activeInstantFinds++
 			lastClickedSlot = null
+			foundPairs.add(slot.containerSlot)
 			return
 		}
 
@@ -148,7 +150,7 @@ object SuperpairsSolver {
 			}
 		}
 
-		slotsToRead.find { it.containerSlot == slotId }?.let { slot ->
+		slotsToRead.find { it.containerSlot == slotId && it.item.item != Items.AIR && it.containerSlot !in foundPairs }?.let { slot ->
 			superpairsMap[slotId] = itemStack
 			checkForPair(slot)
 			slotsToRead.removeIf { it.containerSlot == slotId }
@@ -160,14 +162,18 @@ object SuperpairsSolver {
 		if (slot.item.item in ignoredItems || skyHanniRegex.matches(slot.item.hoverName.string)) return
 
 		val inv = MC.player?.containerMenu?.items
-		inv?.count { it.isSimilar(slot.item) }?.let {
-			val color = if (it > 1) Color(255, 69, 0, 150) else Color(240, 230, 140)
-			drawContext.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, color.rgb)
+
+		val color: ChromaColour? = when {
+			slot.item.item in powerUps -> config.superpairColors.powerUp
+			slot.containerSlot in foundPairs -> config.superpairColors.foundPair
+			else -> inv?.count { it.isSimilar(slot.item) }?.let {
+				if(it > 1)
+					config.superpairColors.discoveredPair
+				else
+					config.superpairColors.undiscoveredPair
+			}
 		}
 
-		if (slot.containerSlot in foundPairs) drawContext.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, Color.GREEN.rgb)
-		if (slot.item.item in powerUps) drawContext.fill(
-			slot.x, slot.y, slot.x + 16, slot.y + 16, Color(100, 30, 130).rgb
-		)
+		color?.let { drawContext.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, it.getEffectiveColourRGB()) }
 	}
 }
