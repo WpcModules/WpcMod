@@ -6,11 +6,13 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.minecraft.client.Minecraft
 import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.util.FileManager
 import net.wapic.wpcmod.util.Utils
 import java.io.File
 
 object ShortcutHandler {
-	private val saveFile = File(WpcMod.configDir, "shortcuts.json")
+	private val file = File(WpcMod.configDir, "shortcuts.json")
+	private val backupFile = File(file.parentFile, "${file.name}.bak")
 	private val gson: Gson = GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().create()
 	val loadedShortcuts = mutableListOf<Shortcut>()
 
@@ -40,34 +42,12 @@ object ShortcutHandler {
 	}
 
 	fun loadShortcuts() {
-		try {
-			if (!saveFile.exists()) return WpcMod.LOGGER.info("No shortcuts found!")
-			WpcMod.LOGGER.info("Loading shortcuts")
-
-			loadedShortcuts.addAll(gson.fromJson(saveFile.reader(), Array<Shortcut>::class.java).toList())
+		val shortcuts = FileManager.loadFile<Array<Shortcut>>(file, backupFile)?.toList()
+		shortcuts?.let {
+			loadedShortcuts.addAll(shortcuts)
 			loadedShortcuts.forEach(Shortcut::addToMap)
-		} catch (e: Throwable) {
-			WpcMod.LOGGER.error("Failed to read shortcuts", e)
-			try {
-				val backup = saveFile.resolveSibling("shortcuts-failed.json")
-				WpcMod.LOGGER.warn("Creating a backup of old shortcuts and continuing with empty shortcuts", e)
-				saveFile.copyTo(backup)
-			} catch (e: Exception) {
-				WpcMod.LOGGER.error("Failed to backup old shortcuts", e)
-			}
-		}
+		} ?: return WpcMod.LOGGER.info("An error while loading shortcuts!")
 	}
 
-	fun saveShortcuts() {
-		try {
-			WpcMod.LOGGER.info("Saving shortcuts")
-			saveFile.parentFile.mkdirs()
-			saveFile.createNewFile()
-			saveFile.writeText(gson.toJson(loadedShortcuts))
-			WpcMod.LOGGER.info("Shortcuts saved successfully")
-		} catch (e: Exception) {
-			WpcMod.LOGGER.error("Failed to save shortcuts", e)
-			throw e
-		}
-	}
+	fun saveShortcuts() = FileManager.saveFile(loadedShortcuts, file, backupFile)
 }
