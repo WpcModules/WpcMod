@@ -49,5 +49,8 @@ object ShortcutHandler {
 		} ?: return WpcMod.LOGGER.info("An error while loading shortcuts!")
 	}
 
-	fun saveShortcuts() = FileManager.saveFile(loadedShortcuts, file, backupFile)
+	fun saveShortcuts() {
+		val json = gson.toJson(loadedShortcuts)
+		FileManager.saveFile(json, file, backupFile)
+	}
 }

@@ -48,7 +48,7 @@ object FileManager {
 		return null
 	}
 
-	fun saveFile(jsonObject: Any, file: File, backupFile: File) {
+	fun saveFile(json: String, file: File, backupFile: File) {
 		val tempFile = File(WpcMod.configDir, "${file.name}.tmp")
 
 		try {
@@ -57,7 +57,7 @@ object FileManager {
 			}
 
 			WpcMod.LOGGER.info("Saving ${file.name}")
-			tempFile.writeText(gson.toJson(jsonObject))
+			tempFile.writeText(json)
 
 			if (file.exists()) file.copyTo(backupFile, overwrite = true)
 

@@ -78,5 +78,8 @@ object HudManager {
 		} ?: return WpcMod.LOGGER.error("An error occurred while loading hud locations!")
 	}
 
-	fun saveLocations() = FileManager.saveFile(hudElements, file, backupFile)
+	fun saveLocations() {
+		val json = gson.toJson(hudElements)
+		FileManager.saveFile(json, file, backupFile)
+	}
 }
