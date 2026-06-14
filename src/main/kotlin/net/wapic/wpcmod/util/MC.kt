@@ -13,6 +13,7 @@ import net.minecraft.client.player.LocalPlayer
 import net.minecraft.client.renderer.texture.TextureManager
 import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.world.item.ItemStack
+import net.wapic.wpcmod.features.general.Freecam
 import net.wapic.wpcmod.mixin.accessors.MinecraftAccessor
 
 object MC {
@@ -21,6 +22,7 @@ object MC {
 	fun useItem() = runOnThread { (instance as? MinecraftAccessor)?.doItemUse_WpcMod() }
 
 	inline val entities get() = instance.level?.entitiesForRendering() ?: emptyList()
+	inline val cameraPos get() = if (Freecam.isEnabled) instance.cameraEntity?.position() else instance.player?.position()
 	inline fun <reified T> entitiesOf(): List<T> = entities.filterIsInstance<T>()
 
 	inline val instance: Minecraft get() = Minecraft.getInstance()

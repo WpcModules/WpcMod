@@ -1,30 +1,40 @@
 package net.wapic.wpcmod.features.dungeons.funnymap.dungeon
 
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.JsonIOException
 import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
+import net.minecraft.ChatFormatting
 import net.minecraft.core.BlockPos
+import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.network.chat.Style
 import net.minecraft.resources.Identifier
-import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.entity.TrappedChestBlockEntity
 import net.minecraft.world.level.levelgen.Heightmap
+import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.features.dungeons.funnymap.core.RoomData
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Room
+import net.wapic.wpcmod.util.ChatUtils
+import net.wapic.wpcmod.util.FileManager
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.Utils.equalsOneOf
+import java.io.File
 import kotlin.math.roundToInt
 
 object ScanUtils {
 
 	var roomList: Set<RoomData> = setOf()
+	val roomsFile = File(WpcMod.configDir, "rooms-new.json")
+	val backupFile = File(roomsFile.parentFile, "${roomsFile.name}.bak")
+	val gson: Gson = GsonBuilder().setPrettyPrinting().create()
 
 	init {
 		try {
-			roomList = Gson().fromJson(
-				MC.resourceManager.getResourceOrThrow(Identifier.fromNamespaceAndPath("wpcmod", "rooms.json"))
+			roomList = gson.fromJson(
+				MC.resourceManager.getResourceOrThrow(Identifier.fromNamespaceAndPath("wpcmod", "dungeon/rooms.json"))
 				.open().bufferedReader(),
 				object : TypeToken<Set<RoomData>>() {}.type)
 		} catch (e: JsonSyntaxException) {
@@ -52,6 +62,10 @@ object ScanUtils {
 		return getRoomData(getCore(x, z))
 	}
 
+	fun getRoomDataFromName(roomName: String): RoomData? {
+		return roomList.find { it.name.equals(roomName, true) }
+	}
+
 	fun getRoomData(hash: Int): RoomData? {
 		return roomList.find { hash in it.cores }
 	}
@@ -69,6 +83,39 @@ object ScanUtils {
 		return room as? Room
 	}
 
+	fun addCore(roomName: String) {
+		val data = getRoomDataFromName(roomName)
+		if (data != null) {
+			val pos = MC.cameraPos ?: return
+			val roomCentre = getRoomCentre(pos.x.toInt(), pos.z.toInt())
+			val newCore = getCore(roomCentre.first, roomCentre.second)
+			WpcMod.LOGGER.debug("Adding {} to room {}", newCore, data)
+
+			val newCores = data.cores + newCore
+			if (newCore in data.cores) return WpcMod.LOGGER.warn("Core already exists in room ${data.name}")
+
+			roomList = roomList.map { roomData ->
+				return@map if (roomData.name == data.name) RoomData(
+					data.name,
+					data.type,
+					newCores,
+					data.crypts,
+					data.secrets,
+					data.trappedChests
+				) else roomData
+			}.toSet()
+
+			ChatUtils.sendMessage("Added core: $newCore to \"$roomName\"", Style.EMPTY.withColor(ChatFormatting.GREEN))
+		} else {
+			ChatUtils.sendMessage("Unable to find room from \"$roomName\"", Style.EMPTY.withColor(ChatFormatting.RED))
+		}
+	}
+
+	fun saveRoomList() {
+		val json = gson.toJson(roomList, object : TypeToken<Set<RoomData>>() {}.type)
+		FileManager.saveFile(json, roomsFile, backupFile)
+	}
+
 	fun getCore(x: Int, z: Int): Int {
 		val sb = StringBuilder(150)
 		val chunk = MC.level?.getChunk(x shr 4, z shr 4) ?: return 0
@@ -77,7 +124,7 @@ object ScanUtils {
 		var bedrock = 0
 		for (y in height downTo 12) {
 			val block = chunk.getBlockState(BlockPos(x, y, z)).block
-			val rawId = Item.getId(block.asItem())
+			val rawId = BuiltInRegistries.BLOCK.getKey(block).toLanguageKey().hashCode()
 
 			if (block == Blocks.AIR && bedrock >= 2 && y < 69) {
 				sb.append(CharArray(y - 11) { '0' })
@@ -88,18 +135,7 @@ object ScanUtils {
 				bedrock++
 			} else {
 				bedrock = 0
-				if (block.equalsOneOf(
-						Blocks.OAK_PLANKS,
-						Blocks.SPRUCE_PLANKS,
-						Blocks.BIRCH_PLANKS,
-						Blocks.JUNGLE_PLANKS,
-						Blocks.ACACIA_PLANKS,
-						Blocks.DARK_OAK_PLANKS,
-						Blocks.CHEST,
-						Blocks.TRAPPED_CHEST,
-						Blocks.LEVER,
-					)
-				) {
+				if (block.equalsOneOf(Blocks.CHEST, Blocks.TRAPPED_CHEST, Blocks.LEVER)) {
 					continue
 				}
 			}
