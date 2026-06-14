@@ -79,14 +79,15 @@ open class TermSimGUI(
 		if (!doesAcceptClick || slot.container != inv || slot.item.item == Items.BLACK_STAINED_GLASS_PANE) return@launch
         doesAcceptClick = false
 
-		delay((ping).coerceAtLeast(0))
+		delay(timeMillis = (ping).coerceAtLeast(0))
 		if (MC.screen != this@TermSimGUI) return@launch
 		doesAcceptClick = true
 		slotClick(slot, button)
     }
 
 	override fun slotClicked(slot: Slot, slotId: Int, mouseButton: Int, type: ContainerInput) {
-		delaySlotClick(slot, mouseButton)
+		//Slot can be null but is marked as non-nullable in AbstractContainerScreen class
+		if (slot != null) delaySlotClick(slot, mouseButton)
 	}
 
     protected fun createNewGui(block: (Slot) -> ItemStack) {

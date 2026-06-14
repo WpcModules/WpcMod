@@ -57,9 +57,4 @@ public abstract class AbstractContainerScreenMixin {
 	private void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo ci) {
 		GuiEvents.RENDER.invoker().onRender((Screen) (Object) this, graphics, mouseX, mouseY, a, ci);
 	}
-
-	@Inject(method = "extractContents", at = @At("HEAD"), cancellable = true)
-	private void renderBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo ci) {
-		GuiEvents.DRAW_BACKGROUND.invoker().onDrawBackground((Screen) (Object) this, graphics, ci);
-	}
 }

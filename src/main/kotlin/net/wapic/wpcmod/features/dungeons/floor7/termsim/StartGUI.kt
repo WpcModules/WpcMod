@@ -1,10 +1,11 @@
 package net.wapic.wpcmod.features.dungeons.floor7.termsim
 
 import net.minecraft.core.component.DataComponents
+import net.minecraft.network.chat.Component
+import net.minecraft.world.entity.player.Inventory
+import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
-import net.minecraft.world.inventory.Slot
-import net.minecraft.network.chat.Component
 import net.wapic.wpcmod.features.dungeons.floor7.TerminalSimulator.openRandomTerminal
 
 object StartGUI : TermSimGUI("Terminal Simulator", 27) {
@@ -30,6 +31,8 @@ object StartGUI : TermSimGUI("Terminal Simulator", 27) {
     }
 
     override fun slotClick(slot: Slot, button: Int) {
+        if (slot.container is Inventory) return
+
         when (slot.containerSlot) {
             10 -> PanesSim.open(ping)
             11 -> RubixSim.open(ping)

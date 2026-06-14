@@ -89,6 +89,7 @@ object GuiEvents {
 		)
 	}
 
+	// Gets triggered in ContainerScreen "extractBackground" so any other type of screen won't trigger this
 	@JvmField
 	val DRAW_BACKGROUND: Event<DrawBackground> = EventFactory.createArrayBacked(DrawBackground::class.java) { listeners ->
 		DrawBackground { screen, context, callbackInfo ->

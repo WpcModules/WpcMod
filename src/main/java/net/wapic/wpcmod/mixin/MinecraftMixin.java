@@ -21,17 +21,17 @@ public abstract class MinecraftMixin {
 	@Nullable
 	public HitResult hitResult;
 
-	@Inject(method = "updateLevelInEngines", at = @At("HEAD"))
-	private void world_change_before(ClientLevel world, CallbackInfo ci) {
-		if (world != null) {
-			WorldChangeEvent.BEFORE.invoker().onWorldChange(world);
+	@Inject(method = "updateLevelInEngines(Lnet/minecraft/client/multiplayer/ClientLevel;Z)V", at = @At("HEAD"))
+	private void world_change_before(ClientLevel level, boolean stopSound, CallbackInfo ci) {
+		if (level != null) {
+			WorldChangeEvent.BEFORE.invoker().onWorldChange(level);
 		}
 	}
 
-	@Inject(method = "updateLevelInEngines", at = @At("TAIL"))
-	private void world_change_after(ClientLevel world, CallbackInfo ci) {
-		if (world != null) {
-			WorldChangeEvent.AFTER.invoker().onWorldChange(world);
+	@Inject(method = "updateLevelInEngines(Lnet/minecraft/client/multiplayer/ClientLevel;Z)V", at = @At("TAIL"))
+	private void world_change_after(ClientLevel level, boolean stopSound, CallbackInfo ci) {
+		if (level != null) {
+			WorldChangeEvent.AFTER.invoker().onWorldChange(level);
 		}
 	}
 

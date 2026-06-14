@@ -19,6 +19,7 @@
     "ClientLevelMixin",
     "ClientPacketListenerMixin",
     "ConnectionMixin",
+    "ContainerScreenMixin",
     "DefaultTooltipPositionerMixin",
     "DimensionTypeMixin",
     "EntityMixin",

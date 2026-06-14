@@ -113,8 +113,8 @@ object TerminalSolver {
 		deltaTicks: Float,
 		callbackInfo: CallbackInfo
 	) {
-		if (!config.enabled || currentTerm == null) return
-		callbackInfo.cancel()
+		if (!config.enabled) return
+		currentTerm?.let { callbackInfo.cancel() }
 	}
 
 	fun onDrawBackground(screen: Screen, gui: GuiGraphicsExtractor, callbackInfo: CallbackInfo) {

@@ -42,10 +42,6 @@ public abstract class LevelRendererMixin {
 
 	@Shadow
 	@Final
-	private LevelRenderState levelRenderState;
-
-	@Shadow
-	@Final
 	private LevelTargetBundle targets;
 
 	@Shadow
