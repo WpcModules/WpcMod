@@ -3,6 +3,8 @@ package net.wapic.wpcmod.util
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.hypixel.modapi.HypixelModAPI
 import net.hypixel.modapi.packet.impl.clientbound.event.ClientboundLocationPacket
+import net.minecraft.ChatFormatting
+import net.minecraft.network.chat.Style
 import net.minecraft.resources.Identifier
 import net.minecraft.util.Util
 import net.minecraft.world.level.ChunkPos
@@ -35,6 +37,7 @@ object Utils {
 
 	fun copyToClipboard(string: String) {
 		MC.keyboard.clipboard = string
+		ChatUtils.sendMessage("Copied \"${string.take(20)}\" to clipboard", Style.EMPTY.withColor(ChatFormatting.GREEN))
 	}
 
 	fun addToCommandQueue(command: String) {
