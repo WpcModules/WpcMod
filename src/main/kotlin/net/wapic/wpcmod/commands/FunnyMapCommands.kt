@@ -13,6 +13,7 @@ import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.DungeonScan
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.ScanUtils
 import net.wapic.wpcmod.util.ChatUtils
+import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils
 
@@ -41,6 +42,13 @@ object FunnyMapCommands : Command("dungeon") {
 
 	val addCoreFromRoomName: RequiredArgumentBuilder<FabricClientCommandSource, String> =
 		argument("roomName", StringArgumentType.string()).executes {
+			if (Utils.getLocation() != Island.DUNGEON) {
+				ChatUtils.sendMessage(
+					"You must be in a dungeon to add a core.",
+					Style.EMPTY.withColor(ChatFormatting.RED)
+				)
+				return@executes 1
+			}
 			val roomName = StringArgumentType.getString(it, "roomName")
 			val data = ScanUtils.addCore(roomName)
 			return@executes 0
