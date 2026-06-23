@@ -205,4 +205,18 @@ class Floor7Config {
 		@ConfigEditorColour
 		val color: ChromaColour = ChromaColour(1f, 1f, 1f, 0, 255)
 	}
+
+	@Accordion
+	@ConfigOption(name = "Auto Debuff", desc = "")
+	var debuff: AutoDebuffConfig = AutoDebuffConfig()
+
+	class AutoDebuffConfig {
+		@ConfigOption(name = "Enable Auto Debuff", desc = "Automatically releases Last Breath at the correct height")
+		@ConfigEditorBoolean
+		var enabled: Boolean = false
+
+		@ConfigOption(name = "Debuff Height", desc = "How many ticks to wait before releasing")
+		@ConfigEditorSlider(minValue = 5f, maxValue = 15f, minStep = 1f)
+		var releaseTick: Float = 11f
+	}
 }
