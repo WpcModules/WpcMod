@@ -3,14 +3,16 @@ package net.wapic.wpcmod.util
 import com.mojang.authlib.properties.Property
 import net.minecraft.core.component.DataComponents
 import net.minecraft.network.chat.Component
+import net.minecraft.world.item.ItemInstance
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.component.ItemLore
 import kotlin.jvm.optionals.getOrNull
 
 object ItemUtils {
 
-	val ItemStack.headTexture: String
-		get() = get(DataComponents.PROFILE)?.partialProfile()?.properties?.get("textures")?.map(Property::value)?.firstOrNull() ?: ""
+	val ItemInstance.headTexture: String
+		get() = get(DataComponents.PROFILE)?.partialProfile()?.properties?.get("textures")
+			?.firstNotNullOfOrNull(Property::value) ?: ""
 
 	val ItemStack.lore: List<Component> get() = getOrDefault(DataComponents.LORE, ItemLore.EMPTY).lines
 

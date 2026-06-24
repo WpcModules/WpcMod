@@ -23,4 +23,10 @@ class ESPConfig {
 	var trapperAnimals = TrapperConfig()
 
 	class TrapperConfig : GlowableESPConfig()
+
+	@Accordion
+	@ConfigOption(name = "Fairy Soul", desc = "Fairy Soul ESP")
+	var fairySoul = FairySoulConfig()
+
+	class FairySoulConfig : GlowableESPConfig()
 }

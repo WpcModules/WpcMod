@@ -28,10 +28,7 @@ import net.wapic.wpcmod.features.dungeons.*
 import net.wapic.wpcmod.features.dungeons.floor7.*
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
 import net.wapic.wpcmod.features.end.EndESP
-import net.wapic.wpcmod.features.entity.EspCache
-import net.wapic.wpcmod.features.entity.RatESP
-import net.wapic.wpcmod.features.entity.TagESP
-import net.wapic.wpcmod.features.entity.TrapperESP
+import net.wapic.wpcmod.features.entity.*
 import net.wapic.wpcmod.features.events.diana.AutoAnswerSphinx
 import net.wapic.wpcmod.features.fishing.AutoFish
 import net.wapic.wpcmod.features.galatea.GalateaESP
@@ -149,6 +146,7 @@ object WpcMod : ModInitializer {
 		RatESP.init()
 		TagESP.init()
 		TrapperESP.init()
+		FairySoulESP.init()
 
 		//Experiments
 		AutoExperiments.init()
