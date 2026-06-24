@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey
 import net.minecraft.client.Minecraft
 import net.minecraft.util.profiling.Profiler
+import net.minecraft.world.entity.Display
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.decoration.ArmorStand
 import net.wapic.wpcmod.config.components.GlowableESPConfig
@@ -40,8 +41,8 @@ object EspCache {
 
 		for ((entity, config) in CACHE) {
 			val pos = if (entity is ArmorStand) entity.getEyePosition(tickDelta) else entity.getRenderPos(tickDelta)
-			val width = if (entity is ArmorStand) 0.8f else entity.bbWidth
-			val height = if (entity is ArmorStand) 0.8f else entity.bbHeight
+			val width = if (entity is ArmorStand || entity is Display.ItemDisplay) 0.8f else entity.bbWidth
+			val height = if (entity is ArmorStand || entity is Display.ItemDisplay) 0.8f else entity.bbHeight
 			if (config.box) worldRenderContext.drawBoundingBox(pos, width, height, config.color)
 			if (config.tracer) worldRenderContext.drawTracer(pos, config.color, config.tracerWidth)
 		}
