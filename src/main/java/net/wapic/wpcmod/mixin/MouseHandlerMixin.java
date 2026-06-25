@@ -29,21 +29,21 @@ public class MouseHandlerMixin {
 	private ScrollWheelHandler scrollWheelHandler;
 
 	@Inject(at = @At("TAIL"), method = "onButton")
-	private void onMouseButton(long window, MouseButtonInfo input, int action, CallbackInfo ci) {
+	private void onMouseButton(long handle, MouseButtonInfo rawButtonInfo, int action, CallbackInfo ci) {
 		if (this.minecraft != null && this.minecraft.screen == null && this.minecraft.getOverlay() == null) {
 			boolean bl = action == 1;
-			Shortcut.Companion.setKeyPressed(InputConstants.Type.MOUSE.getOrCreate(input.button()), bl);
+			Shortcut.Companion.setKeyPressed(InputConstants.Type.MOUSE.getOrCreate(rawButtonInfo.button()), bl);
 			if (bl) {
-				Shortcut.Companion.onKeyPressed(InputConstants.Type.MOUSE.getOrCreate(input.button()));
+				Shortcut.Companion.onKeyPressed(InputConstants.Type.MOUSE.getOrCreate(rawButtonInfo.button()));
 			}
 		}
 	}
 
 	@Inject(at = @At("HEAD"), method = "onScroll", cancellable = true)
-	private void modifyFreecamFlyingSpeed(long windowPointer, double xOffset, double yOffset, CallbackInfo ci) {
+	private void modifyFreecamFlyingSpeed(long handle, double xoffset, double yoffset, CallbackInfo ci) {
 		if (Freecam.Companion.isEnabled() && Freecam.Companion.getCamera() != null) {
 			double mouseWheelSensitivity = this.minecraft.options.mouseWheelSensitivity().get();
-			Vector2i vector2i = this.scrollWheelHandler.onMouseScroll(xOffset * mouseWheelSensitivity, yOffset * mouseWheelSensitivity);
+			Vector2i vector2i = this.scrollWheelHandler.onMouseScroll(xoffset * mouseWheelSensitivity, yoffset * mouseWheelSensitivity);
 
 			if (vector2i.x == 0 && vector2i.y == 0) return;
 

@@ -13,12 +13,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class ConnectionMixin {
 
 	@Inject(method = "sendPacket", at = @At("HEAD"), cancellable = true)
-	private void onPacketSend(Packet<?> packet, ChannelFutureListener channelFutureListener, boolean flush, CallbackInfo ci) {
+	private void onPacketSend(Packet<?> packet, ChannelFutureListener listener, boolean flush, CallbackInfo ci) {
 		PacketEvents.SEND_BEFORE.invoker().onPacketSendBefore(packet, ci);
 	}
 
 	@Inject(method = "sendPacket", at = @At("TAIL"), cancellable = true)
-	private void onPacketSendAfter(Packet<?> packet, ChannelFutureListener channelFutureListener, boolean flush, CallbackInfo ci) {
+	private void onPacketSendAfter(Packet<?> packet, ChannelFutureListener listener, boolean flush, CallbackInfo ci) {
 		PacketEvents.SEND_AFTER.invoker().onPacketSendAfter(packet, ci);
 	}
 }

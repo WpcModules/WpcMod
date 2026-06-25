@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class FogRendererMixin {
 
 	@Inject(at = @At("HEAD"), method = "setupFog", cancellable = true)
-	private static void applyFog(Camera camera, int renderDistance, DeltaTracker deltaTracker, float darkenWorldAmount, ClientLevel level, CallbackInfoReturnable<Vector4f> cir) {
+	private static void applyFog(Camera camera, int renderDistanceInChunks, DeltaTracker deltaTracker, float darkenWorldAmount, ClientLevel level, CallbackInfoReturnable<Vector4f> cir) {
 		Minecraft client = Minecraft.getInstance();
 		if (client.player != null) {
 			boolean isBlind = client.player.hasEffect(MobEffects.BLINDNESS);

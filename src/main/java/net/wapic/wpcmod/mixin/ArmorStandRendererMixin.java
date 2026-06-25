@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(ArmorStandRenderer.class)
 public class ArmorStandRendererMixin {
 	@ModifyExpressionValue(method = "extractRenderState(Lnet/minecraft/world/entity/decoration/ArmorStand;Lnet/minecraft/client/renderer/entity/state/ArmorStandRenderState;F)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/decoration/ArmorStand;isMarker()Z"))
-	private boolean glowOnlyVisibleParts(boolean isMarker, @Local(argsOnly = true) ArmorStandRenderState renderState) {
-		return renderState.getDataOrDefault(EspCache.ENTITY_HAS_CUSTOM_GLOW, isMarker);
+	private boolean glowOnlyVisibleParts(boolean isMarker, @Local(argsOnly = true) ArmorStandRenderState state) {
+		return state.getDataOrDefault(EspCache.ENTITY_HAS_CUSTOM_GLOW, isMarker);
 	}
 }

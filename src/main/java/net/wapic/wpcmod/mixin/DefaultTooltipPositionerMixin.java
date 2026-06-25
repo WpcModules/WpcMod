@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class DefaultTooltipPositionerMixin {
 
 	@Inject(method = "positionTooltip(IILorg/joml/Vector2i;II)V", at = @At(value = "HEAD"), cancellable = true)
-	public void getPosition(int screenWidth, int screenHeight, Vector2i pos, int width, int height, CallbackInfo ci) {
-		TooltipEvents.POSITION.invoker().onPositionTooltip(screenWidth, screenHeight, pos, width, height, ci);
+	public void getPosition(int screenWidth, int screenHeight, Vector2i result, int tooltipWidth, int tooltipHeight, CallbackInfo ci) {
+		TooltipEvents.POSITION.invoker().onPositionTooltip(screenWidth, screenHeight, result, tooltipWidth, tooltipHeight, ci);
 	}
 }
