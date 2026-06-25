@@ -1,5 +1,6 @@
 package net.wapic.wpcmod.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Share;
@@ -16,16 +17,18 @@ import net.wapic.wpcmod.features.chat.CompactChat;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.*;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Map;
 
-@Mixin(value = ChatComponent.class)
+@Mixin(value = ChatComponent.class, priority = Integer.MAX_VALUE)
 public abstract class ChatComponentMixin {
 	private final @Unique ThreadLocal<CompactChat.@Nullable Message> CURRENT = new ThreadLocal<>();
 
-	@ModifyConstant(method = {"addMessageToQueue", "addMessageToDisplayQueue"}, constant = @Constant(intValue = 100), require = 0)
+	@ModifyExpressionValue(method = {"addMessageToQueue", "addMessageToDisplayQueue"}, at = @At(value = "CONSTANT", args = "intValue=100"))
 	private int modifyMaxChatSize(int value) {
 		return WpcMod.config.getChat().getLongerChatHistory() ? 10000 : value;
 	}

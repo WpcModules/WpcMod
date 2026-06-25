@@ -6,7 +6,7 @@ class ChatConfig {
 
 	@ConfigOption(
 		name = "Longer Chat History",
-		desc = "Set the chat history limit higher than you'll ever scroll\n§cDoes nothing if devonian is installed"
+		desc = "Set the chat history limit higher than you'll ever scroll"
 	)
 	@ConfigEditorBoolean
 	var longerChatHistory: Boolean = false
