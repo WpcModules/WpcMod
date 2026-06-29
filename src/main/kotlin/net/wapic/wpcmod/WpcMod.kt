@@ -172,6 +172,7 @@ object WpcMod : ModInitializer {
 		EasySuperboom.init()
 		LividSolver.init()
 		AutoDebuff.init()
+		AutoShowExtraStats.init()
 
 		// Kuudra
 		KuudraESP.init()

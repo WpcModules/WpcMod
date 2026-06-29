@@ -29,6 +29,13 @@ class DungeonConfig {
 	@ConfigEditorBoolean
 	var easySuperboom: Boolean = false
 
+	@ConfigOption(
+		name = "Auto Show Extra Stats",
+		desc = "Automatically run /showextrastats at the end of a run"
+	)
+	@ConfigEditorBoolean
+	var autoShowExtraStats: Boolean = false
+
 	@Accordion
 	@ConfigOption(name = "Livid Solver", desc = "")
 	var lividSolver: LividSolverConfig = LividSolverConfig()
