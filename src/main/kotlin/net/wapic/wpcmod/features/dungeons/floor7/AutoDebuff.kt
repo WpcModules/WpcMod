@@ -34,7 +34,6 @@ object AutoDebuff {
 	}
 
 	fun onUseItem(player: Player, level: Level, hand: InteractionHand): InteractionResult {
-		WpcMod.LOGGER.debug("{}, {}", isEnabled, player.mainHandItem.skyblockId)
 		if (isEnabled && player.mainHandItem.skyblockId in validItems) {
 			tick = 0
 		}
