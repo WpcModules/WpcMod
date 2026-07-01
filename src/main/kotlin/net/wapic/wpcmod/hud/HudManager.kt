@@ -70,7 +70,7 @@ object HudManager {
 		val loadedElements = FileManager.loadFile<Array<SimpleHudElement>>(file, backupFile)?.toList()
 
 		loadedElements?.forEach {
-			WpcMod.LOGGER.info("Loaded hud location: ${it.label}")
+			WpcMod.LOGGER.debug("Loaded hud location: ${it.label}")
 			val element = hudElements.find { element -> element.label == it.label }
 			element?.x = it.x
 			element?.y = it.y
