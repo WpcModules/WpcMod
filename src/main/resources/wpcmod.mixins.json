@@ -11,6 +11,7 @@
   "client": [
     "AbstractContainerScreenMixin",
     "ArmorStandRendererMixin",
+    "BlindnessFogEnvironmentMixin",
     "BlockBehaviourMixin",
     "ButtonBlockMixin",
     "CameraMixin",
@@ -24,7 +25,6 @@
     "DimensionTypeMixin",
     "EntityMixin",
     "EntityRendererMixin",
-    "FogRendererMixin",
     "ItemEntityMixin",
     "KeyboardHandlerMixin",
     "LevelChunkMixin",
