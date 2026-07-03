@@ -400,27 +400,30 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 		drawContext.pose().pushMatrix()
 		applyTransformations(drawContext.pose())
 
+		val mimicLine = if (mimicKilled) "§a✔" else "§c✖"
+		val princeLine = if (princeKilled) "§a✔" else "§c✖"
+
 		when (config.scoreHudType) {
 			ScoreHudType.FULL -> {
 				val lines = buildList {
-					add("§9Dungeon Status")
-					add("§f* §eDeaths: §c$deaths")
-					add("§f* §eMissing Puzzles: §c$missingPuzzles")
-					add("§f* §eFailed Puzzles: §c$failedPuzzles")
-					add("§f* §eSecrets: §a$foundSecrets§7/§a$secretsNeeded §7(§6Total: $totalSecrets§7)")
-					add("§f* §eCrypts: §a$crypts §7(§6Total: ${FunnyMap.Info.cryptCount})")
-					add("§f* §ePrince: ${if (princeKilled) "§a✔" else "§c✖"}")
-					if (isMimicFloor) add("§f* §eMimic: ${if (mimicKilled) "§a✔" else "§c✖"}")
+					add("§9Dungeon Status§r")
+					add("§f* §eDeaths: §c$deaths§r")
+					add("§f* §eMissing Puzzles: §c$missingPuzzles§r")
+					add("§f* §eFailed Puzzles: §c$failedPuzzles§r")
+					add("§f* §eSecrets: §a$foundSecrets§7/§a$secretsNeeded §7(§6Total: $totalSecrets§7)§r")
+					add("§f* §eCrypts: §a$crypts §7(§6Total: ${FunnyMap.Info.cryptCount})§r")
+					add("§f* §ePrince: $princeLine§r")
+					if (isMimicFloor) add("§f* §eMimic: $mimicLine§r")
 
 					add("")
 
-					add("§9Score")
-					add("§f* §eSkill Score: §a$skillScore")
-					add("§f* §eExplore Score: §a$exploreScore §7(§e$roomClearScore §7+ §6$secretScore§7)")
-					add("§f* §eSpeed Score: §a$speedScore")
-					add("§f* §eBonus Score: §a$bonusScore")
-					add("§f* §eTotal Score: §a$totalScore")
-					add("§f* §eRank: $rank")
+					add("§9Score§r")
+					add("§f* §eSkill Score: §a$skillScore§r")
+					add("§f* §eExplore Score: §a$exploreScore §7(§e$roomClearScore §7+ §6$secretScore§7)§r")
+					add("§f* §eSpeed Score: §a$speedScore§r")
+					add("§f* §eBonus Score: §a$bonusScore§r")
+					add("§f* §eTotal Score: §a$totalScore§r")
+					add("§f* §eRank: $rank§r")
 				}
 
 				for ((index, line) in lines.withIndex()) {
@@ -431,7 +434,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 			ScoreHudType.MINIMIZED -> {
 				drawContext.text(
 					MC.font,
-					"§7Secrets: §a$foundSecrets§7/§e$secretsNeeded §7(§c$totalSecrets§7)  Crypts: §a$crypts",
+					"§7Secrets: §a$foundSecrets§7/§e$secretsNeeded §7(§c$totalSecrets§7)  Crypts: §a$crypts  §7P:$princeLine${if (isMimicFloor) "  §7M:$mimicLine§r" else ""}",
 					2,
 					2,
 					CommonColors.WHITE,
@@ -439,7 +442,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 				)
 				drawContext.text(
 					MC.font,
-					"§7Puzzles: §a${totalPuzzles - missingPuzzles}§7/§a$totalPuzzles  §7Deaths: §c$deaths  §7Score: §a$totalScore §7($rank§7)",
+					"§7Puzzles: §a${totalPuzzles - missingPuzzles}§7/§a$totalPuzzles  §7Deaths: §c$deaths  §7Score: §a$totalScore §7($rank§7)§r",
 					2,
 					12,
 					CommonColors.WHITE,
@@ -448,7 +451,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 			}
 
 			ScoreHudType.SCORE_ONLY -> {
-				drawContext.text(MC.font, "§eScore: §a$totalScore §7($rank§7)", 2, 2, CommonColors.WHITE, true)
+				drawContext.text(MC.font, "§eScore: §a$totalScore §7($rank§7)§r", 2, 2, CommonColors.WHITE, true)
 			}
 
 			else -> {}
