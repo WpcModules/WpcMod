@@ -11,7 +11,9 @@ object ChatUtils {
 	val PREFIX: MutableComponent = Component.literal("[WpcMod]: ").setStyle(Style.EMPTY.withColor(ChatFormatting.AQUA))
 
 	fun sendMessage(message: String, style: Style = Style.EMPTY.withColor(ChatFormatting.WHITE)) {
-		MC.gui.chat.addClientSystemMessage(PREFIX.copy().append(Component.literal(message).setStyle(style)))
+		MC.runOnThread {
+			MC.gui.chat.addClientSystemMessage(PREFIX.copy().append(Component.literal(message).setStyle(style)))
+		}
 	}
 
 	fun sendAlert(

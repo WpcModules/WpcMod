@@ -119,8 +119,7 @@ object WpcMod : ModInitializer {
 		ClientPlayConnectionEvents.JOIN.register { handler, sender, client ->
 			if (!updateNotified) {
 				updateNotified = true
-				val updateFound = checkUpdate()
-				if (updateFound) sendUpdateMessage()
+				checkUpdate()
 			}
 		}
 
@@ -220,14 +219,22 @@ object WpcMod : ModInitializer {
 		SkyBlockID.init()
 	}
 
-	fun checkUpdate(): Boolean {
-		var updateFound = false
+	fun checkUpdate() {
 		updateContext.checkUpdate("upstream").thenAcceptAsync {
 			potentialUpdate = it
-			updateFound = it.isUpdateAvailable
+			if (it.isUpdateAvailable) {
+				ChatUtils.sendMessage(
+					"Update found: §e${updateContext.currentVersion.display()}§r -> §e${potentialUpdate?.update?.versionName}§r Click here to update",
+					Style.EMPTY.withHoverEvent(
+						HoverEvent.ShowText(Component.nullToEmpty("Click to update"))
+					).withClickEvent(
+						ClickEvent.RunCommand("/itistimetofuckingupdate")
+					).withColor(ChatFormatting.WHITE)
+				)
+
+				LOGGER.info("Update Found: {}, Version: {}", it.isUpdateAvailable, it.update.versionName)
+			}
 		}
-		if (!updateFound) LOGGER.info("No update available")
-		return updateFound
 	}
 
 	fun startUpdate() {
@@ -240,19 +247,8 @@ object WpcMod : ModInitializer {
 			{
 				LOGGER.info("${potentialUpdate.update.versionName} Update complete!")
 				potentialUpdate.executePreparedUpdate()
-				ChatUtils.sendMessage("Update complete!")
+				ChatUtils.sendMessage("Update complete! the updates will be applied on next restart.")
 			}, MC.instance
-		)
-	}
-
-	fun sendUpdateMessage() {
-		ChatUtils.sendMessage(
-			"Update found: §e${updateContext.currentVersion.display()}§r -> §e${potentialUpdate?.update?.versionName}§r Click here to update",
-			Style.EMPTY.withHoverEvent(
-				HoverEvent.ShowText(Component.nullToEmpty("Click to update"))
-			).withClickEvent(
-				ClickEvent.RunCommand("/itistimetofuckingupdate")
-			).withColor(ChatFormatting.WHITE)
 		)
 	}
 }
