@@ -10,7 +10,7 @@ object WpcModRenderTypes {
 		"wpcmod_lines",
 		RenderSetup.builder(WpcModRenderPipelines.LINES)
 			.bufferSize(RenderType.TRANSIENT_BUFFER_SIZE)
-			.setLayeringTransform(LayeringTransform.VIEW_OFFSET_Z_LAYERING)
+			.setLayeringTransform(LayeringTransform.NO_LAYERING)
 			.createRenderSetup()
 	)
 

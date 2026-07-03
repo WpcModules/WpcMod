@@ -197,10 +197,8 @@ class WorldRenderContext {
 		color: ChromaColour = ChromaColour.fromStaticRGB(255, 255, 255, 255),
 		lineWidth: Float = 2f
 	) {
-		draw(WpcModRenderTypes.LINES) { consumer ->
-			val shape = AABB(minX, minY, minZ, maxX, maxY, maxZ)
-			drawBoundingBox(shape, color, lineWidth)
-		}
+		val shape = AABB(minX, minY, minZ, maxX, maxY, maxZ)
+		drawBoundingBox(shape, color, lineWidth)
 	}
 
 	fun drawLine(
@@ -211,9 +209,7 @@ class WorldRenderContext {
 	) {
 		draw(WpcModRenderTypes.LINES) { consumer ->
 			val pose: PoseStack.Pose = matrixStack.last()
-
 			val normal = (secondPos - firstPos).normalize()
-
 			val color = color.getEffectiveColour()
 
 			consumer.addVertex(pose, secondPos)

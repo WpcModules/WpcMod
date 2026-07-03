@@ -63,7 +63,7 @@ object GalateaESP : EspFeature() {
 		if (!isEnabled()) return
 		if (!config.forestNode.tracer && !config.forestNode.box) return
 
-		if (ParticleTypes.HAPPY_VILLAGER.type.equals(packet.particle.type)) {
+		if (ParticleTypes.HAPPY_VILLAGER.type == packet.particle.type) {
 
 			val pos: BlockPos = BlockPos.containing(packet.x, packet.y - 1, packet.z)
 			val box = AABB.ofSize(pos.center, 1.0, 1.0, 1.0)

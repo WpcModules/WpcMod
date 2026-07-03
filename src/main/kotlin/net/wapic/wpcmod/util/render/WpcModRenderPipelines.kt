@@ -2,28 +2,26 @@ package net.wapic.wpcmod.util.render
 
 import com.mojang.blaze3d.pipeline.BlendFunction
 import com.mojang.blaze3d.pipeline.ColorTargetState
-import com.mojang.blaze3d.pipeline.DepthStencilState
 import com.mojang.blaze3d.pipeline.RenderPipeline
-import com.mojang.blaze3d.platform.CompareOp
 import com.mojang.blaze3d.vertex.VertexFormat
 import com.mojang.blaze3d.vertex.VertexFormatElement
 import net.minecraft.client.renderer.RenderPipelines
 import net.wapic.wpcmod.util.Utils.modIdentifier
+import java.util.*
 
 object WpcModRenderPipelines {
-	private val DepthTestFunction = DepthStencilState(CompareOp.LESS_THAN_OR_EQUAL, false, 0f, 0f)
 
 	val LINES: RenderPipeline = RenderPipelines.register(
 		RenderPipeline.builder(RenderPipelines.LINES_SNIPPET)
 			.withLocation(modIdentifier("pipeline/wpcmod_lines"))
-			.withDepthStencilState(DepthStencilState.DEFAULT)
+			.withDepthStencilState(Optional.empty())
 			.build()
 	)
 
 	val FILLED_BOX: RenderPipeline = RenderPipelines.register(
 		RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
 			.withLocation(modIdentifier("pipeline/wpcmod_filled_box"))
-			.withDepthStencilState(DepthTestFunction)
+			.withDepthStencilState(Optional.empty())
 			.build()
 	)
 
