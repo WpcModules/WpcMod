@@ -7,10 +7,7 @@ import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.block.ButtonBlock
-import net.minecraft.world.level.block.ChestBlock
-import net.minecraft.world.level.block.LeverBlock
-import net.minecraft.world.level.block.PlayerHeadBlock
+import net.minecraft.world.level.block.*
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.dungeon.DungeonConfig.InteractableBlocks
 import net.wapic.wpcmod.util.DungeonUtils
@@ -20,6 +17,7 @@ object DungeonBreaker {
 
 	private val config get() = WpcMod.config.dungeon.dungeonbreaker
 	private const val DUNGEON_BREAKER_ID = "DUNGEONBREAKER"
+	private val blacklistedBlocks = listOf(Blocks.BEDROCK, Blocks.END_PORTAL_FRAME)
 
 	fun init() {
 		AttackBlockCallback.EVENT.register(::onAttackBlock)
@@ -27,15 +25,15 @@ object DungeonBreaker {
 
 	private fun onAttackBlock(
 		player: Player,
-		world: Level,
+		level: Level,
 		hand: InteractionHand,
 		pos: BlockPos,
 		direction: Direction
 	): InteractionResult {
-		if (!DungeonUtils.inDungeons || !config.enabled) return InteractionResult.PASS
+		if (!DungeonUtils.inDungeons) return InteractionResult.PASS
 		if (player.mainHandItem.skyblockId != DUNGEON_BREAKER_ID) return InteractionResult.PASS
 
-		val block = world.getBlockState(pos).block
+		val block = level.getBlockState(pos).block
 		val isPreventedBlock = when (block) {
 			is ChestBlock -> InteractableBlocks.CHEST in config.preventedDungeonbreakerBlocks
 			is ButtonBlock -> InteractableBlocks.BUTTON in config.preventedDungeonbreakerBlocks
@@ -44,7 +42,11 @@ object DungeonBreaker {
 			else -> false
 		}
 
-		if (isPreventedBlock) {
+		if (config.zeroPingDB && !isPreventedBlock && block !in blacklistedBlocks) {
+			level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3)
+		}
+
+		if (isPreventedBlock && config.preventBreakingSecrets) {
 			return InteractionResult.FAIL
 		}
 

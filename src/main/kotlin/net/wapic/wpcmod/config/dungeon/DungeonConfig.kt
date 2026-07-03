@@ -53,14 +53,21 @@ class DungeonConfig {
 
 	class DungeonbreakerConfig {
 		@ConfigOption(
-			name = "Enable Prevent Breaking Blocks",
+			name = "Zero Ping Dungeon Breaker",
+			desc = "Sets the block you're breaking to AIR to remove the delay"
+		)
+		@ConfigEditorBoolean
+		var zeroPingDB = false
+
+		@ConfigOption(
+			name = "Prevent Breaking Secrets",
 			desc = "Prevents blocks in the list below from being broken with Dungeonbreaker"
 		)
 		@ConfigEditorBoolean
-		var enabled = false
+		var preventBreakingSecrets = false
 
 		@ConfigOption(
-			name = "Prevent Breaking Blocks",
+			name = "Prevented Secrets",
 			desc = "Prevent breaking the selected blocks with Dungeonbreaker"
 		)
 		@ConfigEditorDraggableList
