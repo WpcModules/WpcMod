@@ -48,7 +48,7 @@ object GalateaESP : EspFeature() {
 	}
 
 	private fun stringCount(entity: Display.ItemDisplay): Boolean {
-		return !entity.itemStack.isEmpty && entity.itemStack.item.equals(Items.STRING)
+		return !entity.itemStack.isEmpty && entity.itemStack.item == Items.STRING
 	}
 
 	private fun onBlockInteract(pos: BlockPos): InteractionResult {

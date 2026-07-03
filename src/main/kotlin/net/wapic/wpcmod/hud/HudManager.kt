@@ -24,6 +24,7 @@ object HudManager {
 	private val file = File(WpcMod.configDir, "hud-locations.json")
 	private val backupFile = File(file.parentFile, "${file.name}.bak")
 	private val gson: Gson = GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().create()
+	private val config get() = WpcMod.config
 
 	private val hudKeyBind: KeyMapping = KeyMappingHelper.registerKeyMapping(
 		KeyMapping(
@@ -55,6 +56,7 @@ object HudManager {
 	}
 
 	fun openEditor() {
+		config.dungeon.scoreCalculation.scoreHudType.notifyObservers()
 		MC.instance.schedule { MC.screen = HudEditor(hudElements) }
 	}
 

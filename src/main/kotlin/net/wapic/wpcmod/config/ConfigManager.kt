@@ -6,6 +6,7 @@ import io.github.notenoughupdates.moulconfig.ChromaColour
 import io.github.notenoughupdates.moulconfig.LegacyStringChromaColourTypeAdapter
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorSlider
 import io.github.notenoughupdates.moulconfig.gui.MoulConfigEditor
+import io.github.notenoughupdates.moulconfig.observer.PropertyTypeAdapterFactory
 import io.github.notenoughupdates.moulconfig.processor.BuiltinMoulConfigGuis
 import io.github.notenoughupdates.moulconfig.processor.ConfigProcessorDriver
 import io.github.notenoughupdates.moulconfig.processor.MoulConfigProcessor
@@ -24,7 +25,9 @@ object ConfigManager {
 	private var editor: MoulConfigEditor<WpcConfig>? = null
 	private lateinit var processor: MoulConfigProcessor<WpcConfig>
 	private val gson: Gson = GsonBuilder().setPrettyPrinting()
-		.registerTypeAdapter(ChromaColour::class.java, LegacyStringChromaColourTypeAdapter(true).nullSafe()).create()
+		.registerTypeAdapter(ChromaColour::class.java, LegacyStringChromaColourTypeAdapter(true).nullSafe())
+		.registerTypeAdapterFactory(PropertyTypeAdapterFactory())
+		.create()
 
 	fun firstLoad() {
 		setConfigHolder(firstLoadFile(WpcConfig::class.java.getDeclaredConstructor().newInstance()))

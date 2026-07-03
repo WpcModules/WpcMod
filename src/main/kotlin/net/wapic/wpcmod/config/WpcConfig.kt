@@ -35,12 +35,7 @@ class WpcConfig : Config() {
 			"https://github.com/WpcModules/WpcMod"
 		)
 
-		val gitea = Social.forLink(
-			StructuredText.of("WpcMod Gitea Page"),
-			MyResourceLocation.parse("wpcmod:gitea-logo.png"),
-			"https://git.wapic.net/wapic/WpcMod"
-		)
-		return listOf(gitea, github)
+		return listOf(github)
 	}
 
 	override fun saveNow() {

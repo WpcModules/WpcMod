@@ -3,6 +3,7 @@ package net.wapic.wpcmod.config.dungeon
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorBoolean
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorDropdown
 import io.github.notenoughupdates.moulconfig.annotations.ConfigOption
+import io.github.notenoughupdates.moulconfig.observer.Property
 
 class ScoreCalculationConfig {
 
@@ -12,7 +13,7 @@ class ScoreCalculationConfig {
 
 	@ConfigOption(name = "Score Hud", desc = "Show dungeon score in a HUD element")
 	@ConfigEditorDropdown
-	var scoreHudType: ScoreHudType = ScoreHudType.FULL
+	var scoreHudType: Property<ScoreHudType> = Property.of(ScoreHudType.FULL)
 
 	@ConfigOption(name = "Hide in Boss", desc = "Hide HUD element in boss")
 	@ConfigEditorBoolean

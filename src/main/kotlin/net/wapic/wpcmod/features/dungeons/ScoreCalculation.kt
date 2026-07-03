@@ -33,7 +33,7 @@ import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.roundToInt
 
-object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
+object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 162) {
 
 	private val config get() = WpcMod.config.dungeon.scoreCalculation
 	override val isEnabled: Boolean get() = config.enabled
@@ -181,6 +181,9 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 		ClientTickEvents.START_CLIENT_TICK.register(::onTick)
 		DungeonEvents.START.register { isPaul = APIUtils.hasBonusPaulScore() }
 		WorldChangeEvent.BEFORE.register { onWorldChange() }
+
+		config.scoreHudType.addObserver(::onUpdateHudType)
+		config.scoreHudType.notifyObservers()
 	}
 
 	private fun Boolean.ifTrue(num: Int) = if (this) num else 0
@@ -197,6 +200,12 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 		}
 
 		return 0
+	}
+
+	private fun onUpdateHudType(oldType: ScoreHudType, newType: ScoreHudType) = when (newType) {
+		ScoreHudType.MINIMIZED -> this.setDimensions(200, 24)
+		ScoreHudType.SCORE_ONLY -> this.setDimensions(74, 12)
+		else -> this.setDimensions(140, 162)
 	}
 
 	private fun sendScoreMessage(score: Int, messageType: ScoreMessageType) {
@@ -395,7 +404,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 	}
 
 	override fun render(drawContext: GuiGraphicsExtractor, deltaTicks: Float) {
-		if (!isActive || config.scoreHudType == ScoreHudType.DISABLED) return
+		if (!isActive || config.scoreHudType.get() == ScoreHudType.DISABLED) return
 		if (DungeonUtils.bossSpawned && config.hideInBoss) return
 		drawContext.pose().pushMatrix()
 		applyTransformations(drawContext.pose())
@@ -403,7 +412,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 		val mimicLine = if (mimicKilled) "§a✔" else "§c✖"
 		val princeLine = if (princeKilled) "§a✔" else "§c✖"
 
-		when (config.scoreHudType) {
+		when (config.scoreHudType.get()) {
 			ScoreHudType.FULL -> {
 				val lines = buildList {
 					add("§9Dungeon Status§r")

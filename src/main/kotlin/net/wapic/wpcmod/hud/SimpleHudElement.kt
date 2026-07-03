@@ -35,6 +35,11 @@ open class SimpleHudElement(
 
 	open fun render(drawContext: GuiGraphicsExtractor, deltaTicks: Float) {}
 
+	fun setDimensions(width: Int, height: Int) {
+		this.width = width
+		this.height = height
+	}
+
 	fun getLabel(): Component {
 		return Component.nullToEmpty(label)
 	}
