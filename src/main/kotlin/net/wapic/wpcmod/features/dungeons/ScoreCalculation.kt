@@ -183,7 +183,6 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 162) {
 		WorldChangeEvent.BEFORE.register { onWorldChange() }
 
 		config.scoreHudType.addObserver(::onUpdateHudType)
-		config.scoreHudType.notifyObservers()
 	}
 
 	private fun Boolean.ifTrue(num: Int) = if (this) num else 0
