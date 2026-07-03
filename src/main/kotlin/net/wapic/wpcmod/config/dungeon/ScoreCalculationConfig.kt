@@ -14,6 +14,10 @@ class ScoreCalculationConfig {
 	@ConfigEditorDropdown
 	var scoreHudType: ScoreHudType = ScoreHudType.FULL
 
+	@ConfigOption(name = "Hide in Boss", desc = "Hide HUD element in boss")
+	@ConfigEditorBoolean
+	var hideInBoss: Boolean = false
+
 	@ConfigOption(name = "Mimic Message", desc = "Alert in chat when Mimic has been killed")
 	@ConfigEditorBoolean
 	var mimicMessage: Boolean = false

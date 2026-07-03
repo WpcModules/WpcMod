@@ -396,6 +396,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 160) {
 
 	override fun render(drawContext: GuiGraphicsExtractor, deltaTicks: Float) {
 		if (!isActive || config.scoreHudType == ScoreHudType.DISABLED) return
+		if (DungeonUtils.bossSpawned && config.hideInBoss) return
 		drawContext.pose().pushMatrix()
 		applyTransformations(drawContext.pose())
 
