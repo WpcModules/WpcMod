@@ -57,7 +57,6 @@ import net.wapic.wpcmod.util.Utils.modIdentifier
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
-import java.util.concurrent.CompletableFuture
 import kotlin.coroutines.EmptyCoroutineContext
 
 object WpcMod : ModInitializer {
@@ -238,17 +237,14 @@ object WpcMod : ModInitializer {
 	}
 
 	fun startUpdate() {
-		val potentialUpdate = potentialUpdate ?: return ChatUtils.sendMessage("No updates available.")
-		CompletableFuture.supplyAsync {
-			LOGGER.info("Starting update...")
-			ChatUtils.sendMessage("Starting update...")
-			potentialUpdate.prepareUpdate()
-		}.thenAcceptAsync(
-			{
-				LOGGER.info("${potentialUpdate.update.versionName} Update complete!")
-				potentialUpdate.executePreparedUpdate()
-				ChatUtils.sendMessage("Update complete! the updates will be applied on next restart.")
-			}, MC.instance
-		)
+		val potentialUpdate = potentialUpdate ?: return ChatUtils.sendMessage("No updates found!")
+
+		LOGGER.info("Starting update...")
+		ChatUtils.sendMessage("Starting update...")
+
+		potentialUpdate.launchUpdate().whenComplete { void, throwable ->
+			LOGGER.info("${potentialUpdate.update.versionName} Update complete!")
+			ChatUtils.sendMessage("Update complete! the updates will be applied on next restart.")
+		}
 	}
 }
