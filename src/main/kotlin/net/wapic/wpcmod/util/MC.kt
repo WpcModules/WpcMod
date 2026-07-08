@@ -12,6 +12,7 @@ import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.player.LocalPlayer
 import net.minecraft.client.renderer.texture.TextureManager
 import net.minecraft.server.packs.resources.ResourceManager
+import net.minecraft.sounds.SoundEvent
 import net.minecraft.world.item.ItemStack
 import net.wapic.wpcmod.features.general.Freecam
 import net.wapic.wpcmod.mixin.accessors.MinecraftAccessor
@@ -20,6 +21,8 @@ object MC {
 
 	fun runOnThread(run: () -> Unit) = instance.execute(run)
 	fun useItem() = runOnThread { (instance as? MinecraftAccessor)?.doItemUse_WpcMod() }
+	fun playSound(sound: SoundEvent, volume: Float, pitch: Float) =
+		runOnThread { player?.playSound(sound, volume, pitch) }
 
 	inline val entities get() = instance.level?.entitiesForRendering() ?: emptyList()
 	inline val cameraPos get() = if (Freecam.isEnabled) instance.cameraEntity?.position() else instance.player?.position()
