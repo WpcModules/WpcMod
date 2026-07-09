@@ -19,7 +19,7 @@ object DungeonUtils {
 	private const val DUNGEON_END_MESSAGE: String = "> EXTRA STATS <"
 
 	private val puzzleRegex = Regex(" (?<puzzle>.+): \\[(?:(?<completed>✔)|(?<failed>✖)|(?<missing>✦))] ?")
-	private val floorRegex = Regex("^ ⏣ The Catacombs \\((?<floor>[FME][1-7]?)\\)$")
+	private val floorRegex = Regex("^ \uE067 The Catacombs \\((?<floor>[FME][1-7]?)\\)$")
 	private val incompletePuzzles: HashSet<String> = hashSetOf()
 	private val failedPuzzles: HashSet<String> = hashSetOf()
 	var bossSpawned = false
@@ -84,7 +84,7 @@ object DungeonUtils {
 	fun onScoreboardUpdate(line: String) {
 		if (!inDungeons) return
 
-		if (line.contains("⏣ The Catacombs")) {
+		if (line.contains("The Catacombs (")) {
 			val matcher = floorRegex.find(line)
 			currentFloor = DungeonFloor.fromShortName(matcher?.groups["floor"]?.value)
 		}
