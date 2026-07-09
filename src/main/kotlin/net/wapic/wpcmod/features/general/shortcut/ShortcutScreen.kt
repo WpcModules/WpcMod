@@ -2,9 +2,9 @@ package net.wapic.wpcmod.features.general.shortcut
 
 import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.gui.components.Button
+import net.minecraft.client.gui.layouts.HeaderAndFooterLayout
 import net.minecraft.client.gui.layouts.LinearLayout
 import net.minecraft.client.gui.screens.Screen
-import net.minecraft.client.gui.screens.options.OptionsSubScreen
 import net.minecraft.client.input.KeyEvent
 import net.minecraft.client.input.MouseButtonEvent
 import net.minecraft.network.chat.CommonComponents
@@ -12,24 +12,27 @@ import net.minecraft.network.chat.Component
 import net.minecraft.util.Util
 import net.wapic.wpcmod.util.MC
 
-class ShortcutScreen(parent: Screen) :
-	OptionsSubScreen(parent, MC.options, Component.nullToEmpty("Command Shortcuts")) {
+class ShortcutScreen(val parent: Screen?) : Screen(MC.instance, MC.font, Component.nullToEmpty("Command Shortcuts")) {
 
 	var selectedShortcut: Shortcut? = null
 	private var shortcutsList: ShortcutListWidget? = null
+	val layout: HeaderAndFooterLayout = HeaderAndFooterLayout(this)
 	var lastKeyCodeUpdateTime: Long = 0
 
-	override fun addContents() {
-		this.shortcutsList = this.layout.addToContents(ShortcutListWidget(this, this.minecraft))
+	override fun init() {
+		this.addContents()
+		this.addFooter()
+		this.layout.visitWidgets { this.addRenderableWidget(it) }
+		this.repositionElements()
 	}
 
-	override fun addOptions() {
-
+	private fun addContents() {
+		this.shortcutsList = this.layout.addToContents(ShortcutListWidget(this, this.minecraft))
 	}
 
 	override fun onClose() {
 		ShortcutHandler.saveShortcuts()
-		super.onClose()
+		this.minecraft.setScreen(this.parent)
 	}
 
 	override fun repositionElements() {
@@ -37,7 +40,7 @@ class ShortcutScreen(parent: Screen) :
 		this.shortcutsList?.updateSize(this.width, this.layout)
 	}
 
-	override fun addFooter() {
+	private fun addFooter() {
 		val newShortcut: Button = Button.builder(Component.nullToEmpty("New shortcut")) {
 			val shortcut = Shortcut("", InputConstants.UNKNOWN)
 			this.shortcutsList?.addShortcutEntry(shortcut)
