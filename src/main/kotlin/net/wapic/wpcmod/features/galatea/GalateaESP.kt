@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.event.player.AttackBlockCallback
 import net.fabricmc.fabric.api.event.player.UseBlockCallback
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket
 import net.minecraft.world.InteractionResult
@@ -85,8 +86,8 @@ object GalateaESP : EspFeature() {
 		val invisibugs = MC.entitiesOf<ArmorStand>().filter(::isInvisibug)
 
 		for (entity in invisibugs) {
-			val pos = entity.getRenderPos(deltaTicks)
 			with(config.invisibug) {
+				val pos = entity.getRenderPos(deltaTicks).relative(Direction.UP, 0.5)
 				if (box) worldRenderContext.drawBoundingBox(pos, 1f, 1f, color)
 				if (tracer) worldRenderContext.drawTracer(pos, color, tracerWidth)
 			}
