@@ -11,9 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 object AutoCloseWardrobe {
 	private val config get() = WpcMod.config.inventory
 
-	private val wardrobeTitle = Regex("^Wardrobe \\((?<page>\\d)/\\d\\)$")
-	private val slotEquippedRegex = Regex("^Slot \\d+: Equipped$")
-	private var lastClickedSlot: Int? = null
+	private val wardrobeTitle = Regex("^\\((?<page>\\d)/\\d\\) (?:Armor|Equipment) Sets$")
 
 	fun init() {
 		PacketEvents.SEND_AFTER.register(::onPacketSent)
