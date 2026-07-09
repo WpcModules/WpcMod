@@ -25,7 +25,7 @@ object AutoAcceptPartyInvite {
 		val inviteMatcher: MatchResult = invitePattern.matchEntire(message.string) ?: return
 		val name = inviteMatcher.groups["name"]?.value?.trim() ?: return
 
-		val players = config.split(",").map { it.trim().uppercase() }
+		val players = config.uppercase().split(",").map { it.trim() }
 
 		if (name.uppercase() in players) {
 			WpcMod.LOGGER.debug("Auto accepting invite from $name")

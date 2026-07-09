@@ -12,7 +12,7 @@ import net.wapic.wpcmod.util.Utils
 
 object PestESP : EspFeature() {
 
-	val config get() = WpcMod.config.garden.esp.pest
+	private val config get() = WpcMod.config.garden.esp.pest
 
 	fun init() = Unit
 

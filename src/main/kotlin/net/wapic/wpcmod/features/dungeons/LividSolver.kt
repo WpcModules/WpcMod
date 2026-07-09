@@ -27,7 +27,6 @@ object LividSolver : EspFeature() {
 			DungeonFloor.FLOOR_5,
 			DungeonFloor.MASTER_MODE_FLOOR_5
 		) && DungeonUtils.bossSpawned
-	private const val BOSS_KILLED_MESSAGE = "[BOSS] Crossed Livid: Impossible! How did you figure out which one I was?!"
 
 	private val centerBlockPosition = BlockPos(5, 108, 42)
 	private val lividTypes = mapOf(

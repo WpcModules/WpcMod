@@ -36,11 +36,12 @@ object KuudraUtils {
 		}
 	}
 
-	private fun onTick(world: ClientLevel) {
+	private fun onTick(level: ClientLevel) {
 		if (Utils.getLocation() != Island.KUUDRA) return
 
 		if (kuudraEntity == null) {
-			world.entitiesForRendering().find { it is MagmaCube && it.size == 30 && it.skyBlockMaxHealth == 100000.0f }?.let {
+			level.entitiesForRendering().find { it is MagmaCube && it.size == 30 && it.skyBlockMaxHealth == 100000.0f }
+				?.let {
 				kuudraEntity = it as MagmaCube
 				WpcMod.LOGGER.debug("set KuudraEntity to {}", it)
 			}
