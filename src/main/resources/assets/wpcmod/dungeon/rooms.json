@@ -1049,7 +1049,9 @@
   {
     "name": "Stone Window",
     "type": "RARE",
-    "cores": [],
+    "cores": [
+      -1220869986
+    ],
     "crypts": 1,
     "secrets": 2,
     "trappedChests": 0
