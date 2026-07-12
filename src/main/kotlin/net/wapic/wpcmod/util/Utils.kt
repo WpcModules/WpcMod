@@ -67,8 +67,8 @@ object Utils {
 	}
 
 	private fun onHypixelLocationPacket(packet: ClientboundLocationPacket) {
-		location = Island.fromDisplayName(packet.map.getOrNull())
-		WpcMod.LOGGER.debug("Location set to: {}", location)
+		location = Island.fromInternalName(packet.mode.getOrNull())
+		WpcMod.LOGGER.debug("Location set to: {} from internal name {}", location, packet.mode.getOrNull())
 	}
 
 	fun getLoadedBlockEntities(): List<BlockEntity> {

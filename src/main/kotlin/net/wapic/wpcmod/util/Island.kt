@@ -1,7 +1,7 @@
 package net.wapic.wpcmod.util
 
 enum class Island(val displayName: String = "", val internalName: String = "") {
-	UNKNOWN,
+	UNKNOWN("Unknown"),
 
 	// Miscellaneous
 	HUB("Hub", "hub"),
@@ -13,6 +13,7 @@ enum class Island(val displayName: String = "", val internalName: String = "") {
 	// Foraging
 	PARK("The Park", "foraging_1"),
 	GALATEA("Galatea", "foraging_2"),
+	TORRHUS_CANYON("Torrhus Canyon", "foraging_3"),
 
 	// Mining
 	GOLD_MINE("Gold Mine", "mining_1"),
@@ -36,14 +37,10 @@ enum class Island(val displayName: String = "", val internalName: String = "") {
 
 	// Instanced
 	DUNGEON("Dungeon", "dungeon"),
-	KUUDRA("Kuudra", "kuudra");
+	KUUDRA("Kuudra", "kuudra"),
+	SAFARI("Safari", "safari");
 
 	companion object {
-
-		fun fromDisplayName(displayName: String?): Island {
-			return entries.find { it.displayName == displayName } ?: UNKNOWN
-		}
-
 		fun fromInternalName(internalName: String?): Island {
 			return entries.find { it.internalName == internalName } ?: UNKNOWN
 		}

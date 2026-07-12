@@ -48,10 +48,4 @@ class ESPConfig {
 	var invisibug = InvisibugConfig()
 
 	class InvisibugConfig : NonGlowableESPConfig()
-
-	@Accordion
-	@ConfigOption(name = "Forest Node", desc = "Forest Node Settings")
-	var forestNode = ForestNodeConfig()
-
-	class ForestNodeConfig : NonGlowableESPConfig()
 }

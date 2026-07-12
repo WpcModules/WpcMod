@@ -13,6 +13,7 @@ import net.wapic.wpcmod.config.dungeon.DungeonConfig
 import net.wapic.wpcmod.config.end.EndConfig
 import net.wapic.wpcmod.config.events.EventsConfig
 import net.wapic.wpcmod.config.fishing.FishingConfig
+import net.wapic.wpcmod.config.foraging.ForagingConfig
 import net.wapic.wpcmod.config.galatea.GalateaConfig
 import net.wapic.wpcmod.config.garden.GardenConfig
 import net.wapic.wpcmod.config.general.GeneralConfig
@@ -47,6 +48,9 @@ class WpcConfig : Config() {
 
 	@Category(name = "Galatea", desc = "Configuration options for Galatea")
 	var galatea: GalateaConfig = GalateaConfig()
+
+	@Category(name = "Foraging", desc = "Configuration options for Foraging")
+	var foraging: ForagingConfig = ForagingConfig()
 
 	@Category(name = "End", desc = "Configuration options for End")
 	var end: EndConfig = EndConfig()
