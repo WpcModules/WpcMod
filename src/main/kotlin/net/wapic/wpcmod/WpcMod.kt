@@ -137,6 +137,7 @@ object WpcMod : ModInitializer {
 		NetworkListener.init()
 		EspCache.init()
 		HudManager.init()
+		TrapperAPI.init()
 
 		// General
 		ShortcutHandler.init()

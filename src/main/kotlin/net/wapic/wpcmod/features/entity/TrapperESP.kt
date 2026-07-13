@@ -1,9 +1,13 @@
 package net.wapic.wpcmod.features.entity
 
 import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.animal.Animal
+import net.minecraft.world.entity.animal.equine.Horse
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.components.GlowableESPConfig
+import net.wapic.wpcmod.util.EntityUtils.skyBlockMaxHealth
 import net.wapic.wpcmod.util.Island
+import net.wapic.wpcmod.util.TrapperAPI
 import net.wapic.wpcmod.util.Utils
 
 object TrapperESP : EspFeature() {
@@ -14,7 +18,8 @@ object TrapperESP : EspFeature() {
 	fun init() = Unit
 
 	override fun compute(entity: Entity): GlowableESPConfig? = config.takeIf {
-		names.any { entity.name.string.contains(it) }
+		if (entity is Horse) return@takeIf TrapperAPI.currentType?.maxHealth == entity.skyBlockMaxHealth / 2
+		TrapperAPI.currentType?.maxHealth == (entity as? Animal).skyBlockMaxHealth
 	}
 
 	override fun isEnabled(): Boolean =
