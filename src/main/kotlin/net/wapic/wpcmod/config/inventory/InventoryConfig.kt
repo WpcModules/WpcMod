@@ -8,7 +8,10 @@ class InventoryConfig {
 	@ConfigEditorBoolean
 	var armorSwapper: Boolean = false
 
-	@ConfigOption(name = "Auto Close Wardrobe", desc = "Auto close wardrobe after equipping a wardrobe slot")
+	@ConfigOption(
+		name = "Auto Close Wardrobe",
+		desc = "Automatically close Armor & Equipment Wardrobe and Loadouts menu when selecting a slot"
+	)
 	@ConfigEditorBoolean
 	var autoCloseWardrobe: Boolean = false
 
