@@ -110,4 +110,17 @@ object DungeonEvents {
 	fun interface TerminalClick {
 		fun onClick(screen: Screen, slot: Int, button: Int)
 	}
+
+	@JvmField
+	val ROOM_ENTERED: Event<RoomEntered> = EventFactory.createArrayBacked(RoomEntered::class.java) { listeners ->
+		RoomEntered { oldRoom, newRoom ->
+			for (listener in listeners) {
+				listener.onRoomEntered(oldRoom, newRoom)
+			}
+		}
+	}
+
+	fun interface RoomEntered {
+		fun onRoomEntered(oldRoom: String, newRoom: String)
+	}
 }

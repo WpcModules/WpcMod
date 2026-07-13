@@ -7,6 +7,7 @@ import net.minecraft.util.Util
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.chunk.EmptyLevelChunk
 import net.minecraft.world.level.saveddata.maps.MapDecorationTypes
+import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.dungeons.ScoreCalculation
 import net.wapic.wpcmod.features.dungeons.funnymap.core.DungeonPlayer
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.*
@@ -87,6 +88,7 @@ object MapUpdate {
 					if (lastRoom == "") {
 						lastRoom = room
 					} else if (lastRoom != room) {
+						DungeonEvents.ROOM_ENTERED.invoker().onRoomEntered(lastRoom, room)
 						roomVisits.add(Pair(time - lastTime, lastRoom))
 						lastTime = time
 						lastRoom = room

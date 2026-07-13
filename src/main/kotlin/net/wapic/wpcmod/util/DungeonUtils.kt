@@ -24,6 +24,8 @@ object DungeonUtils {
 	private val failedPuzzles: HashSet<String> = hashSetOf()
 	var bossSpawned = false
 		private set
+	var currentRoom: String = ""
+		private set
 
 	val inDungeons get() = Utils.getLocation() == Island.DUNGEON
 
@@ -42,6 +44,7 @@ object DungeonUtils {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 		PlayerListChangeEvent.EVENT.register(::onPlayerListChange)
 		ScoreboardChangeEvent.EVENT.register(::onScoreboardUpdate)
+		DungeonEvents.ROOM_ENTERED.register(::onRoomEntered)
 
 		WorldChangeEvent.BEFORE.register { _ ->
 			incompletePuzzles.clear()
@@ -81,13 +84,18 @@ object DungeonUtils {
 		}
 	}
 
-	fun onScoreboardUpdate(line: String) {
+	private fun onScoreboardUpdate(line: String) {
 		if (!inDungeons) return
 
 		if (line.contains("The Catacombs (")) {
 			val matcher = floorRegex.find(line)
 			currentFloor = DungeonFloor.fromShortName(matcher?.groups["floor"]?.value)
 		}
+	}
+
+	private fun onRoomEntered(oldRoom: String, newRoom: String) {
+		currentRoom = newRoom
+		WpcMod.LOGGER.debug("Current room set: {}, old room: {}", newRoom, oldRoom)
 	}
 
 	private fun checkBossName(floor: DungeonFloor, bossName: String): Boolean {

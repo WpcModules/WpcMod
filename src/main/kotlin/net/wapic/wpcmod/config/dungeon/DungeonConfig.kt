@@ -60,6 +60,13 @@ class DungeonConfig {
 		var zeroPingDB = false
 
 		@ConfigOption(
+			name = "Disable Zero Ping in Tic Tac Toe",
+			desc = "Disables the Zero Ping Dungeon Breaker in Tic Tac Toe to help with grabbing secret"
+		)
+		@ConfigEditorBoolean
+		var fuckTicTacToe = false
+
+		@ConfigOption(
 			name = "Prevent Breaking Secrets",
 			desc = "Prevents blocks in the list below from being broken with Dungeonbreaker"
 		)

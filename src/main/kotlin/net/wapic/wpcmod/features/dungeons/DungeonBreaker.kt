@@ -42,7 +42,7 @@ object DungeonBreaker {
 			else -> false
 		}
 
-		if (config.zeroPingDB && !isPreventedBlock && block !in blacklistedBlocks) {
+		if (config.zeroPingDB && !isPreventedBlock && block !in blacklistedBlocks && DungeonUtils.currentRoom != "Tic Tac Toe") {
 			level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3)
 		}
 
