@@ -13,7 +13,9 @@ import java.util.*
 open class SimpleHudElement(
 	@Expose
 	var label: String,
+	@Expose
 	var width: Int,
+	@Expose
 	var height: Int,
 	var canScale: Boolean = true,
 	var defaultScale: Float = 1f,

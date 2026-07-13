@@ -56,7 +56,6 @@ object HudManager {
 	}
 
 	fun openEditor() {
-		config.dungeon.scoreCalculation.scoreHudType.notifyObservers()
 		MC.instance.schedule { MC.screen = HudEditor(hudElements) }
 	}
 
@@ -74,9 +73,11 @@ object HudManager {
 		loadedElements?.forEach {
 			WpcMod.LOGGER.debug("Loaded hud location: ${it.label}")
 			val element = hudElements.find { element -> element.label == it.label }
+			if (it.width > 0) element?.width = it.width
+			if (it.height > 0) element?.height = it.height
+			element?.scale = it.scale
 			element?.x = it.x
 			element?.y = it.y
-			element?.scale = it.scale
 		} ?: return WpcMod.LOGGER.error("An error occurred while loading hud locations!")
 	}
 
