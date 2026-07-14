@@ -1,5 +1,6 @@
 package net.wapic.wpcmod.features.inventory
 
+import com.google.common.primitives.SignedBytes
 import net.minecraft.network.PacketListener
 import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.game.ServerboundContainerClickPacket
@@ -21,13 +22,14 @@ object AutoCloseWardrobe {
 	private fun onPacketSent(packet: Packet<out PacketListener>, callbackInfo: CallbackInfo) {
 		if (packet !is ServerboundContainerClickPacket || !config.autoCloseWardrobe) return
 
+		val isRightClick = packet.buttonNum == SignedBytes.checkedCast(1)
 		val inLoadouts = MC.screen?.title?.string?.matches(loudoutsTitle) == true
 		val isValidLoadoutSlot = packet.slotNum % 9 in 5..7 && packet.slotNum / 9 in 1..4
 
 		val inWardrobe = MC.screen?.title?.string?.matches(wardrobeTitle) == true
 		val isValidWardrobeSlot = packet.slotNum in 36..44
 
-		val shouldClose = (inLoadouts && isValidLoadoutSlot) || (inWardrobe && isValidWardrobeSlot)
+		val shouldClose = (inLoadouts && isValidLoadoutSlot && !isRightClick) || (inWardrobe && isValidWardrobeSlot)
 
 		if (shouldClose) {
 			MC.runOnThread { MC.screen?.onClose() }
