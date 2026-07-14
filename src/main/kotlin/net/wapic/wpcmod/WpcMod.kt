@@ -39,7 +39,6 @@ import net.wapic.wpcmod.features.general.PreventPlacingItems
 import net.wapic.wpcmod.features.general.shortcut.ShortcutHandler
 import net.wapic.wpcmod.features.instance.AutoGFS
 import net.wapic.wpcmod.features.instance.CancelInteract
-import net.wapic.wpcmod.features.inventory.ArmorSwapper
 import net.wapic.wpcmod.features.inventory.AutoCloseWardrobe
 import net.wapic.wpcmod.features.inventory.DyeColor
 import net.wapic.wpcmod.features.inventory.ScrollableTooltips
@@ -212,7 +211,6 @@ object WpcMod : ModInitializer {
 		AutoAcceptTrapper.init()
 
 		// Inventory
-		ArmorSwapper.init()
 		ScrollableTooltips.init()
 		AutoCloseWardrobe.init()
 		DyeColor.init()

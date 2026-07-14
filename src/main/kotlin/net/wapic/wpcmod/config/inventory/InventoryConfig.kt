@@ -4,10 +4,6 @@ import io.github.notenoughupdates.moulconfig.annotations.*
 
 class InventoryConfig {
 
-	@ConfigOption(name = "Armor Swapper", desc = "Instantly swap to Sorrow when Keybind is hit")
-	@ConfigEditorBoolean
-	var armorSwapper: Boolean = false
-
 	@ConfigOption(
 		name = "Auto Close Wardrobe",
 		desc = "Automatically close Armor & Equipment Wardrobe and Loadouts menu when selecting a slot"
