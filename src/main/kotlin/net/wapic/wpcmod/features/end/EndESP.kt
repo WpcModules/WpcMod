@@ -41,8 +41,8 @@ object EndESP : EspFeature() {
 		val box = AABB.unitCubeFromLowerCorner(player.position()).inflate(radius)
 
 		BlockPos.betweenClosed(box).forEach { blockPos ->
-			if (world.getBlockState(blockPos).block == Blocks.PURPLE_TERRACOTTA) {
-				newEndNodes.add(AABB.ofSize(blockPos.center, 1.0, 1.0, 1.0))
+			if (world.getBlockState(blockPos).block == Blocks.DYED_TERRACOTTA.purple) {
+				newEndNodes.add(AABB(blockPos))
 			}
 		}
 

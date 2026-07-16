@@ -18,7 +18,7 @@ class NumbersHandler : TerminalHandler(TerminalTypes.NUMBERS) {
 
     private fun solveNumbers(items: Array<ItemStack?>): List<Int> {
         return items.mapIndexedNotNull { index, item ->
-            if (item?.item == Items.RED_STAINED_GLASS_PANE.asItem()) index else null
+            if (item?.item == Items.STAINED_GLASS_PANE.red) index else null
         }.sortedBy { items[it]?.count }
     }
 }

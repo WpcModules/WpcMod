@@ -84,7 +84,7 @@ abstract class TermGui(val type: TerminalTypes) {
 		drawContext.text(MC.font, "Items in terminal:", x, y + lines.size * 10, CommonColors.WHITE, true)
 		var itemIndex = 1
 		currentHandler.items.forEachIndexed { index, stack ->
-			if (stack == null || stack.item == Items.BLACK_STAINED_GLASS_PANE) return@forEachIndexed
+			if (stack == null || stack.item == Items.STAINED_GLASS_PANE.black) return@forEachIndexed
 			drawContext.text(
 				MC.font,
 				"${if (index in currentSolution) "§a" else "§c"}${stack.hoverName.string}",

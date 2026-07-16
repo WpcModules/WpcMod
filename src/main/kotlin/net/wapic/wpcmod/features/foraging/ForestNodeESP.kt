@@ -29,7 +29,7 @@ object ForestNodeESP {
 		forestNodes = MC.entitiesOf<Display.ItemDisplay>()
 			.filter { it.itemStack.item == Items.STRING }
 			.distinctBy { it.blockPosition() }
-			.map { AABB.ofSize(it.blockPosition().center, 1.0, 1.0, 1.0) }
+			.map { AABB(it.blockPosition()) }
 	}
 
 	private fun renderWorld(worldRenderContext: WorldRenderContext) {

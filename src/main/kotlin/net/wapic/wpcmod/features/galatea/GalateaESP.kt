@@ -32,13 +32,12 @@ object GalateaESP : EspFeature() {
 		if (!config.invisibug.box && !config.invisibug.tracer) return
 
 		worldRenderContext.profiler.push("invisibug-esp")
-		val deltaTicks = worldRenderContext.tickCounter.getGameTimeDeltaPartialTick(true)
 		val invisibugs = MC.entitiesOf<ArmorStand>().filter {
 			it.deltaMovement.x == 0.0 && it.deltaMovement.y != 0.0 && it.deltaMovement.z == 0.0 && it.isMarker
 		}
 
 		for (entity in invisibugs) {
-			val pos = entity.getRenderPos(deltaTicks).relative(Direction.UP, 0.5)
+			val pos = entity.eyePosition.relative(Direction.UP, 0.5)
 			if (config.invisibug.box) worldRenderContext.drawBoundingBox(pos, 1f, 1f, config.invisibug.color)
 			if (config.invisibug.tracer) worldRenderContext.drawTracer(
 				pos,

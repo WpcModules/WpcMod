@@ -12,19 +12,19 @@ class MelodyHandler : TerminalHandler(TerminalTypes.MELODY) {
     }
 
     override fun click(slotIndex: Int, button: Int, simulateClick: Boolean) {
-        val greenPane = items.indexOfLast { it?.item == Items.LIME_STAINED_GLASS_PANE }.takeIf { it != -1 }
-        val magentaPane = items.indexOfFirst { it?.item == Items.MAGENTA_STAINED_GLASS_PANE }.takeIf { it != -1 }
+        val greenPane = items.indexOfLast { it?.item == Items.STAINED_GLASS_PANE.lime }.takeIf { it != -1 }
+        val magentaPane = items.indexOfFirst { it?.item == Items.STAINED_GLASS_PANE.magenta }.takeIf { it != -1 }
         if (greenPane?.rem(9) != magentaPane?.rem(9)) return
         super.click(slotIndex, button, simulateClick)
     }
 
     private fun solveMelody(items: Array<ItemStack?>): List<Int> {
-        val greenPane = items.indexOfLast { it?.item == Items.LIME_STAINED_GLASS_PANE }.takeIf { it != -1 } ?: return emptyList()
-        val magentaPane = items.indexOfFirst { it?.item == Items.MAGENTA_STAINED_GLASS_PANE }.takeIf { it != -1 } ?: return emptyList()
-        val greenClay = items.indexOfLast { it?.item == Items.LIME_TERRACOTTA }.takeIf { it != -1 } ?: return emptyList()
+        val greenPane = items.indexOfLast { it?.item == Items.STAINED_GLASS_PANE.lime }.takeIf { it != -1 } ?: return emptyList()
+        val magentaPane = items.indexOfFirst { it?.item == Items.STAINED_GLASS_PANE.magenta }.takeIf { it != -1 } ?: return emptyList()
+        val greenClay = items.indexOfLast { it?.item == Items.DYED_TERRACOTTA.lime }.takeIf { it != -1 } ?: return emptyList()
         return items.mapIndexedNotNull { index, item ->
             when {
-                index == greenPane || item?.item == Items.MAGENTA_STAINED_GLASS_PANE -> index
+                index == greenPane || item?.item == Items.STAINED_GLASS_PANE.magenta -> index
                 index == greenClay && greenPane % 9 == magentaPane % 9 -> index
                 else -> null
             }

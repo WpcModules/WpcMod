@@ -17,5 +17,5 @@ class PanesHandler : TerminalHandler(TerminalTypes.PANES) {
     }
 
     private fun solvePanes(items: Array<ItemStack?>): List<Int> =
-        items.mapIndexedNotNull { index, item -> if (item?.item == Items.RED_STAINED_GLASS_PANE.asItem()) index else null }
+        items.mapIndexedNotNull { index, item -> if (item?.item == Items.STAINED_GLASS_PANE.red) index else null }
 }

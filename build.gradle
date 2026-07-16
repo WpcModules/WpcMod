@@ -77,7 +77,7 @@ dependencies {
 
     // Dev Runtimes
 	localRuntime("me.djtheredstoner:DevAuth-fabric:${project.devauth_version}")
-	localRuntime("com.terraformersmc:modmenu:${project.modmenu_version}")
+	localRuntime("maven.modrinth:modmenu:${project.modmenu_version}")
 	// we're using modrinth rei and architectury otherwise it imports the wrong architectury version and won't work properly
 	localRuntime("maven.modrinth:rei:${project.rei_version}+fabric")
 	localRuntime("maven.modrinth:architectury-api:${project.architectury_api}")
@@ -124,7 +124,8 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 25
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
 }
 
 tasks.withType(KotlinCompile).configureEach {
@@ -136,8 +137,9 @@ tasks.withType(KotlinCompile).configureEach {
 java {
 	withSourcesJar()
 
-	sourceCompatibility = JavaVersion.VERSION_25
-	targetCompatibility = JavaVersion.VERSION_25
+	toolchain {
+		languageVersion.set(JavaLanguageVersion.of(25))
+	}
 }
 
 // configure the maven publication

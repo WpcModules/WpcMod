@@ -12,7 +12,7 @@ object ChatUtils {
 
 	fun sendMessage(message: String, style: Style = Style.EMPTY.withColor(ChatFormatting.WHITE)) {
 		MC.runOnThread {
-			MC.gui.chat.addClientSystemMessage(PREFIX.copy().append(Component.literal(message).setStyle(style)))
+			MC.gui.hud.chat.addClientSystemMessage(PREFIX.copy().append(Component.literal(message).setStyle(style)))
 		}
 	}
 
@@ -22,7 +22,7 @@ object ChatUtils {
 		fadeInTicks: Int = 5,
 		stayTicks: Int = 20,
 		fadeOutTicks: Int = 5
-	) = with(MC.gui) {
+	) = with(MC.gui.hud) {
 		setTitle(title)
 		setSubtitle(subtitle)
 		setTimes(fadeInTicks, stayTicks, fadeOutTicks)
@@ -34,7 +34,7 @@ object ChatUtils {
 		fadeInTicks: Int = 5,
 		stayTicks: Int = 20,
 		fadeOutTicks: Int = 5
-	) = with(MC.gui) {
+	) = with(MC.gui.hud) {
 		setTitle(title)
 		setSubtitle(subtitle)
 		setTimes(fadeInTicks, stayTicks, fadeOutTicks)

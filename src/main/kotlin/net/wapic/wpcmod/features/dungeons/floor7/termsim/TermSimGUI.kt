@@ -36,7 +36,7 @@ open class TermSimGUI(
     MC.player!!.inventory,
     Component.literal(name)
 ) {
-    val blackPane = ItemStack(Items.BLACK_STAINED_GLASS_PANE).apply { set(DataComponents.CUSTOM_NAME, Component.literal("")) }
+    val blackPane = ItemStack(Items.STAINED_GLASS_PANE.black).apply { set(DataComponents.CUSTOM_NAME, Component.literal("")) }
 	val guiInventorySlots get() = menu.slots.subList(0, size)
     private var doesAcceptClick = true
     protected var ping = 0L
@@ -76,7 +76,7 @@ open class TermSimGUI(
 
 	private fun delaySlotClick(slot: Slot, button: Int) = WpcMod.coroutineScope.launch {
 		if (MC.screen == StartGUI) return@launch slotClick(slot, button)
-		if (!doesAcceptClick || slot.container != inv || slot.item.item == Items.BLACK_STAINED_GLASS_PANE) return@launch
+		if (!doesAcceptClick || slot.container != inv || slot.item.item == Items.STAINED_GLASS_PANE.black) return@launch
         doesAcceptClick = false
 
 		delay(timeMillis = (ping).coerceAtLeast(0))

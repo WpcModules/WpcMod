@@ -26,7 +26,7 @@ object SuperpairsSolver {
 	private var inSuperpairs: Boolean = false
 
 	private val powerUps = listOf(Items.DIAMOND, Items.FEATHER, Items.LAPIS_BLOCK)
-	private val ignoredItems = listOf(Items.CLOCK, Items.BOOKSHELF, Items.BLACK_STAINED_GLASS_PANE, Items.CAULDRON)
+	private val ignoredItems = listOf(Items.CLOCK, Items.BOOKSHELF, Items.STAINED_GLASS_PANE.black, Items.CAULDRON)
 
 	private val superpairsMap = mutableMapOf<Int, ItemStack>()
 	private val slotsToRead = mutableSetOf<Slot>()

@@ -1,10 +1,6 @@
 package net.wapic.wpcmod.util.render
 
-import com.mojang.blaze3d.pipeline.BlendFunction
-import com.mojang.blaze3d.pipeline.ColorTargetState
 import com.mojang.blaze3d.pipeline.RenderPipeline
-import com.mojang.blaze3d.vertex.VertexFormat
-import com.mojang.blaze3d.vertex.VertexFormatElement
 import net.minecraft.client.renderer.RenderPipelines
 import net.wapic.wpcmod.util.Utils.modIdentifier
 import java.util.*
@@ -24,48 +20,4 @@ object WpcModRenderPipelines {
 			.withDepthStencilState(Optional.empty())
 			.build()
 	)
-
-	val GUI_THING: RenderPipeline = RenderPipelines.register(
-		RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET)
-			.withColorTargetState(ColorTargetState(BlendFunction.TRANSLUCENT))
-			.withVertexFormat(
-				VertexFormat.builder()
-					.add("Position", VertexFormatElement.POSITION)
-					.add("UV0", VertexFormatElement.UV0)
-					.add(
-						"UV1",
-						VertexFormatElement.register(
-							getNextVFId(),
-							0,
-							VertexFormatElement.Type.FLOAT,
-							false,
-							2
-						)
-					)
-					.add(
-						"Roundness",
-						VertexFormatElement.register(
-							getNextVFId(),
-							0,
-							VertexFormatElement.Type.FLOAT,
-							false,
-							4
-						)
-					)
-					.add("Color", VertexFormatElement.COLOR)
-					.build(), VertexFormat.Mode.QUADS
-			)
-			.withCull(true)
-			.withFragmentShader(modIdentifier("core/rendertype_rr"))
-			.withVertexShader(modIdentifier("core/rendertype_rr"))
-			.withLocation(modIdentifier("pipeline/2d/quad_rr"))
-			.build()
-	)
-
-	private fun getNextVFId(): Int {
-		for (i in 0..<VertexFormatElement.MAX_COUNT) {
-			if (VertexFormatElement.byId(i) == null) return i
-		}
-		throw IllegalStateException("No more free VertexFormatElement slots")
-	}
 }

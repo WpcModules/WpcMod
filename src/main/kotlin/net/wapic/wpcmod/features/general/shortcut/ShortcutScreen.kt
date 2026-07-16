@@ -32,7 +32,7 @@ class ShortcutScreen(val parent: Screen?) : Screen(MC.instance, MC.font, Compone
 
 	override fun onClose() {
 		ShortcutHandler.saveShortcuts()
-		this.minecraft.setScreen(this.parent)
+		this.minecraft.gui.setScreen(this.parent)
 	}
 
 	override fun repositionElements() {

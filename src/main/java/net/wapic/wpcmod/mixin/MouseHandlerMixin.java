@@ -30,7 +30,7 @@ public class MouseHandlerMixin {
 
 	@Inject(at = @At("TAIL"), method = "onButton")
 	private void onMouseButton(long handle, MouseButtonInfo rawButtonInfo, int action, CallbackInfo ci) {
-		if (this.minecraft != null && this.minecraft.screen == null && this.minecraft.getOverlay() == null) {
+		if (this.minecraft != null && this.minecraft.gui.screen() == null && this.minecraft.gui.overlay() == null) {
 			boolean bl = action == 1;
 			Shortcut.Companion.setKeyPressed(InputConstants.Type.MOUSE.getOrCreate(rawButtonInfo.button()), bl);
 			if (bl) {

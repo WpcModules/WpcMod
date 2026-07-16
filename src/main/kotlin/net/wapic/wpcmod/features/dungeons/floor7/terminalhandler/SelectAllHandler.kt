@@ -7,7 +7,7 @@ import net.minecraft.world.item.Items
 class SelectAllHandler(val color: DyeColor) : TerminalHandler(TerminalTypes.SELECT_ALL) {
 
 	private val overrides = mapOf(
-		DyeColor.WHITE to setOf(Items.BONE_MEAL, Items.WHITE_WOOL, Items.WHITE_CARPET, Items.WHITE_BANNER),
+		DyeColor.WHITE to setOf(Items.BONE_MEAL, Items.WOOL.white, Items.CARPET.white, Items.BANNER.white),
 		DyeColor.BLACK to setOf(Items.INK_SAC),
 		DyeColor.BLUE to setOf(Items.LAPIS_LAZULI),
 		DyeColor.BROWN to setOf(Items.COCOA_BEANS),
@@ -29,7 +29,7 @@ class SelectAllHandler(val color: DyeColor) : TerminalHandler(TerminalTypes.SELE
 
     private fun solveSelectAll(items: Array<ItemStack?>, color: DyeColor): List<Int> {
 		return items.mapIndexedNotNull { index, itemStack ->
-			if (itemStack?.hasFoil() == true || itemStack?.item == Items.BLACK_STAINED_GLASS_PANE) return@mapIndexedNotNull null
+			if (itemStack?.hasFoil() == true || itemStack?.item == Items.STAINED_GLASS_PANE.black) return@mapIndexedNotNull null
 
 			val isCorrectColor = itemStack?.hoverName?.string?.startsWith(color.name.replace("_", " "), true) == true
 			val hasOverride = overrides[color]?.contains(itemStack?.item) == true

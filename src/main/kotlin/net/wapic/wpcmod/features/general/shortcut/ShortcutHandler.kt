@@ -29,7 +29,7 @@ object ShortcutHandler {
 	}
 
 	private fun onTick(client: Minecraft) {
-		if (client.screen != null) return
+		if (client.gui.screen() != null) return
 
 		loadedShortcuts.forEach { shortcut ->
 			if (shortcut.isUnbound()) return@forEach

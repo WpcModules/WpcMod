@@ -10,14 +10,14 @@ import net.wapic.wpcmod.features.dungeons.floor7.TerminalSimulator.openRandomTer
 
 object StartGUI : TermSimGUI("Terminal Simulator", 27) {
     private val termItems = listOf(
-        ItemStack(Items.PURPLE_DYE).apply { set(DataComponents.CUSTOM_NAME, Component.literal("§aCorrect all the panes!")) },
-        ItemStack(Items.RED_DYE).apply { set(DataComponents.CUSTOM_NAME, Component.literal("§6Change all to same color!")) },
-        ItemStack(Items.PINK_DYE).apply { set(DataComponents.CUSTOM_NAME, Component.literal("§3Click in order!")) },
-        ItemStack(Items.LIME_DYE).apply { set(DataComponents.CUSTOM_NAME, Component.literal("§5What starts with: \"*\"?")) },
-        ItemStack(Items.BROWN_DYE).apply { set(DataComponents.CUSTOM_NAME, Component.literal("§bSelect all the \"*\" items!")) },
-        ItemStack(Items.CYAN_DYE).apply { set(DataComponents.CUSTOM_NAME, Component.literal("§dClick the button on time!")) }
+        ItemStack(Items.DYE.purple).apply { set(DataComponents.CUSTOM_NAME, Component.literal("§aCorrect all the panes!")) },
+        ItemStack(Items.DYE.red).apply { set(DataComponents.CUSTOM_NAME, Component.literal("§6Change all to same color!")) },
+        ItemStack(Items.DYE.pink).apply { set(DataComponents.CUSTOM_NAME, Component.literal("§3Click in order!")) },
+        ItemStack(Items.DYE.lime).apply { set(DataComponents.CUSTOM_NAME, Component.literal("§5What starts with: \"*\"?")) },
+        ItemStack(Items.DYE.brown).apply { set(DataComponents.CUSTOM_NAME, Component.literal("§bSelect all the \"*\" items!")) },
+        ItemStack(Items.DYE.cyan).apply { set(DataComponents.CUSTOM_NAME, Component.literal("§dClick the button on time!")) }
     )
-    private val randomButton = ItemStack(Items.WHITE_DYE).apply { set(DataComponents.CUSTOM_NAME, Component.literal("§7Random")) }
+    private val randomButton = ItemStack(Items.DYE.white).apply { set(DataComponents.CUSTOM_NAME, Component.literal("§7Random")) }
 
     override fun create() {
         createNewGui {

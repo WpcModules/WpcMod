@@ -45,7 +45,6 @@ object ArrowAlign {
 			targetSolution = null
 			return
 		}
-
 		currentFrameRotations = getFrames()
 
 		possibleSolutions.forEach { arr ->
@@ -95,22 +94,23 @@ object ArrowAlign {
         if (clicksRemaining.isEmpty() || DungeonUtils.getF7Phase() != F7Phase.GOLDOR || !config.enabled) return
 		worldRenderContext.profiler.push("ArrowAlign")
 
-        clicksRemaining.forEach { (index, clickNeeded) ->
-            val colorCode = when {
-                clickNeeded == 0 -> return@forEach
-                clickNeeded < 3 -> 'a'
-                clickNeeded < 5 -> '6'
-                else -> 'c'
-            }
+		/*
+				clicksRemaining.forEach { (index, clickNeeded) ->
+					val colorCode = when {
+						clickNeeded == 0 -> return@forEach
+						clickNeeded < 3 -> 'a'
+						clickNeeded < 5 -> '6'
+						else -> 'c'
+					}
+					worldRenderContext.drawText(
+						Component.nullToEmpty("§$colorCode$clickNeeded").visualOrderText,
+						getFramePositionFromIndex(index).center.add(Vec3(-0.3, 0.0, 0.1)),
+						1f,
 
-			worldRenderContext.drawText(
-                Component.nullToEmpty("§$colorCode$clickNeeded").visualOrderText,
-                getFramePositionFromIndex(index).center.add(Vec3(-0.3, 0.0, 0.1)),
-                1f,
-
-				false
-            )
-        }
+						false
+					)
+				}
+		 */
 		worldRenderContext.profiler.pop()
     }
 

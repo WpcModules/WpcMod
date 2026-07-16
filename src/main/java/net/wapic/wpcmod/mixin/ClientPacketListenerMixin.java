@@ -57,8 +57,8 @@ public abstract class ClientPacketListenerMixin {
 
 		ClientboundSetPlayerTeamPacket.Parameters team = packet.getParameters().orElse(null);
 
-		String prefix = team == null ? "" : team.getPlayerPrefix().getString();
-		String suffix = team == null ? "" : team.getPlayerSuffix().getString();
+		String prefix = team == null ? "" : team.playerPrefix().getString();
+		String suffix = team == null ? "" : team.playerSuffix().getString();
 
 		String line = prefix + String.join(" ", packet.getPlayers()) + suffix;
 		String unformattedLine = ChatFormatting.stripFormatting(line);

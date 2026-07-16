@@ -117,7 +117,7 @@ object CompactChat {
 		fun isOld(): Boolean = Util.getMillis() >= lastSeen + config.compactTimeout * 1000
 
 		fun remove() {
-			val hud = MC.gui.chat as ChatComponentAccessor
+			val hud = MC.gui.hud.chat as ChatComponentAccessor
 			lastLine?.let(hud.allMessages::remove)
 			lastVisible.forEach(hud.trimmedMessages::remove)
 			lastVisible.clear()

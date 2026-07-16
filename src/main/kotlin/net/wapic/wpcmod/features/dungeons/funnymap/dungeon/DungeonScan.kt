@@ -143,7 +143,7 @@ object DungeonScan {
 						}
 
 						Blocks.INFESTED_CHISELED_STONE_BRICKS -> DoorType.ENTRANCE
-						Blocks.RED_TERRACOTTA -> DoorType.BLOOD
+						Blocks.DYED_TERRACOTTA.red -> DoorType.BLOOD
 						else -> DoorType.NORMAL
 					}
 				)

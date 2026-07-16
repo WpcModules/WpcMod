@@ -21,7 +21,7 @@ public class KeyboardHandlerMixin {
 
 	@Inject(at = @At("TAIL"), method = "keyPress")
 	private void onKey(long handle, int action, KeyEvent event, CallbackInfo ci) {
-		if (this.minecraft.screen == null) {
+		if (this.minecraft.gui.screen() == null) {
 			if (action == 0) {
 				Shortcut.Companion.setKeyPressed(InputConstants.Type.KEYSYM.getOrCreate(event.key()), false);
 			} else {

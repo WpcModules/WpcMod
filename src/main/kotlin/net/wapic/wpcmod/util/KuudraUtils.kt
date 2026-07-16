@@ -4,7 +4,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.network.chat.Component
-import net.minecraft.world.entity.monster.MagmaCube
+import net.minecraft.world.entity.monster.cubemob.MagmaCube
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.events.skyblock.KuudraEvents

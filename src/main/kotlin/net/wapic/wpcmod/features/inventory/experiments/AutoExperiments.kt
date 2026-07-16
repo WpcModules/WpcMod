@@ -33,24 +33,24 @@ object AutoExperiments {
 	private var handledScreen: ChestMenu? = null
 
 	private val ultraSequenceItems = listOf(
-		Items.WHITE_DYE,
-		Items.BROWN_DYE,
-		Items.BLACK_DYE,
-		Items.BLUE_DYE,
-		Items.GRAY_DYE,
-		Items.LIGHT_GRAY_DYE,
+		Items.DYE.white,
+		Items.DYE.brown,
+		Items.DYE.black,
+		Items.DYE.blue,
+		Items.DYE.gray,
+		Items.DYE.lightGray,
 		Items.BONE_MEAL,
 		Items.LAPIS_LAZULI,
-		Items.RED_DYE,
-		Items.GREEN_DYE,
-		Items.CYAN_DYE,
-		Items.LIGHT_BLUE_DYE,
-		Items.LIME_DYE,
-		Items.MAGENTA_DYE,
-		Items.ORANGE_DYE,
-		Items.PINK_DYE,
-		Items.PURPLE_DYE,
-		Items.YELLOW_DYE
+		Items.DYE.red,
+		Items.DYE.green,
+		Items.DYE.cyan,
+		Items.DYE.lightBlue,
+		Items.DYE.lime,
+		Items.DYE.magenta,
+		Items.DYE.orange,
+		Items.DYE.pink,
+		Items.DYE.purple,
+		Items.DYE.yellow
 	)
 
 	fun init() {
@@ -96,7 +96,7 @@ object AutoExperiments {
 	private fun solveChronomatron(inventory: Container) {
 		if (inventory.getItem(49).item == Blocks.GLOWSTONE.asItem() && !inventory.getItem(lastAdded).hasFoil()) {
 			hasAdded = false
-			if (config.autoClose && chronomatronOrder.size > 11 - config.serumCount) Minecraft.getInstance().screen?.onClose()
+			if (config.autoClose && chronomatronOrder.size > 11 - config.serumCount) MC.screen?.onClose()
 		}
 
 		if (!hasAdded && inventory.getItem(49).item == Items.CLOCK) {
@@ -126,15 +126,15 @@ object AutoExperiments {
 	private fun solveUltrasequencer(inventory: Container) {
 		if (inventory.getItem(49).item == Items.CLOCK) hasAdded = false
 
-		if (!hasAdded && inventory.getItem(49).item == Blocks.GLOWSTONE.asItem()) {
-			if (inventory.getItem(44) == Items.AIR) return
+		if (!hasAdded && inventory.getItem(49).item == Items.GLOWSTONE) {
+			if (inventory.getItem(44).item == Items.AIR) return
 			ultrasequencerOrder.clear()
 			inventory.withIndex().forEach { (i, stack) ->
 				if (i in 9..44 && ultraSequenceItems.contains(stack.item)) ultrasequencerOrder[stack.count - 1] = i
 			}
 			hasAdded = true
 			clicks = 0
-			if (config.autoClose && ultrasequencerOrder.size > 9 - config.serumCount) Minecraft.getInstance().screen?.onClose()
+			if (config.autoClose && ultrasequencerOrder.size > 9 - config.serumCount) MC.screen?.onClose()
 		}
 
 		if (inventory.getItem(49).item == Items.CLOCK && ultrasequencerOrder.contains(clicks) && System.currentTimeMillis() - lastClickTime > config.clickDelay) {
