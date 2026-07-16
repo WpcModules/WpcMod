@@ -1,7 +1,6 @@
 package net.wapic.wpcmod.features.inventory.experiments
 
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
-import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.gui.screens.inventory.ContainerScreen
 import net.minecraft.world.Container

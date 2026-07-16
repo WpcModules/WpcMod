@@ -3,7 +3,6 @@ package net.wapic.wpcmod.util.render
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.VertexConsumer
 import io.github.notenoughupdates.moulconfig.ChromaColour
-import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.renderer.rendertype.RenderType
 import net.minecraft.client.renderer.state.level.CameraRenderState
 import net.minecraft.gizmos.GizmoStyle

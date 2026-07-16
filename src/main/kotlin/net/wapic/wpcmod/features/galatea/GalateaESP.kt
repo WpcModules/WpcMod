@@ -13,7 +13,6 @@ import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.components.GlowableESPConfig
 import net.wapic.wpcmod.events.WorldRenderEvent
 import net.wapic.wpcmod.features.entity.EspFeature
-import net.wapic.wpcmod.util.EntityUtils.getRenderPos
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils

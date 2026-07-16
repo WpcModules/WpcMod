@@ -2,8 +2,6 @@ package net.wapic.wpcmod.features.entity
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey
-import net.fabricmc.fabric.api.client.rendering.v1.level.LevelExtractionEvents
-import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents
 import net.minecraft.client.Minecraft
 import net.minecraft.util.profiling.Profiler
 import net.minecraft.world.entity.Display
@@ -11,8 +9,6 @@ import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.decoration.ArmorStand
 import net.wapic.wpcmod.config.components.GlowableESPConfig
 import net.wapic.wpcmod.events.WorldRenderEvent
-import net.wapic.wpcmod.util.EntityUtils.getRenderPos
-import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.render.WorldRenderContext
 
 object EspCache {
