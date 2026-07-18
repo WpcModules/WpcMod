@@ -8,7 +8,7 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.Island
-import net.wapic.wpcmod.util.ItemUtils.skyblockId
+import net.wapic.wpcmod.util.skyblockId
 import net.wapic.wpcmod.util.Utils
 
 object PigeonSwapper {

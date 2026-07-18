@@ -32,7 +32,6 @@ object Utils {
 	}
 
 	fun Any?.equalsOneOf(vararg other: Any): Boolean = other.any { this == it }
-	fun modIdentifier(path: String): Identifier = Identifier.fromNamespaceAndPath(WpcMod.MOD_ID, path)
 	fun Number.toFixed(decimals: Int = 2): String = "%.${decimals}f".format(Locale.ENGLISH, this)
 
 	fun copyToClipboard(string: String) {

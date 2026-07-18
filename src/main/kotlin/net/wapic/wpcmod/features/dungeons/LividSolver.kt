@@ -12,7 +12,7 @@ import net.wapic.wpcmod.events.BlockEvents
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.features.entity.EspFeature
 import net.wapic.wpcmod.util.ChatUtils
-import net.wapic.wpcmod.util.ConfigUtils.copyWithColor
+import net.wapic.wpcmod.util.copyWithColor
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.DungeonUtils.DungeonFloor
 import net.wapic.wpcmod.util.DungeonUtils.currentFloor

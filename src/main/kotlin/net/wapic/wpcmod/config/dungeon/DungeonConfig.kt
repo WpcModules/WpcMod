@@ -18,10 +18,6 @@ class DungeonConfig {
 	@ConfigEditorBoolean
 	var spiritBear: Boolean = false
 
-	@ConfigOption(name = "Cancel Interact", desc = "Cancel block interaction with ender pearls")
-	@ConfigEditorBoolean
-	var cancelInteract: Boolean = false
-
 	@ConfigOption(
 		name = "Easy Superboom",
 		desc = "Select and place superboom from the hotbar using the pick block keybind"

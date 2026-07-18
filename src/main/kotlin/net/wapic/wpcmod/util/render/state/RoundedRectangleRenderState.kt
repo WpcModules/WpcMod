@@ -1,4 +1,4 @@
-package net.wapic.wpcmod.util.render
+package net.wapic.wpcmod.util.render.state
 
 import com.mojang.blaze3d.pipeline.RenderPipeline
 import com.mojang.blaze3d.vertex.BufferBuilder
@@ -9,6 +9,7 @@ import net.minecraft.client.gui.render.TextureSetup
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.client.renderer.state.gui.GuiElementRenderState
 import net.wapic.wpcmod.render.DirectVertexConsumer
+import net.wapic.wpcmod.util.render.WpcModRenderPipelines
 import org.joml.Matrix3x2f
 
 @JvmRecord
@@ -22,7 +23,7 @@ data class RoundedRectangleRenderState(
 ) : GuiElementRenderState {
 
 	override fun buildVertices(vertices: VertexConsumer) {
-		val color = chromaColour.getEffectiveColour()
+		val color = chromaColour.getEffectiveColourRGB()
 
 		val x = x.toFloat()
 		val y = y.toFloat()
@@ -30,18 +31,35 @@ data class RoundedRectangleRenderState(
 		val height = height.toFloat()
 
 		val consumer = DirectVertexConsumer(vertices as? BufferBuilder, false)
-		consumer.addVertexWith2DPose(matrix, x, y + height).setUv(0f, 0f).setUv(width, height).setUv(radius, radius)
-			.setUv(radius, radius).setColor(color.red, color.green, color.blue, color.alpha)
-		consumer.addVertexWith2DPose(matrix, x + width, y + height).setUv(width, 0f).setUv(width, height).setUv(radius, radius)
-			.setUv(radius, radius).setColor(color.red, color.green, color.blue, color.alpha)
-		consumer.addVertexWith2DPose(matrix, x + width, y).setUv(width, height).setUv(width, height).setUv(radius, radius)
-			.setUv(radius, radius).setColor(color.red, color.green, color.blue, color.alpha)
-		consumer.addVertexWith2DPose(matrix, x, y).setUv(0f, height).setUv(width, height).setUv(radius, radius)
-			.setUv(radius, radius).setColor(color.red, color.green, color.blue, color.alpha)
+
+		consumer.addVertexWith2DPose(matrix, x, y + height)
+			.setUv(0f, 0f).setUv(width, height)
+			.setUv(radius, radius).setUv(radius, radius)
+			.setColor(color)
+
+		consumer.addVertexWith2DPose(matrix, x + width, y + height)
+			.setUv(width, 0f)
+			.setUv(width, height)
+			.setUv(radius, radius)
+			.setUv(radius, radius)
+			.setColor(color)
+		consumer.addVertexWith2DPose(matrix, x + width, y)
+			.setUv(width, height)
+			.setUv(width, height)
+			.setUv(radius, radius)
+			.setUv(radius, radius)
+			.setColor(color)
+
+		consumer.addVertexWith2DPose(matrix, x, y)
+			.setUv(0f, height)
+			.setUv(width, height)
+			.setUv(radius, radius)
+			.setUv(radius, radius)
+			.setColor(color)
 	}
 
 	override fun pipeline(): RenderPipeline {
-		return RenderPipelines.GUI
+		return WpcModRenderPipelines.GUI_CUSTOM
 	}
 
 	override fun textureSetup(): TextureSetup {

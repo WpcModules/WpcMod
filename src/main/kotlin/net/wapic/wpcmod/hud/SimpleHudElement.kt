@@ -5,8 +5,8 @@ import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.network.chat.Component
+import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.MC
-import net.wapic.wpcmod.util.Utils.modIdentifier
 import org.joml.Matrix3x2f
 import java.util.*
 
@@ -29,7 +29,7 @@ open class SimpleHudElement(
 	open val isActive = false
 
 	init {
-		val identifier = modIdentifier(label.lowercase(Locale.US).replace(" ", "_"))
+		val identifier = WpcMod.Identifier(label.lowercase(Locale.US).replace(" ", "_"))
 		HudElementRegistry.attachElementBefore(VanillaHudElements.DEMO_TIMER, identifier) { context, tickCounter ->
 			render(context, tickCounter.getGameTimeDeltaPartialTick(true))
 		}

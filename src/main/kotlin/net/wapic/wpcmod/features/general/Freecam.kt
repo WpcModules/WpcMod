@@ -19,7 +19,7 @@ import net.wapic.wpcmod.util.freecam.CameraEntity.Companion.createCameraEntity
 
 class Freecam {
 	private val bind: KeyMapping =
-		KeyMappingHelper.registerKeyMapping(KeyMapping("freecam", InputConstants.KEY_B, WpcMod.category))
+		KeyMappingHelper.registerKeyMapping(KeyMapping("Freecam", InputConstants.KEY_B, WpcMod.category))
 	private var cameraMotion: Vec3 = Vec3.ZERO
 
 	init {

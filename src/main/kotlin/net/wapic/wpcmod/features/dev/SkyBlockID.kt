@@ -6,7 +6,7 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.TooltipFlag
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.util.ItemUtils.skyblockId
+import net.wapic.wpcmod.util.skyblockId
 
 object SkyBlockID {
 

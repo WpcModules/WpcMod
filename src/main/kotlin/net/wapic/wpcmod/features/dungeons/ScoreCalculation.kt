@@ -27,7 +27,7 @@ import net.wapic.wpcmod.hud.SimpleHudElement
 import net.wapic.wpcmod.util.*
 import net.wapic.wpcmod.util.DungeonUtils.DungeonFloor
 import net.wapic.wpcmod.util.DungeonUtils.isMimicFloor
-import net.wapic.wpcmod.util.EntityUtils.headTexture
+import net.wapic.wpcmod.util.headTexture
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 import kotlin.math.ceil
 import kotlin.math.floor

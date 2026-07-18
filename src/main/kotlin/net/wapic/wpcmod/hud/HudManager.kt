@@ -28,7 +28,7 @@ object HudManager {
 
 	private val hudKeyBind: KeyMapping = KeyMappingHelper.registerKeyMapping(
 		KeyMapping(
-			"hud",
+			"Edit Hud",
 			InputConstants.KEY_END,
 			WpcMod.category
 		)
@@ -71,14 +71,14 @@ object HudManager {
 		val loadedElements = FileManager.loadFile<Array<SimpleHudElement>>(file, backupFile)?.toList()
 
 		loadedElements?.forEach {
-			WpcMod.LOGGER.debug("Loaded hud location: ${it.label}")
+			WpcMod.LOGGER.debug("Applying location of: ${it.label}")
 			val element = hudElements.find { element -> element.label == it.label }
 			if (it.width > 0) element?.width = it.width
 			if (it.height > 0) element?.height = it.height
 			element?.scale = it.scale
 			element?.x = it.x
 			element?.y = it.y
-		} ?: return WpcMod.LOGGER.error("An error occurred while loading hud locations!")
+		} ?: return WpcMod.LOGGER.error("An error occurred while applying hud locations!")
 	}
 
 	fun saveLocations() {

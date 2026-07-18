@@ -1,14 +1,16 @@
 package net.wapic.wpcmod.features.entity
 
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey
-import net.minecraft.client.Minecraft
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelExtractionContext
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelExtractionEvents
 import net.minecraft.util.profiling.Profiler
 import net.minecraft.world.entity.Display
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.decoration.ArmorStand
 import net.wapic.wpcmod.config.components.GlowableESPConfig
 import net.wapic.wpcmod.events.WorldRenderEvent
+import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.getRenderPos
 import net.wapic.wpcmod.util.render.WorldRenderContext
 
 object EspCache {
@@ -21,27 +23,28 @@ object EspCache {
 	private val ADDERS = mutableListOf<EspFeature>()
 
 	fun init() {
-		ClientTickEvents.END_CLIENT_TICK.register(::rebuildCache)
+		LevelExtractionEvents.END_EXTRACTION.register(::rebuildCache)
 		WorldRenderEvent.EVENT.register(::renderEsp)
 	}
 
-	private fun rebuildCache(client: Minecraft) {
+	private fun rebuildCache(levelExtractionContext: LevelExtractionContext) {
 		val profiler = Profiler.get()
-		val level = client.level ?: return
-		profiler.push("build-esp-cache")
+		profiler.push("WpcModRebuildCache")
+		val level = levelExtractionContext.level()
 		CACHE.clear()
 		level.entitiesForRendering().forEach(::getOrCompute)
 		profiler.pop()
 	}
 
 	private fun renderEsp(worldRenderContext: WorldRenderContext) {
-		worldRenderContext.profiler.push("render-esp")
-
+		worldRenderContext.profiler.push("Render-ESPCache")
+		val ticks = MC.instance.deltaTracker.getGameTimeDeltaPartialTick(true)
 		for ((entity, config) in CACHE) {
+			val pos = if (entity is ArmorStand) entity.getEyePosition(ticks) else entity.getRenderPos(ticks)
 			val width = if (entity is ArmorStand || entity is Display.ItemDisplay) 0.8f else entity.bbWidth
 			val height = if (entity is ArmorStand || entity is Display.ItemDisplay) 0.8f else entity.bbHeight
-			if (config.box) worldRenderContext.drawBoundingBox(entity.eyePosition, width, height, config.color)
-			if (config.tracer) worldRenderContext.drawTracer(entity.eyePosition, config.color, config.tracerWidth)
+			if (config.box) worldRenderContext.drawBoundingBox(pos, width, height, config.color)
+			if (config.tracer) worldRenderContext.drawTracer(pos, config.color, config.tracerWidth)
 		}
 
 		worldRenderContext.profiler.pop()

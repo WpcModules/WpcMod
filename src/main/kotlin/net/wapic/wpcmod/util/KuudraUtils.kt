@@ -9,7 +9,6 @@ import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.events.skyblock.KuudraEvents
 import net.wapic.wpcmod.util.ChatUtils.removeFormatting
-import net.wapic.wpcmod.util.EntityUtils.skyBlockMaxHealth
 
 object KuudraUtils {
 

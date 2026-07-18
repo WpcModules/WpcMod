@@ -5,7 +5,7 @@ import net.minecraft.world.entity.player.Inventory
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.PlayerPickEvents
 import net.wapic.wpcmod.util.DungeonUtils
-import net.wapic.wpcmod.util.ItemUtils.skyblockId
+import net.wapic.wpcmod.util.skyblockId
 import net.wapic.wpcmod.util.MC
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 

@@ -12,8 +12,8 @@ import net.minecraft.world.item.Items
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.GuiEvents
 import net.wapic.wpcmod.events.ReplaceItemEvent
-import net.wapic.wpcmod.util.ItemUtils.isSimilar
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.isSimilar
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
 

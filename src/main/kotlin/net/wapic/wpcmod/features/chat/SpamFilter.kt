@@ -37,7 +37,7 @@ object SpamFilter {
 		ClientTickEvents.END_CLIENT_TICK.register(::onTick)
 		HudElementRegistry.attachElementBefore(
 			VanillaHudElements.DEMO_TIMER,
-			Utils.modIdentifier("spam_filter"),
+			WpcMod.Identifier("spam_filter"),
 			::onRenderHud
 		)
 	}

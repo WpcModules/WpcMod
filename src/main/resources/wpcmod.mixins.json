@@ -27,7 +27,7 @@
     "ItemEntityMixin",
     "KeyboardHandlerMixin",
     "LevelChunkMixin",
-    "LevelRendererMixin",
+    "GameRendererMixin",
     "LeverBlockMixin",
     "LightmapRenderStateExtractorMixin",
     "LivingEntityMixin",

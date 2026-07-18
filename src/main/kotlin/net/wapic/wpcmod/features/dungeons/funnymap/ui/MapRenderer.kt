@@ -9,9 +9,8 @@ import net.wapic.wpcmod.features.dungeons.funnymap.core.DungeonPlayer
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.RoomState
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.DungeonScan
 import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils
-import net.wapic.wpcmod.util.ItemUtils.skyblockId
+import net.wapic.wpcmod.util.skyblockId
 import net.wapic.wpcmod.util.MC
-import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 import net.wapic.wpcmod.util.render.BLACK
 import net.wapic.wpcmod.util.render.drawBorder
@@ -23,11 +22,11 @@ object MapRenderer {
 
 	val config get() = WpcMod.config.dungeon.funnyMap
 
-	private val crossResource = Utils.modIdentifier("dungeon/cross.png")
-	private val greenResource = Utils.modIdentifier("dungeon/green_check.png")
-	private val questionResource = Utils.modIdentifier("dungeon/question.png")
-	private val whiteResource = Utils.modIdentifier("dungeon/white_check.png")
-	private val mapIcons = Utils.modIdentifier("dungeon/marker.png")
+	private val crossResource = WpcMod.Identifier("dungeon/cross.png")
+	private val greenResource = WpcMod.Identifier("dungeon/green_check.png")
+	private val questionResource = WpcMod.Identifier("dungeon/question.png")
+	private val whiteResource = WpcMod.Identifier("dungeon/white_check.png")
+	private val mapIcons = WpcMod.Identifier("dungeon/marker.png")
 
 	fun renderCenteredText(drawContext: GuiGraphicsExtractor, text: List<String>, x: Int, y: Int, color: Int) {
 		if (text.isEmpty()) return

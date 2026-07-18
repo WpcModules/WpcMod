@@ -8,7 +8,7 @@ import net.minecraft.world.entity.decoration.ArmorStand
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.components.GlowableESPConfig
 import net.wapic.wpcmod.util.ChatUtils
-import net.wapic.wpcmod.util.EntityUtils.getArmorStandsByEntity
+import net.wapic.wpcmod.util.getNearbyArmorStands
 import java.util.*
 
 object TagESP : EspFeature() {
@@ -45,7 +45,7 @@ object TagESP : EspFeature() {
 
 		if (displayName in tagList || plainTextName in tagList) return true
 		if (entity !is ArmorStand) {
-			return getArmorStandsByEntity(entity).firstOrNull { e ->
+			return entity.getNearbyArmorStands().firstOrNull { e ->
 				tagList.any {
 					e.name.string.contains(
 						it,

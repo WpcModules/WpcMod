@@ -19,6 +19,7 @@ import net.minecraft.network.chat.ClickEvent
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.HoverEvent
 import net.minecraft.network.chat.Style
+import net.minecraft.resources.Identifier
 import net.wapic.wpcmod.commands.*
 import net.wapic.wpcmod.config.ConfigManager
 import net.wapic.wpcmod.config.WpcConfig
@@ -53,7 +54,7 @@ import net.wapic.wpcmod.features.slayer.GummyBearTimer
 import net.wapic.wpcmod.hud.HudManager
 import net.wapic.wpcmod.listeners.NetworkListener
 import net.wapic.wpcmod.util.*
-import net.wapic.wpcmod.util.Utils.modIdentifier
+import net.wapic.wpcmod.util.render.WpcModRenderSystem
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -72,7 +73,7 @@ object WpcMod : ModInitializer {
 	val configDir = File("config/wpcmod")
 
 	val version: Version by lazy { metadata.version }
-	val LOGGER: Logger = LoggerFactory.getLogger("WpcMod")
+	val LOGGER: Logger = LoggerFactory.getLogger(WpcMod::class.java)
 
 	val globalJob = Job()
 	val coroutineScope = CoroutineScope(EmptyCoroutineContext + CoroutineName("WpcMod") + SupervisorJob(globalJob))
@@ -89,7 +90,7 @@ object WpcMod : ModInitializer {
 	)
 	private var potentialUpdate: PotentialUpdate? = null
 
-	val category: KeyMapping.Category = KeyMapping.Category.register(modIdentifier(MOD_ID))
+	val category: KeyMapping.Category = KeyMapping.Category.register(Identifier(MOD_ID))
 
 	override fun onInitialize() {
 		ConfigManager.firstLoad()
@@ -217,6 +218,8 @@ object WpcMod : ModInitializer {
 
 		// Dev
 		SkyBlockID.init()
+
+		WpcModRenderSystem.init()
 	}
 
 	fun checkUpdate() {
@@ -248,4 +251,6 @@ object WpcMod : ModInitializer {
 			ChatUtils.sendMessage("Update complete! the updates will be applied on next restart.")
 		}
 	}
+
+	fun Identifier(path: String): Identifier = Identifier.fromNamespaceAndPath(MOD_ID, path)
 }

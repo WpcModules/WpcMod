@@ -13,9 +13,9 @@ import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.components.GlowableESPConfig
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.features.entity.EspFeature
-import net.wapic.wpcmod.util.ConfigUtils.copyWithColor
+import net.wapic.wpcmod.util.copyWithColor
 import net.wapic.wpcmod.util.Island
-import net.wapic.wpcmod.util.ItemUtils.skyblockId
+import net.wapic.wpcmod.util.skyblockId
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils
 import java.util.*

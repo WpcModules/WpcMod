@@ -11,10 +11,10 @@ import net.wapic.wpcmod.features.dungeons.funnymap.core.map.RoomState
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
 import net.wapic.wpcmod.features.entity.EspFeature
 import net.wapic.wpcmod.util.DungeonUtils
-import net.wapic.wpcmod.util.EntityUtils.getArmorStandsByEntity
-import net.wapic.wpcmod.util.EntityUtils.headTexture
 import net.wapic.wpcmod.util.HeadTextures
 import net.wapic.wpcmod.util.Utils.equalsOneOf
+import net.wapic.wpcmod.util.getNearbyArmorStands
+import net.wapic.wpcmod.util.headTexture
 import net.wapic.wpcmod.util.render.WorldRenderContext
 import net.wapic.wpcmod.util.render.brighter
 import net.wapic.wpcmod.util.render.darker
@@ -46,7 +46,7 @@ object DungeonESP : EspFeature() {
 	}
 
 	fun isStarredMob(entity: Entity): Boolean {
-		val armorStands = getArmorStandsByEntity(entity)
+		val armorStands = entity.getNearbyArmorStands()
 		return armorStands.isNotEmpty() && armorStands.first().name.string.contains("✯")
 	}
 

@@ -11,8 +11,8 @@ import net.wapic.wpcmod.events.EntityEvents
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.HeadTextures
-import net.wapic.wpcmod.util.ItemUtils.headTexture
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.headTexture
 
 object AutoCloseChests {
 

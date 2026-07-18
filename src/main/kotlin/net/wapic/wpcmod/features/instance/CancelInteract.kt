@@ -8,7 +8,7 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.phys.BlockHitResult
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.Island
-import net.wapic.wpcmod.util.ItemUtils.skyblockId
+import net.wapic.wpcmod.util.skyblockId
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils
 
@@ -21,9 +21,7 @@ object CancelInteract {
 	}
 
 	fun onItemUse(player: Player, world: Level, hand: InteractionHand, block: BlockHitResult): InteractionResult {
-		if ((Utils.getLocation() != Island.KUUDRA || !config.kuudra.cancelInteract) &&
-			(Utils.getLocation() != Island.DUNGEON || !config.dungeon.cancelInteract)
-		) {
+		if (Utils.getLocation() != Island.KUUDRA || !config.kuudra.cancelInteract) {
 			return InteractionResult.PASS
 		}
 

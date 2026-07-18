@@ -16,7 +16,7 @@ import net.minecraft.world.item.Items
 import net.minecraft.world.level.Level
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldChangeEvent
-import net.wapic.wpcmod.util.EntityUtils.getArmorStandsByEntity
+import net.wapic.wpcmod.util.getNearbyArmorStands
 import net.wapic.wpcmod.util.MC
 import java.lang.ref.WeakReference
 import java.util.concurrent.atomic.AtomicBoolean
@@ -109,5 +109,5 @@ object AutoFish {
 		return hook
 	}
 
-	private val FishingHook.hasCaughtFish: Boolean get() = getArmorStandsByEntity(this).any { it.name.string == "!!!" }
+	private val FishingHook.hasCaughtFish: Boolean get() = this.getNearbyArmorStands().any { it.name.string == "!!!" }
 }

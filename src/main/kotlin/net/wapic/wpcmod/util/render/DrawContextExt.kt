@@ -4,6 +4,7 @@ import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.resources.Identifier
+import net.wapic.wpcmod.util.render.state.RoundedRectangleRenderState
 import org.joml.Matrix3x2f
 
 fun GuiGraphicsExtractor.drawTexture(
