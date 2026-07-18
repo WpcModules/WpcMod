@@ -95,11 +95,11 @@ object WpcModRenderer {
 		}
 
 		draw.textureSetup.texure1?.let {
-			renderPass.bindTexture("Sampler0", it, draw.textureSetup.sampler1)
+			renderPass.bindTexture("Sampler1", it, draw.textureSetup.sampler1)
 		}
 
 		draw.textureSetup.texure2?.let {
-			renderPass.bindTexture("Sampler0", it, draw.textureSetup.sampler2)
+			renderPass.bindTexture("Sampler2", it, draw.textureSetup.sampler2)
 		}
 
 		renderPass.setVertexBuffer(0, executeInfo.vertexBuffer.slice())

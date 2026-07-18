@@ -13,7 +13,6 @@ import net.minecraft.util.Mth
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.chat.SpamConfig
 import net.wapic.wpcmod.util.MC
-import net.wapic.wpcmod.util.Utils
 
 object SpamFilter {
 

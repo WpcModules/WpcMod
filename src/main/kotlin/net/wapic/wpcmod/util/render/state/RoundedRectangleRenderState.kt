@@ -6,7 +6,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer
 import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.client.gui.navigation.ScreenRectangle
 import net.minecraft.client.gui.render.TextureSetup
-import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.client.renderer.state.gui.GuiElementRenderState
 import net.wapic.wpcmod.render.DirectVertexConsumer
 import net.wapic.wpcmod.util.render.WpcModRenderPipelines

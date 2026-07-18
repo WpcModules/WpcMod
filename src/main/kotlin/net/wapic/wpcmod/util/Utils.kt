@@ -5,7 +5,6 @@ import net.hypixel.modapi.HypixelModAPI
 import net.hypixel.modapi.packet.impl.clientbound.event.ClientboundLocationPacket
 import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Style
-import net.minecraft.resources.Identifier
 import net.minecraft.util.Util
 import net.minecraft.world.level.ChunkPos
 import net.minecraft.world.level.block.entity.BlockEntity
