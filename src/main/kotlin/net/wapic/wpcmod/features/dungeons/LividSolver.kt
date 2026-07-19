@@ -18,7 +18,6 @@ import net.wapic.wpcmod.util.DungeonUtils.currentFloor
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 import net.wapic.wpcmod.util.render.state.EspRenderState
 import net.wapic.wpcmod.util.render.toChromaColour
-import net.wapic.wpcmod.util.lerpedRenderPos
 
 object LividSolver : EspFeature() {
 
