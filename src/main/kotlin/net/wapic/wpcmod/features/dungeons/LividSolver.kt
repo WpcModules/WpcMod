@@ -18,7 +18,7 @@ import net.wapic.wpcmod.util.DungeonUtils.currentFloor
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 import net.wapic.wpcmod.util.render.state.EspRenderState
 import net.wapic.wpcmod.util.render.toChromaColour
-import net.wapic.wpcmod.util.renderPos
+import net.wapic.wpcmod.util.lerpedRenderPos
 
 object LividSolver : EspFeature() {
 
@@ -65,7 +65,7 @@ object LividSolver : EspFeature() {
 	override fun compute(entity: Entity): EspRenderState? {
 		if (entity.plainTextName != lividTypes[correctColor]) return null
 		val usedConfig = if (config.useLividColor) config.copyWithColor(correctColor.textColor.toChromaColour()) else config
-		return EspRenderState(usedConfig, entity.bbWidth, entity.bbHeight, entity.renderPos)
+		return EspRenderState.fromEntity(entity, usedConfig)
 	}
 
 	override fun isEnabled(): Boolean = isInLividBossRoom && (config.glow || config.tracer || config.box)

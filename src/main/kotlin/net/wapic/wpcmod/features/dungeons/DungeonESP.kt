@@ -18,8 +18,6 @@ import net.wapic.wpcmod.util.render.WorldRenderContext
 import net.wapic.wpcmod.util.render.brighter
 import net.wapic.wpcmod.util.render.darker
 import net.wapic.wpcmod.util.render.state.EspRenderState
-import net.wapic.wpcmod.util.lerpedEyePos
-import net.wapic.wpcmod.util.renderPos
 
 object DungeonESP : EspFeature() {
 
@@ -57,10 +55,10 @@ object DungeonESP : EspFeature() {
 			config.doorKeys.glow && entity is ArmorStand && entity.headTexture.equalsOneOf(
 				HeadTextures.WITHER_KEY,
 				HeadTextures.BLOOD_KEY
-			) && !entity.isMarker -> EspRenderState(config.doorKeys, 0.8f, 0.8f, entity.lerpedEyePos)
-			isStarredMob(entity) -> EspRenderState(config.starMob, entity.bbWidth, entity.bbHeight, entity.renderPos)
-			entity.name.string in miniBosses -> EspRenderState(config.miniboss, entity.bbWidth, entity.bbHeight, entity.renderPos)
-			entity is Bat && !entity.isInvisible && entity.health == 100f -> EspRenderState(config.bat, entity.bbWidth, entity.bbHeight, entity.renderPos)
+			) && !entity.isMarker -> EspRenderState.fromArmorStand(entity, config.doorKeys)
+			isStarredMob(entity) -> EspRenderState.fromEntity(entity, config.starMob)
+			entity.name.string in miniBosses -> EspRenderState.fromEntity(entity, config.miniboss)
+			entity is Bat && !entity.isInvisible && entity.health == 100f -> EspRenderState.fromEntity(entity, config.bat)
 			else -> null
 		}
 	}

@@ -9,7 +9,6 @@ import net.wapic.wpcmod.util.HeadTextures
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.render.state.EspRenderState
-import net.wapic.wpcmod.util.lerpedEyePos
 
 object PestESP : EspFeature() {
 
@@ -19,7 +18,7 @@ object PestESP : EspFeature() {
 
 	override fun compute(entity: Entity): EspRenderState? {
 		if(entity is ArmorStand && entity.headTexture in HeadTextures.allPests) {
-			return EspRenderState(config, .8f, .8f, entity.lerpedEyePos)
+			return EspRenderState.fromArmorStand(entity, config)
 		}
 
 		return null

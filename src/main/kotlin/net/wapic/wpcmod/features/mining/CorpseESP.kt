@@ -18,7 +18,6 @@ import net.wapic.wpcmod.util.skyblockId
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.render.state.EspRenderState
-import net.wapic.wpcmod.util.lerpedEyePos
 import java.util.*
 
 object CorpseESP : EspFeature() {
@@ -67,7 +66,7 @@ object CorpseESP : EspFeature() {
 		val corpse = corpses.getOrPut(armorStand.uuid) { Corpse(armorStand.boundingBox) }
 		val config = config.takeUnless { corpse.isLooted } ?: return null
 
-		return EspRenderState(if(config.corpseColor) config.copyWithColor(getCorpseColor(armorStand)) else config, entity.bbWidth, entity.bbHeight, entity.lerpedEyePos)
+		return EspRenderState.fromEntity(entity, if(config.corpseColor) config.copyWithColor(getCorpseColor(armorStand)) else config)
 	}
 
 	override fun isEnabled(): Boolean =

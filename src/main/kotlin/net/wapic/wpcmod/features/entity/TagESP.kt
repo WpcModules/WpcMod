@@ -9,7 +9,6 @@ import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.getNearbyArmorStands
 import net.wapic.wpcmod.util.render.state.EspRenderState
-import net.wapic.wpcmod.util.renderPos
 import java.util.*
 
 object TagESP : EspFeature() {
@@ -60,7 +59,7 @@ object TagESP : EspFeature() {
 	}
 
 	override fun compute(entity: Entity): EspRenderState? {
-		return if (isTagged(entity)) EspRenderState(config, entity.bbWidth, entity.bbHeight, entity.renderPos) else null
+		return if (isTagged(entity)) EspRenderState.fromEntity(entity, config) else null
 	}
 
 	override fun isEnabled(): Boolean = tagList.isNotEmpty() && (config.box || config.tracer || config.glow)

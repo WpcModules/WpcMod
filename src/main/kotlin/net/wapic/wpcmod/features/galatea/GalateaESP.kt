@@ -12,9 +12,7 @@ import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.features.entity.EspFeature
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.Utils
-import net.wapic.wpcmod.util.lerpedEyePos
 import net.wapic.wpcmod.util.render.state.EspRenderState
-import net.wapic.wpcmod.util.renderPos
 
 object GalateaESP : EspFeature() {
 
@@ -28,13 +26,14 @@ object GalateaESP : EspFeature() {
 
 	override fun compute(entity: Entity): EspRenderState? {
 		return when (entity) {
-			is Shulker -> EspRenderState(config.shulker, entity.bbWidth, entity.bbHeight, entity.renderPos)
-			is Axolotl -> EspRenderState(config.axolotl, entity.bbWidth, entity.bbHeight, entity.renderPos)
-			is Frog -> EspRenderState(config.frog, entity.bbWidth, entity.bbHeight, entity.renderPos)
-			is Panda -> EspRenderState(config.panda, entity.bbWidth, entity.bbHeight, entity.renderPos)
-			is Pufferfish -> EspRenderState(config.pufferfish, entity.bbWidth, entity.bbHeight, entity.renderPos)
-			is Turtle -> EspRenderState(config.shellwise, entity.bbWidth, entity.bbHeight, entity.renderPos)
-			is ArmorStand -> if(isInvisibug(entity)) EspRenderState(config.invisibug, .5f, .5f, entity.lerpedEyePos.add(.0, .75, .0)) else null
+			is Shulker -> EspRenderState.fromEntity(entity, config.shulker)
+			is Axolotl -> EspRenderState.fromEntity(entity, config.axolotl)
+			is Frog -> EspRenderState.fromEntity(entity, config.frog)
+			is Panda -> EspRenderState.fromEntity(entity, config.panda)
+			is Pufferfish -> EspRenderState.fromEntity(entity, config.pufferfish)
+			is Turtle -> EspRenderState.fromEntity(entity, config.shellwise)
+			is ArmorStand ->
+				if(isInvisibug(entity)) EspRenderState.fromArmorStand(entity, config.invisibug, .75) else null
 			else -> null
 		}
 	}

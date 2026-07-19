@@ -35,7 +35,7 @@ object WpcModRenderer {
 	}
 
 	fun getBuffer(pipeline: RenderPipeline, textureSetup: TextureSetup, alphaModifier: Float): VertexConsumer {
-		if(previousDraw == null || previousPipeline != pipeline || !textureSetup.equals(textureSetup) || previousAlphaModifier != alphaModifier) {
+		if(previousDraw == null || previousPipeline != pipeline || textureSetup != textureSetup || previousAlphaModifier != alphaModifier) {
 			previousDraw = vertexBuffer.appendDraw(pipeline.getVertexFormatBinding(0)!!, pipeline.primitiveTopology)
 			DRAWS.add(Draw(previousDraw!!, pipeline, textureSetup, alphaModifier))
 		}
@@ -58,7 +58,6 @@ object WpcModRenderer {
 		dispatchDraws()
 
 		profiler.popPush("endFrame")
-		vertexBuffer.endDraw()
 		vertexBuffer.endFrame()
 		DRAWS.clear()
 

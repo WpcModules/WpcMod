@@ -6,7 +6,6 @@ import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.headTexture
 import net.wapic.wpcmod.util.HeadTextures
 import net.wapic.wpcmod.util.render.state.EspRenderState
-import net.wapic.wpcmod.util.lerpedEyePos
 
 object FairySoulESP : EspFeature() {
 	private val config get() = WpcMod.config.general.esp.fairySoul
@@ -15,7 +14,7 @@ object FairySoulESP : EspFeature() {
 
 	override fun compute(entity: Entity): EspRenderState? {
 		if(entity is ArmorStand && entity.headTexture == HeadTextures.FAIRY_SOUL) {
-			return EspRenderState(config, 0.8f, 0.8f, entity.lerpedEyePos)
+			return EspRenderState.fromArmorStand(entity, config)
 		}
 		return null
 	}

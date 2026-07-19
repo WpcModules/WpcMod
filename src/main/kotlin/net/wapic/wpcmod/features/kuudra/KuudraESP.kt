@@ -8,7 +8,6 @@ import net.wapic.wpcmod.util.KuudraUtils
 import net.wapic.wpcmod.util.KuudraUtils.Phase
 import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.render.state.EspRenderState
-import net.wapic.wpcmod.util.renderPos
 
 object KuudraESP : EspFeature() {
 
@@ -19,7 +18,7 @@ object KuudraESP : EspFeature() {
 	override fun compute(entity: Entity): EspRenderState? {
 		if (entity != KuudraUtils.kuudraEntity) return null
 		if (config.kuudra.killPhaseOnly && KuudraUtils.phase != Phase.KILL) return null
-		return EspRenderState(config.kuudra, entity.bbWidth, entity.bbHeight, entity.renderPos)
+		return EspRenderState.fromEntity(entity, config.kuudra)
 	}
 
 	override fun isEnabled(): Boolean {
