@@ -8,7 +8,7 @@ object FreecamCommand : Command("freecam") {
 
 	override fun executes(context: CommandContext<FabricClientCommandSource>): Int {
 		Freecam.toggle(context.source.client)
-		return super.executes(context)
+		return 1
 	}
 
 }

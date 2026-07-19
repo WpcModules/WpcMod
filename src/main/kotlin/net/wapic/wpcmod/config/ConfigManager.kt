@@ -5,11 +5,13 @@ import com.google.gson.GsonBuilder
 import io.github.notenoughupdates.moulconfig.ChromaColour
 import io.github.notenoughupdates.moulconfig.LegacyStringChromaColourTypeAdapter
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorSlider
+import io.github.notenoughupdates.moulconfig.common.IMinecraft
 import io.github.notenoughupdates.moulconfig.gui.MoulConfigEditor
 import io.github.notenoughupdates.moulconfig.observer.PropertyTypeAdapterFactory
 import io.github.notenoughupdates.moulconfig.processor.BuiltinMoulConfigGuis
 import io.github.notenoughupdates.moulconfig.processor.ConfigProcessorDriver
 import io.github.notenoughupdates.moulconfig.processor.MoulConfigProcessor
+import net.minecraft.client.Minecraft
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.components.slider.GuiOptionSlider
 import java.io.File
@@ -118,4 +120,5 @@ object ConfigManager {
 	}
 
 	fun getEditor() = editor ?: MoulConfigEditor(processor).also { editor = it }
+	fun openConfig(client: Minecraft) = client.schedule { IMinecraft.INSTANCE.openWrappedScreen(getEditor()) }
 }

@@ -17,7 +17,7 @@ object TagCommand : Command("tag") {
 
 	override fun executes(context: CommandContext<FabricClientCommandSource>): Int {
 		ChatUtils.sendMessage("Tagged entities: ${TagESP.getTagList()}")
-		return super.executes(context)
+		return 1
 	}
 
 	override fun getCommand(): LiteralArgumentBuilder<FabricClientCommandSource> {

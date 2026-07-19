@@ -10,7 +10,7 @@ object HudEditorCommand : Command("hud") {
 
 	private val resetHud = literal("reset").executes {
 		HudManager.resetLocations()
-		return@executes 0
+		return@executes 1
 	}
 
 	override fun executes(context: CommandContext<FabricClientCommandSource>): Int {

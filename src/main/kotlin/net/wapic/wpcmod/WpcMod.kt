@@ -113,7 +113,10 @@ object WpcMod : ModInitializer {
 				return@executes 1
 			})
 
-			dispatcher.register(ClientCommands.literal("wpcmod").redirect(mainCommand))
+			dispatcher.register(ClientCommands.literal("wpcmod").executes {
+				ConfigManager.openConfig(it.source.client)
+				return@executes 1
+			}.redirect(mainCommand))
 		}
 
 		ClientPlayConnectionEvents.JOIN.register { handler, sender, client ->

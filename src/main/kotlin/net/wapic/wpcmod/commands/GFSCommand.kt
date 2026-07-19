@@ -15,17 +15,17 @@ object GFSCommand : Command("gfs") {
 
 	private val skyBlockID = argument("skyblockId", string()).executes {
 		SackUtils.getFromSack(getString(it, "skyblockId"), 64)
-		return@executes 0
+		return@executes 1
 	}
 
 	private val maxStackSize = argument("maxStackSize", integer(1, 64)).executes {
 		SackUtils.getFromSack(getString(it, "skyblockId"), getInteger(it, "maxStackSize"))
-		return@executes 0
+		return@executes 1
 	}
 
 	override fun executes(context: CommandContext<FabricClientCommandSource>): Int {
 		ChatUtils.sendMessage("Usage: /wpc gfs [SKYBLOCK ID] <Max Stack Size> (max stack size is assumed 64 unless provided)")
-		return super.executes(context)
+		return 1
 	}
 
 	override fun getCommand(): LiteralArgumentBuilder<FabricClientCommandSource> {

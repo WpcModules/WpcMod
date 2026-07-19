@@ -11,6 +11,6 @@ object ShortcutsCommand : Command("binds") {
 		context.source.client.schedule {
 			MC.screen = ShortcutScreen(null)
 		}
-		return super.executes(context)
+		return 1
 	}
 }

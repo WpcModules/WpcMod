@@ -8,6 +8,6 @@ object UpdateCommand : Command("update") {
 
 	override fun executes(context: CommandContext<FabricClientCommandSource>): Int {
 		WpcMod.checkUpdate()
-		return super.executes(context)
+		return 1
 	}
 }

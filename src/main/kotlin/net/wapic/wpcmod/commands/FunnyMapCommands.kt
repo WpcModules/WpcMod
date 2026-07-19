@@ -26,12 +26,12 @@ object FunnyMapCommands : Command("dungeon") {
 		val data = ScanUtils.getRoomData(roomCentre.first, roomCentre.second)
 
 		Utils.copyToClipboard(data?.toString() ?: ScanUtils.getCore(roomCentre.first, roomCentre.second).toString())
-		return@executes 0
+		return@executes 1
 	}
 
 	val addCore: LiteralArgumentBuilder<FabricClientCommandSource> = literal("addcore").executes {
 		ChatUtils.sendMessage("Usage: /wpc dungeon room addcore <roomName>", Style.EMPTY.withColor(ChatFormatting.RED))
-		return@executes 0
+		return@executes 1
 	}
 
 	val addCoreFromRoomName: RequiredArgumentBuilder<FabricClientCommandSource, String> =
@@ -41,27 +41,27 @@ object FunnyMapCommands : Command("dungeon") {
 					"You must be in a dungeon to add a core.",
 					Style.EMPTY.withColor(ChatFormatting.RED)
 				)
-				return@executes 1
+				return@executes 0
 			}
 			val roomName = StringArgumentType.getString(it, "roomName")
 			val data = ScanUtils.addCore(roomName)
-			return@executes 0
+			return@executes 1
 		}
 
 	val saveRooms: LiteralArgumentBuilder<FabricClientCommandSource> = literal("save").executes {
 		ScanUtils.saveRoomList()
-		return@executes 0
+		return@executes 1
 	}
 
 	val scan: LiteralArgumentBuilder<FabricClientCommandSource> = literal("scan").executes {
 		FunnyMap.reset()
 		DungeonScan.scan()
-		return@executes 0
+		return@executes 1
 	}
 
 	override fun executes(context: CommandContext<FabricClientCommandSource>): Int {
 		ChatUtils.sendMessage("Usage: /wpc dungeon <scan/room>", Style.EMPTY.withColor(ChatFormatting.RED))
-		return super.executes(context)
+		return 1
 	}
 
 	override fun getCommand(): LiteralArgumentBuilder<FabricClientCommandSource> {

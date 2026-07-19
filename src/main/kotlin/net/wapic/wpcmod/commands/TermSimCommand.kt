@@ -13,42 +13,42 @@ object TermSimCommand : Command("term") {
 
 	private val startsWith = literal("startswith").executes {
 		StartsWithSim().open(ping)
-		return@executes 0
+		return@executes 1
 	}
 
 	private val panes = literal("panes").executes {
 		PanesSim.open(ping)
-		return@executes 0
+		return@executes 1
 	}
 
 	private val selectAll = literal("selectall").executes {
 		SelectAllSim().open(ping)
-		return@executes 0
+		return@executes 1
 	}
 
 	private val numbers = literal("numbers").executes {
 		NumbersSim.open(ping)
-		return@executes 0
+		return@executes 1
 	}
 
 	private val melody = literal("melody").executes {
 		MelodySim.open(ping)
-		return@executes 0
+		return@executes 1
 	}
 
 	private val rubix = literal("rubix").executes {
 		RubixSim.open(ping)
-		return@executes 0
+		return@executes 1
 	}
 
 	private val random = literal("random").executes {
 		TerminalSimulator.openRandomTerminal(ping)
-		return@executes 0
+		return@executes 1
 	}
 
 	override fun executes(context: CommandContext<FabricClientCommandSource>): Int {
 		StartGUI.open(ping)
-		return super.executes(context)
+		return 1
 	}
 
 	override fun getCommand(): LiteralArgumentBuilder<FabricClientCommandSource> {
