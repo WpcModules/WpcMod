@@ -4,10 +4,11 @@ import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.animal.Animal
 import net.minecraft.world.entity.animal.equine.Horse
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.config.components.GlowableESPConfig
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.TrapperAPI
 import net.wapic.wpcmod.util.Utils
+import net.wapic.wpcmod.util.render.state.EspRenderState
+import net.wapic.wpcmod.util.renderPos
 import net.wapic.wpcmod.util.skyBlockMaxHealth
 
 object TrapperESP : EspFeature() {
@@ -17,9 +18,16 @@ object TrapperESP : EspFeature() {
 
 	fun init() = Unit
 
-	override fun compute(entity: Entity): GlowableESPConfig? = config.takeIf {
-		if (entity is Horse) return@takeIf TrapperAPI.currentType?.maxHealth == entity.skyBlockMaxHealth / 2
-		TrapperAPI.currentType?.maxHealth == (entity as? Animal).skyBlockMaxHealth
+	fun isTrapperAnimal(entity: Entity): Boolean {
+		if (entity is Horse) return TrapperAPI.currentType?.maxHealth == entity.skyBlockMaxHealth / 2
+		return TrapperAPI.currentType?.maxHealth == (entity as? Animal).skyBlockMaxHealth
+	}
+
+	override fun compute(entity: Entity): EspRenderState? {
+		if (isTrapperAnimal(entity)) {
+			return EspRenderState(config, entity.bbWidth, entity.bbHeight, entity.renderPos)
+		}
+		return null
 	}
 
 	override fun isEnabled(): Boolean =

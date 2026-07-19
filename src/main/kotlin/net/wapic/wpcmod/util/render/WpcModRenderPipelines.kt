@@ -18,16 +18,6 @@ object WpcModRenderPipelines {
 			.build()
 	)
 
-	val LINES_STRIP: RenderPipeline = RenderPipelines.register(
-		RenderPipeline.builder(RenderPipelines.LINES_SNIPPET)
-			.withLocation(WpcMod.Identifier("pipeline/wpcmod_triangles"))
-			.withVertexBinding(0, DefaultVertexFormat.POSITION_COLOR_LINE_WIDTH)
-			.withPrimitiveTopology(PrimitiveTopology.LINES)
-			.withDepthStencilState(Optional.empty())
-			.withCull(false)
-			.build()
-	)
-
 	val QUADS: RenderPipeline = RenderPipelines.register(
 		RenderPipeline.builder(RenderPipelines.MATRICES_FOG_SNIPPET)
 			.withLocation(WpcMod.Identifier("pipeline/wpcmod_quads"))

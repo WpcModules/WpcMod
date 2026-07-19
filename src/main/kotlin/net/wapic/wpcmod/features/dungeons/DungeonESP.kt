@@ -5,7 +5,6 @@ import net.minecraft.world.entity.ambient.Bat
 import net.minecraft.world.entity.decoration.ArmorStand
 import net.minecraft.world.phys.AABB
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.config.components.GlowableESPConfig
 import net.wapic.wpcmod.events.WorldRenderEvent
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.RoomState
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
@@ -18,6 +17,9 @@ import net.wapic.wpcmod.util.headTexture
 import net.wapic.wpcmod.util.render.WorldRenderContext
 import net.wapic.wpcmod.util.render.brighter
 import net.wapic.wpcmod.util.render.darker
+import net.wapic.wpcmod.util.render.state.EspRenderState
+import net.wapic.wpcmod.util.lerpedEyePos
+import net.wapic.wpcmod.util.renderPos
 
 object DungeonESP : EspFeature() {
 
@@ -50,15 +52,15 @@ object DungeonESP : EspFeature() {
 		return armorStands.isNotEmpty() && armorStands.first().name.string.contains("✯")
 	}
 
-	override fun compute(entity: Entity): GlowableESPConfig? {
+	override fun compute(entity: Entity): EspRenderState? {
 		return when {
 			config.doorKeys.glow && entity is ArmorStand && entity.headTexture.equalsOneOf(
 				HeadTextures.WITHER_KEY,
 				HeadTextures.BLOOD_KEY
-			) && !entity.isMarker -> config.doorKeys
-			isStarredMob(entity) -> config.starMob
-			entity.name.string in miniBosses -> config.miniboss
-			entity is Bat && !entity.isInvisible && entity.health == 100f -> config.bat
+			) && !entity.isMarker -> EspRenderState(config.doorKeys, 0.8f, 0.8f, entity.lerpedEyePos)
+			isStarredMob(entity) -> EspRenderState(config.starMob, entity.bbWidth, entity.bbHeight, entity.renderPos)
+			entity.name.string in miniBosses -> EspRenderState(config.miniboss, entity.bbWidth, entity.bbHeight, entity.renderPos)
+			entity is Bat && !entity.isInvisible && entity.health == 100f -> EspRenderState(config.bat, entity.bbWidth, entity.bbHeight, entity.renderPos)
 			else -> null
 		}
 	}

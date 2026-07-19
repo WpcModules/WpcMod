@@ -4,18 +4,14 @@ import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelExtractionContext
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelExtractionEvents
 import net.minecraft.util.profiling.Profiler
-import net.minecraft.world.entity.Display
 import net.minecraft.world.entity.Entity
-import net.minecraft.world.entity.decoration.ArmorStand
-import net.wapic.wpcmod.config.components.GlowableESPConfig
 import net.wapic.wpcmod.events.WorldRenderEvent
-import net.wapic.wpcmod.util.MC
-import net.wapic.wpcmod.util.getRenderPos
 import net.wapic.wpcmod.util.render.WorldRenderContext
+import net.wapic.wpcmod.util.render.state.EspRenderState
 
 object EspCache {
 
-	private val CACHE = hashMapOf<Entity, GlowableESPConfig>()
+	private val CACHE = hashMapOf<Entity, EspRenderState>()
 
 	@JvmField
 	val ENTITY_HAS_CUSTOM_GLOW: RenderStateDataKey<Boolean> =
@@ -38,15 +34,10 @@ object EspCache {
 
 	private fun renderEsp(worldRenderContext: WorldRenderContext) {
 		worldRenderContext.profiler.push("Render-ESPCache")
-		val ticks = MC.instance.deltaTracker.getGameTimeDeltaPartialTick(true)
-		for ((entity, config) in CACHE) {
-			val pos = if (entity is ArmorStand) entity.getEyePosition(ticks) else entity.getRenderPos(ticks)
-			val width = if (entity is ArmorStand || entity is Display.ItemDisplay) 0.8f else entity.bbWidth
-			val height = if (entity is ArmorStand || entity is Display.ItemDisplay) 0.8f else entity.bbHeight
+		for ((config, width, height, pos) in CACHE.values) {
 			if (config.box) worldRenderContext.drawBoundingBox(pos, width, height, config.color)
 			if (config.tracer) worldRenderContext.drawTracer(pos, config.color, config.tracerWidth)
 		}
-
 		worldRenderContext.profiler.pop()
 	}
 
@@ -54,20 +45,20 @@ object EspCache {
 		ADDERS.add(feature)
 	}
 
-	fun getOrCompute(entity: Entity): GlowableESPConfig? {
+	fun getOrCompute(entity: Entity): EspRenderState? {
 		if (CACHE.containsKey(entity)) return CACHE[entity]
 
-		val config = compute(entity)
-		if (config != null) CACHE[entity] = config
-		return config
+		val renderState = compute(entity)
+		if (renderState != null) CACHE[entity] = renderState
+		return renderState
 	}
 
-	fun compute(entity: Entity): GlowableESPConfig? {
+	fun compute(entity: Entity): EspRenderState? {
 		for (adder in ADDERS) {
 			if (!adder.isEnabled()) continue
 
-			val config = adder.compute(entity)
-			if (config != null) return config
+			val renderState = adder.compute(entity)
+			if (renderState != null) return renderState
 		}
 		return null
 	}

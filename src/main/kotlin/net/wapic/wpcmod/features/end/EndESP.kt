@@ -9,13 +9,14 @@ import net.minecraft.world.entity.boss.enderdragon.EnderDragon
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.phys.AABB
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.config.components.GlowableESPConfig
 import net.wapic.wpcmod.events.WorldRenderEvent
 import net.wapic.wpcmod.features.entity.EspFeature
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.render.WorldRenderContext
+import net.wapic.wpcmod.util.render.state.EspRenderState
+import net.wapic.wpcmod.util.renderPos
 
 object EndESP : EspFeature() {
 
@@ -64,7 +65,7 @@ object EndESP : EspFeature() {
 		worldRenderContext.profiler.pop()
 	}
 
-	override fun compute(entity: Entity): GlowableESPConfig? = config.dragon.takeIf { entity is EnderDragon }
+	override fun compute(entity: Entity): EspRenderState? = EspRenderState(config.dragon, entity.bbWidth, entity.bbHeight, entity.renderPos).takeIf { entity is EnderDragon }
 	override fun isEnabled(): Boolean {
 		return Utils.getLocation() == Island.END && (config.dragon.glow || config.dragon.tracer || config.dragon.box)
 	}

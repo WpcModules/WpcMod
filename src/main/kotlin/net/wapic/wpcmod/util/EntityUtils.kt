@@ -1,6 +1,5 @@
 package net.wapic.wpcmod.util
 
-import net.minecraft.core.Direction
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntitySelector
 import net.minecraft.world.entity.EquipmentSlot
@@ -14,8 +13,14 @@ val LivingEntity?.skyBlockMaxHealth: Float
 
 val LivingEntity.headTexture: String get() = this.getItemBySlot(EquipmentSlot.HEAD).headTexture
 
-fun Entity.getRenderPos(partialTick: Float): Vec3 =
-	this.getPosition(partialTick).relative(Direction.UP, this.bbHeight / 2.0)
+inline val Entity.renderPos: Vec3
+	get() = this.getPosition(MC.instance.deltaTracker.getGameTimeDeltaPartialTick(true)).add(.0, this.bbHeight / 2.0, .0)
+
+inline val Entity.lerpedPos: Vec3
+	get() = this.getPosition(MC.instance.deltaTracker.getGameTimeDeltaPartialTick(true))
+
+inline val Entity.lerpedEyePos: Vec3
+	get() = this.getEyePosition(MC.instance.deltaTracker.getGameTimeDeltaPartialTick(true))
 
 fun Entity.getNearbyArmorStands(): List<ArmorStand> {
 	return this.level().getEntitiesOfClass(

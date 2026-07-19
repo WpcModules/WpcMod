@@ -6,9 +6,10 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.decoration.ArmorStand
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.config.components.GlowableESPConfig
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.getNearbyArmorStands
+import net.wapic.wpcmod.util.render.state.EspRenderState
+import net.wapic.wpcmod.util.renderPos
 import java.util.*
 
 object TagESP : EspFeature() {
@@ -58,7 +59,9 @@ object TagESP : EspFeature() {
 		return false
 	}
 
-	override fun compute(entity: Entity): GlowableESPConfig? = config.takeIf { isTagged(entity) }
+	override fun compute(entity: Entity): EspRenderState? {
+		return if (isTagged(entity)) EspRenderState(config, entity.bbWidth, entity.bbHeight, entity.renderPos) else null
+	}
 
 	override fun isEnabled(): Boolean = tagList.isNotEmpty() && (config.box || config.tracer || config.glow)
 }

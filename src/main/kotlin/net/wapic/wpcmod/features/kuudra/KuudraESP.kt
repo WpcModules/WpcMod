@@ -2,12 +2,13 @@ package net.wapic.wpcmod.features.kuudra
 
 import net.minecraft.world.entity.Entity
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.config.components.GlowableESPConfig
 import net.wapic.wpcmod.features.entity.EspFeature
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.KuudraUtils
 import net.wapic.wpcmod.util.KuudraUtils.Phase
 import net.wapic.wpcmod.util.Utils
+import net.wapic.wpcmod.util.render.state.EspRenderState
+import net.wapic.wpcmod.util.renderPos
 
 object KuudraESP : EspFeature() {
 
@@ -15,10 +16,10 @@ object KuudraESP : EspFeature() {
 
 	fun init() = Unit
 
-	override fun compute(entity: Entity): GlowableESPConfig? {
+	override fun compute(entity: Entity): EspRenderState? {
 		if (entity != KuudraUtils.kuudraEntity) return null
 		if (config.kuudra.killPhaseOnly && KuudraUtils.phase != Phase.KILL) return null
-		return config.kuudra
+		return EspRenderState(config.kuudra, entity.bbWidth, entity.bbHeight, entity.renderPos)
 	}
 
 	override fun isEnabled(): Boolean {

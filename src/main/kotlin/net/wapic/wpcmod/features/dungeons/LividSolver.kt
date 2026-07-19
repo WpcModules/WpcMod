@@ -7,7 +7,6 @@ import net.minecraft.world.item.DyeColor
 import net.minecraft.world.level.block.StainedGlassBlock
 import net.minecraft.world.level.block.state.BlockState
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.config.components.GlowableESPConfig
 import net.wapic.wpcmod.events.BlockEvents
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.features.entity.EspFeature
@@ -17,7 +16,9 @@ import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.DungeonUtils.DungeonFloor
 import net.wapic.wpcmod.util.DungeonUtils.currentFloor
 import net.wapic.wpcmod.util.Utils.equalsOneOf
+import net.wapic.wpcmod.util.render.state.EspRenderState
 import net.wapic.wpcmod.util.render.toChromaColour
+import net.wapic.wpcmod.util.renderPos
 
 object LividSolver : EspFeature() {
 
@@ -61,9 +62,10 @@ object LividSolver : EspFeature() {
 		correctColor = DyeColor.RED
 	}
 
-	override fun compute(entity: Entity): GlowableESPConfig? {
+	override fun compute(entity: Entity): EspRenderState? {
 		if (entity.plainTextName != lividTypes[correctColor]) return null
-		return if (config.useLividColor) config.copyWithColor(correctColor.textColor.toChromaColour()) else config
+		val usedConfig = if (config.useLividColor) config.copyWithColor(correctColor.textColor.toChromaColour()) else config
+		return EspRenderState(usedConfig, entity.bbWidth, entity.bbHeight, entity.renderPos)
 	}
 
 	override fun isEnabled(): Boolean = isInLividBossRoom && (config.glow || config.tracer || config.box)

@@ -10,7 +10,6 @@ import net.minecraft.world.entity.decoration.ArmorStand
 import net.minecraft.world.item.Items
 import net.minecraft.world.phys.AABB
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.config.components.GlowableESPConfig
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.features.entity.EspFeature
 import net.wapic.wpcmod.util.copyWithColor
@@ -18,6 +17,8 @@ import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.skyblockId
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils
+import net.wapic.wpcmod.util.render.state.EspRenderState
+import net.wapic.wpcmod.util.lerpedEyePos
 import java.util.*
 
 object CorpseESP : EspFeature() {
@@ -59,14 +60,14 @@ object CorpseESP : EspFeature() {
 
 	private fun isCorpse(entity: ArmorStand) = entity.getItemBySlot(EquipmentSlot.HEAD).skyblockId in corpseHelmetIds
 
-	override fun compute(entity: Entity): GlowableESPConfig? {
+	override fun compute(entity: Entity): EspRenderState? {
 		val armorStand = entity as? ArmorStand ?: return null
 		if (!isCorpse(armorStand)) return null
 
 		val corpse = corpses.getOrPut(armorStand.uuid) { Corpse(armorStand.boundingBox) }
 		val config = config.takeUnless { corpse.isLooted } ?: return null
 
-		return if (config.corpseColor) config.copyWithColor(getCorpseColor(armorStand)) else config
+		return EspRenderState(if(config.corpseColor) config.copyWithColor(getCorpseColor(armorStand)) else config, entity.bbWidth, entity.bbHeight, entity.lerpedEyePos)
 	}
 
 	override fun isEnabled(): Boolean =
