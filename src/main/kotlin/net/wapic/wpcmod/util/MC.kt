@@ -13,9 +13,11 @@ import net.minecraft.client.player.LocalPlayer
 import net.minecraft.client.renderer.texture.TextureManager
 import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.sounds.SoundEvent
+import net.minecraft.world.inventory.ContainerInput
 import net.minecraft.world.item.ItemStack
 import net.wapic.wpcmod.features.general.Freecam
 import net.wapic.wpcmod.mixin.accessors.MinecraftAccessor
+import org.lwjgl.glfw.GLFW
 
 object MC {
 
@@ -23,6 +25,21 @@ object MC {
 	fun useItem() = runOnThread { (instance as? MinecraftAccessor)?.doItemUse_WpcMod() }
 	fun playSound(sound: SoundEvent, volume: Float, pitch: Float) =
 		runOnThread { player?.playSound(sound, volume, pitch) }
+
+	fun clickSlot(
+		containerId: Int,
+		slot: Int,
+		button: Int = GLFW.GLFW_MOUSE_BUTTON_LEFT,
+		input: ContainerInput = ContainerInput.PICKUP
+	) {
+		gameMode?.handleContainerInput(
+			containerId,
+			slot,
+			button,
+			input,
+			player ?: return
+		)
+	}
 
 	inline val entities get() = instance.level?.entitiesForRendering() ?: emptyList()
 	inline val cameraPos get() = if (Freecam.isEnabled) instance.cameraEntity?.position() else instance.player?.position()

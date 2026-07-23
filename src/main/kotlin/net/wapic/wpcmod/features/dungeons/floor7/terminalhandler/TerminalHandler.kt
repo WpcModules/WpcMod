@@ -15,7 +15,6 @@ open class TerminalHandler(val type: TerminalTypes) {
     val items: Array<ItemStack?> = arrayOfNulls(type.windowSize)
 	val timeOpened = Util.getMillis()
     var isClicked = false
-	var containerId = 0
 
 	open fun handleSlotUpdate(syncId: Int, slotId: Int, itemStack: ItemStack): Boolean = false
 

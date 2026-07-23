@@ -47,4 +47,19 @@ class ChatConfig {
 	@ConfigOption(name = "Auto Accept Trapper", desc = "Auto accept trevor the trapper quest")
 	@ConfigEditorBoolean
 	var autoAcceptTrapper: Boolean = false
+
+	@Accordion
+	@ConfigOption(name = "Quick Maths Solver", desc = "")
+	var quickMaths: QuickMathConfig = QuickMathConfig()
+
+	class QuickMathConfig {
+
+		@ConfigOption(name = "Enable Quick Maths Solver", desc = "Enables quick maths solver in chat")
+		@ConfigEditorBoolean
+		var enabled: Boolean = false
+
+		@ConfigOption(name = "Automatically Answer", desc = "Automatically say the answer in chat")
+		@ConfigEditorBoolean
+		var autoAnswer: Boolean = false
+	}
 }

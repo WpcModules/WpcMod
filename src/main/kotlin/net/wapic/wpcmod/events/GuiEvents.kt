@@ -105,15 +105,15 @@ object GuiEvents {
 
 	@JvmField
 	val OPEN: Event<OpenedEvent> = EventFactory.createArrayBacked(OpenedEvent::class.java) { listeners ->
-		OpenedEvent { title, containerId ->
+		OpenedEvent { screen ->
 			for (listener in listeners) {
-				listener.onOpen(title, containerId)
+				listener.onOpen(screen)
 			}
 		}
 	}
 
 	fun interface OpenedEvent {
-		fun onOpen(title: String, containerId: Int)
+		fun onOpen(screen: Screen)
 	}
 
 	@JvmField

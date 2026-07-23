@@ -49,9 +49,9 @@ object SuperpairsSolver {
 		ReplaceItemEvent.EVENT.register(::onReplaceItem)
 	}
 
-	fun onInventoryOpen(title: String, containerId: Int) {
+	fun onInventoryOpen(screen: Screen) {
 		if (!config.superpairsSolver) return
-		inSuperpairs = title.matches(superpairsTitle)
+		inSuperpairs = screen.title.string.matches(superpairsTitle)
 	}
 
 	fun onInventoryClosed() {

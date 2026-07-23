@@ -48,7 +48,7 @@ class SelectAllSim(
 
 		playTermSimSound()
 
-		if (guiInventorySlots.none { it?.item?.hasFoil() == false && possibleItems.contains(it.item.item) }) {
+		if (guiInventorySlots.none { !it.item.hasFoil() && possibleItems.contains(it.item.item) }) {
 			this@SelectAllSim.onTerminalSolved()
 		}
 	}
