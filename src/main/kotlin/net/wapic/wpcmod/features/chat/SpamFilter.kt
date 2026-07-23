@@ -27,6 +27,7 @@ object SpamFilter {
 	private val killComboRegex =
 		Regex("\\+\\d+ Kill Combo(?: \\+\\d+[%☯]? (?:✯ Magic Find|coins per kill|Combat Wisdom))?")
 	private val joinOrLeaveRegex = Regex("^(?:Friend|Guild) > \\w+ (?:joined|left)\\.$")
+	private val tipRegex = Regex("^You tipped \\d+ players? in \\d+ different games?!$")
 
 	data class Notification(val text: Component, var delay: Int) {
 		var x = MC.font.width(text.string)
@@ -85,6 +86,7 @@ object SpamFilter {
 			if (text.string.matches(tpFailRegex)) return handle(config.tpFail, text)
 			if (text.string.matches(killComboRegex)) return handle(config.killCombo, text)
 			if (text.string.matches(joinOrLeaveRegex)) return handle(config.joinOrLeave, text)
+			if (text.string.matches(tipRegex)) return handle(config.tippedPlayers, text)
 			return true
 		}
 		return true
