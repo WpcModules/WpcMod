@@ -209,6 +209,7 @@ object WpcMod : ModInitializer {
 		ChatEmotes.init()
 		AutoAcceptPartyInvite.init()
 		AutoAcceptTrapper.init()
+		QuickMathSolver.init()
 
 		// Inventory
 		ScrollableTooltips.init()
