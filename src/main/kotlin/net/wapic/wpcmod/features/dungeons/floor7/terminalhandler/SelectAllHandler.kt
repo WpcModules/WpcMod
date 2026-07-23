@@ -7,13 +7,25 @@ import net.minecraft.world.item.Items
 class SelectAllHandler(val color: DyeColor) : TerminalHandler(TerminalTypes.SELECT_ALL) {
 
 	private val overrides = mapOf(
+		// All this because Hypixel hates us.
 		DyeColor.WHITE to setOf(Items.BONE_MEAL, Items.WHITE_WOOL, Items.WHITE_CARPET, Items.WHITE_BANNER),
 		DyeColor.BLACK to setOf(Items.INK_SAC),
 		DyeColor.BLUE to setOf(Items.LAPIS_LAZULI),
 		DyeColor.BROWN to setOf(Items.COCOA_BEANS),
-		DyeColor.GREEN to setOf(Items.CACTUS),
-		DyeColor.RED to setOf(Items.POPPY),
-		DyeColor.YELLOW to setOf(Items.DANDELION),
+
+		// Green/Red/Yellow Dye still uses legacy names, so .startsWith won't match.
+		// As for the actual items(cactus, poppy, dandelion) I'm unsure if they're used, so I left them.
+		DyeColor.GREEN to setOf(Items.GREEN_DYE, Items.CACTUS),
+		DyeColor.RED to setOf(Items.RED_DYE, Items.POPPY),
+		DyeColor.YELLOW to setOf(Items.YELLOW_DYE, Items.DANDELION),
+
+		// Light Gray is called Silver, because why not?? except Light Gray Dye cause fuck me, I guess.
+		DyeColor.LIGHT_GRAY to setOf(
+			Items.LIGHT_GRAY_STAINED_GLASS_PANE,
+			Items.LIGHT_GRAY_STAINED_GLASS,
+			Items.LIGHT_GRAY_TERRACOTTA,
+			Items.LIGHT_GRAY_WOOL
+		),
 	)
 
 	override fun handleSlotUpdate(syncId: Int, slotId: Int, itemStack: ItemStack): Boolean {

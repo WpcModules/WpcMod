@@ -87,13 +87,13 @@ object TerminalSolver {
 				val color = selectAllRegex.find(title)?.groupValues?.get(1)?.replace("SILVER", "LIGHT GRAY")
 					?: return ChatUtils.sendMessage("Failed to find color from $title")
 				val dyeColor = DyeColor.entries.find { it.name.replace("_", " ") == color }
-					?: return ChatUtils.sendMessage("Failed to find dyeColor from $color")
+					?: return ChatUtils.sendMessage("Failed to find dyeColor from $color!")
 				SelectAllHandler(dyeColor)
 			}
 
 			TerminalTypes.STARTS_WITH -> {
 				val letter = startsWithRegex.find(screen.title.string)?.groupValues?.get(1)
-					?: return ChatUtils.sendMessage("Failed to find letter from $title, please report this!")
+					?: return ChatUtils.sendMessage("Failed to find letter from $title!")
 				StartsWithHandler(letter)
 			}
 		}.also {
