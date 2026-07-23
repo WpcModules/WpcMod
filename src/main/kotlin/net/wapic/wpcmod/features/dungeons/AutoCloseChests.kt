@@ -1,6 +1,5 @@
 package net.wapic.wpcmod.features.dungeons
 
-import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.gui.screens.inventory.ContainerScreen
 import net.minecraft.network.chat.contents.TranslatableContents
@@ -8,6 +7,7 @@ import net.minecraft.sounds.SoundEvents
 import net.minecraft.world.item.ItemStack
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.EntityEvents
+import net.wapic.wpcmod.events.GuiEvents
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.HeadTextures
@@ -20,7 +20,7 @@ object AutoCloseChests {
 	private val defaultTitles = listOf("container.chest", "container.chestDouble")
 
 	fun init() {
-		ScreenEvents.AFTER_INIT.register { _, screen, _, _ -> onScreenInit(screen) }
+		GuiEvents.OPEN.register(::onScreenInit)
 		EntityEvents.ITEM_DATA_SET.register(::onItemDataSet)
 	}
 

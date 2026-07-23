@@ -3,6 +3,8 @@ package net.wapic.wpcmod.features.dungeons.floor7
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
+import net.minecraft.client.gui.screens.inventory.ContainerScreen
 import net.minecraft.network.PacketListener
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.Packet
@@ -10,10 +12,12 @@ import net.minecraft.network.protocol.game.ServerboundContainerClickPacket
 import net.minecraft.util.Util
 import net.minecraft.world.item.DyeColor
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.*
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.*
+import net.wapic.wpcmod.mixin.accessors.AbstractContainerScreenAccessor
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.MC
@@ -59,11 +63,13 @@ object TerminalSolver {
 		}
 	}
 
-	fun onGuiOpen(title: String, containerId: Int) {
+	fun onGuiOpen(screen: Screen) {
+		if (screen !is ContainerScreen) return
 		if (!config.enabled) return
 
+		val title = screen.title.string
+
 		currentTerm?.let {
-			it.containerId = containerId
 			it.isClicked = false
 			it.items.fill(null)
 		}
@@ -86,8 +92,8 @@ object TerminalSolver {
 			}
 
 			TerminalTypes.STARTS_WITH -> {
-				val letter = startsWithRegex.find(title)?.groupValues?.get(1)
-					?: return ChatUtils.sendMessage("Failed to find letter, please report this!")
+				val letter = startsWithRegex.find(screen.title.string)?.groupValues?.get(1)
+					?: return ChatUtils.sendMessage("Failed to find letter from $title, please report this!")
 				StartsWithHandler(letter)
 			}
 		}.also {
@@ -114,7 +120,23 @@ object TerminalSolver {
 		callbackInfo: CallbackInfo
 	) {
 		if (!config.enabled) return
-		currentTerm?.let { callbackInfo.cancel() }
+		currentTerm?.let {
+			callbackInfo.cancel()
+
+			if (config.debug) {
+				val pose = gui.pose()
+				pose.pushMatrix()
+				pose.translate(screen.width / 2f - 88f, -12f)
+				val screen = screen as? AbstractContainerScreen<*> ?: return
+				for (slot in screen.menu.slots) {
+					if (slot.isActive && slot.index < 45 && slot.item.item != Items.BLACK_STAINED_GLASS_PANE) {
+						(screen as? AbstractContainerScreenAccessor)?.extractSlot_WpcMod(gui, slot, mouseX, mouseY)
+						gui.text(MC.font, "${slot.index}", slot.x, slot.y, 0xFFFFFF, false)
+					}
+				}
+				pose.popMatrix()
+			}
+		}
 	}
 
 	fun onDrawBackground(screen: Screen, gui: GuiGraphicsExtractor, callbackInfo: CallbackInfo) {

@@ -73,7 +73,6 @@ abstract class TermGui(val type: TerminalTypes) {
 			}
 			add("Time open: ${Util.getMillis() - currentHandler.timeOpened}ms")
 			add("Is Clicked: ${currentHandler.isClicked}")
-			add("Container ID: ${currentHandler.containerId}")
 			add("Solution: ${currentHandler.solution.joinToString()}")
 		}
 

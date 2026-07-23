@@ -40,7 +40,6 @@ open class TermSimGUI(
 	val guiInventorySlots get() = menu.slots.subList(0, size)
     private var doesAcceptClick = true
     protected var ping = 0L
-	private var containerId = 0
 
     open fun create() {
         guiInventorySlots.forEach { it.setSlot(blackPane) }
@@ -74,7 +73,8 @@ open class TermSimGUI(
 		delaySlotClick(slot, button)
 	}
 
-	private fun delaySlotClick(slot: Slot, button: Int) = WpcMod.coroutineScope.launch {
+	private fun delaySlotClick(slot: Slot?, button: Int) = WpcMod.coroutineScope.launch {
+		if (slot == null) return@launch
 		if (MC.screen == StartGUI) return@launch slotClick(slot, button)
 		if (!doesAcceptClick || slot.container != inv || slot.item.item == Items.BLACK_STAINED_GLASS_PANE) return@launch
         doesAcceptClick = false
@@ -86,17 +86,18 @@ open class TermSimGUI(
     }
 
 	override fun slotClicked(slot: Slot, slotId: Int, mouseButton: Int, type: ContainerInput) {
-		//Slot can be null but is marked as non-nullable in AbstractContainerScreen class
-		if (slot != null) delaySlotClick(slot, mouseButton)
+		// This function will yell at random times because slot is marked as non-nullable, but value is null
+		// I can't find a way to fix it, so I'm just gonna ignore it
+		delaySlotClick(slot, mouseButton)
 	}
 
     protected fun createNewGui(block: (Slot) -> ItemStack) {
-		GuiEvents.OPEN.invoker().onOpen(name, containerId++)
+		GuiEvents.OPEN.invoker().onOpen(this@TermSimGUI)
         guiInventorySlots.forEach { it.setSlot(block(it)) }
     }
 
     protected fun Slot.setSlot(stack: ItemStack) {
-		GuiEvents.SLOT_UPDATE_AFTER.invoker().onSlotUpdateAfter(containerId, index, stack)
+		GuiEvents.SLOT_UPDATE_AFTER.invoker().onSlotUpdateAfter(menu.containerId, index, stack)
         setByPlayer(stack)
     }
 

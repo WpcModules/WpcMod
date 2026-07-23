@@ -10,8 +10,9 @@ object StartsWithGui : TermGui(TerminalTypes.STARTS_WITH) {
 		renderBackground(drawContext, slotCount)
 
         for (index in 9..slotCount) {
-			if ((index % 9).equalsOneOf(0, 8) || index !in currentSolution) continue
-			renderSlot(drawContext, index, config.startsWithColor)
+			if ((index % 9).equalsOneOf(0, 8)) continue
+			val inSolution = index in currentSolution
+			if (inSolution) renderSlot(drawContext, index, config.startsWithColor)
         }
     }
 }

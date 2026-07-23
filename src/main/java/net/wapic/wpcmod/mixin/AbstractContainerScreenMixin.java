@@ -4,6 +4,9 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import net.wapic.wpcmod.events.GuiEvents;
@@ -56,5 +59,10 @@ public abstract class AbstractContainerScreenMixin {
 	@Inject(method = "extractRenderState", at = @At("HEAD"), cancellable = true)
 	private void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo ci) {
 		GuiEvents.RENDER.invoker().onRender((Screen) (Object) this, graphics, mouseX, mouseY, a, ci);
+	}
+
+	@Inject(method = "<init>(Lnet/minecraft/world/inventory/AbstractContainerMenu;Lnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/network/chat/Component;II)V", at = @At("TAIL"))
+	private void onScreenOpen(AbstractContainerMenu menu, Inventory inventory, Component title, int imageWidth, int imageHeight, CallbackInfo ci) {
+		GuiEvents.OPEN.invoker().onOpen((Screen) (Object) this);
 	}
 }

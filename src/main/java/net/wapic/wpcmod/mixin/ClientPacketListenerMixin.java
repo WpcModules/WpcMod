@@ -3,7 +3,10 @@ package net.wapic.wpcmod.mixin;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.ClientPacketListener;
-import net.minecraft.network.protocol.game.*;
+import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
+import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket;
+import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
+import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.wapic.wpcmod.events.GuiEvents;
 import net.wapic.wpcmod.events.ParticleEvents;
 import net.wapic.wpcmod.events.ScoreboardChangeEvent;
@@ -42,13 +45,6 @@ public abstract class ClientPacketListenerMixin {
 	@Inject(at = @At("TAIL"), method = "handleContainerSetSlot")
 	private void onSlotUpdateAfter(ClientboundContainerSetSlotPacket packet, CallbackInfo ci) {
 		GuiEvents.SLOT_UPDATE_AFTER.invoker().onSlotUpdateAfter(packet.getContainerId(), packet.getSlot(), packet.getItem());
-	}
-
-	@Inject(at = @At("HEAD"), method = "handleOpenScreen")
-	private void onOpenScreen(ClientboundOpenScreenPacket packet, CallbackInfo ci) {
-		String title = packet.getTitle().getString();
-		int containerId = packet.getContainerId();
-		GuiEvents.OPEN.invoker().onOpen(title, containerId);
 	}
 
 	@Inject(at = @At("HEAD"), method = "handleSetPlayerTeamPacket")
