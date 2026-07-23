@@ -43,10 +43,6 @@ repositories {
         }
     }
 	maven {
-		name = "Terraformers"
-		url = "https://maven.terraformersmc.com/"
-	}
-	maven {
 		name = "shedaniel"
 		url = "https://maven.shedaniel.me"
 	}
@@ -77,7 +73,8 @@ dependencies {
 
     // Dev Runtimes
 	localRuntime("me.djtheredstoner:DevAuth-fabric:${project.devauth_version}")
-	localRuntime("com.terraformersmc:modmenu:${project.modmenu_version}")
+	// DO NOT SWITCH TO TERRAFORMERS MAVEN REPO CAUSE YOU WILL HATE YOURSELF
+	localRuntime("maven.modrinth:modmenu:${project.modmenu_version}")
 	// we're using modrinth rei and architectury otherwise it imports the wrong architectury version and won't work properly
 	localRuntime("maven.modrinth:rei:${project.rei_version}+fabric")
 	localRuntime("maven.modrinth:architectury-api:${project.architectury_api}")
