@@ -37,6 +37,7 @@
     "OptionsMixin",
     "PacketUtilsMixin",
     "PlayerMixin",
+    "ScreenMixin",
     "SimpleContainerMixin",
     "SkullBlockMixin",
     "accessors.AbstractContainerScreenAccessor",

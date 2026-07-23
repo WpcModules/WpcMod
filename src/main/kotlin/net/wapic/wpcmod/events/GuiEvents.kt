@@ -117,6 +117,19 @@ object GuiEvents {
 	}
 
 	@JvmField
+	val BEFORE_OPEN: Event<BeforeOpenEvent> = EventFactory.createArrayBacked(BeforeOpenEvent::class.java) { listeners ->
+		BeforeOpenEvent { title ->
+			for (listener in listeners) {
+				listener.onBeforeOpen(title)
+			}
+		}
+	}
+
+	fun interface BeforeOpenEvent {
+		fun onBeforeOpen(screen: Screen)
+	}
+
+	@JvmField
 	val CLOSE: Event<ClosedEvent> = EventFactory.createArrayBacked(ClosedEvent::class.java) { listeners ->
 		ClosedEvent {
 			for (listener in listeners) {

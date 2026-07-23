@@ -1,7 +1,6 @@
 package net.wapic.wpcmod.features.dungeons
 
 import net.minecraft.client.gui.screens.Screen
-import net.minecraft.client.gui.screens.inventory.ContainerScreen
 import net.minecraft.network.chat.contents.TranslatableContents
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.world.item.ItemStack
@@ -20,7 +19,7 @@ object AutoCloseChests {
 	private val defaultTitles = listOf("container.chest", "container.chestDouble")
 
 	fun init() {
-		GuiEvents.OPEN.register(::onScreenInit)
+		GuiEvents.BEFORE_OPEN.register(::onScreenInit)
 		EntityEvents.ITEM_DATA_SET.register(::onItemDataSet)
 	}
 
@@ -37,7 +36,7 @@ object AutoCloseChests {
 		if (!config.autoCloseChests || !DungeonUtils.inDungeons) return
 
 		val title = (screen.title.contents as? TranslatableContents)?.key ?: return
-		if (title in defaultTitles && screen is ContainerScreen) {
+		if (title in defaultTitles) {
 			screen.onClose()
 		}
 	}
