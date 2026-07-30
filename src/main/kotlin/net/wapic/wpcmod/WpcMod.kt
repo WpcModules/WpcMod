@@ -34,6 +34,7 @@ import net.wapic.wpcmod.features.fishing.AutoFish
 import net.wapic.wpcmod.features.foraging.ForestNodeESP
 import net.wapic.wpcmod.features.galatea.GalateaESP
 import net.wapic.wpcmod.features.garden.PestESP
+import net.wapic.wpcmod.features.general.CenturyCakeHelper
 import net.wapic.wpcmod.features.general.Freecam
 import net.wapic.wpcmod.features.general.PreventPlacingItems
 import net.wapic.wpcmod.features.general.shortcut.ShortcutHandler
@@ -125,6 +126,7 @@ object WpcMod : ModInitializer {
 		ClientLifecycleEvents.CLIENT_STOPPING.register {
 			ConfigManager.saveConfig()
 			HudManager.saveLocations()
+			CenturyCakeHelper.saveTimes()
 			globalJob.cancel()
 		}
 
@@ -146,6 +148,7 @@ object WpcMod : ModInitializer {
 		TagESP.init()
 		TrapperESP.init()
 		FairySoulESP.init()
+		CenturyCakeHelper.init()
 
 		//Experiments
 		AutoExperiments.init()
