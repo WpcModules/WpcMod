@@ -49,7 +49,7 @@ object KuudraUtils {
 	}
 
 	private fun onMessageReceived(message: Component, actionBar: Boolean) {
-		if (actionBar) return
+		if (actionBar || Utils.getLocation() != Island.KUUDRA) return
 
 		when (message.string) {
 			START_MESSAGE -> {
@@ -60,8 +60,6 @@ object KuudraUtils {
 			BUILD_PHASE_MESSAGE -> phase = Phase.BUILD
 			STUN_PHASE_MESSAGE -> phase = Phase.STUN
 			KILL_PHASE_MESSAGE -> phase = Phase.KILL
-
-
 		}
 
 		if (message.string.removeFormatting().trim() == KUUDRA_END_MESSAGE) {
