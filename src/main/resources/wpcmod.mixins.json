@@ -32,6 +32,7 @@
     "LightmapRenderStateExtractorMixin",
     "LivingEntityMixin",
     "LocalPlayerMixin",
+    "MenuScreenConstructorMixin",
     "MinecraftMixin",
     "MouseHandlerMixin",
     "OptionsMixin",

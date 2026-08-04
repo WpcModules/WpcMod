@@ -5,34 +5,34 @@ import com.mojang.brigadier.context.CommandContext
 import net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.features.dungeons.floor7.TerminalSimulator
-import net.wapic.wpcmod.features.dungeons.floor7.termsim.*
+import net.wapic.wpcmod.features.dungeons.floor7.termsim.RubixSim
+import net.wapic.wpcmod.features.dungeons.floor7.termsim.StartGUI
 
 object TermSimCommand : Command("term") {
 	private val ping get() = WpcMod.config.dungeon.floor7.termSimPing.toLong()
 
 	private val startsWith = literal("startswith").executes {
-		StartsWithSim().open(ping)
+		RubixSim.open(ping)
 		return@executes 0
 	}
 
 	private val panes = literal("panes").executes {
-		PanesSim.open(ping)
+		RubixSim.open(ping)
 		return@executes 0
 	}
 
 	private val selectAll = literal("selectall").executes {
-		SelectAllSim().open(ping)
+		RubixSim.open(ping)
 		return@executes 0
 	}
 
 	private val numbers = literal("numbers").executes {
-		NumbersSim.open(ping)
+		RubixSim.open(ping)
 		return@executes 0
 	}
 
 	private val melody = literal("melody").executes {
-		MelodySim.open(ping)
+		RubixSim.open(ping)
 		return@executes 0
 	}
 
@@ -42,7 +42,7 @@ object TermSimCommand : Command("term") {
 	}
 
 	private val random = literal("random").executes {
-		TerminalSimulator.openRandomTerminal(ping)
+		RubixSim.open(ping)
 		return@executes 0
 	}
 

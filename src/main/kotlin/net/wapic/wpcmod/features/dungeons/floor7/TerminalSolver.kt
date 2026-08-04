@@ -10,15 +10,15 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.game.ServerboundContainerClickPacket
 import net.minecraft.util.Util
-import net.minecraft.world.item.DyeColor
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.*
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
-import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.*
+import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.RubixHandler
+import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalHandler
+import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalTypes
 import net.wapic.wpcmod.mixin.accessors.AbstractContainerScreenAccessor
-import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.MC
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
@@ -78,24 +78,7 @@ object TerminalSolver {
 			TerminalTypes.entries.find { title.startsWith(it.windowName) }?.takeIf { it != currentTerm?.type } ?: return
 
 		currentTerm = when (newTerm) {
-			TerminalTypes.MELODY -> MelodyHandler()
-			TerminalTypes.NUMBERS -> NumbersHandler()
-			TerminalTypes.PANES -> PanesHandler()
 			TerminalTypes.RUBIX -> RubixHandler()
-
-			TerminalTypes.SELECT_ALL -> {
-				val color = selectAllRegex.find(title)?.groupValues?.get(1)?.replace("SILVER", "LIGHT GRAY")
-					?: return ChatUtils.sendMessage("Failed to find color from $title")
-				val dyeColor = DyeColor.entries.find { it.name.replace("_", " ") == color }
-					?: return ChatUtils.sendMessage("Failed to find dyeColor from $color!")
-				SelectAllHandler(dyeColor)
-			}
-
-			TerminalTypes.STARTS_WITH -> {
-				val letter = startsWithRegex.find(screen.title.string)?.groupValues?.get(1)
-					?: return ChatUtils.sendMessage("Failed to find letter from $title!")
-				StartsWithHandler(letter)
-			}
 		}.also {
 			WpcMod.LOGGER.debug("Opened terminal: {}", it.type.name)
 			DungeonEvents.TERMINAL_OPENED.invoker().onOpen(it)
