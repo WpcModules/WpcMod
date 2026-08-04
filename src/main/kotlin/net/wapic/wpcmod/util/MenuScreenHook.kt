@@ -19,8 +19,9 @@ object MenuScreenHook {
 		containerId: Int
 	): Boolean {
 		val player = mc.player ?: return false
-		val termType =
-			TerminalType.fromTitle(title) ?: return false // TODO: Check if user is inside a dungeon / Floor 7
+
+		// TODO: Check if user is inside a dungeon / Floor 7
+		val termType = TerminalType.fromTitle(title) ?: return false
 
 		val inventory = player.inventory
 		val menu = type.create(containerId, inventory)
