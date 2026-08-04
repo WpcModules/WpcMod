@@ -7,7 +7,8 @@ import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.gui.screens.inventory.ContainerScreen
 import net.minecraft.world.InteractionResult
 import net.wapic.wpcmod.features.dungeons.floor7.TerminalSolver
-import net.wapic.wpcmod.features.dungeons.floor7.termsim.*
+import net.wapic.wpcmod.features.dungeons.floor7.terminals.AbstractTerminalScreen
+import net.wapic.wpcmod.features.dungeons.floor7.termsim.RubixSim
 
 class ReiCompatibility : REIClientPlugin {
 
@@ -15,8 +16,8 @@ class ReiCompatibility : REIClientPlugin {
 		registry.registerDecider(object : OverlayDecider {
 			override fun <R : Screen> isHandingScreen(screen: Class<R>): Boolean {
 				return when (screen) {
-					MelodySim::class.java, NumbersSim::class.java, PanesSim::class.java,
-					RubixSim::class.java, SelectAllSim::class.java, StartsWithSim::class.java -> true
+					AbstractTerminalScreen::class.java -> true
+					RubixSim::class.java -> true
 					ContainerScreen::class.java -> true
 					else -> false
 				}

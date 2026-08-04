@@ -9,8 +9,6 @@ import net.minecraft.world.item.Items
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.dungeons.floor7.TerminalSolver
-import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.SelectAllHandler
-import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.StartsWithHandler
 import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalHandler
 import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalTypes
 import net.wapic.wpcmod.util.MC
@@ -67,8 +65,6 @@ abstract class TermGui(val type: TerminalTypes) {
 
 		val lines = buildList {
 			when (type) {
-				TerminalTypes.STARTS_WITH -> add("${type.name} '${(currentHandler as StartsWithHandler).letter}' Debug Info")
-				TerminalTypes.SELECT_ALL -> add("${type.name} '${(currentHandler as SelectAllHandler).color}' Debug Info")
 				else -> add("${type.name} Debug Info")
 			}
 			add("Time open: ${Util.getMillis() - currentHandler.timeOpened}ms")

@@ -164,7 +164,6 @@ object WpcMod : ModInitializer {
 		DungeonESP.init()
 		TickTimers.init()
 		TerminalSolver.init()
-		MelodyMessage.init()
 		InactiveWaypoints.init()
 		ArrowAlign.init()
 		FunnyMap.init()

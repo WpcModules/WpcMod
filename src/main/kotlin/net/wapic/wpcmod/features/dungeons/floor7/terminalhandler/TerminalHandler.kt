@@ -41,9 +41,7 @@ open class TerminalHandler(val type: TerminalTypes) {
     }
 
     fun canClick(slotIndex: Int, button: Int, needed: Int = solution.count { it == slotIndex }): Boolean = when {
-        type == TerminalTypes.MELODY -> slotIndex.equalsOneOf(16, 25, 34, 43)
         slotIndex !in solution -> false
-        type == TerminalTypes.NUMBERS && slotIndex != solution.firstOrNull() -> false
         type == TerminalTypes.RUBIX && ((needed < 3 && button == 1) || (needed.equalsOneOf(3, 4) && button != 1)) -> false
         else -> true
     }
