@@ -133,12 +133,10 @@ abstract class AbstractTerminalScreen(protected val type: TerminalType, initialM
 
 	override fun dataChanged(container: AbstractContainerMenu, id: Int, value: Int) = Unit
 	override fun slotChanged(container: AbstractContainerMenu, slotIndex: Int, itemStack: ItemStack) {
-		if (slotIndex >= type.windowSize) {
-			allowClick = true
-			return
-		}
+		if (slotIndex >= type.windowSize) return
 		if (itemStack.item == Items.BLACK_STAINED_GLASS_PANE) return
 
+		allowClick = true
 		val slot = menu.getSlot(slotIndex)
 		items[slot.index] = slot
 		WpcMod.LOGGER.debug("Slot changed: {}, {}, {}", slotIndex, itemStack, itemStack.hoverName.string)
