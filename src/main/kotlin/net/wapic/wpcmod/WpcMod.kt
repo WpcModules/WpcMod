@@ -26,7 +26,6 @@ import net.wapic.wpcmod.features.chat.*
 import net.wapic.wpcmod.features.dev.SkyBlockID
 import net.wapic.wpcmod.features.dungeons.*
 import net.wapic.wpcmod.features.dungeons.floor7.*
-import net.wapic.wpcmod.features.dungeons.floor7.terminals.TerminalSimulator
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
 import net.wapic.wpcmod.features.end.EndESP
 import net.wapic.wpcmod.features.entity.*
@@ -174,7 +173,6 @@ object WpcMod : ModInitializer {
 		LividSolver.init()
 		AutoDebuff.init()
 		AutoShowExtraStats.init()
-		TerminalSimulator.init()
 
 		// Kuudra
 		KuudraESP.init()

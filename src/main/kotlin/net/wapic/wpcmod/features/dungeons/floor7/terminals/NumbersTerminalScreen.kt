@@ -4,48 +4,43 @@ import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.network.chat.Component
 import net.minecraft.world.inventory.ChestMenu
-import net.minecraft.world.item.ItemStack
+import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.Items
 
-class NumbersTerminalScreen(menu: ChestMenu, title: Component) :
-	AbstractTerminalScreen(Terminal.Type.NUMBERS, menu, title) {
+class NumbersTerminalScreen(menu: ChestMenu, title: Component) : AbstractTerminalScreen(menu, title) {
 
-	private val solution = arrayOfNulls<Int>(14)
-	private val sol = mutableSetOf<Int>()
+	override fun resize(width: Int, height: Int) {
+		this.height = (menu.rowCount * totalSlotSpace).toInt()
+		this.width = (((menu.container.containerSize - 1) % 9) * totalSlotSpace).toInt()
+	}
 
 	override fun extractSlots(graphics: GuiGraphicsExtractor) {
-		val firstIndex = solution.indexOfFirst { it != null }
-
 		solution.forEachIndexed { index, slotIndex ->
-			if(slotIndex == null) return@forEachIndexed
 
 			val color = when (index) {
-				firstIndex + 0 -> config.orderColor
-				firstIndex + 1 -> config.orderColor2
-				firstIndex + 2 -> config.orderColor3
+				0 -> config.orderColor
+				1 -> config.orderColor2
+				2 -> config.orderColor3
 				else -> config.backgroundColor
 			}
 
-			extractSlot(graphics, slotIndex, color, if (config.showNumbers) (index + 1).toString() else "")
+			extractSlot(graphics, slotIndex, color)
 		}
 	}
 
 	override fun slotClicked(slotIndex: Int, button: Int): Boolean {
-		val firstIndex = solution.indexOfFirst { it != null }
-		if(slotIndex == solution[firstIndex]) {
+		if(slotIndex == solution.first()) {
 			if(doTerminalClick(slotIndex, InputConstants.MOUSE_BUTTON_MIDDLE)) {
-				solution[firstIndex] = null
+				solution.removeIf { it == slotIndex }
 				return true
 			}
 		}
 		return false
 	}
 
-	override fun onUpdate(items: Array<ItemStack?>) {
-		items.forEachIndexed { slotIndex, stack ->
-			if(isValidItem(stack ?: return@forEachIndexed)) solution[stack.count - 1] = slotIndex
-		}
+	override fun onUpdate(slots: List<Slot>) {
+		solution.addAll(slots.mapNotNull { slot ->
+			(slot.item.count to slot.index).takeIf { slot.item.item == Items.RED_STAINED_GLASS_PANE }
+		}.sortedBy { it.first }.map { it.second })
 	}
-
-	fun isValidItem(stack: ItemStack?): Boolean = stack?.item == Items.RED_STAINED_GLASS_PANE
 }

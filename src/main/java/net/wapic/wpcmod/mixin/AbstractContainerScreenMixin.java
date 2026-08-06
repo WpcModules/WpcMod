@@ -38,7 +38,7 @@ public abstract class AbstractContainerScreenMixin {
 
 	@Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
 	private void onMouseClicked(MouseButtonEvent event, boolean doubleClick, CallbackInfoReturnable<Boolean> cir) {
-		GuiEvents.MOUSE_CLICK.invoker().onMouseClick((Screen) (Object) this, (int) event.x(), (int) event.y(), event.button(), cir);
+		GuiEvents.MOUSE_CLICK.invoker().onMouseClick((Screen) (Object) this, event.x(),event.y(), event.button(), cir);
 	}
 
 	@Inject(at = @At("HEAD"), method = "mouseScrolled")

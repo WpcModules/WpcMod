@@ -3,7 +3,6 @@ package net.wapic.wpcmod.config.dungeon
 import io.github.notenoughupdates.moulconfig.ChromaColour
 import io.github.notenoughupdates.moulconfig.annotations.*
 import net.wapic.wpcmod.features.dungeons.floor7.terminals.Terminal
-import net.wapic.wpcmod.features.dungeons.floor7.terminals.TerminalSimulator
 
 class Floor7Config {
 
@@ -18,7 +17,7 @@ class Floor7Config {
 	@Transient
 	@ConfigOption(name = "Terminal Simulator", desc = "Open terminal simulator, can also be accessed with /wpc term.")
 	@ConfigEditorButton(buttonText = "Open")
-	var openTerminalSimulator: Runnable = Runnable { TerminalSimulator.open(Terminal.Type.MELODY) }
+	var openTerminalSimulator: Runnable = Runnable { Terminal.openSimulator() }
 
 	@Accordion
 	@ConfigOption(name = "Arrow Align Solver", desc = "Solver for Arrow Device in P3")

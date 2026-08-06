@@ -66,7 +66,7 @@ object GuiEvents {
 	}
 
 	fun interface MouseClick {
-		fun onMouseClick(screen: Screen, mouseX: Int, mouseY: Int, button: Int, cir: CallbackInfoReturnable<Boolean>)
+		fun onMouseClick(screen: Screen, mouseX: Double, mouseY: Double, button: Int, cir: CallbackInfoReturnable<Boolean>)
 	}
 
 	@JvmField

@@ -75,15 +75,15 @@ object DungeonEvents {
 
 	@JvmField
 	val TERMINAL_CLOSED: Event<TerminalClose> = EventFactory.createArrayBacked(TerminalClose::class.java) { listeners ->
-		TerminalClose { terminalType, isSimulator ->
+		TerminalClose {
 			for (listener in listeners) {
-				listener.onClose(terminalType, isSimulator)
+				listener.onClose()
 			}
 		}
 	}
 
 	fun interface TerminalClose {
-		fun onClose(terminalType: Terminal.Type, isSimulator: Boolean)
+		fun onClose()
 	}
 
 	@JvmField

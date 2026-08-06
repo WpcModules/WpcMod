@@ -1,38 +1,48 @@
 package net.wapic.wpcmod.features.dungeons.floor7.terminals.simulator
 
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags
-import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.network.chat.Component
 import net.minecraft.tags.TagKey
+import net.minecraft.world.inventory.ChestMenu
+import net.minecraft.world.inventory.ContainerInput
+import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.DyeColor
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
-import net.wapic.wpcmod.features.dungeons.floor7.terminals.SelectAllTerminalScreen
 import net.wapic.wpcmod.features.dungeons.floor7.terminals.Terminal
 import kotlin.random.Random
 
-class SelectAllTerminalSimulator(override val screen: SelectAllTerminalScreen) : AbstractTerminalSimulator(screen, Terminal.Type.SELECT_ALL) {
+class SelectAllSimulatorHandler(menu: ChestMenu, title: Component) : TerminalSimulatorHandler(menu) {
+
+	private val color = Terminal.SELECT_ALL_PATTERN.matchEntire(title.string)?.groupValues?.get(1)
+	private val dyeColor = DyeColor.entries.find { it.name.replace("_", " ") == color } ?: DyeColor.entries.random()
 	private val dyedItems = BuiltInRegistries.ITEM.getTagOrEmpty(ConventionalItemTags.DYED)
-	private val incorrectColors = DyeColor.entries.filterNot { it == screen.dyeColor }
+	private val incorrectColors = DyeColor.entries.filterNot { it == dyeColor }
 
 	override fun create() {
 		this.setSlots { slot ->
-			if(slot.index % 9 in 1..7 && slot.index / 9 in 1..4) {
-				val color = if(Random.nextDouble() > 0.65) screen.dyeColor else incorrectColors.random()
+			if(slot.index % 9 in 1..7 && slot.index / 9 in 1..3) {
+				val color = if(Random.nextDouble() > 0.65) dyeColor else incorrectColors.random()
 				return@setSlots getRandomItemOfColor(color)
 			}
 			return@setSlots blackPane
 		}
 	}
 
-	override fun onClick(slotIndex: Int, button: Int) {
-		this.setSlots { slot ->
-			if(slot.index == slotIndex) slot.item.apply { set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true) } else slot.item
+	override fun slotClicked(slot: Slot, slotId: Int, buttonNum: Int, containerInput: ContainerInput) {
+		if(hasColorWithoutFoil(slot)) {
+			slot.item.applyComponents(glintOverrideData)
+			slot.setItem(slot.item)
 		}
 	}
 
-	override fun onUpdate(items: Array<ItemStack?>) {
-		if(items.none(screen::isValidItem)) this.onSolve()
+	override fun onUpdate(slots: List<Slot>) {
+		if(slots.none(::hasColorWithoutFoil)) this.onSolve()
+	}
+
+	private fun hasColorWithoutFoil(slot: Slot): Boolean {
+		return slot.item.hoverName.string.startsWith(dyeColor.name.replace("_", " "), true) && !slot.item.hasFoil()
 	}
 
 	private fun getRandomItemOfColor(color: DyeColor): ItemStack {

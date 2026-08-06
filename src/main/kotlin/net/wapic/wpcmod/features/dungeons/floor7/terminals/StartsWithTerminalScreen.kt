@@ -4,15 +4,20 @@ import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.network.chat.Component
 import net.minecraft.world.inventory.ChestMenu
+import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
-import net.wapic.wpcmod.WpcMod
 
 class StartsWithTerminalScreen(menu: ChestMenu, title: Component) :
-	AbstractTerminalScreen(Terminal.Type.STARTS_WITH, menu, title) {
-	private val startsWithRegex = Regex("^What starts with: '(\\w)'\\?$")
-	private val solution = mutableListOf<Int>()
-	private val clickedSlots = mutableListOf<Int>()
-	val letter = startsWithRegex.matchEntire(title.string)?.groupValues?.get(1)
+	AbstractTerminalScreen(menu, title) {
+
+	private val clickedSlots = mutableSetOf<Int>()
+	val letter = Terminal.STARTS_WITH_PATTERN.matchEntire(title.string)?.groupValues?.get(1)
+
+	override fun resize(width: Int, height: Int) {
+		this.height = ((menu.rowCount + 0.5f) * totalSlotSpace).toInt()
+		this.width = (font.width(title) * config.customTermSize * 1.25f).toInt()
+	}
+
 	override fun extractSlots(graphics: GuiGraphicsExtractor) {
 		for (slotIndex in solution) {
 			extractSlot(graphics, slotIndex, config.startsWithColor)
@@ -28,8 +33,8 @@ class StartsWithTerminalScreen(menu: ChestMenu, title: Component) :
 		return false
 	}
 
-	override fun onUpdate(items: Array<ItemStack?>) {
-		solution.addAll(items.mapIndexedNotNull { index, stack ->  if(isValidItem(stack, index)) index else null })
+	override fun onUpdate(slots: List<Slot>) {
+		solution.addAll(slots.mapNotNull { slot -> slot.index.takeIf { isValidItem(slot.item, slot.index) } })
 	}
 
 	fun isValidItem(stack: ItemStack?, slotIndex: Int = -1): Boolean {
