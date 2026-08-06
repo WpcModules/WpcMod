@@ -1,41 +1,44 @@
 package net.wapic.wpcmod.features.dungeons.floor7.terminals
 
+import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.network.chat.Component
 import net.minecraft.world.inventory.ChestMenu
-import net.minecraft.world.inventory.Slot
-import net.minecraft.world.item.BlockItem
-import net.minecraft.world.item.DyeColor
-import net.minecraft.world.level.block.StainedGlassPaneBlock
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
 import net.wapic.wpcmod.WpcMod
-import org.lwjgl.glfw.GLFW
 
-class RubixTerminalScreen(menu: ChestMenu, title: Component) : AbstractTerminalScreen(TerminalType.RUBIX, menu, title) {
-	private val rubixColorOrder = listOf(DyeColor.ORANGE, DyeColor.YELLOW, DyeColor.GREEN, DyeColor.BLUE, DyeColor.RED)
-	private val solutionMap = mutableMapOf<Int, Int>()
+class RubixTerminalScreen(menu: ChestMenu, title: Component) : AbstractTerminalScreen(Terminal.Type.RUBIX, menu, title) {
+	private val solution = mutableMapOf<Int, Int>()
+	val rubixColorOrder = listOf(Items.ORANGE_STAINED_GLASS_PANE, Items.YELLOW_STAINED_GLASS_PANE, Items.GREEN_STAINED_GLASS_PANE, Items.BLUE_STAINED_GLASS_PANE, Items.RED_STAINED_GLASS_PANE)
+	var goal: Int? = null
 
 	override fun extractSlots(graphics: GuiGraphicsExtractor) {
-		if (solutionMap.isEmpty()) solve(items)
-
-		for ((slotIndex, clicks) in solutionMap) {
-			val color = if (clicks > 0) config.rubixColor2 else config.rubixColor1
-			extractSlot(graphics, menu.getSlot(slotIndex), color, clicks.toString())
+		for ((slotIndex, clicks) in solution) {
+			val color = when(clicks) {
+				1 -> config.rubixColor1
+				2 -> config.rubixColor2
+				-1 -> config.oppositeRubixColor1
+				-2 -> config.oppositeRubixColor2
+				else -> continue
+			}
+			extractSlot(graphics, slotIndex, color, clicks.toString())
 		}
 	}
 
-	override fun slotClicked(slot: Slot, button: Int): Boolean {
-		solutionMap[slot.index]?.let { clicks ->
-			val button = if (clicks > 0) GLFW.GLFW_MOUSE_BUTTON_LEFT else GLFW.GLFW_MOUSE_BUTTON_RIGHT
-			if (doTerminalClick(slot, button)) {
-				solutionMap.clear()
-				return true
+	override fun slotClicked(slotIndex: Int, button: Int): Boolean {
+		solution[slotIndex]?.let { clicks ->
+			val button = if (clicks > 0) InputConstants.MOUSE_BUTTON_LEFT else InputConstants.MOUSE_BUTTON_RIGHT
+			if(doTerminalClick(slotIndex, button)) {
+				val newClicks = clicks + if(button == 0) -1 else 1
+				if(newClicks == 0) solution.remove(slotIndex)
 			}
 		}
 		return false
 	}
 
-	private fun solveItem(itemColor: DyeColor, goal: Int): Int? {
-		val diff = goal - rubixColorOrder.indexOf(itemColor)
+	fun solveItem(start: Int, goal: Int): Int? {
+		val diff = goal - start
 
 		return when {
 			diff == 0 -> null
@@ -45,22 +48,20 @@ class RubixTerminalScreen(menu: ChestMenu, title: Component) : AbstractTerminalS
 		}
 	}
 
-	private fun solve(items: Array<Slot?>) {
-		var goal: Int? = null
+	override fun onUpdate(items: Array<ItemStack?>) {
+		// I'm overcomplicating things again, aren't I?
+		if(goal == null) {
+			goal = items.groupingBy { rubixColorOrder.indexOf(it?.item) }.eachCount().filter { it.key >= 0 }.maxBy { it.value }.key
+			WpcMod.LOGGER.debug("set goal to {}", goal)
+		}
 
-		items.forEach { slot ->
-			val itemColor = ((slot?.item?.item as? BlockItem)?.block as? StainedGlassPaneBlock)?.color ?: return@forEach
-			val index = rubixColorOrder.indexOf(itemColor)
+		items.forEachIndexed { slotIndex, stack ->
+			if (stack?.item == Items.BLACK_STAINED_GLASS_PANE) return@forEachIndexed
+			val index = rubixColorOrder.indexOf(stack?.item ?: return@forEachIndexed)
 
-			if (goal == null) {
-				if (index != -1) goal = index
-				WpcMod.LOGGER.debug("Goal set to: {}", goal)
-				return@forEach
-			}
-
-			solveItem(itemColor, goal)?.let { clicks ->
-				solutionMap[slot.index] = clicks
-				WpcMod.LOGGER.debug("set slot: {} to {}", slot.index, clicks)
+			solveItem(index, goal ?: return@forEachIndexed)?.let { clicks ->
+				solution[slotIndex] = clicks
+				WpcMod.LOGGER.debug("set slot: {} to {}", slotIndex, clicks)
 			}
 		}
 	}

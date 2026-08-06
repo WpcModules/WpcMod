@@ -5,53 +5,47 @@ import com.mojang.brigadier.context.CommandContext
 import net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.features.dungeons.floor7.termsim.RubixSim
-import net.wapic.wpcmod.features.dungeons.floor7.termsim.StartGUI
+import net.wapic.wpcmod.features.dungeons.floor7.terminals.TerminalSimulator
+import net.wapic.wpcmod.features.dungeons.floor7.terminals.Terminal
 
 object TermSimCommand : Command("term") {
 	private val ping get() = WpcMod.config.dungeon.floor7.termSimPing.toLong()
 
 	private val startsWith = literal("startswith").executes {
-		RubixSim.open(ping)
+		TerminalSimulator.open(Terminal.Type.STARTS_WITH, null, null)
 		return@executes 0
 	}
 
 	private val panes = literal("panes").executes {
-		RubixSim.open(ping)
+		TerminalSimulator.open(Terminal.Type.PANES)
 		return@executes 0
 	}
 
 	private val selectAll = literal("selectall").executes {
-		RubixSim.open(ping)
+		TerminalSimulator.open(Terminal.Type.SELECT_ALL)
 		return@executes 0
 	}
 
 	private val numbers = literal("numbers").executes {
-		RubixSim.open(ping)
+		TerminalSimulator.open(Terminal.Type.NUMBERS)
 		return@executes 0
 	}
 
 	private val melody = literal("melody").executes {
-		RubixSim.open(ping)
+		TerminalSimulator.open(Terminal.Type.MELODY)
 		return@executes 0
 	}
 
 	private val rubix = literal("rubix").executes {
-		RubixSim.open(ping)
-		return@executes 0
-	}
-
-	private val random = literal("random").executes {
-		RubixSim.open(ping)
+		TerminalSimulator.open(Terminal.Type.RUBIX)
 		return@executes 0
 	}
 
 	override fun executes(context: CommandContext<FabricClientCommandSource>): Int {
-		StartGUI.open(ping)
 		return super.executes(context)
 	}
 
 	override fun getCommand(): LiteralArgumentBuilder<FabricClientCommandSource> {
-		return command.then(rubix).then(melody).then(selectAll).then(panes).then(numbers).then(startsWith).then(random)
+		return command.then(rubix).then(melody).then(selectAll).then(panes).then(numbers).then(startsWith)
 	}
 }

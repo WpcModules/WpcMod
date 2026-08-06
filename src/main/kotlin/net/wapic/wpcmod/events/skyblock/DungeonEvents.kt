@@ -2,8 +2,9 @@ package net.wapic.wpcmod.events.skyblock
 
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
-import net.minecraft.client.gui.screens.Screen
-import net.wapic.wpcmod.features.dungeons.floor7.terminalhandler.TerminalHandler
+import net.minecraft.world.item.ItemStack
+import net.wapic.wpcmod.features.dungeons.floor7.terminals.AbstractTerminalScreen
+import net.wapic.wpcmod.features.dungeons.floor7.terminals.Terminal
 
 object DungeonEvents {
 
@@ -48,67 +49,67 @@ object DungeonEvents {
 
 	@JvmField
 	val TERMINAL_SOLVED: Event<TerminalSolve> = EventFactory.createArrayBacked(TerminalSolve::class.java) { listeners ->
-		TerminalSolve { terminal ->
+		TerminalSolve { screen, isSimulator ->
 			for (listener in listeners) {
-				listener.onSolve(terminal)
+				listener.onSolve(screen, isSimulator)
 			}
 		}
 	}
 
 	fun interface TerminalSolve {
-		fun onSolve(terminal: TerminalHandler)
+		fun onSolve(screen: AbstractTerminalScreen, isSimulator: Boolean)
 	}
 
 	@JvmField
 	val TERMINAL_OPENED: Event<TerminalOpen> = EventFactory.createArrayBacked(TerminalOpen::class.java) { listeners ->
-		TerminalOpen { terminal ->
+		TerminalOpen { screen, isSimulator ->
 			for (listener in listeners) {
-				listener.onOpen(terminal)
+				listener.onOpen(screen, isSimulator)
 			}
 		}
 	}
 
 	fun interface TerminalOpen {
-		fun onOpen(terminal: TerminalHandler)
+		fun onOpen(screen: AbstractTerminalScreen, isSimulator: Boolean)
 	}
 
 	@JvmField
 	val TERMINAL_CLOSED: Event<TerminalClose> = EventFactory.createArrayBacked(TerminalClose::class.java) { listeners ->
-		TerminalClose { terminal ->
+		TerminalClose { terminalType, isSimulator ->
 			for (listener in listeners) {
-				listener.onClose(terminal)
+				listener.onClose(terminalType, isSimulator)
 			}
 		}
 	}
 
 	fun interface TerminalClose {
-		fun onClose(terminal: TerminalHandler)
+		fun onClose(terminalType: Terminal.Type, isSimulator: Boolean)
 	}
 
 	@JvmField
 	val TERMINAL_UPDATED: Event<TerminalUpdate> = EventFactory.createArrayBacked(TerminalUpdate::class.java) { listeners ->
-		TerminalUpdate { terminal ->
+		TerminalUpdate { screen, items, isSimulator ->
 			for (listener in listeners) {
-				listener.onUpdate(terminal)
+				listener.onUpdate(screen, items, isSimulator)
 			}
 		}
 	}
 
 	fun interface TerminalUpdate {
-		fun onUpdate(terminal: TerminalHandler)
+		fun onUpdate(screen: AbstractTerminalScreen, items: Array<ItemStack?>, isSimulator: Boolean)
 	}
 
 	@JvmField
 	val TERMINAL_CLICKED: Event<TerminalClick> = EventFactory.createArrayBacked(TerminalClick::class.java) { listeners ->
-		TerminalClick { screen, slot, button ->
+		TerminalClick { screen, slot, button, isSimulator ->
 			for (listener in listeners) {
-				listener.onClick(screen, slot, button)
+				listener.onClick(screen, slot, button, isSimulator)
 			}
 		}
 	}
 
 	fun interface TerminalClick {
-		fun onClick(screen: Screen, slot: Int, button: Int)
+		fun onClick(screen: AbstractTerminalScreen, slot: Int, button: Int, isSimulator: Boolean)
 	}
 
 	@JvmField

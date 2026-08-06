@@ -2,7 +2,8 @@ package net.wapic.wpcmod.config.dungeon
 
 import io.github.notenoughupdates.moulconfig.ChromaColour
 import io.github.notenoughupdates.moulconfig.annotations.*
-import net.wapic.wpcmod.features.dungeons.floor7.termsim.StartGUI
+import net.wapic.wpcmod.features.dungeons.floor7.terminals.Terminal
+import net.wapic.wpcmod.features.dungeons.floor7.terminals.TerminalSimulator
 
 class Floor7Config {
 
@@ -17,7 +18,7 @@ class Floor7Config {
 	@Transient
 	@ConfigOption(name = "Terminal Simulator", desc = "Open terminal simulator, can also be accessed with /wpc term.")
 	@ConfigEditorButton(buttonText = "Open")
-	var openTerminalSimulator: Runnable = Runnable { StartGUI.open(termSimPing.toLong()) }
+	var openTerminalSimulator: Runnable = Runnable { TerminalSimulator.open(Terminal.Type.MELODY) }
 
 	@Accordion
 	@ConfigOption(name = "Arrow Align Solver", desc = "Solver for Arrow Device in P3")
@@ -79,17 +80,9 @@ class Floor7Config {
 		@ConfigEditorBoolean
 		var debug = false
 
-		@ConfigOption(name = "Hide Clicked", desc = "Visually hides your first click before a gui updates instantly to improve perceived response time. Does not affect actual click time.")
-		@ConfigEditorBoolean
-		var hideClicked: Boolean = false
-
 		@ConfigOption(name = "Show Numbers", desc = "Shows numbers in the order terminal.")
 		@ConfigEditorBoolean
 		var showNumbers: Boolean = true
-
-		@ConfigOption(name = "Show Entire Order Terminal", desc = "Show all numbers in the order terminal")
-		@ConfigEditorBoolean
-		var showAllOrder: Boolean = true
 
 		@ConfigOption(name = "Reload Threshold", desc = "Time in milliseconds before the terminal refreshes.")
 		@ConfigEditorSlider(minValue = 300f, maxValue = 1000f, minStep = 10f)

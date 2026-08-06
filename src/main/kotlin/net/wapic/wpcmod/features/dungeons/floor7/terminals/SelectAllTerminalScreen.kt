@@ -1,21 +1,18 @@
 package net.wapic.wpcmod.features.dungeons.floor7.terminals
 
-import io.github.notenoughupdates.moulconfig.ChromaColour
+import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.network.chat.Component
 import net.minecraft.world.inventory.ChestMenu
-import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.DyeColor
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
-import net.wapic.wpcmod.WpcMod
-import org.lwjgl.glfw.GLFW
 
 class SelectAllTerminalScreen(menu: ChestMenu, title: Component) :
-	AbstractTerminalScreen(TerminalType.SELECT_ALL, menu, title) {
-	private val colorRegex = Regex("^Select all the (.+) items!$")
-	private val color = colorRegex.matchEntire(title.string.replace("SILVER", "LIGHT GRAY"))?.groupValues?.get(1)
-	private val dyeColor = DyeColor.entries.find { it.name.replace("_", " ").equals(color, true) }
+	AbstractTerminalScreen(Terminal.Type.SELECT_ALL, menu, title) {
+	private val selectAllRegex = Regex("^Select all the (.+) items!$")
+	private val color = selectAllRegex.matchEntire(title.string.replace("SILVER", "LIGHT GRAY"))?.groupValues?.get(1)
+	private val solution = mutableListOf<Int>()
 
 	private val overrides = mapOf(
 		// All this because Hypixel hates us.
@@ -39,32 +36,32 @@ class SelectAllTerminalScreen(menu: ChestMenu, title: Component) :
 		),
 	)
 
+	val dyeColor = DyeColor.entries.first { it.name.replace("_", " ").equals(color, true) }
+
 	override fun extractSlots(graphics: GuiGraphicsExtractor) {
-		for (slot in items.filterNotNull()) {
-			if (!isClickableItem(slot.item)) {
-				if (config.debug) extractSlot(graphics, slot, ChromaColour(0f, 0f, 0f, 0, 0))
-				continue
-			}
-			extractSlot(graphics, slot, config.selectColor)
+		for (slotIndex in solution) {
+			extractSlot(graphics, slotIndex, config.selectColor)
 		}
 	}
 
-	override fun slotClicked(slot: Slot, button: Int): Boolean {
-		if (!isClickableItem(slot.item)) return false
-		doTerminalClick(slot, GLFW.GLFW_MOUSE_BUTTON_MIDDLE)
-		return true
+	override fun slotClicked(slotIndex: Int, button: Int): Boolean {
+		if (slotIndex !in solution) return false
+		if (doTerminalClick(slotIndex, InputConstants.MOUSE_BUTTON_MIDDLE)) {
+			return solution.removeIf { it == slotIndex }
+		}
+		return false
 	}
 
-	private fun isClickableItem(stack: ItemStack): Boolean {
-		if (stack.hasFoil()) return false
+	override fun onUpdate(items: Array<ItemStack?>) {
+		solution.addAll(items.mapIndexedNotNull{ index, stack -> if(isValidItem(stack)) index else null })
+	}
 
-		if (dyeColor == null) {
-			WpcMod.LOGGER.error("Failed to get DyeColor from color {}", color)
-			return false
-		}
+	fun isValidItem(stack: ItemStack?): Boolean {
+		if (stack?.hasFoil() == true) return false
 
-		val isCorrectColor = stack.hoverName.string.contains(dyeColor.name.replace("_", " "), true)
-		val hasOverride = overrides[dyeColor]?.contains(stack.item) == true
+		val isCorrectColor = stack?.hoverName?.string?.startsWith(dyeColor.name.replace("_", " "), true) == true
+		val hasOverride = overrides[dyeColor]?.contains(stack?.item) == true
+
 		return isCorrectColor || hasOverride
 	}
 }

@@ -10,30 +10,35 @@ import net.minecraft.sounds.SoundEvents
 import net.minecraft.util.CommonColors
 import net.minecraft.world.inventory.*
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.Items
 import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.render.drawRoundedRect
 
-abstract class AbstractTerminalScreen(protected val type: TerminalType, initialMenu: ChestMenu, title: Component) :
+abstract class AbstractTerminalScreen(private val type: Terminal.Type, initialMenu: ChestMenu, title: Component) :
 	Screen(title), ContainerListener, MenuAccess<ChestMenu> {
-	protected val config get() = WpcMod.config.dungeon.floor7.terminalSolvers
 	private var menu: ChestMenu = initialMenu
+	private val slotMap: MutableMap<Int, Box> = mutableMapOf()
+	private var allowClick: Boolean = true
+	private val isSimulator = menu.containerId == Int.MAX_VALUE
+
+	protected val config get() = WpcMod.config.dungeon.floor7.terminalSolvers
+	protected val items = arrayOfNulls<ItemStack>(type.windowSize)
 
 	private val scaledSlotSize get() = 16 * config.customTermSize
 	protected val totalSlotSpace = scaledSlotSize + config.gap * config.customTermSize
-
-	private val slotMap: MutableMap<Slot, Box> = mutableMapOf()
-	protected val items = arrayOfNulls<Slot>(type.windowSize)
-	private var allowClick: Boolean = true
 
 	init {
 		menu.addSlotListener(this)
 	}
 
 	override fun init() {
-		this.width =
-			(MC.font.width(title) * config.customTermSize).coerceAtLeast((type.width + 0.5f) * totalSlotSpace).toInt()
+		DungeonEvents.TERMINAL_OPENED.invoker().onOpen(this, isSimulator)
+		this.resize(width, height)
+	}
+
+	override fun resize(width: Int, height: Int) {
+		this.width = (MC.font.width(title) * config.customTermSize).coerceAtLeast((type.width + 0.5f) * totalSlotSpace).toInt()
 		this.height = (menu.rowCount * totalSlotSpace).toInt()
 	}
 
@@ -44,17 +49,18 @@ abstract class AbstractTerminalScreen(protected val type: TerminalType, initialM
 		return false
 	}
 
-	open fun slotClicked(slot: Slot, button: Int): Boolean = false
+	abstract fun slotClicked(slotIndex: Int, button: Int): Boolean
 
-	protected fun doTerminalClick(slot: Slot, button: Int): Boolean {
+	protected fun doTerminalClick(slotIndex: Int, button: Int): Boolean {
 		if (!allowClick) return false
 		val input = if (button == 0 || button == 1) ContainerInput.PICKUP else ContainerInput.CLONE
 
-		MC.clickSlot(menu.containerId, slot.index, button, input)
+		if(!isSimulator) MC.clickSlot(menu.containerId, slotIndex, button, input)
 		MC.playSound(SoundEvents.NOTE_BLOCK_BELL.value(), 1f, 1f)
 
 		allowClick = false
-		WpcMod.LOGGER.debug("Clicked slot {} with button {}", slot.index, button)
+		WpcMod.LOGGER.debug("Clicked terminal slot {} with button {}", slotIndex, button)
+		DungeonEvents.TERMINAL_CLICKED.invoker().onClick(this, slotIndex, button, isSimulator)
 		return true
 	}
 
@@ -84,20 +90,20 @@ abstract class AbstractTerminalScreen(protected val type: TerminalType, initialM
 
 	abstract fun extractSlots(graphics: GuiGraphicsExtractor)
 
-	protected fun extractSlot(graphics: GuiGraphicsExtractor, slot: Slot, color: ChromaColour, text: String = "") {
+	protected fun extractSlot(graphics: GuiGraphicsExtractor, slotIndex: Int, color: ChromaColour, text: String = "") {
 		val pose = graphics.pose()
 
-		val x = (slot.index % 9 - 4) * totalSlotSpace + (graphics.guiWidth() - scaledSlotSize) / 2
-		val y = (slot.index / 9 - 2) * totalSlotSpace + (graphics.guiHeight() - scaledSlotSize) / 2
+		val x = (slotIndex % 9 - 4) * totalSlotSpace + (graphics.guiWidth() - totalSlotSpace) / 2
+		val y = (slotIndex / 9 - 2) * totalSlotSpace + (graphics.guiHeight() - totalSlotSpace) / 2
 
-		slotMap[slot] = Box(x, y, scaledSlotSize)
+		slotMap[slotIndex] = Box(x, y, scaledSlotSize)
 
 		pose.pushMatrix()
 		pose.translate(x, y)
 		pose.scale(config.customTermSize)
 		graphics.drawRoundedRect(0, 0, 16, 16, config.slotRoundness, color)
 		graphics.centeredText(MC.font, text, 8, MC.font.lineHeight / 2, CommonColors.WHITE)
-		if (config.debug) graphics.item(slot.item, 0, 0)
+		if(config.debug) items[slotIndex]?.let { graphics.item(it, 0, 0) }
 		pose.popMatrix()
 	}
 
@@ -106,6 +112,7 @@ abstract class AbstractTerminalScreen(protected val type: TerminalType, initialM
 	override fun onClose() {
 		super.onClose()
 		MC.player?.closeContainer()
+		DungeonEvents.TERMINAL_CLOSED.invoker().onClose(type, isSimulator)
 	}
 
 	override fun removed() {
@@ -114,11 +121,8 @@ abstract class AbstractTerminalScreen(protected val type: TerminalType, initialM
 		menu.removeSlotListener(this)
 	}
 
-	protected fun getHoveredSlot(mouseX: Double, mouseY: Double): Slot? {
-		slotMap.entries.find { isHovering(it.value.x, it.value.y, it.value.l, mouseX, mouseY) }?.let {
-			return it.key
-		}
-		return null
+	protected fun getHoveredSlot(mouseX: Double, mouseY: Double): Int? {
+		return slotMap.entries.find { isHovering(it.value.x, it.value.y, it.value.l, mouseX, mouseY) }?.key
 	}
 
 	private fun isHovering(slotX: Float, slotY: Float, length: Float, mouseX: Double, mouseY: Double): Boolean {
@@ -131,15 +135,21 @@ abstract class AbstractTerminalScreen(protected val type: TerminalType, initialM
 		menu.addSlotListener(this)
 	}
 
-	override fun dataChanged(container: AbstractContainerMenu, id: Int, value: Int) = Unit
+	override fun dataChanged(container: AbstractContainerMenu, id: Int, value: Int) {
+		WpcMod.LOGGER.debug("Data changed, {}, {}, {}", container, id, value)
+	}
+
+	open fun onUpdate(items: Array<ItemStack?>) = Unit
+
 	override fun slotChanged(container: AbstractContainerMenu, slotIndex: Int, itemStack: ItemStack) {
 		if (slotIndex >= type.windowSize) return
-		if (itemStack.item == Items.BLACK_STAINED_GLASS_PANE) return
-
+		items[slotIndex] = itemStack
 		allowClick = true
-		val slot = menu.getSlot(slotIndex)
-		items[slot.index] = slot
 		WpcMod.LOGGER.debug("Slot changed: {}, {}, {}", slotIndex, itemStack, itemStack.hoverName.string)
+		if(slotIndex == type.windowSize - 1) {
+			onUpdate(items)
+			DungeonEvents.TERMINAL_UPDATED.invoker().onUpdate(this, items, isSimulator)
+		}
 	}
 
 	private data class Box(val x: Float, val y: Float, val l: Float)

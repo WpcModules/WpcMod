@@ -20,22 +20,18 @@ object MenuScreenHook {
 	): Boolean {
 		val player = mc.player ?: return false
 
-		// TODO: Check if user is inside a dungeon / Floor 7
-		val termType = TerminalType.fromTitle(title) ?: return false
-
 		val inventory = player.inventory
 		val menu = type.create(containerId, inventory)
 
-		if (menu is ChestMenu) {
+		if (menu is ChestMenu && Terminal.shouldReplace(title)) {
 			player.containerMenu = menu
-			WpcMod.LOGGER.debug("Opened custom menu: {}", menu.containerId)
 
 			when (val screen = MC.screen) {
 				is PanesTerminalScreen, is MelodyTerminalScreen, is SelectAllTerminalScreen,
 				is RubixTerminalScreen, is NumbersTerminalScreen, is StartsWithTerminalScreen -> screen.changeHandler(
 					menu
 				)
-				else -> MC.screen = TerminalType.getScreen(termType, menu, title)
+				else -> MC.screen = Terminal.createScreen(menu, title)
 			}
 			return true
 		}
