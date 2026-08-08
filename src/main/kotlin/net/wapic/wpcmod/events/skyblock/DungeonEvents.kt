@@ -4,7 +4,6 @@ import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
 import net.minecraft.world.item.ItemStack
 import net.wapic.wpcmod.features.dungeons.floor7.terminals.AbstractTerminalScreen
-import net.wapic.wpcmod.features.dungeons.floor7.terminals.Terminal
 
 object DungeonEvents {
 
