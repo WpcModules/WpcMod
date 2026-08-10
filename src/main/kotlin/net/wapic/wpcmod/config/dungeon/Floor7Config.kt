@@ -79,10 +79,6 @@ class Floor7Config {
 		@ConfigEditorBoolean
 		var debug = false
 
-		@ConfigOption(name = "Show Numbers", desc = "Shows numbers in the order terminal.")
-		@ConfigEditorBoolean
-		var showNumbers: Boolean = true
-
 		@ConfigOption(name = "Reload Threshold", desc = "Time in milliseconds before the terminal refreshes.")
 		@ConfigEditorSlider(minValue = 300f, maxValue = 1000f, minStep = 10f)
 		var terminalReloadThreshold: Float = 600f
@@ -115,7 +111,7 @@ class Floor7Config {
 		@ConfigEditorColour
 		var rubixColor1 = ChromaColour.fromRGB(0, 255, 255, 0, 255)
 
-		@ConfigOption(name = "Rubix 2", desc = "Color of the rubix terminal solver for 2 click.")
+		@ConfigOption(name = "Rubix 2", desc = "Color of the rubix terminal solver for 2 clicks.")
 		@ConfigEditorColour
 		var rubixColor2 = ChromaColour.fromRGB(0, 255, 255, 0, 125)
 
@@ -123,7 +119,7 @@ class Floor7Config {
 		@ConfigEditorColour
 		var oppositeRubixColor1 = ChromaColour.fromRGB(255, 0, 0, 0, 255)
 		
-		@ConfigOption(name = "Rubix -2", desc = "Color of the rubix terminal solver for -2 click.")
+		@ConfigOption(name = "Rubix -2", desc = "Color of the rubix terminal solver for -2 clicks.")
 		@ConfigEditorColour
 		var oppositeRubixColor2 = ChromaColour.fromRGB(255, 0, 0, 0, 125)
 
@@ -147,7 +143,7 @@ class Floor7Config {
 		@ConfigEditorColour
 		var selectColor = ChromaColour.fromRGB(0, 255, 255, 0, 255)
 
-		@ConfigOption(name = "Melody Column", desc = "Color of the colum indicator for melody.")
+		@ConfigOption(name = "Melody Column", desc = "Color of the column indicator for melody.")
 		@ConfigEditorColour
 		var melodyColumColor = ChromaColour.fromRGB(255, 0, 255, 0, 255)
 

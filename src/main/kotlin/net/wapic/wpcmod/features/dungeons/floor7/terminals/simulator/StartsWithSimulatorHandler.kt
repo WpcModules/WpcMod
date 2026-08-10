@@ -17,7 +17,7 @@ class StartsWithSimulatorHandler(menu: ChestMenu, title: Component) : TerminalSi
 
 	override fun create() {
 		this.setSlots { slot ->
-			if(slot.index % 9 in 1..7 && slot.index / 9 in 1..4) {
+			if(slot.index % 9 in 1..7 && slot.index / 9 in 1..3) {
 				val correct = allItems.filter { isValidItem(it) }
 				val incorrect = allItems.filterNot { isValidItem(it) }
 				return@setSlots if(Random.nextBoolean()) correct.random().copy() else incorrect.random().copy()
@@ -34,8 +34,8 @@ class StartsWithSimulatorHandler(menu: ChestMenu, title: Component) : TerminalSi
 		}
 	}
 
-	override fun onUpdate(slots: List<Slot>) {
-		if(slots.none { isValidItem(it.item, it.index) }) this.onSolve()
+	override fun isTerminalSolved(slots: List<Slot>): Boolean {
+		return slots.none { isValidItem(it.item, it.index) }
 	}
 
 	private fun isValidItem(stack: ItemStack?, slotIndex: Int = -1): Boolean {

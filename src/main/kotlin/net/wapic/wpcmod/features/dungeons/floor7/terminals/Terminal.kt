@@ -1,11 +1,11 @@
 package net.wapic.wpcmod.features.dungeons.floor7.terminals
 
-import net.minecraft.client.gui.screens.MenuScreens
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.Component
 import net.minecraft.world.inventory.ChestMenu
 import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.item.DyeColor
+import net.minecraft.world.item.Items
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.features.dungeons.floor7.terminals.simulator.*
 import net.wapic.wpcmod.util.MC
@@ -16,6 +16,13 @@ object Terminal {
 
 	val STARTS_WITH_PATTERN = Regex("^What starts with: '(\\w)'\\?$")
 	val SELECT_ALL_PATTERN = Regex("^Select all the (.+) items!$")
+	val RUBIX_ORDER = listOf(
+		Items.ORANGE_STAINED_GLASS_PANE,
+		Items.YELLOW_STAINED_GLASS_PANE,
+		Items.GREEN_STAINED_GLASS_PANE,
+		Items.BLUE_STAINED_GLASS_PANE,
+		Items.RED_STAINED_GLASS_PANE,
+	)
 	var handler: TerminalSimulatorHandler? = null
 
 	fun createSolverScreen(menu: ChestMenu, title: Component): Screen {
@@ -23,18 +30,14 @@ object Terminal {
 		return terminalType.screenFactory(menu, title)
 	}
 
-	fun createSimulatorHandler(menu: ChestMenu, title: Component) {
-		val terminalType = Type.fromTitle(title)
-		handler = terminalType.simulatorFactory(menu, title)
-	}
-
 	fun shouldReplace(title: Component): Boolean {
+		if (!config.enabled) return false
 		return Type.entries.any { title.string.startsWith(it.windowName) }
 	}
 
-	fun isSolverEnabled(): Boolean = config.enabled
-
 	fun openSimulator(type: Type = Type.entries.random()) {
+		val player = MC.player ?: return
+
 		val title = Component.literal(type.windowName)
 		if(type == Type.STARTS_WITH) title.append(" '${"ABCDEFGHIJLMNOW".random()}'?")
 		if(type == Type.SELECT_ALL) title.append(" ${DyeColor.entries.random().name.uppercase().replace("_", " ")} items!")
@@ -48,7 +51,12 @@ object Terminal {
 			Type.MELODY -> MenuType.GENERIC_9x6
 		}
 
-		MenuScreens.create(menuType, MC.instance, Int.MAX_VALUE, title)
+		val inventory = player.inventory
+		val menu = menuType.create(Int.MAX_VALUE, inventory)
+		handler = type.simulatorFactory(menu, title)
+
+		player.containerMenu = menu
+		MC.screen = if(config.enabled) type.screenFactory(menu, title) else TerminalSimulatorScreen(menu, inventory, title)
 	}
 
 	enum class Type(

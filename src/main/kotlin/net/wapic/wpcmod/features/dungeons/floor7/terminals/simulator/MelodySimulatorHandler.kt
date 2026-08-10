@@ -66,8 +66,8 @@ class MelodySimulatorHandler(menu: ChestMenu, title: Component) : TerminalSimula
 		create()
 	}
 
-	override fun onUpdate(slots: List<Slot>) {
-		if(currentRow >= 5) onSolve()
+	override fun isTerminalSolved(slots: List<Slot>): Boolean {
+		return currentRow >= 5
 	}
 
 	private fun incrementTicks() {

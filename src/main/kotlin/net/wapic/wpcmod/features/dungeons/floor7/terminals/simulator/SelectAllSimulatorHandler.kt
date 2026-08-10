@@ -1,15 +1,17 @@
 package net.wapic.wpcmod.features.dungeons.floor7.terminals.simulator
 
-import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
-import net.minecraft.tags.TagKey
 import net.minecraft.world.inventory.ChestMenu
 import net.minecraft.world.inventory.ContainerInput
 import net.minecraft.world.inventory.Slot
+import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.DyeColor
-import net.minecraft.world.item.Item
+import net.minecraft.world.item.DyeItem
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.level.block.StainedGlassBlock
+import net.minecraft.world.level.block.StainedGlassPaneBlock
 import net.wapic.wpcmod.features.dungeons.floor7.terminals.Terminal
 import kotlin.random.Random
 
@@ -17,12 +19,12 @@ class SelectAllSimulatorHandler(menu: ChestMenu, title: Component) : TerminalSim
 
 	private val color = Terminal.SELECT_ALL_PATTERN.matchEntire(title.string)?.groupValues?.get(1)
 	private val dyeColor = DyeColor.entries.find { it.name.replace("_", " ") == color } ?: DyeColor.entries.random()
-	private val dyedItems = BuiltInRegistries.ITEM.getTagOrEmpty(ConventionalItemTags.DYED)
+	private val allItems = BuiltInRegistries.ITEM.map { it.defaultInstance }
 	private val incorrectColors = DyeColor.entries.filterNot { it == dyeColor }
 
 	override fun create() {
 		this.setSlots { slot ->
-			if(slot.index % 9 in 1..7 && slot.index / 9 in 1..3) {
+			if(slot.index % 9 in 1..7 && slot.index / 9 in 1..4) {
 				val color = if(Random.nextDouble() > 0.65) dyeColor else incorrectColors.random()
 				return@setSlots getRandomItemOfColor(color)
 			}
@@ -37,8 +39,8 @@ class SelectAllSimulatorHandler(menu: ChestMenu, title: Component) : TerminalSim
 		}
 	}
 
-	override fun onUpdate(slots: List<Slot>) {
-		if(slots.none(::hasColorWithoutFoil)) this.onSolve()
+	override fun isTerminalSolved(slots: List<Slot>): Boolean {
+		return slots.none(::hasColorWithoutFoil)
 	}
 
 	private fun hasColorWithoutFoil(slot: Slot): Boolean {
@@ -46,27 +48,17 @@ class SelectAllSimulatorHandler(menu: ChestMenu, title: Component) : TerminalSim
 	}
 
 	private fun getRandomItemOfColor(color: DyeColor): ItemStack {
-		return dyedItems.filter { it.`is`(getColor(color)) }.random().value().defaultInstance
+		val dyeItems = allItems.filter(::getDyeItems)
+		return dyeItems.filter { it.hoverName.string.startsWith(color.name.replace("_", " "), true) }.random().copy()
 	}
 
-	private fun getColor(color: DyeColor): TagKey<Item> {
-		return when (color) {
-			DyeColor.WHITE -> ConventionalItemTags.WHITE_DYED
-			DyeColor.ORANGE -> ConventionalItemTags.ORANGE_DYED
-			DyeColor.MAGENTA -> ConventionalItemTags.MAGENTA_DYED
-			DyeColor.LIGHT_BLUE -> ConventionalItemTags.LIGHT_BLUE_DYED
-			DyeColor.YELLOW -> ConventionalItemTags.YELLOW_DYED
-			DyeColor.LIME -> ConventionalItemTags.LIME_DYED
-			DyeColor.PINK -> ConventionalItemTags.PINK_DYED
-			DyeColor.GRAY -> ConventionalItemTags.GRAY_DYED
-			DyeColor.LIGHT_GRAY -> ConventionalItemTags.LIGHT_GRAY_DYED
-			DyeColor.CYAN -> ConventionalItemTags.CYAN_DYED
-			DyeColor.PURPLE -> ConventionalItemTags.PURPLE_DYED
-			DyeColor.BLUE -> ConventionalItemTags.BLUE_DYED
-			DyeColor.BROWN -> ConventionalItemTags.BROWN_DYED
-			DyeColor.GREEN -> ConventionalItemTags.GREEN_DYED
-			DyeColor.RED -> ConventionalItemTags.RED_DYED
-			DyeColor.BLACK -> ConventionalItemTags.BLACK_DYED
-		}
+	// TODO: find a better way to get color items (for some reason hypixel doesn't have the DYED tag sometimes??)
+	private fun getDyeItems(stack: ItemStack): Boolean {
+		val block = (stack.item as? BlockItem)?.block
+		if (block is StainedGlassBlock) return true
+		if (block is StainedGlassPaneBlock && block != Blocks.BLACK_STAINED_GLASS) return true
+		if (stack.item is DyeItem) return true
+		return false
+
 	}
 }

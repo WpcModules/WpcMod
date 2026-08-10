@@ -34,11 +34,11 @@ class SelectAllTerminalScreen(menu: ChestMenu, title: Component) :
 		return false
 	}
 
-	override fun onUpdate(slots: List<Slot>) {
-		solution.addAll(slots.mapNotNull{ slot -> slot.index.takeIf { isValidItem(slot.item) } })
+	override fun onInventoryUpdated(slots: List<Slot>) {
+		solution.addAll(slots.mapNotNull{ slot -> slot.index.takeIf { hasColorAndNotClicked(slot.item) } })
 	}
 
-	fun isValidItem(stack: ItemStack?): Boolean {
+	fun hasColorAndNotClicked(stack: ItemStack?): Boolean {
 		if (stack?.hasFoil() == true) return false
 
 		val isCorrectColor = stack?.hoverName?.string?.startsWith(dyeColor.name.replace("_", " "), true) == true
@@ -49,7 +49,7 @@ class SelectAllTerminalScreen(menu: ChestMenu, title: Component) :
 
 	companion object {
 		private val ITEM_OVERRIDES = mapOf(
-			// All this because Hypixel hates us.
+			// All this because Hypixel hates us. some of these items might not even be in the damn menu. I just put them there to be sure
 			DyeColor.WHITE to setOf(
 				Items.BONE_MEAL,
 				Items.WHITE_WOOL,

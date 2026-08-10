@@ -15,22 +15,16 @@ class PanesTerminalScreen(menu: ChestMenu, title: Component) : AbstractTerminalS
 	}
 
 	override fun extractSlots(graphics: GuiGraphicsExtractor) {
-		for (slotIndex in solution) {
-			extractSlot(graphics, slotIndex, config.panesColor)
+		for (slot in solution) {
+			extractSlot(graphics, slot, config.panesColor)
 		}
 	}
 
 	override fun slotClicked(slotIndex: Int, button: Int): Boolean {
-		if (slotIndex !in solution) return false
-		if (doTerminalClick(slotIndex, InputConstants.MOUSE_BUTTON_MIDDLE)) {
-			return solution.removeIf { slotIndex == it }
-		}
-		return false
+		return if(slotIndex in solution) doTerminalClick(slotIndex, InputConstants.MOUSE_BUTTON_MIDDLE) else false
 	}
 
-	override fun onUpdate(slots: List<Slot>) {
-		solution.addAll(slots.mapNotNull { slot ->
-			slot.index.takeIf { slot.item.item == Items.RED_STAINED_GLASS_PANE }
-		})
+	override fun onInventoryUpdated(slots: List<Slot>) {
+		solution.addAll(slots.mapNotNull { slot -> slot.index.takeIf { slot.item.item == Items.RED_STAINED_GLASS_PANE } })
 	}
 }

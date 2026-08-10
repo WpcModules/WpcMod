@@ -13,16 +13,19 @@ import net.minecraft.world.item.ItemStack
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.Utils.equalsOneOf
 import net.wapic.wpcmod.util.render.drawRoundedRect
 
 abstract class AbstractTerminalScreen(initialMenu: ChestMenu, title: Component) :
-	Screen(title), ContainerListener, MenuAccess<ChestMenu> {
+	Screen(title), MenuAccess<ChestMenu>, ContainerListener {
 
 	private var menu: ChestMenu = initialMenu
-	private var allowClick: Boolean = true
 	private val slotMap: MutableMap<Int, Box> = mutableMapOf()
-	private val isSimulator = menu.containerId == Int.MAX_VALUE
+	val isSimulator = menu.containerId == Int.MAX_VALUE
 	private val scaledSlotSize = 16 * config.customTermSize
+
+	private var allowClick = false
+	private var inventoryUpdated = false
 
 	protected val totalSlotSpace = scaledSlotSize + config.gap * config.customTermSize
 	protected val config get() = WpcMod.config.dungeon.floor7.terminalSolvers
@@ -35,11 +38,20 @@ abstract class AbstractTerminalScreen(initialMenu: ChestMenu, title: Component) 
 	override fun tick() {
 		super.tick()
 		Terminal.handler?.onTick()
+
+		if(inventoryUpdated) {
+			solution.clear()
+			val slots = menu.slots.subList(0, menu.container.containerSize)
+			onInventoryUpdated(slots)
+			inventoryUpdated = false
+			allowClick = true
+			DungeonEvents.TERMINAL_UPDATED.invoker().onUpdate(this, slots)
+		}
 	}
 
 	override fun init() {
 		Terminal.handler?.create()
-		DungeonEvents.TERMINAL_OPENED.invoker().onOpen(this, isSimulator)
+		DungeonEvents.TERMINAL_OPENED.invoker().onOpen(this)
 		this.resize(width, height)
 	}
 
@@ -57,17 +69,15 @@ abstract class AbstractTerminalScreen(initialMenu: ChestMenu, title: Component) 
 
 	protected fun doTerminalClick(slotIndex: Int, button: Int): Boolean {
 		if (!allowClick) return false
-
 		allowClick = false
-
-		val input = if (button == 0 || button == 1) ContainerInput.PICKUP else ContainerInput.CLONE
+		val input = if (button.equalsOneOf(0, 1)) ContainerInput.PICKUP else ContainerInput.CLONE
 
 		Terminal.handler?.slotClicked(menu.getSlot(slotIndex), slotIndex, button, input)
 		if(!isSimulator) MC.clickSlot(menu.containerId, slotIndex, button, input)
+		WpcMod.LOGGER.debug("Clicked terminal slot {}, button {}", slotIndex, button)
 
 		MC.playSound(SoundEvents.NOTE_BLOCK_BELL.value(), 1f, 1f)
-		DungeonEvents.TERMINAL_CLICKED.invoker().onClick(this, slotIndex, button, isSimulator)
-
+		DungeonEvents.TERMINAL_CLICKED.invoker().onClick(this, slotIndex, button)
 		return true
 	}
 
@@ -78,8 +88,8 @@ abstract class AbstractTerminalScreen(initialMenu: ChestMenu, title: Component) 
 	override fun extractBackground(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, deltaTicks: Float) {
 		val pose = graphics.pose()
 		pose.pushMatrix()
-		val x = (graphics.guiWidth() - width) / 2f
-		val y = (graphics.guiHeight() - height) / 2f
+		val x = (graphics.guiWidth() - this.width) / 2f
+		val y = (graphics.guiHeight() - this.height) / 2f
 		pose.translate(x, y)
 		graphics.drawRoundedRect(0, 0, this.width, this.height, config.backgroundRoundness, config.backgroundColor)
 		extractTitle(graphics)
@@ -113,6 +123,10 @@ abstract class AbstractTerminalScreen(initialMenu: ChestMenu, title: Component) 
 
 		graphics.drawRoundedRect(0, 0, 16, 16, config.slotRoundness, color)
 		graphics.centeredText(font, text, 8, font.lineHeight / 2, CommonColors.WHITE)
+		if (config.debug) {
+			graphics.fakeItem(menu.getSlot(slotIndex).item, 0, 0)
+			graphics.itemDecorations(font, menu.getSlot(slotIndex).item, 0, 0)
+		}
 
 		pose.popMatrix()
 	}
@@ -120,7 +134,6 @@ abstract class AbstractTerminalScreen(initialMenu: ChestMenu, title: Component) 
 	override fun getMenu(): ChestMenu = menu
 
 	override fun onClose() {
-		super.onClose()
 		if(isSimulator) {
 			minecraft.player?.clientSideCloseContainer()
 		} else {
@@ -131,9 +144,9 @@ abstract class AbstractTerminalScreen(initialMenu: ChestMenu, title: Component) 
 
 	override fun removed() {
 		val player = minecraft.player ?: return
-		Terminal.handler?.onRemoved()
 		menu.removed(player)
 		menu.removeSlotListener(this)
+		Terminal.handler?.removed()
 	}
 
 	protected fun getHoveredSlot(mouseX: Double, mouseY: Double): Int? {
@@ -150,22 +163,12 @@ abstract class AbstractTerminalScreen(initialMenu: ChestMenu, title: Component) 
 		menu.addSlotListener(this)
 	}
 
-	override fun dataChanged(container: AbstractContainerMenu, id: Int, value: Int) {
-		WpcMod.LOGGER.debug("Data changed, {}, {}, {}", container, id, value)
-	}
-
-	open fun onUpdate(slots: List<Slot>) = Unit
-
+	override fun dataChanged(container: AbstractContainerMenu, id: Int, value: Int) = Unit
 	override fun slotChanged(container: AbstractContainerMenu, slotIndex: Int, itemStack: ItemStack) {
-		if (container != menu || slotIndex >= menu.container.containerSize) return
-		allowClick = true
-
-		if(slotIndex == menu.container.containerSize - 1) {
-			val slots = menu.slots.subList(0, menu.container.containerSize)
-			solution.clear()
-			this.onUpdate(slots)
-		}
+		inventoryUpdated = true
 	}
+
+	abstract fun onInventoryUpdated(slots: List<Slot>)
 
 	private data class Box(val x: Float, val y: Float, val l: Float)
 }

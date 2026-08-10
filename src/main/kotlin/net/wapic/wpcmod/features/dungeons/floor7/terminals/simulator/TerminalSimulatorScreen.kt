@@ -10,7 +10,8 @@ import net.minecraft.world.inventory.ContainerInput
 import net.wapic.wpcmod.features.dungeons.floor7.terminals.Terminal
 import net.wapic.wpcmod.util.MC
 
-class TerminalSimulatorScreen(menu: ChestMenu, inventory: Inventory, title: Component) : ContainerScreen(menu, inventory, title) {
+class TerminalSimulatorScreen(menu: ChestMenu, inventory: Inventory, title: Component) :
+	ContainerScreen(menu, inventory, title) {
 
 	override fun init() {
 		super.init()
@@ -33,7 +34,7 @@ class TerminalSimulatorScreen(menu: ChestMenu, inventory: Inventory, title: Comp
 	}
 
 	override fun removed() {
-		Terminal.handler?.onRemoved()
+		Terminal.handler?.removed()
 		super.removed()
 	}
 

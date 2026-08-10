@@ -16,12 +16,11 @@ class NumbersTerminalScreen(menu: ChestMenu, title: Component) : AbstractTermina
 
 	override fun extractSlots(graphics: GuiGraphicsExtractor) {
 		solution.forEachIndexed { index, slotIndex ->
-
 			val color = when (index) {
 				0 -> config.orderColor
 				1 -> config.orderColor2
 				2 -> config.orderColor3
-				else -> config.backgroundColor
+				else -> return@forEachIndexed
 			}
 
 			extractSlot(graphics, slotIndex, color)
@@ -29,18 +28,19 @@ class NumbersTerminalScreen(menu: ChestMenu, title: Component) : AbstractTermina
 	}
 
 	override fun slotClicked(slotIndex: Int, button: Int): Boolean {
-		if(slotIndex == solution.first()) {
-			if(doTerminalClick(slotIndex, InputConstants.MOUSE_BUTTON_MIDDLE)) {
-				solution.removeIf { it == slotIndex }
-				return true
-			}
+		if(slotIndex != solution.first()) return false
+		if(doTerminalClick(slotIndex, InputConstants.MOUSE_BUTTON_MIDDLE)) {
+			solution.removeIf { it == slotIndex }
+			return true
 		}
 		return false
 	}
 
-	override fun onUpdate(slots: List<Slot>) {
-		solution.addAll(slots.mapNotNull { slot ->
-			(slot.item.count to slot.index).takeIf { slot.item.item == Items.RED_STAINED_GLASS_PANE }
-		}.sortedBy { it.first }.map { it.second })
+	override fun onInventoryUpdated(slots: List<Slot>) {
+		solution.addAll(
+			slots.sortedBy { it.item.count }.mapNotNull { slot ->
+				slot.index.takeIf { slot.item.item == Items.RED_STAINED_GLASS_PANE }
+			}
+		)
 	}
 }

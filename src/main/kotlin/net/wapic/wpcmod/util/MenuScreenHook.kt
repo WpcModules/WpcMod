@@ -5,8 +5,9 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.ChestMenu
 import net.minecraft.world.inventory.MenuType
-import net.wapic.wpcmod.features.dungeons.floor7.terminals.*
-import net.wapic.wpcmod.features.dungeons.floor7.terminals.simulator.TerminalSimulatorScreen
+import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.features.dungeons.floor7.terminals.AbstractTerminalScreen
+import net.wapic.wpcmod.features.dungeons.floor7.terminals.Terminal
 
 // Modified from SkyHanni
 object MenuScreenHook {
@@ -15,37 +16,30 @@ object MenuScreenHook {
 	fun <T : AbstractContainerMenu> openCustomMenu(
 		title: Component,
 		type: MenuType<T>,
-		mc: Minecraft,
+		client: Minecraft,
 		containerId: Int
 	): Boolean {
-		val player = mc.player ?: return false
+		val player = client.player ?: return false
+		if (!Terminal.shouldReplace(title)) return false
 
 		val inventory = player.inventory
-		val menu = type.create(containerId, inventory)
-		if (menu !is ChestMenu) return false
+		val menu = type.create(containerId, inventory) as? ChestMenu ?: return false
 
-		if (Terminal.shouldReplace(title)) {
-			player.containerMenu = menu
+		player.containerMenu = menu
+		WpcMod.LOGGER.debug("Set menu to: {}, currentScreen {}", player.containerMenu, client.screen)
 
-			if(containerId == Int.MAX_VALUE) {
-				Terminal.createSimulatorHandler(menu, title)
-
-				if(!Terminal.isSolverEnabled()){
-					MC.screen = TerminalSimulatorScreen(menu, inventory, title)
-					return true
-				}
+		when (val screen = client.screen) {
+			is AbstractTerminalScreen -> {
+				screen.changeHandler(menu)
+				WpcMod.LOGGER.debug("Changed Menu Handler to {}, with ID: {}", menu, menu.containerId)
 			}
 
-			when (val screen = MC.screen) {
-				is PanesTerminalScreen, is MelodyTerminalScreen, is SelectAllTerminalScreen,
-				is RubixTerminalScreen, is NumbersTerminalScreen, is StartsWithTerminalScreen -> screen.changeHandler(
-					menu
-				)
-				else -> MC.screen = Terminal.createSolverScreen(menu, title)
+			else ->  {
+				client.setScreen(Terminal.createSolverScreen(menu, title))
+				WpcMod.LOGGER.debug("Opened custom menu {}, currentScreen: {}", player.containerMenu, client.screen)
 			}
-			return true
 		}
 
-		return false
+		return true
 	}
 }

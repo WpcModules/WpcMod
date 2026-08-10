@@ -2,7 +2,7 @@ package net.wapic.wpcmod.events.skyblock
 
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
-import net.minecraft.world.item.ItemStack
+import net.minecraft.world.inventory.Slot
 import net.wapic.wpcmod.features.dungeons.floor7.terminals.AbstractTerminalScreen
 
 object DungeonEvents {
@@ -48,28 +48,28 @@ object DungeonEvents {
 
 	@JvmField
 	val TERMINAL_SOLVED: Event<TerminalSolve> = EventFactory.createArrayBacked(TerminalSolve::class.java) { listeners ->
-		TerminalSolve { screen, isSimulator ->
+		TerminalSolve { screen ->
 			for (listener in listeners) {
-				listener.onSolve(screen, isSimulator)
+				listener.onSolve(screen)
 			}
 		}
 	}
 
 	fun interface TerminalSolve {
-		fun onSolve(screen: AbstractTerminalScreen, isSimulator: Boolean)
+		fun onSolve(screen: AbstractTerminalScreen)
 	}
 
 	@JvmField
 	val TERMINAL_OPENED: Event<TerminalOpen> = EventFactory.createArrayBacked(TerminalOpen::class.java) { listeners ->
-		TerminalOpen { screen, isSimulator ->
+		TerminalOpen { screen ->
 			for (listener in listeners) {
-				listener.onOpen(screen, isSimulator)
+				listener.onOpen(screen)
 			}
 		}
 	}
 
 	fun interface TerminalOpen {
-		fun onOpen(screen: AbstractTerminalScreen, isSimulator: Boolean)
+		fun onOpen(screen: AbstractTerminalScreen)
 	}
 
 	@JvmField
@@ -87,28 +87,28 @@ object DungeonEvents {
 
 	@JvmField
 	val TERMINAL_UPDATED: Event<TerminalUpdate> = EventFactory.createArrayBacked(TerminalUpdate::class.java) { listeners ->
-		TerminalUpdate { screen, items, isSimulator ->
+		TerminalUpdate { screen, slots ->
 			for (listener in listeners) {
-				listener.onUpdate(screen, items, isSimulator)
+				listener.onUpdate(screen, slots)
 			}
 		}
 	}
 
 	fun interface TerminalUpdate {
-		fun onUpdate(screen: AbstractTerminalScreen, items: Array<ItemStack?>, isSimulator: Boolean)
+		fun onUpdate(screen: AbstractTerminalScreen, slots: List<Slot>)
 	}
 
 	@JvmField
 	val TERMINAL_CLICKED: Event<TerminalClick> = EventFactory.createArrayBacked(TerminalClick::class.java) { listeners ->
-		TerminalClick { screen, slot, button, isSimulator ->
+		TerminalClick { screen, slot, button ->
 			for (listener in listeners) {
-				listener.onClick(screen, slot, button, isSimulator)
+				listener.onClick(screen, slot, button)
 			}
 		}
 	}
 
 	fun interface TerminalClick {
-		fun onClick(screen: AbstractTerminalScreen, slot: Int, button: Int, isSimulator: Boolean)
+		fun onClick(screen: AbstractTerminalScreen, slot: Int, button: Int)
 	}
 
 	@JvmField

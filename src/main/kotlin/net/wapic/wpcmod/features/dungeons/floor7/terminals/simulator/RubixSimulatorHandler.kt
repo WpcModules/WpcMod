@@ -5,12 +5,13 @@ import net.minecraft.world.inventory.ChestMenu
 import net.minecraft.world.inventory.ContainerInput
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.Items
+import net.wapic.wpcmod.features.dungeons.floor7.terminals.Terminal
 
 class RubixSimulatorHandler(menu: ChestMenu, title: Component) : TerminalSimulatorHandler(menu) {
 	override fun create() {
 		this.setSlots { slot ->
 			if(slot.index %9 in 3..5 && slot.index / 9 in 1..3) {
-				return@setSlots RUBIX_ORDER.random().defaultInstance
+				return@setSlots Terminal.RUBIX_ORDER.random().defaultInstance
 			}
 			return@setSlots blackPane
 		}
@@ -18,12 +19,12 @@ class RubixSimulatorHandler(menu: ChestMenu, title: Component) : TerminalSimulat
 
 	override fun slotClicked(slot: Slot, slotId: Int, buttonNum: Int, containerInput: ContainerInput) {
 		val delta = if(buttonNum == 0) 1 else -1
-		val index = (RUBIX_ORDER.indexOf(slot.item.item) + delta + RUBIX_ORDER.size) % RUBIX_ORDER.size
-		slot.setItem(RUBIX_ORDER[index].defaultInstance)
+		val index = (Terminal.RUBIX_ORDER.indexOf(slot.item.item) + delta + Terminal.RUBIX_ORDER.size) % Terminal.RUBIX_ORDER.size
+		slot.setItem(Terminal.RUBIX_ORDER[index].defaultInstance)
 	}
 
-	override fun onUpdate(slots: List<Slot>) {
+	override fun isTerminalSolved(slots: List<Slot>): Boolean {
 		val gameArea = slots.filterNot { it.item.item == Items.BLACK_STAINED_GLASS_PANE }
-		if(gameArea.distinctBy { it.item.item }.size == 1) this.onSolve()
+		return gameArea.distinctBy { it.item.item }.size == 1
 	}
 }

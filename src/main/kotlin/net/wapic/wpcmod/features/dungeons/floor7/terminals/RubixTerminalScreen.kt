@@ -19,7 +19,7 @@ class RubixTerminalScreen(menu: ChestMenu, title: Component) : AbstractTerminalS
 	}
 
 	override fun extractSlots(graphics: GuiGraphicsExtractor) {
-		for ((slotIndex, clicks) in rubixSolution) {
+		for ( (slotIndex, clicks) in rubixSolution) {
 			val color = when(clicks) {
 				1 -> config.rubixColor1
 				2 -> config.rubixColor2
@@ -41,27 +41,18 @@ class RubixTerminalScreen(menu: ChestMenu, title: Component) : AbstractTerminalS
 	}
 
 	fun getClicks(start: Int, goal: Int): Int {
-		return (goal - start + RUBIX_ORDER.size / 2) % RUBIX_ORDER.size - RUBIX_ORDER.size / 2
+		val size = Terminal.RUBIX_ORDER.size
+		return Math.floorMod(goal - start + size / 2, size) - size / 2
 	}
 
-	override fun onUpdate(slots: List<Slot>) {
+	override fun onInventoryUpdated(slots: List<Slot>) {
 		val gameArea = slots.filterNot { it.item.item == Items.BLACK_STAINED_GLASS_PANE }
-		goal = gameArea.groupingBy { RUBIX_ORDER.indexOf(it.item.item) }.eachCount().filter { it.key >= 0 }.maxBy { it.value }.key
+		if(goal == null) goal = gameArea.groupingBy { Terminal.RUBIX_ORDER.indexOf(it.item.item) }.eachCount().maxBy { it.value }.key
 
 		goal?.let { goal ->
 			rubixSolution = gameArea.associate { slot ->
-				slot.index to getClicks(RUBIX_ORDER.indexOf(slot.item.item), goal)
+				slot.index to getClicks(Terminal.RUBIX_ORDER.indexOf(slot.item.item), goal)
 			}
 		} ?: return WpcMod.LOGGER.error("Rubix terminal goal is null!")
-	}
-
-	companion object {
-		val RUBIX_ORDER = listOf(
-			Items.ORANGE_STAINED_GLASS_PANE,
-			Items.YELLOW_STAINED_GLASS_PANE,
-			Items.GREEN_STAINED_GLASS_PANE,
-			Items.BLUE_STAINED_GLASS_PANE,
-			Items.RED_STAINED_GLASS_PANE,
-		)
 	}
 }

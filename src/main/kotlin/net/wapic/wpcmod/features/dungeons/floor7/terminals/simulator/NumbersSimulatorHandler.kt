@@ -30,7 +30,7 @@ class NumbersSimulatorHandler(menu: ChestMenu, title: Component) : TerminalSimul
 		counts.add(slot.item.count)
 	}
 
-	override fun onUpdate(slots: List<Slot>) {
-		if(slots.none { it.item.item == Items.RED_STAINED_GLASS_PANE } ) this.onSolve()
+	override fun isTerminalSolved(slots: List<Slot>): Boolean {
+		return slots.none { it.item.item == Items.RED_STAINED_GLASS_PANE }
 	}
 }

@@ -5,7 +5,6 @@ import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.network.chat.Component
 import net.minecraft.world.inventory.ChestMenu
 import net.minecraft.world.inventory.Slot
-import net.minecraft.world.item.ItemStack
 
 class StartsWithTerminalScreen(menu: ChestMenu, title: Component) :
 	AbstractTerminalScreen(menu, title) {
@@ -33,14 +32,14 @@ class StartsWithTerminalScreen(menu: ChestMenu, title: Component) :
 		return false
 	}
 
-	override fun onUpdate(slots: List<Slot>) {
-		solution.addAll(slots.mapNotNull { slot -> slot.index.takeIf { isValidItem(slot.item, slot.index) } })
+	override fun onInventoryUpdated(slots: List<Slot>) {
+		solution.addAll(slots.mapNotNull{ slot -> slot.index.takeIf { hasLetterAndNotClicked(slot) } })
 	}
 
-	fun isValidItem(stack: ItemStack?, slotIndex: Int = -1): Boolean {
-		if (slotIndex in clickedSlots) return false
+	fun hasLetterAndNotClicked(slot: Slot): Boolean {
+		if (slot.index in clickedSlots) return false
 
-		if (stack?.hasFoil() == true && !stack.item.defaultInstance.hasFoil()) return false
-		return letter?.let { stack?.hoverName?.string?.startsWith(it) } == true
+		if (slot.item.hasFoil() && !slot.item.item.defaultInstance.hasFoil()) return false
+		return letter?.let { slot.item.hoverName.string.startsWith(it, true) } == true
 	}
 }

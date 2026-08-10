@@ -1,7 +1,5 @@
 package net.wapic.wpcmod.features.dungeons.floor7.terminals
 
-import com.mojang.blaze3d.platform.InputConstants
-import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.network.chat.Component
 import net.minecraft.world.inventory.ChestMenu
@@ -9,7 +7,6 @@ import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.Items
 
 class MelodyTerminalScreen(menu: ChestMenu, title: Component) : AbstractTerminalScreen(menu, title) {
-	private var canClick = true
 
 	override fun resize(width: Int, height: Int) {
 		this.height = ((menu.rowCount + 1.5f) * totalSlotSpace).toInt()
@@ -17,25 +14,34 @@ class MelodyTerminalScreen(menu: ChestMenu, title: Component) : AbstractTerminal
 	}
 
 	override fun extractSlots(graphics: GuiGraphicsExtractor) {
-		for (slot in menu.slots.subList(0, menu.container.containerSize)) {
+		for (slot in menu.slots) {
 			when(slot.item.item) {
-				Items.RED_STAINED_GLASS_PANE, Items.RED_TERRACOTTA -> extractSlot(graphics, slot.index, config.melodyRowColor)
 				Items.LIME_STAINED_GLASS_PANE, Items.LIME_TERRACOTTA -> extractSlot(graphics, slot.index, config.melodyPointerColor)
+				Items.RED_STAINED_GLASS_PANE -> extractSlot(graphics, slot.index, config.melodyRowColor)
 				Items.MAGENTA_STAINED_GLASS_PANE -> extractSlot(graphics, slot.index, config.melodyColumColor)
-				Items.WHITE_STAINED_GLASS_PANE -> extractSlot(graphics, slot.index, ChromaColour(1f, 0.1f, 1f, 0, 255))
 				else -> continue
 			}
 		}
 	}
 
 	override fun slotClicked(slotIndex: Int, button: Int): Boolean {
-		if (!canClick) return false
-		return doTerminalClick(slotIndex, InputConstants.MOUSE_BUTTON_MIDDLE)
+		if (slotIndex !in solution) return false
+		if (doTerminalClick(slotIndex, button)) return solution.removeIf { it == slotIndex }
+		return false
 	}
 
-	override fun onUpdate(slots: List<Slot>) {
-		val pointer = slots.indexOfFirst { it.item.item == Items.LIME_STAINED_GLASS_PANE }
-		val column = slots.indexOfFirst { it.item.item == Items.MAGENTA_STAINED_GLASS_PANE }
-		canClick = pointer % 9 == column % 9 && pointer != -1 && column != -1
+	override fun onInventoryUpdated(slots: List<Slot>) {
+		var pointer = -1
+		var column = -1
+		var slotToClick = -1
+		for (slot in slots) {
+			if (slot.item.item == Items.LIME_STAINED_GLASS_PANE) pointer = slot.index
+			if (slot.item.item == Items.MAGENTA_STAINED_GLASS_PANE) column = slot.index
+			if (slot.item.item == Items.LIME_TERRACOTTA) slotToClick = slot.index
+		}
+
+		if(slotToClick != -1 && pointer != -1 && column != -1 && pointer % 9 == column % 9) {
+			solution.add(slotToClick)
+		}
 	}
 }

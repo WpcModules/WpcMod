@@ -12,10 +12,7 @@ class ReiCompatibility : REIClientPlugin {
 	override fun registerScreens(registry: ScreenRegistry) {
 		registry.registerDecider(object : OverlayDecider {
 			override fun <R : Screen> isHandingScreen(screen: Class<R>): Boolean {
-				return when (screen) {
-					AbstractTerminalScreen::class.java -> true
-					else -> false
-				}
+				return AbstractTerminalScreen::class.java.isAssignableFrom(screen)
 			}
 
 			override fun <R : Screen> shouldScreenBeOverlaid(screen: R): InteractionResult {
