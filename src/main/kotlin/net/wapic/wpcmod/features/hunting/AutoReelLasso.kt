@@ -13,6 +13,7 @@ import net.wapic.wpcmod.util.ItemUtils.skyblockId
 import net.wapic.wpcmod.util.MC
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 object AutoReelLasso {
 	private val config get() = WpcMod.config.hunting
@@ -31,6 +32,9 @@ object AutoReelLasso {
 	fun onEntityAdded(entity: Entity) {
 		if (!config.autoReel) return
 		if (entity is Bat && MC.player?.mainHandItem?.skyblockId in LASSO_IDS) {
+			potentialLeash?.let {
+				if (it.isAlive && it.leashHolder == MC.player) return
+			}
 			potentialLeash = entity
 		}
 	}
@@ -52,9 +56,9 @@ object AutoReelLasso {
 	}
 
 	fun reelLasso() = WpcMod.coroutineScope.launch {
-		delay(Random.nextLong(50, 150).milliseconds)
+		delay(Random.nextLong(100, 200).milliseconds)
 		MC.useItem()
-		delay(400.milliseconds) // Prevent redetecting old leash
+		delay(1.seconds) // Prevent redetecting old leash
 		isProcessing = false
 	}
 
