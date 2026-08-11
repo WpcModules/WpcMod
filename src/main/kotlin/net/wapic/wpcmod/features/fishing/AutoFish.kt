@@ -21,6 +21,7 @@ import net.wapic.wpcmod.util.MC
 import java.lang.ref.WeakReference
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.random.Random
+import kotlin.time.Duration.Companion.milliseconds
 
 object AutoFish {
 
@@ -77,7 +78,7 @@ object AutoFish {
 			val maxDelay = minDelay + 100L
 
 			repeat(castCount) { i ->
-				val castDelay = Random.nextLong(minDelay, maxDelay)
+				val castDelay = Random.nextLong(minDelay, maxDelay).milliseconds
 				delay(castDelay)
 
 				val isHoldingRod = client.player?.isHolding(Items.FISHING_ROD) == true
@@ -89,7 +90,7 @@ object AutoFish {
 				}
 			}
 
-			delay(350) // Delay to prevent false positive from old armor stand
+			delay(400.milliseconds) // Delay to prevent false positive from old armor stand
 		} finally {
 			isProcessing.set(false)
 			cachedHook = null
