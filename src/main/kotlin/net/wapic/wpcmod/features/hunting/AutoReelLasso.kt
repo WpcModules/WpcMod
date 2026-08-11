@@ -56,7 +56,9 @@ object AutoReelLasso {
 	}
 
 	fun reelLasso() = WpcMod.coroutineScope.launch {
-		delay(Random.nextLong(100, 200).milliseconds)
+		val reelDelay = Random.nextLong(80, 180).milliseconds
+		delay(reelDelay)
+		WpcMod.LOGGER.info("Reeling Lasso $reelDelay")
 		MC.useItem()
 		delay(1.seconds) // Prevent redetecting old leash
 		isProcessing = false
