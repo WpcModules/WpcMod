@@ -17,6 +17,7 @@ import net.wapic.wpcmod.config.foraging.ForagingConfig
 import net.wapic.wpcmod.config.galatea.GalateaConfig
 import net.wapic.wpcmod.config.garden.GardenConfig
 import net.wapic.wpcmod.config.general.GeneralConfig
+import net.wapic.wpcmod.config.hunting.HuntingConfig
 import net.wapic.wpcmod.config.inventory.InventoryConfig
 import net.wapic.wpcmod.config.kuudra.KuudraConfig
 import net.wapic.wpcmod.config.mining.MiningConfig
@@ -57,6 +58,9 @@ class WpcConfig : Config() {
 
 	@Category(name = "Fishing", desc = "Configuration options for fishing")
 	var fishing: FishingConfig = FishingConfig()
+
+	@Category(name = "Hunting", desc = "Configuration options for Hunting")
+	var hunting: HuntingConfig = HuntingConfig()
 
 	@Category(name = "Kuudra", desc = "Configuration options for Kuudra")
 	var kuudra: KuudraConfig = KuudraConfig()
