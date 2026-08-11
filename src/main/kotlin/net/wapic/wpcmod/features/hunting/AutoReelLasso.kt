@@ -63,7 +63,10 @@ object AutoReelLasso {
 	}
 
 	private fun Entity.canBeReeled(): Boolean {
-		val entities = this.level().getEntitiesOfClass(ArmorStand::class.java, this.boundingBox.expandTowards(1.0, 2.0, 1.0))
+		val entities = this.level().getEntitiesOfClass(
+			ArmorStand::class.java,
+			this.boundingBox.expandTowards(.0, 3.0, .0)
+		)
 		return entities.any { it.name.string == "REEL" }
 	}
 }
