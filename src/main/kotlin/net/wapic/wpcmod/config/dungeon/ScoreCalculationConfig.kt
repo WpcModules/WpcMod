@@ -13,19 +13,23 @@ class ScoreCalculationConfig {
 
 	@ConfigOption(name = "Score Hud", desc = "Show dungeon score in a HUD element")
 	@ConfigEditorDropdown
-	var scoreHudType: Property<ScoreHudType> = Property.of(ScoreHudType.FULL)
+	var scoreHudType: Property<ScoreHudType> = Property.of(ScoreHudType.MINIMIZED)
 
 	@ConfigOption(name = "Hide in Boss", desc = "Hide HUD element in boss")
 	@ConfigEditorBoolean
 	var hideInBoss: Boolean = false
 
-	@ConfigOption(name = "Mimic Message", desc = "Alert in chat when Mimic has been killed")
+	@ConfigOption(name = "Mimic Message", desc = "Alert party when Mimic has been killed")
 	@ConfigEditorBoolean
 	var mimicMessage: Boolean = false
 
-	@ConfigOption(name = "Prince Message", desc = "Alert in chat when Prince has been killed")
+	@ConfigOption(name = "Prince Message", desc = "Alert party when Prince giving +1 score has been killed")
 	@ConfigEditorBoolean
 	var princeMessage: Boolean = false
+
+	@ConfigOption(name = "Bat Message", desc = "Alert party when Bat giving +1 score has been killed")
+	@ConfigEditorBoolean
+	var batMessage: Boolean = false
 
 	@ConfigOption(name = "Notify 270 Score", desc = "Configure 270 score notification")
 	@ConfigEditorDropdown
