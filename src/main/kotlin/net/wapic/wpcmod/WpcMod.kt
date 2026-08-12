@@ -38,6 +38,7 @@ import net.wapic.wpcmod.features.general.CenturyCakeHelper
 import net.wapic.wpcmod.features.general.Freecam
 import net.wapic.wpcmod.features.general.PreventPlacingItems
 import net.wapic.wpcmod.features.general.shortcut.ShortcutHandler
+import net.wapic.wpcmod.features.hunting.AutoReelLasso
 import net.wapic.wpcmod.features.instance.AutoGFS
 import net.wapic.wpcmod.features.instance.CancelInteract
 import net.wapic.wpcmod.features.inventory.AutoCloseWardrobe
@@ -183,7 +184,6 @@ object WpcMod : ModInitializer {
 
 		// Galatea
 		GalateaESP.init()
-		ForestNodeESP.init()
 
 		// End
 		EndESP.init()
@@ -195,7 +195,13 @@ object WpcMod : ModInitializer {
 
 		// Fishing
 		AutoFish.init()
-		
+
+		// Foraging
+		ForestNodeESP.init()
+
+		// Hunting
+		AutoReelLasso.init()
+
 		// Mining
 		PigeonSwapper.init()
 		ChestESP.init()
