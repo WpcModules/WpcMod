@@ -61,10 +61,9 @@ class SelectAllTerminalScreen(menu: ChestMenu, title: Component) :
 			DyeColor.BROWN to setOf(Items.COCOA_BEANS),
 
 			// Green/Red/Yellow Dye still uses legacy names, so .startsWith won't match.
-			// As for the actual items(cactus, poppy, dandelion) I'm unsure if they're used, so I left them.
-			DyeColor.GREEN to setOf(Items.GREEN_DYE, Items.CACTUS),
-			DyeColor.RED to setOf(Items.RED_DYE, Items.POPPY),
-			DyeColor.YELLOW to setOf(Items.YELLOW_DYE, Items.DANDELION),
+			DyeColor.GREEN to setOf(Items.GREEN_DYE),
+			DyeColor.RED to setOf(Items.RED_DYE),
+			DyeColor.YELLOW to setOf(Items.YELLOW_DYE),
 
 			// Light Gray is called Silver, because why not?? except Light Gray Dye cause fuck me, I guess.
 			DyeColor.LIGHT_GRAY to setOf(

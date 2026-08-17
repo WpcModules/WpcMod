@@ -26,17 +26,16 @@ object MenuScreenHook {
 		val menu = type.create(containerId, inventory) as? ChestMenu ?: return false
 
 		player.containerMenu = menu
-		WpcMod.LOGGER.debug("Set menu to: {}, currentScreen {}", player.containerMenu, client.screen)
 
 		when (val screen = client.screen) {
 			is AbstractTerminalScreen -> {
 				screen.changeHandler(menu)
-				WpcMod.LOGGER.debug("Changed Menu Handler to {}, with ID: {}", menu, menu.containerId)
+				WpcMod.LOGGER.debug("Updated screen handler to {}, with ID: {}", menu, menu.containerId)
 			}
 
 			else ->  {
 				client.setScreen(Terminal.createSolverScreen(menu, title))
-				WpcMod.LOGGER.debug("Opened custom menu {}, currentScreen: {}", player.containerMenu, client.screen)
+				WpcMod.LOGGER.debug("Opened custom menu {}, screen: {}", player.containerMenu, client.screen)
 			}
 		}
 

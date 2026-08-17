@@ -31,8 +31,7 @@ object Terminal {
 	}
 
 	fun shouldReplace(title: Component): Boolean {
-		if (!config.enabled) return false
-		return Type.entries.any { title.string.startsWith(it.windowName) }
+		return config.enabled && Type.entries.any { title.string.startsWith(it.windowName) }
 	}
 
 	fun openSimulator(type: Type = Type.entries.random()) {

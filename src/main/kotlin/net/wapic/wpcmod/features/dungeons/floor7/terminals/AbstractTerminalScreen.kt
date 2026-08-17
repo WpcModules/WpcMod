@@ -29,7 +29,7 @@ abstract class AbstractTerminalScreen(initialMenu: ChestMenu, title: Component) 
 
 	protected val totalSlotSpace = scaledSlotSize + config.gap * config.customTermSize
 	protected val config get() = WpcMod.config.dungeon.floor7.terminalSolvers
-	protected val solution = mutableSetOf<Int>()
+	protected val solution = mutableListOf<Int>()
 
 	init {
 		menu.addSlotListener(this)
@@ -157,18 +157,18 @@ abstract class AbstractTerminalScreen(initialMenu: ChestMenu, title: Component) 
 		return mouseX in slotX..(slotX + length) && mouseY in slotY..(slotY + length)
 	}
 
-	fun changeHandler(newMenu: ChestMenu) {
-		menu.removeSlotListener(this)
-		menu = newMenu
-		menu.addSlotListener(this)
-	}
-
 	override fun dataChanged(container: AbstractContainerMenu, id: Int, value: Int) = Unit
 	override fun slotChanged(container: AbstractContainerMenu, slotIndex: Int, itemStack: ItemStack) {
 		inventoryUpdated = true
 	}
 
 	abstract fun onInventoryUpdated(slots: List<Slot>)
+
+	fun changeHandler(newMenu: ChestMenu) {
+		menu.removeSlotListener(this)
+		menu = newMenu
+		menu.addSlotListener(this)
+	}
 
 	private data class Box(val x: Float, val y: Float, val l: Float)
 }
