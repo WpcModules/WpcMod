@@ -1,7 +1,9 @@
 package net.wapic.wpcmod.features.hunting
 
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientChunkEvents
+import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.player.RemotePlayer
-import net.minecraft.network.chat.Component
+import net.minecraft.core.BlockPos
 import net.minecraft.world.entity.Display
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.ambient.Bat
@@ -25,43 +27,58 @@ import net.minecraft.world.entity.monster.spider.CaveSpider
 import net.minecraft.world.entity.monster.warden.Warden
 import net.minecraft.world.item.DyeColor
 import net.minecraft.world.item.Items
-import net.minecraft.world.level.block.entity.BeehiveBlockEntity
+import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.chunk.LevelChunk
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.components.GlowableESPConfig
+import net.wapic.wpcmod.events.BlockEvents
+import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.events.WorldRenderEvent
 import net.wapic.wpcmod.features.entity.EspFeature
+import net.wapic.wpcmod.util.EntityUtils.biome
 import net.wapic.wpcmod.util.EntityUtils.headTexture
 import net.wapic.wpcmod.util.HeadTextures
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.SafariAPI
-import net.wapic.wpcmod.util.SafariAPI.Zone
-import net.wapic.wpcmod.util.Utils
+import net.wapic.wpcmod.util.SafariAPI.SafariBiome
+import net.wapic.wpcmod.util.SafariAPI.SafariBiome.Companion.isOf
 import net.wapic.wpcmod.util.render.WorldRenderContext
 
 object SafariESP : EspFeature() {
 
 	private val config get() = WpcMod.config.hunting.safari
+	private val clickableBeehives: MutableSet<BlockPos> = mutableSetOf()
 
-	// TODO: Better hive ESP & fix DisplayEntities remaining after being captured
+	// TODO: fix DisplayEntities remaining after being captured
 	fun init() {
+		ClientChunkEvents.CHUNK_LOAD.register(::onChunkLoad)
 		WorldRenderEvent.EVENT.register(::onRenderWorld)
+		BlockEvents.CHANGE.register(::onBlockChange)
+
+		WorldChangeEvent.BEFORE.register {
+			clickableBeehives.clear()
+		}
 	}
 
-	private fun isEntityInZone(entity: Entity, zone: Zone): Boolean {
-		return zone.box.isInside(entity.blockX, entity.blockY, entity.blockZ)
+	private fun onBlockChange(pos: BlockPos, oldState: BlockState, newState: BlockState) {
+		if (!isEnabled()) return
+		if (oldState.block == Blocks.AIR && newState.block == Blocks.BEE_NEST) clickableBeehives.add(pos)
+		if (oldState.block == Blocks.BEE_NEST && newState.block == Blocks.BEE_NEST) clickableBeehives.removeIf { it == pos }
+	}
+
+	private fun isBeeNest(blockState: BlockState) = blockState.block == Blocks.BEE_NEST
+
+	private fun onChunkLoad(level: ClientLevel, chunk: LevelChunk) {
+		if (!isEnabled()) return
+		chunk.findBlocks(::isBeeNest) { pos, state ->
+			clickableBeehives.add(pos)
+		}
 	}
 
 	private fun onRenderWorld(worldRenderContext: WorldRenderContext) {
-		val beeHives = Utils.getLoadedBlockEntities().filterIsInstance<BeehiveBlockEntity>()
-		for (hive in beeHives) {
-			worldRenderContext.drawText(
-				Component.nullToEmpty(hive.occupantCount.toString()).visualOrderText,
-				hive.blockPos.center,
-				2f,
-				false
-			)
-			worldRenderContext.drawBoundingBox(hive.blockPos.center, 1f, 1f)
-		}
+		if (!config.highlightBeehives || !isEnabled()) return
+		for (hive in clickableBeehives) worldRenderContext.drawBoundingBox(hive.center, 1f, 1f)
 	}
 
 	private fun computeIcyMobs(entity: Entity) = when (entity) {
@@ -71,7 +88,8 @@ object SafariESP : EspFeature() {
 
 		// Troodon & Mantis Shrimp
 		is Display.ItemDisplay -> {
-			val isIcyEntity = isEntityInZone(entity, Zone.ICY) && entity.posRotInterpolationDuration == 3
+			val isIcyEntity =
+				entity.biome.isOf(SafariBiome.ICY) || entity.biome.isOf(SafariBiome.ICY_CAVES) && entity.posRotInterpolationDuration == 3
 			isIcyEntity && entity.itemStack.item == Items.PLAYER_HEAD
 		}
 
@@ -82,11 +100,11 @@ object SafariESP : EspFeature() {
 		is CaveSpider, is Bat, is Phantom, is Warden -> true
 		is Endermite -> entity.y > 60
 		is Shulker -> entity.color == DyeColor.PURPLE
-		is RemotePlayer -> entity.name.string == "Hideyho "
+		is RemotePlayer -> entity.name.string == "Hideyho " // Yes, the space is supposed to be there
 		is ArmorStand -> entity.headTexture == HeadTextures.GAZER
 
 		// Duplico, Gimmiegold, Hideonwall(Moving)
-		is Display.ItemDisplay -> isEntityInZone(entity, Zone.HAUNTED) && entity.posRotInterpolationDuration == 3
+		is Display.ItemDisplay -> entity.biome.isOf(SafariBiome.HAUNTED) && entity.posRotInterpolationDuration == 3
 		else -> false
 	}
 
@@ -97,14 +115,13 @@ object SafariESP : EspFeature() {
 
 		// Chuckwalla & Flitter
 		is Display.ItemDisplay -> {
-			val isCavernEntity = isEntityInZone(entity, Zone.CAVERN) && entity.posRotInterpolationDuration == 3
+			val isCavernEntity = entity.biome.isOf(SafariBiome.CAVERN) && entity.posRotInterpolationDuration == 3
 			isCavernEntity && entity.itemStack.item == Items.PLAYER_HEAD
 		}
 
 		is ArmorStand -> {
 			if (entity.headTexture == HeadTextures.DRIFTLING) return entity.scale == 1.25f
-			if (entity.headTexture == HeadTextures.SHYWORM_HEAD) return true
-			return false
+			return entity.headTexture == HeadTextures.SHYWORM_HEAD
 		}
 
 		else -> false
@@ -118,12 +135,13 @@ object SafariESP : EspFeature() {
 	}
 
 	override fun compute(entity: Entity): GlowableESPConfig? {
-		val shouldHaveESP = when (Zone.fromBlockPos(MC.player?.blockPosition())) {
-			Zone.ICY -> computeIcyMobs(entity)
-			Zone.HAUNTED -> computeHauntedMobs(entity)
-			Zone.CAVERN -> computeCavernMobs(entity)
-			Zone.FOREST -> computeForestMobs(entity)
-			Zone.NONE -> false
+		val player = MC.player ?: return null
+		val shouldHaveESP = when (SafariBiome.fromBiome(player.biome)) {
+			SafariBiome.ICY -> computeIcyMobs(entity)
+			SafariBiome.HAUNTED -> computeHauntedMobs(entity)
+			SafariBiome.FOREST -> computeForestMobs(entity)
+			SafariBiome.CAVERN -> computeCavernMobs(entity)
+			else -> false
 		}
 
 		return if (shouldHaveESP) config.critter else null
