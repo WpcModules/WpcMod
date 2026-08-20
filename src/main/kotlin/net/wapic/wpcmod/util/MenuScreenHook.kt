@@ -29,6 +29,10 @@ object MenuScreenHook {
 
 		when (val screen = client.screen) {
 			is AbstractTerminalScreen -> {
+				if (screen.title != title) { // Edge case where select / startsWith is opened twice
+					client.setScreen(Terminal.createSolverScreen(menu, title))
+					return true
+				}
 				screen.changeHandler(menu)
 				WpcMod.LOGGER.debug("Updated screen handler to {}, with ID: {}", menu, menu.containerId)
 			}
