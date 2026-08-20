@@ -9,6 +9,6 @@ class HuntingConfig {
 	@ConfigEditorBoolean
 	var autoReel: Boolean = false
 
-	@Category(name = "Safari ESP", desc = "Configurations for Safari ESP")
-	var safari: SafariESPConfig = SafariESPConfig()
+	@Category(name = "Safari", desc = "Configurations for Safari")
+	var safari: SafariConfig = SafariConfig()
 }
