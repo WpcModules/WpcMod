@@ -1,6 +1,7 @@
 package net.wapic.wpcmod.config.foraging
 
 import io.github.notenoughupdates.moulconfig.annotations.Accordion
+import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorBoolean
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorDraggableList
 import io.github.notenoughupdates.moulconfig.annotations.ConfigOption
 import net.wapic.wpcmod.config.components.NonGlowableESPConfig
@@ -21,5 +22,12 @@ class ESPConfig {
 			ForestNodeESP.ForestNodeIslands.GALATEA,
 			ForestNodeESP.ForestNodeIslands.SAFARI
 		)
+
+		@ConfigOption(
+			name = "Only show current Safari Biome",
+			desc = "When in Safari, only show Forest Nodes in the current biome"
+		)
+		@ConfigEditorBoolean
+		var onlyCurrentBiome: Boolean = false
 	}
 }
