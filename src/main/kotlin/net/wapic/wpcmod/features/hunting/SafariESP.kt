@@ -137,7 +137,7 @@ object SafariESP : EspFeature() {
 	override fun compute(entity: Entity): GlowableESPConfig? {
 		val player = MC.player ?: return null
 		val shouldHaveESP = when (SafariBiome.fromBiome(player.biome)) {
-			SafariBiome.ICY -> computeIcyMobs(entity)
+			SafariBiome.ICY, SafariBiome.ICY_CAVES -> computeIcyMobs(entity)
 			SafariBiome.HAUNTED -> computeHauntedMobs(entity)
 			SafariBiome.FOREST -> computeForestMobs(entity)
 			SafariBiome.CAVERN -> computeCavernMobs(entity)

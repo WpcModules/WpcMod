@@ -12,6 +12,20 @@ class SafariConfig {
 	var highlightBeehives: Boolean = false
 
 	@Accordion
+	@ConfigOption(name = "Safari Tracker", desc = "")
+	val tracker = SafariTrackerConfig()
+
+	class SafariTrackerConfig {
+		@ConfigOption(name = "Enable Safari Tracker", desc = "Show all captured mobs in the safari")
+		@ConfigEditorBoolean
+		var showTracker: Boolean = false
+
+		@ConfigOption(name = "Show only current Biome", desc = "Show only mobs in the current biome")
+		@ConfigEditorBoolean
+		var onlyCurrentBiome: Boolean = false
+	}
+
+	@Accordion
 	@ConfigOption(name = "Critter ESP", desc = "")
 	val critter = CritterESPConfig()
 
