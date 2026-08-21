@@ -4,13 +4,9 @@ import io.github.notenoughupdates.moulconfig.annotations.Accordion
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorBoolean
 import io.github.notenoughupdates.moulconfig.annotations.ConfigOption
 import net.wapic.wpcmod.config.components.GlowableESPConfig
+import net.wapic.wpcmod.config.components.NonGlowableESPConfig
 
 class SafariConfig {
-
-	@ConfigOption(name = "Highlight Honeybug Nests", desc = "Highlights Bee Nests in the forest biome")
-	@ConfigEditorBoolean
-	var highlightBeehives: Boolean = false
-
 	@Accordion
 	@ConfigOption(name = "Safari Tracker", desc = "")
 	val tracker = SafariTrackerConfig()
@@ -24,6 +20,12 @@ class SafariConfig {
 		@ConfigEditorBoolean
 		var onlyCurrentBiome: Boolean = false
 	}
+
+	@Accordion
+	@ConfigOption(name = "Honeybug Nest ESP", desc = "")
+	val honeybugNestESP = HoneybugNestESPConfig()
+
+	class HoneybugNestESPConfig : NonGlowableESPConfig()
 
 	@Accordion
 	@ConfigOption(name = "Critter ESP", desc = "")

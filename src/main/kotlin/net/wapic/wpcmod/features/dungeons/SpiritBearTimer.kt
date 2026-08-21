@@ -60,7 +60,7 @@ object SpiritBearTimer : SimpleHudElement("Spirit Bear Timer", 90, 12) {
 		matrixStack.popMatrix()
 	}
 
-	fun onBlockChange(pos: BlockPos, oldState: BlockState, newState: BlockState) {
+	fun onBlockChange(pos: BlockPos, oldState: BlockState?, newState: BlockState) {
 		if (!isActive) return
 
 		if (pos == lastBlockPos && newState.block == Blocks.SEA_LANTERN) {

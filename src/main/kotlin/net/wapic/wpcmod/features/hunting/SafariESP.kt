@@ -30,12 +30,14 @@ import net.minecraft.world.item.Items
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.chunk.LevelChunk
+import net.minecraft.world.phys.AABB
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.components.GlowableESPConfig
 import net.wapic.wpcmod.events.BlockEvents
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.events.WorldRenderEvent
 import net.wapic.wpcmod.features.entity.EspFeature
+import net.wapic.wpcmod.mixin.accessors.DisplayAccessor
 import net.wapic.wpcmod.util.EntityUtils.biome
 import net.wapic.wpcmod.util.EntityUtils.headTexture
 import net.wapic.wpcmod.util.HeadTextures
@@ -43,6 +45,7 @@ import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.SafariAPI
 import net.wapic.wpcmod.util.SafariAPI.SafariBiome
 import net.wapic.wpcmod.util.SafariAPI.SafariBiome.Companion.isOf
+import net.wapic.wpcmod.util.SafariAPI.SafariBiome.Companion.isSimilarTo
 import net.wapic.wpcmod.util.render.WorldRenderContext
 
 object SafariESP : EspFeature() {
@@ -61,24 +64,30 @@ object SafariESP : EspFeature() {
 		}
 	}
 
-	private fun onBlockChange(pos: BlockPos, oldState: BlockState, newState: BlockState) {
+	private fun onBlockChange(pos: BlockPos, oldState: BlockState?, newState: BlockState) {
 		if (!isEnabled()) return
-		if (oldState.block == Blocks.AIR && newState.block == Blocks.BEE_NEST) clickableBeehives.add(pos)
-		if (oldState.block == Blocks.BEE_NEST && newState.block == Blocks.BEE_NEST) clickableBeehives.removeIf { it == pos }
-	}
+		val immutablePos = pos.immutable()
 
-	private fun isBeeNest(blockState: BlockState) = blockState.block == Blocks.BEE_NEST
+		if (!isBeeNest(oldState) && isBeeNest(newState))
+			clickableBeehives.add(immutablePos) else clickableBeehives.remove(immutablePos)
+	}
 
 	private fun onChunkLoad(level: ClientLevel, chunk: LevelChunk) {
 		if (!isEnabled()) return
-		chunk.findBlocks(::isBeeNest) { pos, state ->
-			clickableBeehives.add(pos)
-		}
+		chunk.findBlocks(::isBeeNest) { pos, _ -> clickableBeehives.add(pos.immutable()) }
 	}
 
+	private fun isBeeNest(blockState: BlockState?) = blockState?.block == Blocks.BEE_NEST
+
 	private fun onRenderWorld(worldRenderContext: WorldRenderContext) {
-		if (!config.highlightBeehives || !isEnabled()) return
-		for (hive in clickableBeehives) worldRenderContext.drawBoundingBox(hive.center, 1f, 1f)
+		if (!isEnabled()) return
+		if (!config.honeybugNestESP.box && !config.honeybugNestESP.tracer) return
+		if (MC.player?.biome?.isOf(SafariBiome.FOREST) == false) return
+
+		for (hive in clickableBeehives) {
+			if (config.honeybugNestESP.box) worldRenderContext.drawBoundingBox(AABB(hive), config.honeybugNestESP.color)
+			if (config.honeybugNestESP.tracer) worldRenderContext.drawTracer(hive.center, config.honeybugNestESP.color)
+		}
 	}
 
 	private fun computeIcyMobs(entity: Entity) = when (entity) {
@@ -87,11 +96,7 @@ object SafariESP : EspFeature() {
 		is TropicalFish -> entity.pattern == TropicalFish.Pattern.SNOOPER
 
 		// Troodon & Mantis Shrimp
-		is Display.ItemDisplay -> {
-			val isIcyEntity =
-				entity.biome.isOf(SafariBiome.ICY) || entity.biome.isOf(SafariBiome.ICY_CAVES) && entity.posRotInterpolationDuration == 3
-			isIcyEntity && entity.itemStack.item == Items.PLAYER_HEAD
-		}
+		is Display.ItemDisplay -> entity.itemStack.item == Items.PLAYER_HEAD
 
 		else -> false
 	}
@@ -104,7 +109,7 @@ object SafariESP : EspFeature() {
 		is ArmorStand -> entity.headTexture == HeadTextures.GAZER
 
 		// Duplico, Gimmiegold, Hideonwall(Moving)
-		is Display.ItemDisplay -> entity.biome.isOf(SafariBiome.HAUNTED) && entity.posRotInterpolationDuration == 3
+		is Display.ItemDisplay -> entity.posRotInterpolationDuration == 3
 		else -> false
 	}
 
@@ -113,11 +118,8 @@ object SafariESP : EspFeature() {
 		is TropicalFish -> entity.pattern == TropicalFish.Pattern.CLAYFISH
 		is Silverfish -> !entity.isInvisible
 
-		// Chuckwalla & Flitter
-		is Display.ItemDisplay -> {
-			val isCavernEntity = entity.biome.isOf(SafariBiome.CAVERN) && entity.posRotInterpolationDuration == 3
-			isCavernEntity && entity.itemStack.item == Items.PLAYER_HEAD
-		}
+		// Chuckwalla & Flitter & Rockmite
+		is Display.ItemDisplay -> entity.itemStack.item == Items.PLAYER_HEAD
 
 		is ArmorStand -> {
 			if (entity.headTexture == HeadTextures.DRIFTLING) return entity.scale == 1.25f
@@ -130,21 +132,28 @@ object SafariESP : EspFeature() {
 	private fun computeForestMobs(entity: Entity) = when (entity) {
 		is Fox, is Bee, is Parrot, is Frog, is Creaking, is Panda -> true
 		is Shulker -> entity.color == DyeColor.GREEN
-		is Display.ItemDisplay -> entity.posRotInterpolationDuration == 3 && entity.itemStack.item == Items.GREEN_SHULKER_BOX
+		is Display.ItemDisplay -> entity.itemStack.item == Items.GREEN_SHULKER_BOX
 		else -> false
 	}
 
 	override fun compute(entity: Entity): GlowableESPConfig? {
 		val player = MC.player ?: return null
-		val shouldHaveESP = when (SafariBiome.fromBiome(player.biome)) {
+		if (!entity.biome.isSimilarTo(player.biome)) return null
+		val entityBiome = SafariBiome.fromBiome(entity.biome) ?: return null
+
+		if (entity is Display.ItemDisplay) { // Hypixel doesn't delete their DisplayEntities they just set their scale to 0
+			val scale = entity.entityData.get((entity as? DisplayAccessor)?.dataScale ?: return null)
+			if (scale.length() == 0f) return null
+		}
+
+		val hasEsp = when (entityBiome) {
 			SafariBiome.ICY, SafariBiome.ICY_CAVES -> computeIcyMobs(entity)
 			SafariBiome.HAUNTED -> computeHauntedMobs(entity)
 			SafariBiome.FOREST -> computeForestMobs(entity)
 			SafariBiome.CAVERN -> computeCavernMobs(entity)
-			else -> false
 		}
 
-		return if (shouldHaveESP) config.critter else null
+		return config.critter.takeIf { hasEsp }
 	}
 
 	override fun isEnabled() = SafariAPI.inSafari
