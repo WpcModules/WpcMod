@@ -111,7 +111,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 162) {
 	// Death
 	private var deaths = 0
 	private var firstDeathHadSpirit = false
-		get() = if (config.assumeSpirit) true else field
+		get() = config.assumeSpirit || field
 
 	private val deathPenalty get() = (2 * deaths) - if (firstDeathHadSpirit && deaths > 0) 1 else 0
 
@@ -145,13 +145,15 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 162) {
 	// Bonus
 	private var mimicKilled = false
 	private var isPaul = false
-		get() = if(config.assumePaul) true else field
+		get() = config.assumePaul || field
 	private var princeKilled = false
 	private var batKilled = false
 	private var crypts = 0
 
 	private val calcBonusScore
-		get() = crypts.coerceAtMost(5) + isPaul.ifTrue(10) + mimicKilled.ifTrue(2) + princeKilled.ifTrue(1) + batKilled.ifTrue(1)
+		get() = crypts.coerceAtMost(5) + isPaul.ifTrue(10) + mimicKilled.ifTrue(2) + princeKilled.ifTrue(1) + batKilled.ifTrue(
+			1
+		)
 	private val bonusScore get() = if (isEntrance) ceil(calcBonusScore * 0.7).toInt() else calcBonusScore
 
 	private var sent300Message = false
@@ -255,9 +257,9 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 162) {
 		sentMimicMessage = false
 	}
 
-	private fun onBlockChange(pos: BlockPos, old: BlockState, new: BlockState) {
+	private fun onBlockChange(pos: BlockPos, old: BlockState?, new: BlockState) {
 		if (!isActive) return
-		if (old.block == Blocks.TRAPPED_CHEST && new.block == Blocks.AIR) {
+		if (old?.block == Blocks.TRAPPED_CHEST && new.block == Blocks.AIR) {
 			mimicOpenTime = Util.getMillis()
 			mimicPos = pos
 		}
@@ -370,11 +372,12 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 162) {
 		if (!isActive || actionBar) return
 		val message = text.string
 
-		when(message) {
+		when (message) {
 			"A Bat has been slain. +1 Bonus Score" -> {
 				batKilled = true
 				if (config.batMessage) return Utils.runCommand("/pc Bat Killed")
 			}
+
 			"A Prince falls. +1 Bonus Score" -> {
 				princeKilled = true
 				if (config.princeMessage) return Utils.runCommand("/pc Prince Killed")
@@ -448,7 +451,6 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 162) {
 					drawContext.text(MC.font, line, 2, 2 + (index * 10), CommonColors.WHITE, true)
 				}
 			}
-
 
 			ScoreHudType.MINIMIZED -> {
 				val topLine = buildString {

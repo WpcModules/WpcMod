@@ -17,7 +17,13 @@ object SafariAPI {
 
 		companion object {
 			fun fromBiome(biome: Holder<Biome>) = entries.find { biome.isOf(it) }
+
 			fun Holder<Biome>.isOf(safariBiome: SafariBiome): Boolean = this.`is`(safariBiome.identifier)
+			fun Holder<Biome>.isIcyBiome(): Boolean = this.registeredName.startsWith(ICY.identifier.toString())
+			fun Holder<Biome>.isSimilarTo(other: Holder<Biome>): Boolean {
+				val areBothIcyBiomes = this.isIcyBiome() && other.isIcyBiome()
+				return this == other || areBothIcyBiomes
+			}
 		}
 	}
 
