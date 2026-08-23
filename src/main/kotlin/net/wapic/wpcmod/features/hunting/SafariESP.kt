@@ -102,7 +102,7 @@ object SafariESP : EspFeature() {
 
 	private fun computeHauntedMobs(entity: Entity): Boolean = when (entity) {
 		is CaveSpider, is Bat, is Phantom, is Warden -> true
-		is Endermite -> entity.y > 60
+		is Endermite -> config.critter.showOutOfBoundsLitterbug || entity.y > 60
 		is Shulker -> entity.color == DyeColor.PURPLE
 		is RemotePlayer -> entity.name.string == "Hideyho " // Yes, the space is supposed to be there
 		is ArmorStand -> entity.headTexture == HeadTextures.GAZER
@@ -117,7 +117,7 @@ object SafariESP : EspFeature() {
 		is TropicalFish -> entity.pattern == TropicalFish.Pattern.CLAYFISH
 		is Silverfish -> !entity.isInvisible
 
-		// Chuckwalla & Flitter & Rockmite
+		// Chuckwalla, Flitter, Rockmite mound
 		is Display.ItemDisplay -> entity.itemStack.item == Items.PLAYER_HEAD
 
 		is ArmorStand -> {

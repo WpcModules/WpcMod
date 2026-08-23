@@ -7,6 +7,11 @@ import net.wapic.wpcmod.config.components.GlowableESPConfig
 import net.wapic.wpcmod.config.components.NonGlowableESPConfig
 
 class SafariConfig {
+
+	@ConfigOption(name = "Announce Sparkling Critters", desc = "Announce when a nearby sparkling critter is spotted")
+	@ConfigEditorBoolean
+	var announceSparkling: Boolean = false
+
 	@Accordion
 	@ConfigOption(name = "Safari Tracker", desc = "")
 	val tracker = SafariTrackerConfig()
@@ -31,5 +36,13 @@ class SafariConfig {
 	@ConfigOption(name = "Critter ESP", desc = "")
 	val critter = CritterESPConfig()
 
-	class CritterESPConfig : GlowableESPConfig()
+	class CritterESPConfig : GlowableESPConfig() {
+
+		@ConfigOption(
+			name = "Show out of bounds litterbugs",
+			desc = "Highlight litterbugs that are at the bottom of the map in Haunted biome"
+		)
+		@ConfigEditorBoolean
+		var showOutOfBoundsLitterbug: Boolean = false
+	}
 }

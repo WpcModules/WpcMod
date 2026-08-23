@@ -40,6 +40,7 @@ import net.wapic.wpcmod.features.general.PreventPlacingItems
 import net.wapic.wpcmod.features.general.shortcut.ShortcutHandler
 import net.wapic.wpcmod.features.hunting.AutoReelLasso
 import net.wapic.wpcmod.features.hunting.SafariESP
+import net.wapic.wpcmod.features.hunting.SafariSparklingHelper
 import net.wapic.wpcmod.features.hunting.SafariTracker
 import net.wapic.wpcmod.features.instance.AutoGFS
 import net.wapic.wpcmod.features.instance.CancelInteract
@@ -207,6 +208,7 @@ object WpcMod : ModInitializer {
 		AutoReelLasso.init()
 		SafariESP.init()
 		SafariTracker.init()
+		SafariSparklingHelper.init()
 
 		// Mining
 		PigeonSwapper.init()
