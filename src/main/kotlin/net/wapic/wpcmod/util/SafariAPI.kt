@@ -24,6 +24,11 @@ object SafariAPI {
 				val areBothIcyBiomes = this.isIcyBiome() && other.isIcyBiome()
 				return this == other || areBothIcyBiomes
 			}
+
+			fun SafariBiome.isSimilarTo(biome: Holder<Biome>): Boolean {
+				val areBothIcyBiomes = (this == ICY || this == ICY_CAVES) && biome.isIcyBiome()
+				return biome.isOf(this) || areBothIcyBiomes
+			}
 		}
 	}
 
@@ -68,5 +73,9 @@ object SafariAPI {
 		SCRAPPY("Scrappy", SafariBiome.CAVERN),
 		SNOOZLE("Snoozle", SafariBiome.CAVERN),
 		GEMZIE("Gemzie", SafariBiome.CAVERN);
+
+		companion object {
+			fun fromName(name: String): Critter? = entries.find { it.entityName == name }
+		}
 	}
 }
