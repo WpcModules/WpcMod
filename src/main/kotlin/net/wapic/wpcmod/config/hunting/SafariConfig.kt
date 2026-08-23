@@ -12,6 +12,10 @@ class SafariConfig {
 	@ConfigEditorBoolean
 	var announceSparkling: Boolean = false
 
+	@ConfigOption(name = "Auto Accept Hideyho", desc = "Automatically accept Hideyho dialogue")
+	@ConfigEditorBoolean
+	var autoAcceptHideyho: Boolean = false
+
 	@Accordion
 	@ConfigOption(name = "Safari Tracker", desc = "")
 	val tracker = SafariTrackerConfig()
