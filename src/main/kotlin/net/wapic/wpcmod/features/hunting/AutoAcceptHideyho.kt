@@ -11,7 +11,9 @@ import net.wapic.wpcmod.util.Utils
 object AutoAcceptHideyho {
 
 	private val config = WpcMod.config.hunting.safari
-	private const val HIDEYHO_ACCEPT_MESSAGE = "§eSelect an option: §a[Sure] §c[No thanks...]"
+
+	// Hypixel, trim your damn messages please
+	private const val HIDEYHO_ACCEPT_MESSAGE = "§eSelect an option: §a[Sure] §c[No thanks...] "
 
 	fun init() {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
@@ -21,7 +23,7 @@ object AutoAcceptHideyho {
 		if (actionBar || !SafariAPI.inSafari || !config.autoAcceptHideyho) return
 
 		if (message.string == HIDEYHO_ACCEPT_MESSAGE) {
-			val yesComponent = message.siblings.first { it.string == "§a[Sure]" }
+			val yesComponent = message.siblings.first { it.string == "§a[Sure] " }
 			val clickEvent = yesComponent.style.clickEvent as? ClickEvent.RunCommand
 			Utils.runCommand(clickEvent?.command ?: return ChatUtils.sendMessage("Unable to find click event"))
 		}

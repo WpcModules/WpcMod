@@ -38,10 +38,7 @@ import net.wapic.wpcmod.features.general.CenturyCakeHelper
 import net.wapic.wpcmod.features.general.Freecam
 import net.wapic.wpcmod.features.general.PreventPlacingItems
 import net.wapic.wpcmod.features.general.shortcut.ShortcutHandler
-import net.wapic.wpcmod.features.hunting.AutoReelLasso
-import net.wapic.wpcmod.features.hunting.SafariESP
-import net.wapic.wpcmod.features.hunting.SafariSparklingHelper
-import net.wapic.wpcmod.features.hunting.SafariTracker
+import net.wapic.wpcmod.features.hunting.*
 import net.wapic.wpcmod.features.instance.AutoGFS
 import net.wapic.wpcmod.features.instance.CancelInteract
 import net.wapic.wpcmod.features.inventory.AutoCloseWardrobe
@@ -209,6 +206,7 @@ object WpcMod : ModInitializer {
 		SafariESP.init()
 		SafariTracker.init()
 		SafariSparklingHelper.init()
+		AutoAcceptHideyho.init()
 
 		// Mining
 		PigeonSwapper.init()
