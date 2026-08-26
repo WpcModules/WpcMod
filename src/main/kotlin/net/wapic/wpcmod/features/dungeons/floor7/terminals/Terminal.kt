@@ -7,6 +7,7 @@ import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.item.DyeColor
 import net.minecraft.world.item.Items
 import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.events.GuiEvents
 import net.wapic.wpcmod.features.dungeons.floor7.terminals.simulator.*
 import net.wapic.wpcmod.util.MC
 
@@ -38,8 +39,10 @@ object Terminal {
 		val player = MC.player ?: return
 
 		val title = Component.literal(type.windowName)
-		if(type == Type.STARTS_WITH) title.append(" '${"ABCDEFGHIJLMNOW".random()}'?")
-		if(type == Type.SELECT_ALL) title.append(" ${DyeColor.entries.random().name.uppercase().replace("_", " ")} items!")
+		if (type == Type.STARTS_WITH) title.append(" '${"ABCDEFGHIJLMNOW".random()}'?")
+		if (type == Type.SELECT_ALL) title.append(
+			" ${DyeColor.entries.random().name.uppercase().replace("_", " ")} items!"
+		)
 
 		val menuType = when (type) {
 			Type.NUMBERS -> MenuType.GENERIC_9x4
@@ -55,7 +58,16 @@ object Terminal {
 		handler = type.simulatorFactory(menu, title)
 
 		player.containerMenu = menu
-		MC.screen = if(config.enabled) type.screenFactory(menu, title) else TerminalSimulatorScreen(menu, inventory, title)
+		MC.screen =
+			if (config.enabled) type.screenFactory(menu, title) else TerminalSimulatorScreen(menu, inventory, title)
+	}
+
+	fun init() {
+		GuiEvents.SLOT_UPDATE.register { containerId, slotId, itemStack ->
+			val screen = MC.screen as? AbstractTerminalScreen ?: return@register
+			if (containerId != screen.menu.containerId) return@register
+			screen.slotChanged(screen.menu, slotId, itemStack)
+		}
 	}
 
 	enum class Type(

@@ -9,9 +9,7 @@ import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.DyeColor
 import net.minecraft.world.item.DyeItem
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.StainedGlassBlock
-import net.minecraft.world.level.block.StainedGlassPaneBlock
 import net.wapic.wpcmod.features.dungeons.floor7.terminals.Terminal
 import kotlin.random.Random
 
@@ -24,8 +22,8 @@ class SelectAllSimulatorHandler(menu: ChestMenu, title: Component) : TerminalSim
 
 	override fun create() {
 		this.setSlots { slot ->
-			if(slot.index % 9 in 1..7 && slot.index / 9 in 1..4) {
-				val color = if(Random.nextDouble() > 0.65) dyeColor else incorrectColors.random()
+			if (slot.index % 9 in 1..7 && slot.index / 9 in 1..4) {
+				val color = if (Random.nextDouble() > 0.65) dyeColor else incorrectColors.random()
 				return@setSlots getRandomItemOfColor(color)
 			}
 			return@setSlots blackPane
@@ -33,7 +31,8 @@ class SelectAllSimulatorHandler(menu: ChestMenu, title: Component) : TerminalSim
 	}
 
 	override fun slotClicked(slot: Slot, slotId: Int, buttonNum: Int, containerInput: ContainerInput) {
-		if(hasColorWithoutFoil(slot)) {
+		if (hasColorWithoutFoil(slot)) {
+			playTerminalSound()
 			slot.item.applyComponents(glintOverrideData)
 			slot.setItem(slot.item)
 		}
@@ -56,7 +55,7 @@ class SelectAllSimulatorHandler(menu: ChestMenu, title: Component) : TerminalSim
 	private fun getDyeItems(stack: ItemStack): Boolean {
 		val block = (stack.item as? BlockItem)?.block
 		if (block is StainedGlassBlock) return true
-		if (block is StainedGlassPaneBlock && block != Blocks.BLACK_STAINED_GLASS) return true
+		if (stack.hoverName.string.endsWith("Wool")) return true
 		if (stack.item is DyeItem) return true
 		return false
 

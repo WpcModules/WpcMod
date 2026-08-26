@@ -10,7 +10,7 @@ import net.wapic.wpcmod.features.dungeons.floor7.terminals.Terminal
 class RubixSimulatorHandler(menu: ChestMenu, title: Component) : TerminalSimulatorHandler(menu) {
 	override fun create() {
 		this.setSlots { slot ->
-			if(slot.index %9 in 3..5 && slot.index / 9 in 1..3) {
+			if (slot.index % 9 in 3..5 && slot.index / 9 in 1..3) {
 				return@setSlots Terminal.RUBIX_ORDER.random().defaultInstance
 			}
 			return@setSlots blackPane
@@ -18,9 +18,12 @@ class RubixSimulatorHandler(menu: ChestMenu, title: Component) : TerminalSimulat
 	}
 
 	override fun slotClicked(slot: Slot, slotId: Int, buttonNum: Int, containerInput: ContainerInput) {
-		val delta = if(buttonNum == 0) 1 else -1
-		val index = (Terminal.RUBIX_ORDER.indexOf(slot.item.item) + delta + Terminal.RUBIX_ORDER.size) % Terminal.RUBIX_ORDER.size
+		if (slot.item.item == Items.BLACK_STAINED_GLASS_PANE) return
+		val delta = if (buttonNum == 0) 1 else -1
+		val index =
+			(Terminal.RUBIX_ORDER.indexOf(slot.item.item) + delta + Terminal.RUBIX_ORDER.size) % Terminal.RUBIX_ORDER.size
 		slot.setItem(Terminal.RUBIX_ORDER[index].defaultInstance)
+		playTerminalSound()
 	}
 
 	override fun isTerminalSolved(slots: List<Slot>): Boolean {

@@ -41,7 +41,7 @@ object SuperpairsSolver {
 
 	fun init() {
 		GuiEvents.OPEN.register(::onInventoryOpen)
-		GuiEvents.SLOT_UPDATE_AFTER.register(::onSlotUpdate)
+		GuiEvents.SLOT_UPDATE.register(::onSlotUpdate)
 		GuiEvents.SLOT_CLICKED.register(::onMouseClick)
 		GuiEvents.DRAW_SLOT_BACKGROUND.register(::onDrawSlot)
 		GuiEvents.CLOSE.register(::onInventoryClosed)
@@ -140,7 +140,7 @@ object SuperpairsSolver {
 		lastClickedSlot = null
 	}
 
-	fun onSlotUpdate(syncId: Int, slotId: Int, itemStack: ItemStack) {
+	fun onSlotUpdate(containerId: Int, slotId: Int, itemStack: ItemStack) {
 		if (!inSuperpairs || !config.superpairsSolver) return
 		if (slotId > 53 || itemStack.isEmpty) return
 		if (skyHanniRegex.matches(itemStack.hoverName.string)) return
@@ -150,11 +150,12 @@ object SuperpairsSolver {
 			}
 		}
 
-		slotsToRead.find { it.containerSlot == slotId && it.item.item != Items.AIR && it.containerSlot !in foundPairs }?.let { slot ->
-			superpairsMap[slotId] = itemStack
-			checkForPair(slot)
-			slotsToRead.removeIf { it.containerSlot == slotId }
-		}
+		slotsToRead.find { it.containerSlot == slotId && it.item.item != Items.AIR && it.containerSlot !in foundPairs }
+			?.let { slot ->
+				superpairsMap[slotId] = itemStack
+				checkForPair(slot)
+				slotsToRead.removeIf { it.containerSlot == slotId }
+			}
 	}
 
 	fun onDrawSlot(drawContext: GuiGraphicsExtractor, screen: Screen, slot: Slot, callbackInfo: CallbackInfo) {
@@ -167,7 +168,7 @@ object SuperpairsSolver {
 			slot.item.item in powerUps -> config.superpairColors.powerUp
 			slot.containerSlot in foundPairs -> config.superpairColors.foundPair
 			else -> inv?.count { it.isSimilar(slot.item) }?.let {
-				if(it > 1)
+				if (it > 1)
 					config.superpairColors.discoveredPair
 				else
 					config.superpairColors.undiscoveredPair

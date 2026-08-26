@@ -6,7 +6,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.ChestMenu
 import net.minecraft.world.inventory.MenuType
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.features.dungeons.floor7.terminals.AbstractTerminalScreen
 import net.wapic.wpcmod.features.dungeons.floor7.terminals.Terminal
 
 // Modified from SkyHanni
@@ -26,23 +25,8 @@ object MenuScreenHook {
 		val menu = type.create(containerId, inventory) as? ChestMenu ?: return false
 
 		player.containerMenu = menu
-
-		when (val screen = client.screen) {
-			is AbstractTerminalScreen -> {
-				if (screen.title != title) { // Edge case where select / startsWith is opened twice
-					client.setScreen(Terminal.createSolverScreen(menu, title))
-					return true
-				}
-				screen.changeHandler(menu)
-				WpcMod.LOGGER.debug("Updated screen handler to {}, with ID: {}", menu, menu.containerId)
-			}
-
-			else ->  {
-				client.setScreen(Terminal.createSolverScreen(menu, title))
-				WpcMod.LOGGER.debug("Opened custom menu {}, screen: {}", player.containerMenu, client.screen)
-			}
-		}
-
+		client.setScreen(Terminal.createSolverScreen(menu, title))
+		WpcMod.LOGGER.debug("Opened custom menu {}, screen: {}", player.containerMenu, client.screen)
 		return true
 	}
 }

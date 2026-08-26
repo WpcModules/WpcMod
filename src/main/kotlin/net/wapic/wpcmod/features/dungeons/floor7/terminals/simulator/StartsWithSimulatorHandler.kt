@@ -17,17 +17,18 @@ class StartsWithSimulatorHandler(menu: ChestMenu, title: Component) : TerminalSi
 
 	override fun create() {
 		this.setSlots { slot ->
-			if(slot.index % 9 in 1..7 && slot.index / 9 in 1..3) {
+			if (slot.index % 9 in 1..7 && slot.index / 9 in 1..3) {
 				val correct = allItems.filter { isValidItem(it) }
 				val incorrect = allItems.filterNot { isValidItem(it) }
-				return@setSlots if(Random.nextBoolean()) correct.random().copy() else incorrect.random().copy()
+				return@setSlots if (Random.nextBoolean()) correct.random().copy() else incorrect.random().copy()
 			}
 			return@setSlots blackPane
 		}
 	}
 
 	override fun slotClicked(slot: Slot, slotId: Int, buttonNum: Int, containerInput: ContainerInput) {
-		if(isValidItem(slot.item, slot.index)) {
+		if (isValidItem(slot.item, slot.index)) {
+			playTerminalSound()
 			slot.item.applyComponents(glintOverrideData)
 			slot.setItem(slot.item)
 			clickedSlots.add(slot.index)

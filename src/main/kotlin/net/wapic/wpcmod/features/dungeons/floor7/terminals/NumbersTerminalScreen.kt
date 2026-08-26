@@ -4,15 +4,11 @@ import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.network.chat.Component
 import net.minecraft.world.inventory.ChestMenu
+import net.minecraft.world.inventory.ContainerInput
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.Items
 
 class NumbersTerminalScreen(menu: ChestMenu, title: Component) : AbstractTerminalScreen(menu, title) {
-
-	override fun resize(width: Int, height: Int) {
-		this.height = (menu.rowCount * totalSlotSpace).toInt()
-		this.width = (((menu.container.containerSize - 1) % 9) * totalSlotSpace).toInt()
-	}
 
 	override fun extractSlots(graphics: GuiGraphicsExtractor) {
 		solution.forEachIndexed { index, slotIndex ->
@@ -23,20 +19,25 @@ class NumbersTerminalScreen(menu: ChestMenu, title: Component) : AbstractTermina
 				else -> return@forEachIndexed
 			}
 
-			extractSlot(graphics, slotIndex, color)
+			extractSlot(
+				graphics,
+				slotIndex,
+				color,
+				if (config.showNumbers) menu.getSlot(slotIndex).item.count.toString() else ""
+			)
 		}
 	}
 
-	override fun slotClicked(slotIndex: Int, button: Int): Boolean {
-		if(slotIndex != solution.first()) return false
-		if(doTerminalClick(slotIndex, InputConstants.MOUSE_BUTTON_MIDDLE)) {
+	override fun slotClicked(slotIndex: Int, button: Int, input: ContainerInput): Boolean {
+		if (slotIndex == solution.firstOrNull()) {
 			solution.removeIf { it == slotIndex }
+			doTerminalClick(slotIndex, InputConstants.MOUSE_BUTTON_MIDDLE, ContainerInput.CLONE)
 			return true
 		}
 		return false
 	}
 
-	override fun onInventoryUpdated(slots: List<Slot>) {
+	override fun solveTerminal(slots: List<Slot>) {
 		solution.addAll(
 			slots.sortedBy { it.item.count }.mapNotNull { slot ->
 				slot.index.takeIf { slot.item.item == Items.RED_STAINED_GLASS_PANE }

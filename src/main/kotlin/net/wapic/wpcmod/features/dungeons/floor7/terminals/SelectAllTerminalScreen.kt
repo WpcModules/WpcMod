@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.network.chat.Component
 import net.minecraft.world.inventory.ChestMenu
+import net.minecraft.world.inventory.ContainerInput
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.DyeColor
 import net.minecraft.world.item.ItemStack
@@ -12,13 +13,9 @@ import net.minecraft.world.item.Items
 class SelectAllTerminalScreen(menu: ChestMenu, title: Component) :
 	AbstractTerminalScreen(menu, title) {
 
-	private val color = Terminal.SELECT_ALL_PATTERN.matchEntire(title.string.replace("SILVER", "LIGHT GRAY"))?.groupValues?.get(1)
+	private val color =
+		Terminal.SELECT_ALL_PATTERN.matchEntire(title.string.replace("SILVER", "LIGHT GRAY"))?.groupValues?.get(1)
 	private val dyeColor = DyeColor.entries.first { it.name.replace("_", " ").equals(color, true) }
-
-	override fun resize(width: Int, height: Int) {
-		this.height = ((menu.rowCount + 0.5f) * totalSlotSpace).toInt()
-		this.width = (font.width(title) * config.customTermSize * 1.25f).toInt()
-	}
 
 	override fun extractSlots(graphics: GuiGraphicsExtractor) {
 		for (slotIndex in solution) {
@@ -26,16 +23,17 @@ class SelectAllTerminalScreen(menu: ChestMenu, title: Component) :
 		}
 	}
 
-	override fun slotClicked(slotIndex: Int, button: Int): Boolean {
-		if (slotIndex !in solution) return false
-		if (doTerminalClick(slotIndex, InputConstants.MOUSE_BUTTON_MIDDLE)) {
-			return solution.removeIf { it == slotIndex }
+	override fun slotClicked(slotIndex: Int, button: Int, input: ContainerInput): Boolean {
+		if (slotIndex in solution) {
+			solution.removeIf { it == slotIndex }
+			doTerminalClick(slotIndex, InputConstants.MOUSE_BUTTON_MIDDLE, ContainerInput.CLONE)
+			return true
 		}
 		return false
 	}
 
-	override fun onInventoryUpdated(slots: List<Slot>) {
-		solution.addAll(slots.mapNotNull{ slot -> slot.index.takeIf { hasColorAndNotClicked(slot.item) } })
+	override fun solveTerminal(slots: List<Slot>) {
+		solution.addAll(slots.mapNotNull { slot -> slot.index.takeIf { hasColorAndNotClicked(slot.item) } })
 	}
 
 	fun hasColorAndNotClicked(stack: ItemStack?): Boolean {
