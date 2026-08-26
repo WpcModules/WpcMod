@@ -34,7 +34,7 @@ class MelodyTerminalScreen(menu: ChestMenu, title: Component) : AbstractTerminal
 			if (slot.item.item == Items.LIME_TERRACOTTA) slotToClick = slot.index
 		}
 
-		if (slotToClick != -1 && pointer != -1 && column != -1 && pointer % 9 == column % 9) {
+		if (slotIndex == slotToClick && pointer != -1 && column != -1 && pointer % 9 == column % 9) {
 			doTerminalClick(slotIndex, button, input)
 			return true
 		}
