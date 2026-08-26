@@ -5,6 +5,9 @@
       <option name="BLANK_LINES_AROUND_BLOCK_WHEN_BRANCHES" value="1" />
       <option name="CODE_STYLE_DEFAULTS" value="KOTLIN_OFFICIAL" />
     </JetCodeStyleSettings>
+    <Properties>
+      <option name="KEEP_BLANK_LINES" value="true" />
+    </Properties>
     <codeStyleSettings language="JAVA">
       <option name="ENUM_CONSTANTS_WRAP" value="2" />
       <indentOptions>

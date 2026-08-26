@@ -2,8 +2,8 @@ package net.wapic.wpcmod.events
 
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
-import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.core.BlockPos
+import net.minecraft.world.level.block.state.BlockState
 
 object BlockEvents {
 
@@ -17,6 +17,6 @@ object BlockEvents {
 	}
 
 	fun interface BlockChange {
-		fun onChange(pos: BlockPos, oldState: BlockState, newState: BlockState)
+		fun onChange(pos: BlockPos, oldState: BlockState?, newState: BlockState)
 	}
 }

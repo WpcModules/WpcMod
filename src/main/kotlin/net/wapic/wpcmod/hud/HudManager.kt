@@ -13,6 +13,7 @@ import net.wapic.wpcmod.features.dungeons.floor7.InactiveWaypoints
 import net.wapic.wpcmod.features.dungeons.floor7.InvincibilityTimer
 import net.wapic.wpcmod.features.dungeons.floor7.TickTimers
 import net.wapic.wpcmod.features.dungeons.funnymap.ui.MapElement
+import net.wapic.wpcmod.features.hunting.SafariTracker
 import net.wapic.wpcmod.features.kuudra.KuudraDisplay
 import net.wapic.wpcmod.features.slayer.GummyBearTimer
 import net.wapic.wpcmod.util.FileManager
@@ -43,6 +44,7 @@ object HudManager {
 		SpiritBearTimer,
 		InvincibilityTimer,
 		GummyBearTimer,
+		SafariTracker,
 	)
 
 	fun init() {
