@@ -6,12 +6,14 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.inventory.ChestMenu
 import net.minecraft.world.inventory.ContainerInput
 import net.minecraft.world.inventory.Slot
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
-import net.wapic.wpcmod.WpcMod
 
 class RubixTerminalScreen(menu: ChestMenu, title: Component) : AbstractTerminalScreen(menu, title) {
 	private val gameArea = listOf(12, 13, 14, 21, 22, 23, 30, 31, 32)
 	private var goal: Int? = null
+	override val gameWidth: Int = 3
+	override val gameHeight: Int = 3
 
 	override fun extractSlots(graphics: GuiGraphicsExtractor) {
 		gameArea.forEachIndexed { index, slotIndex ->
@@ -33,11 +35,15 @@ class RubixTerminalScreen(menu: ChestMenu, title: Component) : AbstractTerminalS
 			if (clicks == 0) return false
 			val button = if (clicks > 0) InputConstants.MOUSE_BUTTON_LEFT else InputConstants.MOUSE_BUTTON_RIGHT
 			solution[index] = clicks - if (button == 0) 1 else -1
-			doTerminalClick(slotIndex, button, input)
+			doTerminalClick(slotIndex, button, ContainerInput.PICKUP)
 			return true
 		}
 
 		return false
+	}
+
+	override fun isExpected(slotIndex: Int, itemStack: ItemStack): Boolean {
+		return getClicks(Terminal.RUBIX_ORDER.indexOf(itemStack.item), goal ?: return false) == 0
 	}
 
 	private fun getClicks(start: Int, goal: Int): Int {
@@ -45,17 +51,16 @@ class RubixTerminalScreen(menu: ChestMenu, title: Component) : AbstractTerminalS
 		return Math.floorMod(goal - start + size / 2, size) - size / 2
 	}
 
-	override fun solveTerminal(slots: List<Slot>) {
+	override fun solveTerminal(slots: List<Slot>): List<Int> {
 		val gameArea = slots.filterNot { it.item.item == Items.BLACK_STAINED_GLASS_PANE }
-		if (goal == null) goal =
-			gameArea.groupingBy { Terminal.RUBIX_ORDER.indexOf(it.item.item) }.eachCount().maxBy { it.value }.key
+		if (goal == null) {
+			val goalItem = gameArea.groupingBy { it.item.item }.eachCount().maxBy { it.value }.key
+			goal = Terminal.RUBIX_ORDER.indexOf(goalItem)
+		}
 
 		goal?.let { goal ->
-			solution.addAll(
-				gameArea.map { slot ->
-					getClicks(Terminal.RUBIX_ORDER.indexOf(slot.item.item), goal)
-				}
-			)
-		} ?: return WpcMod.LOGGER.error("Rubix terminal goal is null!")
+			return gameArea.map { getClicks(Terminal.RUBIX_ORDER.indexOf(it.item.item), goal) }
+		}
+		return emptyList()
 	}
 }

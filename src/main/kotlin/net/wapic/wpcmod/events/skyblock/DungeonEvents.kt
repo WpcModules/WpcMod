@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
 import net.minecraft.world.inventory.Slot
 import net.wapic.wpcmod.features.dungeons.floor7.terminals.AbstractTerminalScreen
+import net.wapic.wpcmod.features.dungeons.floor7.terminals.Terminal
 
 object DungeonEvents {
 
@@ -48,15 +49,15 @@ object DungeonEvents {
 
 	@JvmField
 	val TERMINAL_SOLVED: Event<TerminalSolve> = EventFactory.createArrayBacked(TerminalSolve::class.java) { listeners ->
-		TerminalSolve { screen ->
+		TerminalSolve { type ->
 			for (listener in listeners) {
-				listener.onSolve(screen)
+				listener.onSolve(type)
 			}
 		}
 	}
 
 	fun interface TerminalSolve {
-		fun onSolve(screen: AbstractTerminalScreen)
+		fun onSolve(type: Terminal.Type)
 	}
 
 	@JvmField
@@ -86,26 +87,28 @@ object DungeonEvents {
 	}
 
 	@JvmField
-	val TERMINAL_UPDATED: Event<TerminalUpdate> = EventFactory.createArrayBacked(TerminalUpdate::class.java) { listeners ->
-		TerminalUpdate { screen, slots ->
-			for (listener in listeners) {
-				listener.onUpdate(screen, slots)
+	val TERMINAL_UPDATED: Event<TerminalUpdate> =
+		EventFactory.createArrayBacked(TerminalUpdate::class.java) { listeners ->
+			TerminalUpdate { screen, slots ->
+				for (listener in listeners) {
+					listener.onUpdate(screen, slots)
+				}
 			}
 		}
-	}
 
 	fun interface TerminalUpdate {
 		fun onUpdate(screen: AbstractTerminalScreen, slots: List<Slot>)
 	}
 
 	@JvmField
-	val TERMINAL_CLICKED: Event<TerminalClick> = EventFactory.createArrayBacked(TerminalClick::class.java) { listeners ->
-		TerminalClick { screen, slot, button ->
-			for (listener in listeners) {
-				listener.onClick(screen, slot, button)
+	val TERMINAL_CLICKED: Event<TerminalClick> =
+		EventFactory.createArrayBacked(TerminalClick::class.java) { listeners ->
+			TerminalClick { screen, slot, button ->
+				for (listener in listeners) {
+					listener.onClick(screen, slot, button)
+				}
 			}
 		}
-	}
 
 	fun interface TerminalClick {
 		fun onClick(screen: AbstractTerminalScreen, slot: Int, button: Int)

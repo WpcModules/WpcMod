@@ -8,9 +8,11 @@ import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.Items
 
 class MelodyTerminalScreen(menu: ChestMenu, title: Component) : AbstractTerminalScreen(menu, title) {
+	override val gameWidth: Int = 7
+	override val gameHeight: Int = 5
 
 	override fun extractSlots(graphics: GuiGraphicsExtractor) {
-		for (slot in menu.slots) {
+		for (slot in slots) {
 			when (slot.item.item) {
 				Items.LIME_STAINED_GLASS_PANE, Items.LIME_TERRACOTTA -> extractSlot(
 					graphics,
@@ -42,5 +44,5 @@ class MelodyTerminalScreen(menu: ChestMenu, title: Component) : AbstractTerminal
 	}
 
 	// Melody doesn't receive slot updates like other terminals for some reason
-	override fun solveTerminal(slots: List<Slot>) = Unit
+	override fun solveTerminal(slots: List<Slot>): List<Int> = emptyList()
 }

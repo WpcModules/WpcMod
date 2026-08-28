@@ -40,7 +40,7 @@ class MelodySimulatorHandler(menu: ChestMenu, title: Component) : TerminalSimula
 				if (slot.index % 9 == pointerLocation) return@setSlots pointerItem
 				if (slot.index % 9 in 1..5) return@setSlots rowItem
 			}
-			slot.item
+			null
 		}
 	}
 

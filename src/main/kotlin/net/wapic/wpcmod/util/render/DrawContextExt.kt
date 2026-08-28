@@ -39,7 +39,14 @@ fun GuiGraphicsExtractor.drawBorder(x: Int, y: Int, width: Int, height: Int, col
 	fill(x + width - 1, y + 1, x + width, y + height - 1, color)
 }
 
-fun GuiGraphicsExtractor.drawRoundedRect(x: Int, y: Int, width: Int, height: Int, radius: Float, color: ChromaColour) {
+fun GuiGraphicsExtractor.drawRoundedRect(
+	x: Float,
+	y: Float,
+	width: Float,
+	height: Float,
+	radius: Float,
+	color: ChromaColour
+) {
 	val matrix = Matrix3x2f(pose())
 	this.guiRenderState.addGuiElement(
 		RoundedRectangleRenderState(

@@ -1,19 +1,24 @@
 package net.wapic.wpcmod.features.dungeons.floor7.terminals
 
+import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.Component
 import net.minecraft.world.inventory.ChestMenu
 import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.item.DyeColor
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.GuiEvents
+import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.dungeons.floor7.terminals.simulator.*
+import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.MC
 
 object Terminal {
 
 	private val config get() = WpcMod.config.dungeon.floor7.terminalSolvers
+	private val SOLVED_REGEX = Regex("^solved a terminal!$") //TODO: get actual regex
 
 	val STARTS_WITH_PATTERN = Regex("^What starts with: '(\\w)'\\?$")
 	val SELECT_ALL_PATTERN = Regex("^Select all the (.+) items!$")
@@ -24,11 +29,36 @@ object Terminal {
 		Items.BLUE_STAINED_GLASS_PANE,
 		Items.RED_STAINED_GLASS_PANE,
 	)
-	var handler: TerminalSimulatorHandler? = null
 
-	fun createSolverScreen(menu: ChestMenu, title: Component): Screen {
-		val terminalType = Type.fromTitle(title)
-		return terminalType.screenFactory(menu, title)
+	var handler: TerminalSimulatorHandler? = null
+		private set
+	private var lastTerminal: Type? = null
+
+	fun init() {
+		GuiEvents.SLOT_UPDATE.register(::onSlotUpdate)
+		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
+	}
+
+	private fun onSlotUpdate(containerId: Int, slotId: Int, itemStack: ItemStack) {
+		val screen = MC.screen as? AbstractTerminalScreen ?: return
+		if (containerId != screen.menu.containerId) return
+		screen.slotChanged(screen.menu, slotId, itemStack)
+	}
+
+	private fun onMessageReceived(message: Component, isActionBar: Boolean) {
+		if (isActionBar || !DungeonUtils.inDungeons) return
+
+		if (message.string.matches(SOLVED_REGEX)) {
+			DungeonEvents.TERMINAL_SOLVED.invoker().onSolve(lastTerminal ?: return)
+			lastTerminal = null
+		}
+	}
+
+	fun createSolverScreen(menu: ChestMenu, title: Component) {
+		val terminalType = Type.fromTitle(title) ?: return
+		lastTerminal = terminalType
+		MC.screen = terminalType.screenFactory(menu, title)
+		WpcMod.LOGGER.debug("Opened custom menu {}, screen: {}", menu.containerId, MC.screen)
 	}
 
 	fun shouldReplace(title: Component): Boolean {
@@ -62,12 +92,8 @@ object Terminal {
 			if (config.enabled) type.screenFactory(menu, title) else TerminalSimulatorScreen(menu, inventory, title)
 	}
 
-	fun init() {
-		GuiEvents.SLOT_UPDATE.register { containerId, slotId, itemStack ->
-			val screen = MC.screen as? AbstractTerminalScreen ?: return@register
-			if (containerId != screen.menu.containerId) return@register
-			screen.slotChanged(screen.menu, slotId, itemStack)
-		}
+	fun removeSimulator() {
+		handler = null
 	}
 
 	enum class Type(
@@ -83,8 +109,8 @@ object Terminal {
 		MELODY("Click the button on time!", ::MelodyTerminalScreen, ::MelodySimulatorHandler);
 
 		companion object {
-			fun fromTitle(title: Component): Type {
-				return entries.first { title.string.startsWith(it.windowName) }
+			fun fromTitle(title: Component): Type? {
+				return entries.firstOrNull { title.string.startsWith(it.windowName) }
 			}
 		}
 	}

@@ -9,6 +9,8 @@ import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.Items
 
 class NumbersTerminalScreen(menu: ChestMenu, title: Component) : AbstractTerminalScreen(menu, title) {
+	override val gameWidth: Int = 5
+	override val gameHeight: Int = 2
 
 	override fun extractSlots(graphics: GuiGraphicsExtractor) {
 		solution.forEachIndexed { index, slotIndex ->
@@ -19,12 +21,8 @@ class NumbersTerminalScreen(menu: ChestMenu, title: Component) : AbstractTermina
 				else -> return@forEachIndexed
 			}
 
-			extractSlot(
-				graphics,
-				slotIndex,
-				color,
-				if (config.showNumbers) menu.getSlot(slotIndex).item.count.toString() else ""
-			)
+			val text = if (config.showNumbers) menu.getSlot(slotIndex).item.count.toString() else ""
+			extractSlot(graphics, slotIndex, color, text)
 		}
 	}
 
@@ -37,11 +35,9 @@ class NumbersTerminalScreen(menu: ChestMenu, title: Component) : AbstractTermina
 		return false
 	}
 
-	override fun solveTerminal(slots: List<Slot>) {
-		solution.addAll(
-			slots.sortedBy { it.item.count }.mapNotNull { slot ->
-				slot.index.takeIf { slot.item.item == Items.RED_STAINED_GLASS_PANE }
-			}
-		)
+	override fun solveTerminal(slots: List<Slot>): List<Int> {
+		return slots.sortedBy { it.item.count }.mapNotNull { slot ->
+			slot.index.takeIf { slot.item.item == Items.RED_STAINED_GLASS_PANE }
+		}
 	}
 }

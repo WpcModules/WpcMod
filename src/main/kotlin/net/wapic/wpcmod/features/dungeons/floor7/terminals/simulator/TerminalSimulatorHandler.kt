@@ -27,9 +27,7 @@ abstract class TerminalSimulatorHandler(private val menu: ChestMenu) {
 	abstract fun isTerminalSolved(slots: List<Slot>): Boolean
 	open fun onTick() = Unit
 
-	fun removed() {
-		Terminal.handler = null
-	}
+	fun removed() = Terminal.removeSimulator()
 
 	protected fun setSlots(block: (Slot) -> ItemStack?) {
 		for (slot in slots) {
@@ -47,8 +45,11 @@ abstract class TerminalSimulatorHandler(private val menu: ChestMenu) {
 	}
 
 	protected fun Slot.setItem(stack: ItemStack) {
-		setSlots { slot ->
-			if (slot.index == this.index) stack else slot.item
+		this.setByPlayer(stack)
+		GuiEvents.SLOT_UPDATE.invoker().onSlotUpdate(Integer.MAX_VALUE, this.index, this.item)
+
+		if (isTerminalSolved(slots)) {
+			MC.player?.clientSideCloseContainer()
 		}
 	}
 }

@@ -10,8 +10,9 @@ import net.minecraft.world.item.DyeColor
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 
-class SelectAllTerminalScreen(menu: ChestMenu, title: Component) :
-	AbstractTerminalScreen(menu, title) {
+class SelectAllTerminalScreen(menu: ChestMenu, title: Component) : AbstractTerminalScreen(menu, title) {
+	override val gameWidth: Int = 7
+	override val gameHeight: Int = 4
 
 	private val color =
 		Terminal.SELECT_ALL_PATTERN.matchEntire(title.string.replace("SILVER", "LIGHT GRAY"))?.groupValues?.get(1)
@@ -32,13 +33,11 @@ class SelectAllTerminalScreen(menu: ChestMenu, title: Component) :
 		return false
 	}
 
-	override fun solveTerminal(slots: List<Slot>) {
-		solution.addAll(slots.mapNotNull { slot -> slot.index.takeIf { hasColorAndNotClicked(slot.item) } })
+	override fun solveTerminal(slots: List<Slot>): List<Int> {
+		return slots.mapNotNull { slot -> slot.index.takeIf { hasColor(slot.item) } }
 	}
 
-	fun hasColorAndNotClicked(stack: ItemStack?): Boolean {
-		if (stack?.hasFoil() == true) return false
-
+	fun hasColor(stack: ItemStack?): Boolean {
 		val isCorrectColor = stack?.hoverName?.string?.startsWith(dyeColor.name.replace("_", " "), true) == true
 		val hasOverride = ITEM_OVERRIDES[dyeColor]?.contains(stack?.item) == true
 

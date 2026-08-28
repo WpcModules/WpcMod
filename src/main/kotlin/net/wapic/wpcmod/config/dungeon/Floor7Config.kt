@@ -89,21 +89,39 @@ class Floor7Config {
 		@ConfigEditorBoolean
 		var showNumbers: Boolean = true
 
+		@ConfigOption(
+			name = "Slot Resync Timeout",
+			desc = "Amount of time to wait before assuming a slot click failed to register.\nRecommended to use at least ping * 2\nincrease value if terminals break"
+		)
+		@ConfigEditorSlider(minValue = 200f, maxValue = 800f, minStep = 1f)
+		var resyncTime: Float = 300f
+
+		@ConfigOption(
+			name = "Click Delay",
+			desc = "Minimum delay between clicks in the terminal.\nA higher value will result in more clicks registering"
+		)
+		@ConfigEditorSlider(minValue = 0f, maxValue = 200f, minStep = 1f)
+		var clickDelay: Float = 0f
+
 		@ConfigOption(name = "Custom Term Scale", desc = "The scale of the custom terminal GUI")
 		@ConfigEditorSlider(minValue = 0.5f, maxValue = 6f, minStep = 0.1f)
 		var customTermSize: Float = 2f
 
 		@ConfigOption(name = "Gap", desc = "The gap between the slots in the custom terminal gui.")
 		@ConfigEditorSlider(minValue = 0f, maxValue = 8f, minStep = 1f)
-		var gap: Float = 2f
-
-		@ConfigOption(name = "Background Roundness", desc = "The corner roundness of the terminal")
-		@ConfigEditorSlider(minValue = 0f, maxValue = 32f, minStep = 1f)
-		var backgroundRoundness: Float = 8f
+		var gap: Float = 1f
 
 		@ConfigOption(name = "Slot Roundness", desc = "The slot corner roundness of the terminal")
 		@ConfigEditorSlider(minValue = 0f, maxValue = 8f, minStep = 1f)
-		var slotRoundness: Float = 2f
+		var slotRoundness: Float = 1f
+
+		@ConfigOption(name = "Background Roundness", desc = "The corner roundness of the terminal")
+		@ConfigEditorSlider(minValue = 0f, maxValue = 32f, minStep = 1f)
+		var backgroundRoundness: Float = 4f
+
+		@ConfigOption(name = "Padding", desc = "amount of padding between background and slots")
+		@ConfigEditorSlider(minValue = 0f, maxValue = 16f, minStep = 1f)
+		var padding: Float = 2f
 
 		@ConfigOption(name = "Background", desc = "Background color of the terminal solver.")
 		@ConfigEditorColour

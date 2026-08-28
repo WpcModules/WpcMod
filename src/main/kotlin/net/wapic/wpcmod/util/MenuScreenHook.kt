@@ -5,7 +5,6 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.ChestMenu
 import net.minecraft.world.inventory.MenuType
-import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.features.dungeons.floor7.terminals.Terminal
 
 // Modified from SkyHanni
@@ -25,8 +24,7 @@ object MenuScreenHook {
 		val menu = type.create(containerId, inventory) as? ChestMenu ?: return false
 
 		player.containerMenu = menu
-		client.setScreen(Terminal.createSolverScreen(menu, title))
-		WpcMod.LOGGER.debug("Opened custom menu {}, screen: {}", player.containerMenu, client.screen)
+		Terminal.createSolverScreen(menu, title)
 		return true
 	}
 }

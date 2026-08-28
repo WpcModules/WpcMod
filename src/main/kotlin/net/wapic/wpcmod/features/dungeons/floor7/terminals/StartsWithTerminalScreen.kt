@@ -6,12 +6,13 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.inventory.ChestMenu
 import net.minecraft.world.inventory.ContainerInput
 import net.minecraft.world.inventory.Slot
+import net.minecraft.world.item.ItemStack
 
-class StartsWithTerminalScreen(menu: ChestMenu, title: Component) :
-	AbstractTerminalScreen(menu, title) {
+class StartsWithTerminalScreen(menu: ChestMenu, title: Component) : AbstractTerminalScreen(menu, title) {
+	override val gameWidth: Int = 7
+	override val gameHeight: Int = 3
 
-	private val clickedSlots = mutableSetOf<Int>()
-	val letter = Terminal.STARTS_WITH_PATTERN.matchEntire(title.string)?.groupValues?.get(1)
+	private val letter = Terminal.STARTS_WITH_PATTERN.matchEntire(title.string)?.groupValues?.get(1)
 
 	override fun extractSlots(graphics: GuiGraphicsExtractor) {
 		for (slotIndex in solution) {
@@ -21,7 +22,6 @@ class StartsWithTerminalScreen(menu: ChestMenu, title: Component) :
 
 	override fun slotClicked(slotIndex: Int, button: Int, input: ContainerInput): Boolean {
 		if (slotIndex in solution) {
-			clickedSlots.add(slotIndex)
 			solution.removeIf { it == slotIndex }
 			doTerminalClick(slotIndex, InputConstants.MOUSE_BUTTON_MIDDLE, ContainerInput.CLONE)
 			return true
@@ -29,14 +29,11 @@ class StartsWithTerminalScreen(menu: ChestMenu, title: Component) :
 		return false
 	}
 
-	override fun solveTerminal(slots: List<Slot>) {
-		solution.addAll(slots.mapNotNull { slot -> slot.index.takeIf { hasLetterAndNotClicked(slot) } })
+	override fun solveTerminal(slots: List<Slot>): List<Int> {
+		return slots.mapNotNull { slot -> slot.index.takeIf { hasLetter(slot.item) } }
 	}
 
-	fun hasLetterAndNotClicked(slot: Slot): Boolean {
-		if (slot.index in clickedSlots) return false
-
-		if (slot.item.hasFoil() && !slot.item.item.defaultInstance.hasFoil()) return false
-		return letter?.let { slot.item.hoverName.string.startsWith(it, true) } == true
+	private fun hasLetter(stack: ItemStack): Boolean {
+		return letter?.let { stack.hoverName.string.startsWith(it, true) } == true
 	}
 }
