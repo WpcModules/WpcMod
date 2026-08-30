@@ -11,6 +11,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 
 class SelectAllTerminalScreen(menu: ChestMenu, title: Component) : AbstractTerminalScreen(menu, title) {
+
 	override val gameWidth: Int = 7
 	override val gameHeight: Int = 4
 

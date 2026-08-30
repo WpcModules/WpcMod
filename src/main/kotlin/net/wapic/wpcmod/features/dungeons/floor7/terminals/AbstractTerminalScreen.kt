@@ -54,6 +54,7 @@ abstract class AbstractTerminalScreen(initialMenu: ChestMenu, title: Component) 
 			if (misingItem.isEmpty()) continue
 
 			// this needs to be improved like wtf is this, also shouldn't number terminal break at some point???
+			// should probably just use solveTerminal(slots), but I'll have to test when update releases.
 			if (this is RubixTerminalScreen) {
 				val index = listOf(12, 13, 14, 21, 22, 23, 30, 31, 32).indexOf(slotToTime.first)
 				solution[index] = misingItem.first()
@@ -62,13 +63,18 @@ abstract class AbstractTerminalScreen(initialMenu: ChestMenu, title: Component) 
 			}
 
 			iterator.remove()
-			WpcMod.LOGGER.debug("Synchronized terminal with solution {}", solution)
 		}
 	}
 
 	override fun init() {
 		Terminal.handler?.create()
 		DungeonEvents.TERMINAL_OPENED.invoker().onOpen(this)
+	}
+
+	// Prevent init from being called when resizing, no need to rebild widgets since we don't have any.
+	override fun resize(width: Int, height: Int) {
+		this.width = width
+		this.height = height
 	}
 
 	override fun keyPressed(event: KeyEvent): Boolean {
@@ -103,7 +109,6 @@ abstract class AbstractTerminalScreen(initialMenu: ChestMenu, title: Component) 
 
 		nextClickTime = Util.getEpochMillis() + config.clickDelay.toLong()
 		DungeonEvents.TERMINAL_CLICKED.invoker().onClick(this, slotIndex, button)
-		WpcMod.LOGGER.debug("Clicked terminal slot {}, button {}, {}", slotIndex, button, Util.getEpochMillis())
 	}
 
 	override fun extractRenderState(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, a: Float) {
@@ -202,7 +207,6 @@ abstract class AbstractTerminalScreen(initialMenu: ChestMenu, title: Component) 
 		if (slotIndex == menu.container.containerSize - 1 && !isInitialized) {
 			solution.addAll(solveTerminal(slots))
 			isInitialized = true
-			WpcMod.LOGGER.debug("Initialized terminal with solution {}", solution)
 		}
 	}
 

@@ -6,7 +6,6 @@ import net.minecraft.world.inventory.ContainerInput
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStackTemplate
 import net.minecraft.world.item.Items
-import net.wapic.wpcmod.WpcMod
 
 class NumbersSimulatorHandler(menu: ChestMenu, title: Component) : TerminalSimulatorHandler(menu) {
 	private val redPane = ItemStackTemplate(Items.RED_STAINED_GLASS_PANE)
@@ -18,7 +17,6 @@ class NumbersSimulatorHandler(menu: ChestMenu, title: Component) : TerminalSimul
 
 		this.setSlots { slot ->
 			if (slot.index % 9 in 2..6 && slot.index / 9 in 1..2) {
-				WpcMod.LOGGER.info("Counts: $counts")
 				return@setSlots redPane.apply(counts.removeFirst(), emptyNameData)
 			}
 			return@setSlots blackPane

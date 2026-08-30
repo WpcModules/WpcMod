@@ -10,10 +10,12 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 
 class RubixTerminalScreen(menu: ChestMenu, title: Component) : AbstractTerminalScreen(menu, title) {
-	private val gameArea = listOf(12, 13, 14, 21, 22, 23, 30, 31, 32)
-	private var goal: Int? = null
+
 	override val gameWidth: Int = 3
 	override val gameHeight: Int = 3
+
+	private val gameArea = listOf(12, 13, 14, 21, 22, 23, 30, 31, 32)
+	private var goal: Int? = null
 
 	override fun extractSlots(graphics: GuiGraphicsExtractor) {
 		gameArea.forEachIndexed { index, slotIndex ->
@@ -58,9 +60,6 @@ class RubixTerminalScreen(menu: ChestMenu, title: Component) : AbstractTerminalS
 			goal = Terminal.RUBIX_ORDER.indexOf(goalItem)
 		}
 
-		goal?.let { goal ->
-			return gameArea.map { getClicks(Terminal.RUBIX_ORDER.indexOf(it.item.item), goal) }
-		}
-		return emptyList()
+		return gameArea.map { getClicks(Terminal.RUBIX_ORDER.indexOf(it.item.item), goal ?: return emptyList()) }
 	}
 }

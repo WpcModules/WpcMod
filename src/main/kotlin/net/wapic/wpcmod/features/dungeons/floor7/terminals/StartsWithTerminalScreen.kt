@@ -9,6 +9,7 @@ import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 
 class StartsWithTerminalScreen(menu: ChestMenu, title: Component) : AbstractTerminalScreen(menu, title) {
+
 	override val gameWidth: Int = 7
 	override val gameHeight: Int = 3
 

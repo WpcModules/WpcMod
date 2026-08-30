@@ -8,6 +8,7 @@ import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.Items
 
 class MelodyTerminalScreen(menu: ChestMenu, title: Component) : AbstractTerminalScreen(menu, title) {
+
 	override val gameWidth: Int = 7
 	override val gameHeight: Int = 5
 
@@ -30,7 +31,7 @@ class MelodyTerminalScreen(menu: ChestMenu, title: Component) : AbstractTerminal
 		var pointer = -1
 		var column = -1
 		var slotToClick = -1
-		for (slot in menu.slots.subList(0, menu.container.containerSize)) {
+		for (slot in slots) {
 			if (slot.item.item == Items.LIME_STAINED_GLASS_PANE) pointer = slot.index
 			if (slot.item.item == Items.MAGENTA_STAINED_GLASS_PANE) column = slot.index
 			if (slot.item.item == Items.LIME_TERRACOTTA) slotToClick = slot.index
