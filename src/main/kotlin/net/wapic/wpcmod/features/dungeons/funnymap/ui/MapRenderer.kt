@@ -29,14 +29,21 @@ object MapRenderer {
 	private val whiteResource = Utils.modIdentifier("dungeon/white_check.png")
 	private val mapIcons = Utils.modIdentifier("dungeon/marker.png")
 
-	fun renderCenteredText(drawContext: GuiGraphicsExtractor, text: List<String>, x: Int, y: Int, color: Int) {
+	fun renderCenteredText(
+		drawContext: GuiGraphicsExtractor,
+		text: List<String>,
+		x: Int,
+		y: Int,
+		color: Int,
+		scale: Float = 1f
+	) {
 		if (text.isEmpty()) return
 		val player = MC.player ?: return
 		val matrixStack = drawContext.pose()
 
 		matrixStack.pushMatrix()
 		matrixStack.translate(x.toFloat(), y.toFloat())
-		matrixStack.scale(config.textScale, config.textScale)
+		matrixStack.scale(config.textScale * scale, config.textScale * scale)
 
 		if (config.mapRotate) {
 			matrixStack.rotate(Math.toRadians(player.yRot + 180.0).toFloat())
@@ -115,7 +122,7 @@ object MapRenderer {
 					"INFINITE_SPIRIT_LEAP",
 					"HAUNT_ABILITY"
 				))
-				) {
+			) {
 				matrixStack.rotate(-Math.toRadians(player.yaw + 180.0).toFloat())
 
 				if (config.mapRotate) {
