@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.event.EventFactory
 import net.minecraft.world.inventory.Slot
 import net.wapic.wpcmod.features.dungeons.floor7.terminals.AbstractTerminalScreen
 import net.wapic.wpcmod.features.dungeons.floor7.terminals.Terminal
+import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Room
 
 object DungeonEvents {
 
@@ -18,6 +19,7 @@ object DungeonEvents {
 	}
 
 	fun interface Start {
+
 		fun onStart()
 	}
 
@@ -31,6 +33,7 @@ object DungeonEvents {
 	}
 
 	fun interface End {
+
 		fun onEnd()
 	}
 
@@ -44,6 +47,7 @@ object DungeonEvents {
 	}
 
 	fun interface PuzzleReset {
+
 		fun onPuzzleReset()
 	}
 
@@ -57,6 +61,7 @@ object DungeonEvents {
 	}
 
 	fun interface TerminalSolve {
+
 		fun onSolve(type: Terminal.Type)
 	}
 
@@ -70,6 +75,7 @@ object DungeonEvents {
 	}
 
 	fun interface TerminalOpen {
+
 		fun onOpen(screen: AbstractTerminalScreen)
 	}
 
@@ -83,6 +89,7 @@ object DungeonEvents {
 	}
 
 	fun interface TerminalClose {
+
 		fun onClose()
 	}
 
@@ -97,6 +104,7 @@ object DungeonEvents {
 		}
 
 	fun interface TerminalUpdate {
+
 		fun onUpdate(screen: AbstractTerminalScreen, slots: List<Slot>)
 	}
 
@@ -111,6 +119,7 @@ object DungeonEvents {
 		}
 
 	fun interface TerminalClick {
+
 		fun onClick(screen: AbstractTerminalScreen, slot: Int, button: Int)
 	}
 
@@ -124,6 +133,7 @@ object DungeonEvents {
 	}
 
 	fun interface RoomEntered {
-		fun onRoomEntered(oldRoom: String, newRoom: String)
+
+		fun onRoomEntered(oldRoom: Room, newRoom: Room)
 	}
 }

@@ -105,6 +105,13 @@ class UniqueRoom(arrX: Int, arrY: Int, room: Room) {
 		}
 	}
 
+	fun setRoomState(state: RoomState) {
+		tiles.forEach { (room, pair) ->
+			room.state = state
+			WpcMod.LOGGER.debug("Set room {} to state {}", room, state)
+		}
+	}
+
 	// TODO: make it not shit
 	fun getNameScale(): Float = Mth.clamp(this.tiles.size / 12f, 0.5f, 1f)
 

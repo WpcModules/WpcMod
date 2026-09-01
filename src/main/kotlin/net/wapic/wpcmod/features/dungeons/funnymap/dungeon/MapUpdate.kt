@@ -17,6 +17,7 @@ import net.wapic.wpcmod.util.TabListUtil
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 
 object MapUpdate {
+
 	var roomAdded = false
 
 	fun preloadHeads() {
@@ -62,36 +63,46 @@ object MapUpdate {
 					iconNum++
 				}
 
-				val player = MC.level?.players()?.find { it.name.string == name }?.let {
+				val player = MC.level?.players()?.find { it.stringUUID == uuid }?.let {
 					if (!playerLoaded) setData(it)
-					yaw = it.yRot
-					mapX =
-						((it.x - DungeonScan.START_X + 13) * MapUtils.coordMultiplier + MapUtils.startCorner.first).toInt()
-					mapZ =
-						((it.z - DungeonScan.START_Z + 13) * MapUtils.coordMultiplier + MapUtils.startCorner.second).toInt()
+					this.updatePos(
+						((it.x - DungeonScan.START_X + 13) * MapUtils.coordMultiplier + MapUtils.startCorner.first).toFloat(),
+						((it.z - DungeonScan.START_Z + 13) * MapUtils.coordMultiplier + MapUtils.startCorner.second).toFloat(),
+						it.yRot
+					)
 					return@let it
 				}
 
 				if (player == null) {
 					MapUtils.mapData?.decorations?.elementAtOrNull(iconNum - 1)?.let { decoration ->
-						isPlayer = decoration.type == MapDecorationTypes.FRAME
-						if (!isPlayer) {
-							yaw = decoration.rot * 22.5f
-							mapX = (decoration.x + 128) shr 1
-							mapZ = (decoration.y + 128) shr 1
-						}
+						if (decoration.type == MapDecorationTypes.FRAME) return@let // no need to update local player from map
+						this.updatePos(
+							((decoration.x + 128) shr 1).toFloat(),
+							((decoration.y + 128) shr 1).toFloat(),
+							decoration.rot * 22.5f
+						)
 					}
 				}
 
 				val room = getCurrentRoom()
-				if (room != "Error" || time > 1000) {
-					if (lastRoom == "") {
-						lastRoom = room
-					} else if (lastRoom != room) {
-						DungeonEvents.ROOM_ENTERED.invoker().onRoomEntered(lastRoom, room)
-						roomVisits.add(Pair(time - lastTime, lastRoom))
-						lastTime = time
-						lastRoom = room
+				room?.let { current ->
+					if (time <= 1000) return@let
+					if (lastRoom == null) {
+						lastRoom = current
+					} else if (lastRoom?.data?.name != current.data.name) {
+
+						if (current.state.equalsOneOf(RoomState.UNDISCOVERED, RoomState.UNOPENED)) {
+							current.uniqueRoom?.setRoomState(RoomState.DISCOVERED)
+						}
+
+						lastRoom?.let { last ->
+							if (player?.stringUUID == uuid) {
+								DungeonEvents.ROOM_ENTERED.invoker().onRoomEntered(last, current)
+							}
+							roomVisits.add(Pair(time - lastTime, last))
+							lastTime = time
+							lastRoom = current
+						}
 					}
 				}
 			}
@@ -115,7 +126,6 @@ object MapUpdate {
 				}
 
 				if (mapTile.state.ordinal < room.state.ordinal) {
-					PlayerTracker.roomStateChange(room, room.state, mapTile.state)
 					if (room is Room && room.data.type == RoomType.BLOOD && mapTile.state == RoomState.GREEN) {
 						ScoreCalculation.bloodCleared = true
 					}

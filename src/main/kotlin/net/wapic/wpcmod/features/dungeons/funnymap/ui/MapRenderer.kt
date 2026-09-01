@@ -3,11 +3,11 @@ package net.wapic.wpcmod.features.dungeons.funnymap.ui
 import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.util.CommonColors
+import net.minecraft.util.Mth
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.dungeon.FunnyConfig
 import net.wapic.wpcmod.features.dungeons.funnymap.core.DungeonPlayer
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.RoomState
-import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.DungeonScan
 import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils
 import net.wapic.wpcmod.util.ItemUtils.skyblockId
 import net.wapic.wpcmod.util.MC
@@ -89,30 +89,26 @@ object MapRenderer {
 		}
 	}
 
-	fun drawPlayerHead(drawContext: GuiGraphicsExtractor, name: String, player: DungeonPlayer) {
+	fun drawPlayerHead(drawContext: GuiGraphicsExtractor, name: String, player: DungeonPlayer, deltaTicks: Float) {
 		val realPlayer = MC.player ?: return
 		val matrixStack = drawContext.pose()
 		matrixStack.pushMatrix()
 
 		try {
-			if (player.isPlayer || name == MC.player?.name?.string) {
-				matrixStack.translate(
-					((realPlayer.x - DungeonScan.START_X + 13) * MapUtils.coordMultiplier + MapUtils.startCorner.first).toFloat(),
-					((realPlayer.z - DungeonScan.START_Z + 13) * MapUtils.coordMultiplier + MapUtils.startCorner.second).toFloat(),
-				)
-				player.yaw = realPlayer.yRot
-			} else {
-				matrixStack.translate(player.mapX.toFloat(), player.mapZ.toFloat())
-			}
+
+			val interpolatedX = Mth.lerp(deltaTicks, player.lastMapX, player.mapX)
+			val interpolatedZ = Mth.lerp(deltaTicks, player.lastMapZ, player.mapZ)
+			val interpolatedYaw = Mth.lerp(deltaTicks, player.lastYaw, player.yaw)
+			matrixStack.translate(interpolatedX, interpolatedZ)
 
 			matrixStack.scale(config.playerHeadScale, config.playerHeadScale)
-			matrixStack.rotate(Math.toRadians(player.yaw + 180.0).toFloat())
+			matrixStack.rotate(Math.toRadians(interpolatedYaw + 180.0).toFloat())
 
-			if (config.mapVanillaMarker && (player.isPlayer || name == MC.player?.name?.string)) {
+			if (config.mapVanillaMarker && player.uuid == realPlayer.stringUUID) {
 				drawContext.drawTexture(mapIcons, -4, -4, 0f, 0f, 8, 8, 8, 8)
 			} else {
 				drawContext.drawTexture(player.skin.body.texturePath(), -4, -4, 8f, 8f, 8, 8, 64, 64)
-				drawContext.drawBorder(-4, -4, 8, 8, ChromaColour.BLACK)
+				if (config.drawHeadBorder) drawContext.drawBorder(-4, -4, 8, 8, ChromaColour.BLACK)
 			}
 
 			// Handle player names

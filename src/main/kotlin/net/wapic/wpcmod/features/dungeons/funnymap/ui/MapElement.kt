@@ -72,7 +72,7 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 		profiler.popPush("text")
 		renderText(drawContext)
 		profiler.popPush("players")
-		renderPlayerHeads(drawContext)
+		renderPlayerHeads(drawContext, deltaTicks)
 		profiler.pop()
 
 		if (config.mapRotate) {
@@ -179,7 +179,12 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 			)
 				name.addAll(room.data.name.split(" "))
 
-			val color = if (room.state == RoomState.GREEN) CommonColors.GREEN else CommonColors.WHITE
+			val color = when (room.state) {
+				RoomState.CLEARED -> CommonColors.WHITE
+				RoomState.GREEN -> CommonColors.GREEN
+				else -> CommonColors.LIGHTER_GRAY
+			}
+
 			val scale = room.uniqueRoom?.getNameScale() ?: 1f
 			MapRenderer.renderCenteredText(
 				drawContext,
@@ -196,18 +201,18 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 		matrixStack.popMatrix()
 	}
 
-	fun renderPlayerHeads(drawContext: GuiGraphicsExtractor) {
+	fun renderPlayerHeads(drawContext: GuiGraphicsExtractor, deltaTicks: Float) {
 		try {
 			if (FunnyMap.dungeonTeammates.isEmpty()) {
 				MC.player?.let {
 					MapRenderer.drawPlayerHead(drawContext, it.name.string, DungeonPlayer(it.skin).apply {
 						yaw = it.yRot
-					})
+					}, deltaTicks)
 				}
 			} else {
 				FunnyMap.dungeonTeammates.forEach { (name, teammate) ->
 					if (!teammate.dead) {
-						MapRenderer.drawPlayerHead(drawContext, name, teammate)
+						MapRenderer.drawPlayerHead(drawContext, name, teammate, deltaTicks)
 					}
 				}
 			}
