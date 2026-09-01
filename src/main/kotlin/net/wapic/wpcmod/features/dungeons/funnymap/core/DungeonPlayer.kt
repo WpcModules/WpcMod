@@ -19,6 +19,8 @@ data class DungeonPlayer(val skin: PlayerSkin) {
 	val formattedName: String
 		get() = "§$colorPrefix$name"
 
+	var dungeonClass: DungeonUtils.DungeonClass = DungeonUtils.DungeonClass.EMPTY
+
 	var mapX = 0f
 	var mapZ = 0f
 	var yaw = 0f

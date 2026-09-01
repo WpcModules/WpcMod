@@ -12,6 +12,7 @@ import net.wapic.wpcmod.features.dungeons.ScoreCalculation
 import net.wapic.wpcmod.features.dungeons.funnymap.core.DungeonPlayer
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.*
 import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils
+import net.wapic.wpcmod.util.DungeonUtils.DungeonClass
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.TabListUtil
 import net.wapic.wpcmod.util.Utils.equalsOneOf
@@ -62,6 +63,10 @@ object MapUpdate {
 					icon = "icon-$iconNum"
 					iconNum++
 				}
+				if (dungeonClass == DungeonClass.EMPTY) {
+					val classText = tabText.substringAfter("(").substringBefore(")").substringBefore(" ")
+					dungeonClass = DungeonClass.fromTabText(classText)
+				}
 
 				val player = MC.level?.players()?.find { it.stringUUID == uuid }?.let {
 					if (!playerLoaded) setData(it)
@@ -96,7 +101,7 @@ object MapUpdate {
 						}
 
 						lastRoom?.let { last ->
-							if (player?.stringUUID == uuid) {
+							if (isPlayer) {
 								DungeonEvents.ROOM_ENTERED.invoker().onRoomEntered(last, current)
 							}
 							roomVisits.add(Pair(time - lastTime, last))

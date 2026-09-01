@@ -213,4 +213,20 @@ object DungeonUtils {
 			}
 		}
 	}
+
+	enum class DungeonClass(val color: Int) {
+		ARCHER(11141120),
+		BERSERK(16755200),
+		HEALER(16733695),
+		MAGE(5636095),
+		TANK(43520),
+		EMPTY(0);
+
+		companion object {
+
+			fun fromTabText(text: String): DungeonClass {
+				return entries.find { it.name.equals(text, ignoreCase = true) } ?: EMPTY
+			}
+		}
+	}
 }

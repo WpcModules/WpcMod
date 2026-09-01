@@ -91,9 +91,9 @@ class FunnyConfig {
 	@ConfigEditorBoolean
 	var mapCenterCheckmark = true
 
-	@ConfigOption(name = "Draw Player Head Border", desc = "Draw A Border Around The Player Head")
+	@ConfigOption(name = "Draw Class Border", desc = "Draw a class based colored border around the player heads")
 	@ConfigEditorBoolean
-	var drawHeadBorder = true
+	var drawClassBorder = true
 
 	@Accordion
 	@ConfigOption(name = "Colors", desc = "Configure each color on the map")

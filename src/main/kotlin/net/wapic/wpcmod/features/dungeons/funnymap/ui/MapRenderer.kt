@@ -1,6 +1,5 @@
 package net.wapic.wpcmod.features.dungeons.funnymap.ui
 
-import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.util.CommonColors
 import net.minecraft.util.Mth
@@ -13,9 +12,9 @@ import net.wapic.wpcmod.util.ItemUtils.skyblockId
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.Utils.equalsOneOf
-import net.wapic.wpcmod.util.render.BLACK
 import net.wapic.wpcmod.util.render.drawBorder
 import net.wapic.wpcmod.util.render.drawTexture
+import net.wapic.wpcmod.util.render.toChromaColour
 import java.awt.Color
 import kotlin.math.roundToInt
 
@@ -104,11 +103,15 @@ object MapRenderer {
 			matrixStack.scale(config.playerHeadScale, config.playerHeadScale)
 			matrixStack.rotate(Math.toRadians(interpolatedYaw + 180.0).toFloat())
 
-			if (config.mapVanillaMarker && player.uuid == realPlayer.stringUUID) {
+			if (config.mapVanillaMarker && player.isPlayer) {
 				drawContext.drawTexture(mapIcons, -4, -4, 0f, 0f, 8, 8, 8, 8)
 			} else {
 				drawContext.drawTexture(player.skin.body.texturePath(), -4, -4, 8f, 8f, 8, 8, 64, 64)
-				if (config.drawHeadBorder) drawContext.drawBorder(-4, -4, 8, 8, ChromaColour.BLACK)
+				if (config.drawClassBorder) drawContext.drawBorder(
+					-5, -5,
+					10, 10,
+					player.dungeonClass.color.toChromaColour()
+				)
 			}
 
 			// Handle player names
@@ -119,7 +122,7 @@ object MapRenderer {
 					"HAUNT_ABILITY"
 				))
 			) {
-				matrixStack.rotate(-Math.toRadians(player.yaw + 180.0).toFloat())
+				matrixStack.rotate(-Math.toRadians(interpolatedYaw + 180.0).toFloat())
 
 				if (config.mapRotate) {
 					matrixStack.rotate(Math.toRadians(realPlayer.yRot + 180.0).toFloat())
