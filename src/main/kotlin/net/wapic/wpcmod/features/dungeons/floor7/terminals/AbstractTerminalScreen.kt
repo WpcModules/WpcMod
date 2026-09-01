@@ -21,6 +21,7 @@ import net.wapic.wpcmod.util.Utils.equalsOneOf
 import net.wapic.wpcmod.util.render.drawRoundedRect
 
 abstract class AbstractTerminalScreen(initialMenu: ChestMenu, title: Component) : Screen(title), MenuAccess<ChestMenu> {
+
 	abstract val gameWidth: Int
 	abstract val gameHeight: Int
 
@@ -121,13 +122,13 @@ abstract class AbstractTerminalScreen(initialMenu: ChestMenu, title: Component) 
 		pose.pushMatrix()
 		val backgroundWidth = gameWidth * totalSlotSpace
 		val backgroundHeight = gameHeight * totalSlotSpace
-		val x = (graphics.guiWidth() - backgroundWidth) / 2f - config.gap
-		val y = (graphics.guiHeight() - backgroundHeight) / 2f - config.gap
+		val x = (graphics.guiWidth() - backgroundWidth) / 2f
+		val y = (graphics.guiHeight() - backgroundHeight) / 2f
 		pose.translate(x, y)
 		graphics.drawRoundedRect(
 			-config.padding, -config.padding,
-			backgroundWidth + config.padding * 2,
-			backgroundHeight + config.padding * 2,
+			backgroundWidth + (config.padding * 2) - (config.gap * config.customTermSize),
+			backgroundHeight + (config.padding * 2) - (config.gap * config.customTermSize),
 			config.backgroundRoundness,
 			config.backgroundColor
 		)
@@ -140,8 +141,8 @@ abstract class AbstractTerminalScreen(initialMenu: ChestMenu, title: Component) 
 		val x = (slotIndex % 9 - 4) * totalSlotSpace + (graphics.guiWidth() - totalSlotSpace) / 2
 
 		val rowOffset = when (gameHeight) {
-			4 -> scaledSlotSize / 2 + 1f
-			2 -> -(scaledSlotSize / 2) - 1f
+			4 -> totalSlotSpace / 2
+			2 -> -(totalSlotSpace / 2)
 			else -> 0f
 		}
 		val y = (slotIndex / 9 - 2) * totalSlotSpace + (graphics.guiHeight() - totalSlotSpace) / 2 - rowOffset
