@@ -5,7 +5,10 @@ import io.github.notenoughupdates.moulconfig.annotations.*
 
 class FunnyConfig {
 
-	@ConfigOption(name = "Chat Info", desc = "Show dungeon overview information after scanning.")
+	@ConfigOption(
+		name = "Chat Info",
+		desc = "Show dungeon overview information after scanning.\nDoes not work in legit mode."
+	)
 	@ConfigEditorBoolean
 	var scanChatInfo = true
 

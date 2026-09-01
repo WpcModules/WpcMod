@@ -7,7 +7,6 @@ import net.minecraft.world.level.chunk.EmptyLevelChunk
 import net.minecraft.world.level.levelgen.Heightmap
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.*
-import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.DungeonScan.scan
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.MC
@@ -82,7 +81,7 @@ object DungeonScan {
 			FunnyMap.Info.secretCount = FunnyMap.Info.uniqueRooms.sumOf { it.mainRoom.data.secrets }
 			FunnyMap.Info.cryptCount = FunnyMap.Info.uniqueRooms.sumOf { it.mainRoom.data.crypts }
 
-			if (config.scanChatInfo) {
+			if (config.scanChatInfo && !config.legitMode) {
 				val lines = mutableListOf(
 					"§aScan Finished!",
 					"§aPuzzles (§c${FunnyMap.Info.puzzles.size}§a):",
