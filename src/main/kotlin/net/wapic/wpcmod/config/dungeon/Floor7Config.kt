@@ -90,6 +90,21 @@ class Floor7Config {
 		var showNumbers: Boolean = true
 
 		@ConfigOption(
+			name = "Replace Click Sound",
+			desc = "Replace Terminal Sound with a custom sound\nDefault is block.note_block.pling"
+		)
+		@ConfigEditorText
+		var soundReplacement: String = "block.note_block.pling"
+
+		@ConfigOption(name = "Sound Volume", desc = "Volume of the custom click sound")
+		@ConfigEditorSlider(minValue = 0f, maxValue = 1f, minStep = 0.01f)
+		var soundVolume: Float = 1f
+
+		@ConfigOption(name = "Sound Pitch", desc = "Pitch of the custom click sound")
+		@ConfigEditorSlider(minValue = 0f, maxValue = 100f, minStep = 0.1f)
+		var soundPitch: Float = 1f
+
+		@ConfigOption(
 			name = "Slot Resync Timeout",
 			desc = "Amount of time to wait before assuming a slot click failed to register.\nRecommended to use at least ping * 2\nincrease value if terminals break"
 		)
@@ -101,7 +116,7 @@ class Floor7Config {
 			desc = "Minimum delay between clicks in the terminal.\nA higher value will result in more clicks registering"
 		)
 		@ConfigEditorSlider(minValue = 0f, maxValue = 200f, minStep = 1f)
-		var clickDelay: Float = 0f
+		var clickDelay: Float = 60f
 
 		@ConfigOption(name = "Custom Term Scale", desc = "The scale of the custom terminal GUI")
 		@ConfigEditorSlider(minValue = 0.5f, maxValue = 6f, minStep = 0.1f)
@@ -185,6 +200,7 @@ class Floor7Config {
 	var inactiveWaypoints: InactiveWaypointsConfig = InactiveWaypointsConfig()
 
 	class InactiveWaypointsConfig {
+
 		@ConfigOption(name = "Enabled", desc = "Global toggle for Inactive Waypoints")
 		@ConfigEditorBoolean
 		var enabled: Boolean = false
@@ -223,6 +239,7 @@ class Floor7Config {
 	var debuff: AutoDebuffConfig = AutoDebuffConfig()
 
 	class AutoDebuffConfig {
+
 		@ConfigOption(name = "Enable Auto Debuff", desc = "Automatically releases Last Breath at the correct height")
 		@ConfigEditorBoolean
 		var enabled: Boolean = false

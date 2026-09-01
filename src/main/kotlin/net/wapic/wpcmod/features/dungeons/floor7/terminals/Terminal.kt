@@ -2,18 +2,27 @@ package net.wapic.wpcmod.features.dungeons.floor7.terminals
 
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.multiplayer.ClientLevel
+import net.minecraft.core.Holder
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
+import net.minecraft.sounds.SoundEvent
+import net.minecraft.sounds.SoundEvents.NOTE_BLOCK_PLING
+import net.minecraft.sounds.SoundSource
 import net.minecraft.world.inventory.ChestMenu
 import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.item.DyeColor
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
+import net.minecraft.world.phys.Vec3
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.GuiEvents
+import net.wapic.wpcmod.events.SoundEvents
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.dungeons.floor7.terminals.simulator.*
 import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.MC
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 
 object Terminal {
 
@@ -37,6 +46,26 @@ object Terminal {
 	fun init() {
 		GuiEvents.SLOT_UPDATE.register(::onSlotUpdate)
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
+		SoundEvents.PLAY.register(::onPlaySound)
+	}
+
+	private fun onPlaySound(
+		sound: Holder<SoundEvent>,
+		source: SoundSource,
+		pos: Vec3,
+		volume: Float,
+		pitch: Float,
+		seed: Long,
+		level: ClientLevel,
+		callbackInfo: CallbackInfo
+	) {
+		if (MC.screen !is AbstractTerminalScreen || config.soundReplacement.isEmpty()) return
+		if (sound != NOTE_BLOCK_PLING || volume != 8f || pitch != 4.047619f) return
+		val customSound = BuiltInRegistries.SOUND_EVENT.find { it.location.path == config.soundReplacement }
+			?: return WpcMod.LOGGER.error("Unable to find sound from: {}", config.soundReplacement)
+		callbackInfo.cancel()
+		MC.playSound(customSound, config.soundVolume, config.soundPitch)
+
 	}
 
 	private fun onSlotUpdate(containerId: Int, slotId: Int, itemStack: ItemStack) {
@@ -101,6 +130,7 @@ object Terminal {
 		val screenFactory: (menu: ChestMenu, title: Component) -> Screen,
 		val simulatorFactory: (menu: ChestMenu, title: Component) -> TerminalSimulatorHandler
 	) {
+
 		PANES("Correct all the panes!", ::PanesTerminalScreen, ::PanesSimulatorHandler),
 		RUBIX("Change all to same color!", ::RubixTerminalScreen, ::RubixSimulatorHandler),
 		NUMBERS("Click in order!", ::NumbersTerminalScreen, ::NumbersSimulatorHandler),
@@ -109,6 +139,7 @@ object Terminal {
 		MELODY("Click the button on time!", ::MelodyTerminalScreen, ::MelodySimulatorHandler);
 
 		companion object {
+
 			fun fromTitle(title: Component): Type? {
 				return entries.firstOrNull { title.string.startsWith(it.windowName) }
 			}
