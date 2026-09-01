@@ -48,21 +48,17 @@ object MapUpdate {
 
 	fun updatePlayers(tabEntries: List<Pair<PlayerInfo, Component>>) {
 		if (FunnyMap.dungeonTeammates.isEmpty()) return
-		// Update map icons
 		val time = Util.getMillis() - FunnyMap.Info.startTime
-		var iconNum = 0
-		for (i in listOf(5, 9, 13, 17, 1)) {
-			val tabText = tabEntries[i].second.string.trim()
+
+		for ((index, value) in listOf(5, 9, 13, 17, 1).withIndex()) {
+			val tabText = tabEntries[value].second.string.trim()
 			val name = tabText.substringAfterLast("] ").split(" ")[0]
 			if (name.isEmpty()) continue
+
 			FunnyMap.dungeonTeammates[name]?.run {
 				dead = tabText.contains("(DEAD)")
-				if (dead) {
-					icon = ""
-				} else {
-					icon = "icon-$iconNum"
-					iconNum++
-				}
+				if (dead) continue
+
 				if (dungeonClass == DungeonClass.EMPTY) {
 					val classText = tabText.substringAfter("(").substringBefore(")").substringBefore(" ")
 					dungeonClass = DungeonClass.fromTabText(classText)
@@ -79,7 +75,7 @@ object MapUpdate {
 				}
 
 				if (player == null) {
-					MapUtils.mapData?.decorations?.elementAtOrNull(iconNum - 1)?.let { decoration ->
+					MapUtils.mapData?.decorations?.elementAtOrNull(index)?.let { decoration ->
 						if (decoration.type == MapDecorationTypes.FRAME) return@let // no need to update local player from map
 						this.updatePos(
 							((decoration.x + 128) shr 1).toFloat(),

@@ -128,8 +128,8 @@ object MapRenderer {
 					matrixStack.rotate(Math.toRadians(realPlayer.yRot + 180.0).toFloat())
 				}
 
-				matrixStack.translate(0f, config.playerHeadScale * 4f)
-				matrixStack.scale(config.playerNameScale, config.playerNameScale)
+				matrixStack.translate(0f, 6f)
+				matrixStack.scale(config.playerNameScale)
 				drawContext.text(
 					MC.font,
 					name,
