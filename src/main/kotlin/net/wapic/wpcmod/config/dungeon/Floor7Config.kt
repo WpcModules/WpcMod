@@ -101,7 +101,7 @@ class Floor7Config {
 		var soundVolume: Float = 1f
 
 		@ConfigOption(name = "Sound Pitch", desc = "Pitch of the custom click sound")
-		@ConfigEditorSlider(minValue = 0f, maxValue = 100f, minStep = 0.1f)
+		@ConfigEditorSlider(minValue = 0f, maxValue = 2f, minStep = 0.01f)
 		var soundPitch: Float = 1f
 
 		@ConfigOption(
