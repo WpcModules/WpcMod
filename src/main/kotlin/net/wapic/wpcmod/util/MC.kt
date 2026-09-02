@@ -55,7 +55,7 @@ object MC {
 	inline val options: Options get() = instance.options
 	inline val connection get() = player?.connection
 	inline var screen: Screen?
-		set(value) = gui.setScreen(value)
+		set(value) = runOnThread { gui.setScreen(value) }
 		get() = gui.screen()
 	inline val screenName: String? get() = screen?.title?.string
 	inline val textureManager: TextureManager get() = instance.textureManager

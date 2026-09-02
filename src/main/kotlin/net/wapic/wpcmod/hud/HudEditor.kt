@@ -95,7 +95,7 @@ class HudEditor : Screen {
 
 			if (isScaling) {
 				val newScale = oppositeCorner.distance(mouseX, mouseY) * scalePerDistance
-				if(newScale !in 0.2f..5f)  return
+				if (newScale <= 0.2f || it.getUnscaledHeight() * newScale >= MC.window.guiScaledHeight) return
 
 				it.scale = newScale.toFloat()
 				val translatedPos = translate(oppositeCorner, it)

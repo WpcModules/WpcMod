@@ -48,7 +48,7 @@ object LividSolver : EspFeature() {
 		WorldChangeEvent.BEFORE.register(::reset)
 	}
 
-	private fun onBlockChange(pos: BlockPos, oldState: BlockState, newState: BlockState) {
+	private fun onBlockChange(pos: BlockPos, oldState: BlockState?, newState: BlockState) {
 		if (!isEnabled()) return
 		if (pos != centerBlockPosition) return
 

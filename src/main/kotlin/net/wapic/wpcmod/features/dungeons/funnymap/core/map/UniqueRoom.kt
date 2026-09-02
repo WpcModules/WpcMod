@@ -1,9 +1,11 @@
 package net.wapic.wpcmod.features.dungeons.funnymap.core.map
 
+import net.minecraft.util.Mth
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
 
 class UniqueRoom(arrX: Int, arrY: Int, room: Room) {
+
 	private val config get() = WpcMod.config.dungeon.funnyMap
 
 	var name: String
@@ -102,6 +104,16 @@ class UniqueRoom(arrX: Int, arrY: Int, room: Room) {
 			else -> (xRooms[0].key + xRooms[1].key) / 2 to (zRooms[0].key + zRooms[1].key) / 2
 		}
 	}
+
+	fun setRoomState(state: RoomState) {
+		tiles.forEach { (room, pair) ->
+			room.state = state
+			WpcMod.LOGGER.debug("Set room {} to state {}", room, state)
+		}
+	}
+
+	// TODO: make it not shit
+	fun getNameScale(): Float = Mth.clamp(this.tiles.size / 12f, 0.5f, 1f)
 
 	fun getNamePosition(): Pair<Int, Int> = if (config.mapCenterRoomName) center else topLeft
 

@@ -90,7 +90,7 @@ object AutoFish {
 				}
 			}
 
-			delay(350.milliseconds) // Delay to prevent false positive from old armor stand
+			delay(400.milliseconds) // Delay to prevent false positive from old armor stand
 		} finally {
 			isProcessing.set(false)
 			cachedHook = null

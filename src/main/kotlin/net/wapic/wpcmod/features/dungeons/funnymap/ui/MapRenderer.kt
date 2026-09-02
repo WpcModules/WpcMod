@@ -1,20 +1,19 @@
 package net.wapic.wpcmod.features.dungeons.funnymap.ui
 
-import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.util.CommonColors
+import net.minecraft.util.Mth
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.dungeon.FunnyConfig
 import net.wapic.wpcmod.features.dungeons.funnymap.core.DungeonPlayer
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.RoomState
-import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.DungeonScan
 import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils
 import net.wapic.wpcmod.util.skyblockId
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.equalsOneOf
-import net.wapic.wpcmod.util.render.BLACK
 import net.wapic.wpcmod.util.render.drawBorder
 import net.wapic.wpcmod.util.render.drawTexture
+import net.wapic.wpcmod.util.render.toChromaColour
 import java.awt.Color
 import kotlin.math.roundToInt
 
@@ -28,14 +27,21 @@ object MapRenderer {
 	private val whiteResource = WpcMod.Identifier("dungeon/white_check.png")
 	private val mapIcons = WpcMod.Identifier("dungeon/marker.png")
 
-	fun renderCenteredText(drawContext: GuiGraphicsExtractor, text: List<String>, x: Int, y: Int, color: Int) {
+	fun renderCenteredText(
+		drawContext: GuiGraphicsExtractor,
+		text: List<String>,
+		x: Int,
+		y: Int,
+		color: Int,
+		scale: Float = 1f
+	) {
 		if (text.isEmpty()) return
 		val player = MC.player ?: return
 		val matrixStack = drawContext.pose()
 
 		matrixStack.pushMatrix()
 		matrixStack.translate(x.toFloat(), y.toFloat())
-		matrixStack.scale(config.textScale, config.textScale)
+		matrixStack.scale(config.textScale * scale, config.textScale * scale)
 
 		if (config.mapRotate) {
 			matrixStack.rotate(Math.toRadians(player.yRot + 180.0).toFloat())
@@ -81,30 +87,30 @@ object MapRenderer {
 		}
 	}
 
-	fun drawPlayerHead(drawContext: GuiGraphicsExtractor, name: String, player: DungeonPlayer) {
+	fun drawPlayerHead(drawContext: GuiGraphicsExtractor, name: String, player: DungeonPlayer, deltaTicks: Float) {
 		val realPlayer = MC.player ?: return
 		val matrixStack = drawContext.pose()
 		matrixStack.pushMatrix()
 
 		try {
-			if (player.isPlayer || name == MC.player?.name?.string) {
-				matrixStack.translate(
-					((realPlayer.x - DungeonScan.START_X + 13) * MapUtils.coordMultiplier + MapUtils.startCorner.first).toFloat(),
-					((realPlayer.z - DungeonScan.START_Z + 13) * MapUtils.coordMultiplier + MapUtils.startCorner.second).toFloat(),
-				)
-				player.yaw = realPlayer.yRot
-			} else {
-				matrixStack.translate(player.mapX.toFloat(), player.mapZ.toFloat())
-			}
+
+			val interpolatedX = Mth.lerp(deltaTicks, player.lastMapX, player.mapX)
+			val interpolatedZ = Mth.lerp(deltaTicks, player.lastMapZ, player.mapZ)
+			val interpolatedYaw = Mth.lerp(deltaTicks, player.lastYaw, player.yaw)
+			matrixStack.translate(interpolatedX, interpolatedZ)
 
 			matrixStack.scale(config.playerHeadScale, config.playerHeadScale)
-			matrixStack.rotate(Math.toRadians(player.yaw + 180.0).toFloat())
+			matrixStack.rotate(Math.toRadians(interpolatedYaw + 180.0).toFloat())
 
-			if (config.mapVanillaMarker && (player.isPlayer || name == MC.player?.name?.string)) {
+			if (config.mapVanillaMarker && player.isPlayer) {
 				drawContext.drawTexture(mapIcons, -4, -4, 0f, 0f, 8, 8, 8, 8)
 			} else {
 				drawContext.drawTexture(player.skin.body.texturePath(), -4, -4, 8f, 8f, 8, 8, 64, 64)
-				drawContext.drawBorder(-4, -4, 8, 8, ChromaColour.BLACK)
+				if (config.drawClassBorder) drawContext.drawBorder(
+					-5, -5,
+					10, 10,
+					player.dungeonClass.color.toChromaColour()
+				)
 			}
 
 			// Handle player names
@@ -114,15 +120,15 @@ object MapRenderer {
 					"INFINITE_SPIRIT_LEAP",
 					"HAUNT_ABILITY"
 				))
-				) {
-				matrixStack.rotate(-Math.toRadians(player.yaw + 180.0).toFloat())
+			) {
+				matrixStack.rotate(-Math.toRadians(interpolatedYaw + 180.0).toFloat())
 
 				if (config.mapRotate) {
 					matrixStack.rotate(Math.toRadians(realPlayer.yRot + 180.0).toFloat())
 				}
 
-				matrixStack.translate(0f, config.playerHeadScale * 4f)
-				matrixStack.scale(config.playerNameScale, config.playerNameScale)
+				matrixStack.translate(0f, 6f)
+				matrixStack.scale(config.playerNameScale)
 				drawContext.text(
 					MC.font,
 					name,

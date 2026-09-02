@@ -57,7 +57,7 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 			matrixStack.translate(64f, 64f)
 			matrixStack.rotate(Math.toRadians(-player.yRot + 180.0).toFloat())
 
-			if(config.mapCenter) {
+			if (config.mapCenter) {
 				matrixStack.translate(
 					-((player.x - DungeonScan.START_X + 15) * MapUtils.coordMultiplier + MapUtils.startCorner.first - 2).toFloat(),
 					-((player.z - DungeonScan.START_Z + 15) * MapUtils.coordMultiplier + MapUtils.startCorner.second - 2).toFloat(),
@@ -72,7 +72,7 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 		profiler.popPush("text")
 		renderText(drawContext)
 		profiler.popPush("players")
-		renderPlayerHeads(drawContext)
+		renderPlayerHeads(drawContext, deltaTicks)
 		profiler.pop()
 
 		if (config.mapRotate) {
@@ -128,9 +128,21 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 					is Door -> {
 						val doorOffset = if (roomSize == 16) 5 else 6
 						if (xEven) {
-							drawContext.fill(xPos + doorOffset, yPos, xPos + xStep - doorOffset, yPos + yStep, color.rgb)
+							drawContext.fill(
+								xPos + doorOffset,
+								yPos,
+								xPos + xStep - doorOffset,
+								yPos + yStep,
+								color.rgb
+							)
 						} else {
-							drawContext.fill(xPos, yPos + doorOffset, xPos + xStep, yPos + yStep - doorOffset, color.rgb)
+							drawContext.fill(
+								xPos,
+								yPos + doorOffset,
+								xPos + xStep,
+								yPos + yStep - doorOffset,
+								color.rgb
+							)
 						}
 					}
 				}
@@ -165,17 +177,21 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 					RoomType.CHAMPION
 				)
 			)
-			name.addAll(room.data.name.split(" "))
+				name.addAll(room.data.name.split(" "))
 
-			val color = if (room.state == RoomState.GREEN) CommonColors.GREEN else CommonColors.WHITE
+			val color = when (room.state) {
+				RoomState.CLEARED -> CommonColors.WHITE
+				RoomState.GREEN -> CommonColors.GREEN
+				else -> CommonColors.LIGHTER_GRAY
+			}
 
-			// Offset + half of roomsize
+			val scale = room.uniqueRoom?.getNameScale() ?: 1f
 			MapRenderer.renderCenteredText(
 				drawContext,
 				name,
 				xOffsetName.toInt() + halfRoomSize,
 				yOffsetName.toInt() + halfRoomSize,
-				color
+				color, scale
 			)
 
 			if (config.mapCheckmark) {
@@ -185,24 +201,23 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 		matrixStack.popMatrix()
 	}
 
-	fun renderPlayerHeads(drawContext: GuiGraphicsExtractor) {
+	fun renderPlayerHeads(drawContext: GuiGraphicsExtractor, deltaTicks: Float) {
 		try {
 			if (FunnyMap.dungeonTeammates.isEmpty()) {
 				MC.player?.let {
 					MapRenderer.drawPlayerHead(drawContext, it.name.string, DungeonPlayer(it.skin).apply {
 						yaw = it.yRot
-					})
+					}, deltaTicks)
 				}
 			} else {
 				FunnyMap.dungeonTeammates.forEach { (name, teammate) ->
 					if (!teammate.dead) {
-						MapRenderer.drawPlayerHead(drawContext, name, teammate)
+						MapRenderer.drawPlayerHead(drawContext, name, teammate, deltaTicks)
 					}
 				}
 			}
 		} catch (_: ConcurrentModificationException) {
 		}
 	}
-
 
 }

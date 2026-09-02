@@ -1,9 +1,7 @@
 package net.wapic.wpcmod.config.general
 
-import io.github.notenoughupdates.moulconfig.annotations.Category
-import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorBoolean
-import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorButton
-import io.github.notenoughupdates.moulconfig.annotations.ConfigOption
+import io.github.notenoughupdates.moulconfig.ChromaColour
+import io.github.notenoughupdates.moulconfig.annotations.*
 import net.wapic.wpcmod.features.general.shortcut.ShortcutScreen
 import net.wapic.wpcmod.hud.HudManager
 import net.wapic.wpcmod.util.MC
@@ -24,6 +22,28 @@ class GeneralConfig {
 	@ConfigEditorButton(buttonText = "Open")
 	val shortcutEditor = Runnable {
 		MC.screen = ShortcutScreen(MC.screen)
+	}
+
+	@Accordion
+	@ConfigOption(name = "Century Cake Helper", desc = "")
+	val centuryCake: CenturyCakeConfig = CenturyCakeConfig()
+
+	class CenturyCakeConfig {
+		@ConfigOption(name = "Enable Century Cake Helper", desc = "Enables the Century Cake Helper")
+		@ConfigEditorBoolean
+		var enabled: Boolean = false
+
+		@ConfigOption(name = "Highlight Eaten Cakes", desc = "Highlights cakes that have been eaten")
+		@ConfigEditorBoolean
+		var highlightEaten: Boolean = false
+
+		@ConfigOption(name = "Cake Eaten Color", desc = "Highlight color when a cake has been eaten")
+		@ConfigEditorColour
+		var cakeEatenColor: ChromaColour = ChromaColour.fromStaticRGB(255, 0, 0, 255)
+
+		@ConfigOption(name = "Cake Ready Color", desc = "Highlight color when a cake is ready to be eaten")
+		@ConfigEditorColour
+		var cakeReadyColor: ChromaColour = ChromaColour.fromStaticRGB(0, 255, 0, 255)
 	}
 
 	@Category(name = "ESP", desc = "Configure general ESP features")

@@ -5,7 +5,10 @@ import io.github.notenoughupdates.moulconfig.annotations.*
 
 class FunnyConfig {
 
-	@ConfigOption(name = "Chat Info", desc = "Show dungeon overview information after scanning.")
+	@ConfigOption(
+		name = "Chat Info",
+		desc = "Show dungeon overview information after scanning.\nDoes not work in legit mode."
+	)
 	@ConfigEditorBoolean
 	var scanChatInfo = true
 
@@ -87,6 +90,10 @@ class FunnyConfig {
 	@ConfigOption(name = "Center Room Checkmarks", desc = "Center room checkmarks.")
 	@ConfigEditorBoolean
 	var mapCenterCheckmark = true
+
+	@ConfigOption(name = "Draw Class Border", desc = "Draw a class based colored border around the player heads")
+	@ConfigEditorBoolean
+	var drawClassBorder = true
 
 	@Accordion
 	@ConfigOption(name = "Colors", desc = "Configure each color on the map")

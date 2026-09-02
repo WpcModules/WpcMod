@@ -9,10 +9,13 @@ import net.wapic.wpcmod.events.ScoreboardChangeEvent
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.dungeons.ScoreCalculation
+import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Room
+import net.wapic.wpcmod.features.dungeons.funnymap.core.map.UniqueRoom
 import net.wapic.wpcmod.util.ChatUtils.removeFormatting
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 
 object DungeonUtils {
+
 	private const val DUNGEON_START_MESSAGE: String =
 		"§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon."
 
@@ -24,7 +27,7 @@ object DungeonUtils {
 	private val failedPuzzles: HashSet<String> = hashSetOf()
 	var bossSpawned = false
 		private set
-	var currentRoom: String = ""
+	var currentRoom: UniqueRoom? = null
 		private set
 
 	val inDungeons get() = Utils.getLocation() == Island.DUNGEON
@@ -93,9 +96,9 @@ object DungeonUtils {
 		}
 	}
 
-	private fun onRoomEntered(oldRoom: String, newRoom: String) {
-		currentRoom = newRoom
-		WpcMod.LOGGER.debug("Current room set: {}, old room: {}", newRoom, oldRoom)
+	private fun onRoomEntered(oldRoom: Room, newRoom: Room) {
+		currentRoom = newRoom.uniqueRoom
+		WpcMod.LOGGER.debug("Current room set: {}, old room: {}", newRoom.data.name, oldRoom.data.name)
 	}
 
 	private fun checkBossName(floor: DungeonFloor, bossName: String): Boolean {
@@ -178,8 +181,9 @@ object DungeonUtils {
 		UNKNOWN("UNKNOWN");
 
 		companion object {
+
 			fun fromStateName(stateName: String): F7Phase {
-				return entries.find { it.stateName == stateName} ?: UNKNOWN
+				return entries.find { it.stateName == stateName } ?: UNKNOWN
 			}
 		}
 	}
@@ -203,8 +207,25 @@ object DungeonUtils {
 		NONE("");
 
 		companion object {
+
 			fun fromShortName(shortName: String?): DungeonFloor {
 				return entries.find { it.shortName == shortName } ?: NONE
+			}
+		}
+	}
+
+	enum class DungeonClass(val color: Int) {
+		ARCHER(11141120),
+		BERSERK(16755200),
+		HEALER(16733695),
+		MAGE(5636095),
+		TANK(43520),
+		EMPTY(0);
+
+		companion object {
+
+			fun fromTabText(text: String): DungeonClass {
+				return entries.find { it.name.equals(text, ignoreCase = true) } ?: EMPTY
 			}
 		}
 	}

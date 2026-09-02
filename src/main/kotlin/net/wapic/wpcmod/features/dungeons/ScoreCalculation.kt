@@ -53,6 +53,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 162) {
 	private val skytilsMimicMessage = Regex("\\\$SKYTILS-DUNGEON-SCORE-MIMIC")
 	private val mimicMessage = Regex("Mimic (Dead|Killed)!?", RegexOption.IGNORE_CASE)
 	private val princeMessage = Regex("Prince (Dead|Killed)!?", RegexOption.IGNORE_CASE)
+	private val batMessage = Regex("Bat (Dead|Killed)!?", RegexOption.IGNORE_CASE)
 
 	data class FloorRequirement(val secretPercentage: Double = 1.0, val speed: Int = 10 * 60)
 
@@ -110,7 +111,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 162) {
 	// Death
 	private var deaths = 0
 	private var firstDeathHadSpirit = false
-		get() = if (config.assumeSpirit) true else field
+		get() = config.assumeSpirit || field
 
 	private val deathPenalty get() = (2 * deaths) - if (firstDeathHadSpirit && deaths > 0) 1 else 0
 
@@ -142,14 +143,17 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 162) {
 		}
 
 	// Bonus
-	var mimicKilled = false
+	private var mimicKilled = false
 	private var isPaul = false
-		get() = if(config.assumePaul) true else field
+		get() = config.assumePaul || field
 	private var princeKilled = false
+	private var batKilled = false
 	private var crypts = 0
 
 	private val calcBonusScore
-		get() = crypts.coerceAtMost(5) + isPaul.ifTrue(10) + mimicKilled.ifTrue(2) + princeKilled.ifTrue(1)
+		get() = crypts.coerceAtMost(5) + isPaul.ifTrue(10) + mimicKilled.ifTrue(2) + princeKilled.ifTrue(1) + batKilled.ifTrue(
+			1
+		)
 	private val bonusScore get() = if (isEntrance) ceil(calcBonusScore * 0.7).toInt() else calcBonusScore
 
 	private var sent300Message = false
@@ -242,6 +246,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 162) {
 		mimicKilled = false
 		isPaul = false
 		princeKilled = false
+		batKilled = false
 		crypts = 0
 
 		mimicOpenTime = 0L
@@ -252,9 +257,9 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 162) {
 		sentMimicMessage = false
 	}
 
-	private fun onBlockChange(pos: BlockPos, old: BlockState, new: BlockState) {
+	private fun onBlockChange(pos: BlockPos, old: BlockState?, new: BlockState) {
 		if (!isActive) return
-		if (old.block == Blocks.TRAPPED_CHEST && new.block == Blocks.AIR) {
+		if (old?.block == Blocks.TRAPPED_CHEST && new.block == Blocks.AIR) {
 			mimicOpenTime = Util.getMillis()
 			mimicPos = pos
 		}
@@ -368,16 +373,23 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 162) {
 		if (!isActive || actionBar) return
 		val message = text.string
 
-		if (message == "A Prince falls. +1 Bonus Score") {
-			princeKilled = true
-			if (config.princeMessage) Utils.runCommand("/pc Prince Killed!")
+		when (message) {
+			"A Bat has been slain. +1 Bonus Score" -> {
+				batKilled = true
+				if (config.batMessage) return Utils.runCommand("/pc Bat Killed")
+			}
+
+			"A Prince falls. +1 Bonus Score" -> {
+				princeKilled = true
+				if (config.princeMessage) return Utils.runCommand("/pc Prince Killed")
+			}
 		}
 
 		if (message.startsWith("§9Party §8>")) {
-			if (message.contains(skytilsMimicMessage) || message.contains(mimicMessage)) {
-				setMimicDead(false)
-			} else if (message.contains(princeMessage)) {
-				princeKilled = true
+			when {
+				message.contains(skytilsMimicMessage) || message.contains(mimicMessage) -> setMimicDead(false)
+				message.contains(princeMessage) -> princeKilled = true
+				message.contains(batMessage) -> batKilled = true
 			}
 		}
 	}
@@ -411,6 +423,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 162) {
 
 		val mimicLine = if (mimicKilled) "§a✔" else "§c✖"
 		val princeLine = if (princeKilled) "§a✔" else "§c✖"
+		val batLine = if (batKilled) "§a✔" else "§c✖"
 
 		when (config.scoreHudType.get()) {
 			ScoreHudType.FULL -> {
@@ -421,7 +434,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 162) {
 					add("§f* §eFailed Puzzles: §c$failedPuzzles§r")
 					add("§f* §eSecrets: §a$foundSecrets§7/§a$secretsNeeded §7(§6Total: $totalSecrets§7)§r")
 					add("§f* §eCrypts: §a$crypts §7(§6Total: ${FunnyMap.Info.cryptCount})§r")
-					add("§f* §ePrince: $princeLine§r")
+					add("§f* §ePrince: $princeLine§r §7| §eBat: $batLine§r")
 					if (isMimicFloor) add("§f* §eMimic: $mimicLine§r")
 
 					add("")
@@ -441,22 +454,22 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 162) {
 			}
 
 			ScoreHudType.MINIMIZED -> {
-				drawContext.text(
-					MC.font,
-					"§7Secrets: §a$foundSecrets§7/§e$secretsNeeded §7(§c$totalSecrets§7)  Crypts: §a$crypts  §7P:$princeLine${if (isMimicFloor) "  §7M:$mimicLine§r" else ""}",
-					2,
-					2,
-					CommonColors.WHITE,
-					true
-				)
-				drawContext.text(
-					MC.font,
-					"§7Puzzles: §a${totalPuzzles - missingPuzzles}§7/§a$totalPuzzles  §7Deaths: §c$deaths  §7Score: §a$totalScore §7($rank§7)§r",
-					2,
-					12,
-					CommonColors.WHITE,
-					true
-				)
+				val topLine = buildString {
+					append("§7Secrets: §a$foundSecrets§7/§e$secretsNeeded §7(§c$totalSecrets§7)§r  ")
+					append("§7C: §a$crypts§r  ")
+					append("§7P:$princeLine§r  ")
+					append("§7B:$batLine§r  ")
+					if (isMimicFloor) append("§7M:$mimicLine§r")
+				}
+
+				val bottomLine = buildString {
+					append("§7Puzzles: §a${totalPuzzles - missingPuzzles}§7/§a$totalPuzzles§r  ")
+					append("§7Deaths: §c$deaths§r  ")
+					append("§7Score: §a$totalScore §7($rank§7)§r")
+				}
+
+				drawContext.text(MC.font, topLine, 2, 2, CommonColors.WHITE, true)
+				drawContext.text(MC.font, bottomLine, 2, 12, CommonColors.WHITE, true)
 			}
 
 			ScoreHudType.SCORE_ONLY -> {

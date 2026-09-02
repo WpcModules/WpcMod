@@ -66,7 +66,13 @@ object GuiEvents {
 	}
 
 	fun interface MouseClick {
-		fun onMouseClick(screen: Screen, mouseX: Int, mouseY: Int, button: Int, cir: CallbackInfoReturnable<Boolean>)
+		fun onMouseClick(
+			screen: Screen,
+			mouseX: Double,
+			mouseY: Double,
+			button: Int,
+			cir: CallbackInfoReturnable<Boolean>
+		)
 	}
 
 	@JvmField
@@ -91,13 +97,14 @@ object GuiEvents {
 
 	// Gets triggered in ContainerScreen "extractBackground" so any other type of screen won't trigger this
 	@JvmField
-	val DRAW_BACKGROUND: Event<DrawBackground> = EventFactory.createArrayBacked(DrawBackground::class.java) { listeners ->
-		DrawBackground { screen, context, callbackInfo ->
-			for (listener in listeners) {
-				listener.onDrawBackground(screen, context, callbackInfo)
+	val DRAW_BACKGROUND: Event<DrawBackground> =
+		EventFactory.createArrayBacked(DrawBackground::class.java) { listeners ->
+			DrawBackground { screen, context, callbackInfo ->
+				for (listener in listeners) {
+					listener.onDrawBackground(screen, context, callbackInfo)
+				}
 			}
 		}
-	}
 
 	fun interface DrawBackground {
 		fun onDrawBackground(screen: Screen, drawContext: GuiGraphicsExtractor, callbackInfo: CallbackInfo)
@@ -117,6 +124,19 @@ object GuiEvents {
 	}
 
 	@JvmField
+	val BEFORE_OPEN: Event<BeforeOpenEvent> = EventFactory.createArrayBacked(BeforeOpenEvent::class.java) { listeners ->
+		BeforeOpenEvent { title ->
+			for (listener in listeners) {
+				listener.onBeforeOpen(title)
+			}
+		}
+	}
+
+	fun interface BeforeOpenEvent {
+		fun onBeforeOpen(screen: Screen)
+	}
+
+	@JvmField
 	val CLOSE: Event<ClosedEvent> = EventFactory.createArrayBacked(ClosedEvent::class.java) { listeners ->
 		ClosedEvent {
 			for (listener in listeners) {
@@ -130,28 +150,15 @@ object GuiEvents {
 	}
 
 	@JvmField
-	val SLOT_UPDATE_AFTER: Event<SlotUpdateAfter> = EventFactory.createArrayBacked(SlotUpdateAfter::class.java) { listeners ->
-		SlotUpdateAfter { syncId, slotId, itemStack ->
+	val SLOT_UPDATE: Event<SlotUpdateAfter> = EventFactory.createArrayBacked(SlotUpdateAfter::class.java) { listeners ->
+		SlotUpdateAfter { containerId, slotId, itemStack ->
 			for (listener in listeners) {
-				listener.onSlotUpdateAfter(syncId, slotId, itemStack)
+				listener.onSlotUpdate(containerId, slotId, itemStack)
 			}
 		}
 	}
 
 	fun interface SlotUpdateAfter {
-		fun onSlotUpdateAfter(syncId: Int, slotId: Int, itemStack: ItemStack)
-	}
-
-	@JvmField
-	val SLOT_UPDATE_BEFORE: Event<SlotUpdateBefore> = EventFactory.createArrayBacked(SlotUpdateBefore::class.java) { listeners ->
-		SlotUpdateBefore { syncId, slotId, itemStack ->
-			for (listener in listeners) {
-				listener.onSlotUpdateBefore(syncId, slotId, itemStack)
-			}
-		}
-	}
-
-	fun interface SlotUpdateBefore {
-		fun onSlotUpdateBefore(syncId: Int, slotId: Int, itemStack: ItemStack)
+		fun onSlotUpdate(containerId: Int, slotId: Int, itemStack: ItemStack)
 	}
 }

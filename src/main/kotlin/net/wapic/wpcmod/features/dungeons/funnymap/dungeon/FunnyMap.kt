@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
 import net.minecraft.network.chat.Component
+import net.minecraft.util.Util
 import net.minecraft.util.profiling.Profiler
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldChangeEvent
@@ -18,6 +19,7 @@ import net.wapic.wpcmod.util.DungeonUtils.isMimicFloor
 import net.wapic.wpcmod.util.TabListUtil
 
 object FunnyMap {
+
 	val config get() = WpcMod.config.dungeon.funnyMap
 
 	val dungeonTeammates = mutableMapOf<String, DungeonPlayer>()
@@ -77,7 +79,7 @@ object FunnyMap {
 
 	fun onDungeonStart() {
 		TabListUtil.getDungeonTabList()?.let(MapUpdate::getPlayers)
-		Info.startTime = System.currentTimeMillis()
+		Info.startTime = Util.getMillis()
 	}
 
 	fun onMessageReceived(text: Component, isActionBar: Boolean) {
@@ -101,7 +103,6 @@ object FunnyMap {
 		Info.reset()
 		dungeonTeammates.clear()
 		espDoors.clear()
-		PlayerTracker.roomClears.clear()
 		MapUtils.calibrated = false
 		MapUtils.mapData = null
 		DungeonScan.hasScanned = false
@@ -110,6 +111,7 @@ object FunnyMap {
 	private fun shouldSearchMimic() = !Info.mimicFound && !config.legitMode && isMimicFloor
 
 	object Info {
+
 		// 6 x 6 room grid, 11 x 11 with connections
 		val dungeonList = Array<Tile>(121) { Unknown(0, 0) }
 		val uniqueRooms = mutableSetOf<UniqueRoom>()

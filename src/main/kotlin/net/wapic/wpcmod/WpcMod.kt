@@ -27,6 +27,7 @@ import net.wapic.wpcmod.features.chat.*
 import net.wapic.wpcmod.features.dev.SkyBlockID
 import net.wapic.wpcmod.features.dungeons.*
 import net.wapic.wpcmod.features.dungeons.floor7.*
+import net.wapic.wpcmod.features.dungeons.floor7.terminals.Terminal
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
 import net.wapic.wpcmod.features.end.EndESP
 import net.wapic.wpcmod.features.entity.*
@@ -35,9 +36,11 @@ import net.wapic.wpcmod.features.fishing.AutoFish
 import net.wapic.wpcmod.features.foraging.ForestNodeESP
 import net.wapic.wpcmod.features.galatea.GalateaESP
 import net.wapic.wpcmod.features.garden.PestESP
+import net.wapic.wpcmod.features.general.CenturyCakeHelper
 import net.wapic.wpcmod.features.general.Freecam
 import net.wapic.wpcmod.features.general.PreventPlacingItems
 import net.wapic.wpcmod.features.general.shortcut.ShortcutHandler
+import net.wapic.wpcmod.features.hunting.*
 import net.wapic.wpcmod.features.instance.AutoGFS
 import net.wapic.wpcmod.features.instance.CancelInteract
 import net.wapic.wpcmod.features.inventory.AutoCloseWardrobe
@@ -129,6 +132,7 @@ object WpcMod : ModInitializer {
 		ClientLifecycleEvents.CLIENT_STOPPING.register {
 			ConfigManager.saveConfig()
 			HudManager.saveLocations()
+			CenturyCakeHelper.saveTimes()
 			globalJob.cancel()
 		}
 
@@ -150,6 +154,7 @@ object WpcMod : ModInitializer {
 		TagESP.init()
 		TrapperESP.init()
 		FairySoulESP.init()
+		CenturyCakeHelper.init()
 
 		//Experiments
 		AutoExperiments.init()
@@ -164,8 +169,6 @@ object WpcMod : ModInitializer {
 		ScoreCalculation.init()
 		DungeonESP.init()
 		TickTimers.init()
-		TerminalSolver.init()
-		MelodyMessage.init()
 		InactiveWaypoints.init()
 		ArrowAlign.init()
 		FunnyMap.init()
@@ -176,6 +179,7 @@ object WpcMod : ModInitializer {
 		LividSolver.init()
 		AutoDebuff.init()
 		AutoShowExtraStats.init()
+		Terminal.init()
 
 		// Kuudra
 		KuudraESP.init()
@@ -186,7 +190,6 @@ object WpcMod : ModInitializer {
 
 		// Galatea
 		GalateaESP.init()
-		ForestNodeESP.init()
 
 		// End
 		EndESP.init()
@@ -198,7 +201,17 @@ object WpcMod : ModInitializer {
 
 		// Fishing
 		AutoFish.init()
-		
+
+		// Foraging
+		ForestNodeESP.init()
+
+		// Hunting
+		AutoReelLasso.init()
+		SafariESP.init()
+		SafariTracker.init()
+		SafariSparklingHelper.init()
+		AutoAcceptHideyho.init()
+
 		// Mining
 		PigeonSwapper.init()
 		ChestESP.init()

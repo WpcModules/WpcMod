@@ -24,9 +24,9 @@ object SpamFilter {
 		Regex("^Your (\\w+(?:\\s\\w+)*) hit (\\d+) enem(?:y|ies) for (\\d+(?:,\\d+)*(\\.\\d+)?) damage\\.$")
 	private val tpFailRegex = Regex("^There are blocks in the way!$")
 	private val killComboRegex =
-		Regex("\\+\\d+ Kill Combo(?: \\+\\d+[%☯]? (?:✯ Magic Find|coins per kill|Combat Wisdom))?")
+		Regex("\\+\\d+ Kill Combo(?: \\+\\d+.? (?:. Magic Find|coins per kill|Combat Wisdom))?")
 	private val joinOrLeaveRegex = Regex("^(?:Friend|Guild) > \\w+ (?:joined|left)\\.$")
-	private val tipRegex = Regex("^You tipped \\d+ players? in \\d+ different games?!$")
+	private val tipRegex = Regex("^§aYou tipped \\d+ players? in \\d+ (?:different\\s)?games?!$")
 
 	data class Notification(val text: Component, var delay: Int) {
 		var x = MC.font.width(text.string)

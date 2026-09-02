@@ -8,8 +8,10 @@ import net.minecraft.world.phys.AABB
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.events.WorldRenderEvent
+import net.wapic.wpcmod.util.EntityUtils.biome
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.SafariAPI.SafariBiome.Companion.isSimilarTo
 import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.render.WorldRenderContext
 
@@ -24,24 +26,27 @@ object ForestNodeESP {
 		WorldChangeEvent.AFTER.register { forestNodes = null }
 	}
 
-	fun onTick(client: Minecraft) {
+	private fun onTick(client: Minecraft) {
 		if (!isEnabled()) return
 		forestNodes = MC.entitiesOf<Display.ItemDisplay>()
-			.filter { it.itemStack.item == Items.STRING }
+			.filter { it.itemStack.item == Items.STRING && isInBiome(it) }
 			.distinctBy { it.blockPosition() }
 			.map { AABB(it.blockPosition()) }
+	}
+
+	private fun isInBiome(entity: Display.ItemDisplay): Boolean {
+		if (!config.onlyCurrentBiome) return true
+		val player = MC.player ?: return false
+		return entity.biome.isSimilarTo(player.biome)
 	}
 
 	private fun renderWorld(worldRenderContext: WorldRenderContext) {
 		if (!isEnabled()) return
 		worldRenderContext.profiler.push("forest-node-esp")
 		forestNodes?.forEach { node ->
-			if (config.box) worldRenderContext.drawBoundingBox(node.setMinY(node.maxY), config.color)
-			if (config.tracer) worldRenderContext.drawTracer(
-				node.setMinY(node.maxY).center,
-				config.color,
-				config.tracerWidth
-			)
+			val nodePos = node.setMinY(node.maxY)
+			if (config.box) worldRenderContext.drawBoundingBox(nodePos, config.color)
+			if (config.tracer) worldRenderContext.drawTracer(nodePos.center, config.color, config.tracerWidth)
 		}
 		worldRenderContext.profiler.pop()
 	}

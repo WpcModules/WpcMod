@@ -2,12 +2,12 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	id 'idea'
-	id 'java'
-	id 'net.fabricmc.fabric-loom' version "${loom_version}"
-	id 'maven-publish'
-	id "org.jetbrains.kotlin.jvm" version "${kotlin_version}"
-	id "com.gradleup.shadow" version "9.4.2"
+    id 'idea'
+    id 'java'
+    id 'net.fabricmc.fabric-loom' version "${loom_version}"
+    id 'maven-publish'
+    id "org.jetbrains.kotlin.jvm" version "${kotlin_version}"
+    id "com.gradleup.shadow" version "9.4.2"
 }
 
 version = project.mod_version
@@ -15,7 +15,7 @@ group = project.maven_group
 loom.log4jConfigs.from "log4j-dev.xml"
 
 base {
-	archivesName = project.archives_base_name
+    archivesName = project.archives_base_name
 }
 
 repositories {
@@ -36,88 +36,88 @@ repositories {
         url = "https://repo.nea.moe/releases"
     }
     maven {
+        name = "shedaniel"
+        url = "https://maven.shedaniel.me"
+    }
+    maven {
         name = "Modrinth"
         url = "https://api.modrinth.com/maven"
         content {
             includeGroup("maven.modrinth")
         }
     }
-	maven {
-		name = "shedaniel"
-		url = "https://maven.shedaniel.me"
-	}
 }
 
 configurations {
-	shadowImplementation
+    shadowImplementation
 }
 
 dependencies {
-	// To change the versions see the gradle.properties file
-	minecraft("com.mojang:minecraft:${project.minecraft_version}")
-	implementation("net.fabricmc:fabric-loader:${project.loader_version}")
+    // To change the versions see the gradle.properties file
+    minecraft("com.mojang:minecraft:${project.minecraft_version}")
+    implementation("net.fabricmc:fabric-loader:${project.loader_version}")
 
-	// Fabric API. This is technically optional, but you probably want it anyway.
-	implementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}")
-	implementation("net.fabricmc:fabric-language-kotlin:${project.fabric_kotlin_version}")
+    // Fabric API. This is technically optional, but you probably want it anyway.
+    implementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}")
+    implementation("net.fabricmc:fabric-language-kotlin:${project.fabric_kotlin_version}")
 
-	shadowImplementation("org.notenoughupdates.moulconfig:${project.moulconfig_version}")
-	shadowImplementation("moe.nea:libautoupdate:${project.libautoupdate_version}")
+    shadowImplementation("org.notenoughupdates.moulconfig:${project.moulconfig_version}")
+    shadowImplementation("moe.nea:libautoupdate:${project.libautoupdate_version}")
 
-	include(implementation("com.moulberry:mixinconstraints:${project.mixinconstraints_version}"))
-	include(implementation("net.hypixel:mod-api:1.0.2"))
+    include(implementation("com.moulberry:mixinconstraints:${project.mixinconstraints_version}"))
+    include(implementation("net.hypixel:mod-api:1.0.2"))
 
-	compileOnly("me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}") {
-		exclude group: "net.fabricmc.fabric-api"
-	}
+    compileOnly("me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}") {
+        exclude group: "net.fabricmc.fabric-api"
+    }
 
     // Dev Runtimes
-	localRuntime("me.djtheredstoner:DevAuth-fabric:${project.devauth_version}")
-	// DO NOT SWITCH TO TERRAFORMERS MAVEN REPO CAUSE YOU WILL HATE YOURSELF
-	localRuntime("maven.modrinth:modmenu:${project.modmenu_version}")
-	// we're using modrinth rei and architectury otherwise it imports the wrong architectury version and won't work properly
-	localRuntime("maven.modrinth:rei:${project.rei_version}+fabric")
-	localRuntime("maven.modrinth:architectury-api:${project.architectury_api}")
+    localRuntime("me.djtheredstoner:DevAuth-fabric:${project.devauth_version}")
+    // DO NOT SWITCH TO TERRAFORMERS MAVEN REPO CAUSE YOU WILL HATE YOURSELF
+    localRuntime("maven.modrinth:modmenu:${project.modmenu_version}")
+    // we're using modrinth rei and architectury otherwise it imports the wrong architectury version and won't work properly
+    localRuntime("maven.modrinth:rei:${project.rei_version}+fabric")
+    localRuntime("maven.modrinth:architectury-api:${project.architectury_api}")
 
-	localRuntime("maven.modrinth:hypixel-mod-api:${project.hypixel_mod_api_version}")
-	localRuntime("maven.modrinth:sodium:${project.sodium_version}")
-	localRuntime("maven.modrinth:no-chat-reports:${project.no_chat_reports_version}")
-	localRuntime("maven.modrinth:betterf3:${project.betterf3_version}")
-	localRuntime("maven.modrinth:zoomify:${project.zoomify_version}")
-	localRuntime("maven.modrinth:cloth-config:${project.cloth_config_version}")
-	localRuntime("maven.modrinth:yacl:${project.yacl_version}")
+    localRuntime("maven.modrinth:hypixel-mod-api:${project.hypixel_mod_api_version}")
+    localRuntime("maven.modrinth:sodium:${project.sodium_version}")
+    localRuntime("maven.modrinth:no-chat-reports:${project.no_chat_reports_version}")
+    localRuntime("maven.modrinth:betterf3:${project.betterf3_version}")
+    localRuntime("maven.modrinth:zoomify:${project.zoomify_version}")
+    localRuntime("maven.modrinth:cloth-config:${project.cloth_config_version}")
+    localRuntime("maven.modrinth:yacl:${project.yacl_version}")
 
-	configurations.shadowImplementation.dependencies.each {
-		implementation(it)
-	}
+    configurations.shadowImplementation.dependencies.each {
+        implementation(it)
+    }
 }
 
 shadowJar {
-	archiveClassifier.set("")
-	configurations = [project.configurations.shadowImplementation]
+    archiveClassifier.set("")
+    configurations = [project.configurations.shadowImplementation]
 
-	relocate('io.github.notenoughupdates.moulconfig', 'net.wapic.wpcmod.deps.moulconfig')
-	relocate('moe.nea.libautoupdate', 'net.wapic.wpcmod.deps.libautoupdate')
+    relocate('io.github.notenoughupdates.moulconfig', 'net.wapic.wpcmod.deps.moulconfig')
+    relocate('moe.nea.libautoupdate', 'net.wapic.wpcmod.deps.libautoupdate')
 
-	exclude("META-INF/versions/**")
-	mergeServiceFiles()
+    exclude("META-INF/versions/**")
+    mergeServiceFiles()
 }
 
 jar {
-	archiveClassifier.set("no-deps")
-	destinationDirectory.set(rootProject.layout.buildDirectory.dir("badjars"))
+    archiveClassifier.set("no-deps")
+    destinationDirectory.set(rootProject.layout.buildDirectory.dir("badjars"))
 }
 
 assemble {
-	dependsOn(shadowJar)
+    dependsOn(shadowJar)
 }
 
 processResources {
-	inputs.property "version", project.version
+    inputs.property "version", project.version
 
-	filesMatching("fabric.mod.json") {
-		expand "version": inputs.properties.version
-	}
+    filesMatching("fabric.mod.json") {
+        expand "version": inputs.properties.version
+    }
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -127,12 +127,12 @@ tasks.withType(JavaCompile).configureEach {
 
 tasks.withType(KotlinCompile).configureEach {
     compilerOptions {
-		jvmTarget = JvmTarget.JVM_25
+        jvmTarget = JvmTarget.JVM_25
     }
 }
 
 java {
-	withSourcesJar()
+    withSourcesJar()
 
 	toolchain {
 		languageVersion.set(JavaLanguageVersion.of(25))
@@ -141,21 +141,21 @@ java {
 
 // configure the maven publication
 publishing {
-	publications {
-		create("mavenJava", MavenPublication) {
+    publications {
+        create("mavenJava", MavenPublication) {
             groupId = project.maven_group
             artifactId = project.archives_base_name + "-mc-" + project.minecraft_version
-			version = project.mod_version + project.properties.getOrDefault("sha", "")
-			from components.java
-		}
-	}
+            version = project.mod_version + project.properties.getOrDefault("sha", "")
+            from components.java
+        }
+    }
 
-	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-	repositories {
-		maven {
-			name = "WapicMavenRepo"
-			url = "https://maven.wapic.net/${project.properties.get("sha") ? "snapshots": "releases"}"
-			credentials(PasswordCredentials)
-		}
-	}
+    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
+    repositories {
+        maven {
+            name = "WapicMavenRepo"
+            url = "https://maven.wapic.net/${project.properties.get("sha") ? "snapshots" : "releases"}"
+            credentials(PasswordCredentials)
+        }
+    }
 }
