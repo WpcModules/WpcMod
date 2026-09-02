@@ -31,6 +31,7 @@ import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
 import net.wapic.wpcmod.features.end.EndESP
 import net.wapic.wpcmod.features.entity.*
 import net.wapic.wpcmod.features.events.diana.AutoAnswerSphinx
+import net.wapic.wpcmod.features.events.diana.LootshareHelper
 import net.wapic.wpcmod.features.fishing.AutoFish
 import net.wapic.wpcmod.features.foraging.ForestNodeESP
 import net.wapic.wpcmod.features.galatea.GalateaESP
@@ -194,6 +195,7 @@ object WpcMod : ModInitializer {
 
 		// Diana
 		AutoAnswerSphinx.init()
+		LootshareHelper.init()
 
 		// Fishing
 		AutoFish.init()
