@@ -4,11 +4,9 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
 import net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
-import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.features.dungeons.floor7.terminals.Terminal
 
 object TermSimCommand : Command("term") {
-	private val ping get() = WpcMod.config.dungeon.floor7.termSimPing.toLong()
 
 	private val startsWith = literal("startswith").executes {
 		Terminal.openSimulator(Terminal.Type.STARTS_WITH)

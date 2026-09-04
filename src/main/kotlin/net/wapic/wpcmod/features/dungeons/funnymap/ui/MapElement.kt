@@ -7,7 +7,6 @@ import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.util.CommonColors
 import net.minecraft.util.profiling.Profiler
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.features.dungeons.funnymap.core.DungeonPlayer
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.*
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.DungeonScan
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
@@ -18,10 +17,11 @@ import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils.CONNECTOR_SIZE
 import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils.halfRoomSize
 import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils.roomSize
 import net.wapic.wpcmod.hud.SimpleHudElement
-import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.equalsOneOf
-import net.wapic.wpcmod.util.render.fillWithOutline
+import net.wapic.wpcmod.util.dungeons.DungeonPlayer
+import net.wapic.wpcmod.util.dungeons.DungeonUtils
+import net.wapic.wpcmod.util.render.gui.fillWithOutline
 
 object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 
@@ -109,9 +109,7 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 
 				var color = tile.color
 
-				if (tile.state.equalsOneOf(RoomState.UNDISCOVERED, RoomState.UNOPENED) &&
-					!legitRender && FunnyMap.Info.startTime != 0L
-				) {
+				if (tile.state.equalsOneOf(RoomState.UNDISCOVERED, RoomState.UNOPENED) && !legitRender && DungeonUtils.startTime != 0L) {
 					if (config.mapDarkenUndiscovered) {
 						color = color.darken(1 - config.mapDarkenPercent)
 					}
@@ -203,14 +201,14 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 
 	fun renderPlayerHeads(drawContext: GuiGraphicsExtractor, deltaTicks: Float) {
 		try {
-			if (FunnyMap.dungeonTeammates.isEmpty()) {
+			if (DungeonUtils.dungeonTeammates.isEmpty()) {
 				MC.player?.let {
 					MapRenderer.drawPlayerHead(drawContext, it.name.string, DungeonPlayer(it.skin).apply {
 						yaw = it.yRot
 					}, deltaTicks)
 				}
 			} else {
-				FunnyMap.dungeonTeammates.forEach { (name, teammate) ->
+				DungeonUtils.dungeonTeammates.forEach { (name, teammate) ->
 					if (!teammate.dead) {
 						MapRenderer.drawPlayerHead(drawContext, name, teammate, deltaTicks)
 					}

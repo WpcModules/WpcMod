@@ -59,6 +59,9 @@ object HudManager {
 
 	fun openEditor() {
 		MC.instance.schedule { MC.screen = HudEditor(hudElements) }
+		hudElements.forEach {
+			if (it is Mutable) it.notifyObserver()
+		}
 	}
 
 	fun resetLocations() {

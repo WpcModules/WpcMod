@@ -6,13 +6,15 @@ import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.input.MouseButtonEvent
 import net.minecraft.network.chat.Component
 import net.minecraft.util.CommonColors
+import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.MC
-import net.wapic.wpcmod.util.render.fillWithOutline
+import net.wapic.wpcmod.util.render.gui.fillWithOutline
 import org.lwjgl.glfw.GLFW
 import java.awt.Point
 import kotlin.math.abs
 
 class HudEditor : Screen {
+
 	private val elements: List<SimpleHudElement>
 	private var isScaling: Boolean = false
 	private var clickedElement: SimpleHudElement? = null
@@ -50,7 +52,7 @@ class HudEditor : Screen {
 	fun getHoveredElement(mouseX: Double, mouseY: Double): SimpleHudElement? {
 		return elements.find {
 			mouseX in it.getAbsoluteX()..it.getAbsoluteX() + it.getEffectiveWidth() &&
-			mouseY in it.getAbsoluteY()..it.getAbsoluteY() + it.getEffectiveHeight()
+					mouseY in it.getAbsoluteY()..it.getAbsoluteY() + it.getEffectiveHeight()
 		}
 	}
 
@@ -75,10 +77,20 @@ class HudEditor : Screen {
 		return super.mouseClicked(click, doubled)
 	}
 
+	override fun mouseScrolled(x: Double, y: Double, scrollX: Double, scrollY: Double): Boolean {
+		super.mouseScrolled(x, y, scrollX, scrollY)
+		WpcMod.LOGGER.debug("Scrolling element: {}, {}, {}, {}", x, y, scrollX, scrollY)
+		getHoveredElement(x, y)?.let {
+			val newScale = it.scale + scrollY * 0.1f
+			return true
+		}
+		return true
+	}
+
 	fun getOppositeCorner(mouseX: Double, mouseY: Double, x: Float, y: Float, width: Int, height: Int): Point {
 		return Point(
-			(if(abs(mouseX - x) > abs(x + width - mouseX)) x else x + width).toInt(),
-			(if(abs(mouseY - y) > abs(y + height - mouseY)) y else y + height).toInt()
+			(if (abs(mouseX - x) > abs(x + width - mouseX)) x else x + width).toInt(),
+			(if (abs(mouseY - y) > abs(y + height - mouseY)) y else y + height).toInt()
 		)
 	}
 
@@ -95,12 +107,18 @@ class HudEditor : Screen {
 
 			if (isScaling) {
 				val newScale = oppositeCorner.distance(mouseX, mouseY) * scalePerDistance
-				if (newScale <= 0.2f || it.getUnscaledHeight() * newScale >= MC.window.guiScaledHeight) return
+				if (newScale <= 0.2f || it.getUnscaledHeight() * newScale >= MC.window.guiScaledHeight || it.getUnscaledWidth() * newScale >= MC.window.guiScaledWidth) return
 
 				it.scale = newScale.toFloat()
 				val translatedPos = translate(oppositeCorner, it)
-				it.x = translatedPos.first.coerceIn(0f, (MC.window.guiScaledWidth - it.getEffectiveWidth()).toFloat()) / (MC.window.guiScaledWidth - it.getEffectiveWidth()).toFloat()
-				it.y = translatedPos.second.coerceIn(0f, (MC.window.guiScaledWidth - it.getEffectiveWidth()).toFloat()) / (MC.window.guiScaledHeight - it.getEffectiveHeight()).toFloat()
+				it.x = translatedPos.first.coerceIn(
+					0f,
+					(MC.window.guiScaledWidth - it.getEffectiveWidth()).toFloat()
+				) / (MC.window.guiScaledWidth - it.getEffectiveWidth()).toFloat()
+				it.y = translatedPos.second.coerceIn(
+					0f,
+					(MC.window.guiScaledWidth - it.getEffectiveWidth()).toFloat()
+				) / (MC.window.guiScaledHeight - it.getEffectiveHeight()).toFloat()
 			}
 		}
 
@@ -108,8 +126,8 @@ class HudEditor : Screen {
 	}
 
 	fun translate(pos: Point, element: SimpleHudElement): Pair<Float, Float> {
-		return (pos.x + element.getEffectiveWidth() * if(pos.x > element.getAbsoluteX() + element.getEffectiveWidth() / 2) -1f else 0f) to
-				(pos.y + element.getEffectiveHeight() * if(pos.y > element.getAbsoluteY() + element.getEffectiveHeight() / 2) -1f else 0f)
+		return (pos.x + element.getEffectiveWidth() * if (pos.x > element.getAbsoluteX() + element.getEffectiveWidth() / 2) -1f else 0f) to
+				(pos.y + element.getEffectiveHeight() * if (pos.y > element.getAbsoluteY() + element.getEffectiveHeight() / 2) -1f else 0f)
 	}
 
 	override fun mouseReleased(click: MouseButtonEvent): Boolean {

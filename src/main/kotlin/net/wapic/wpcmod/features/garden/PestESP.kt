@@ -4,11 +4,11 @@ import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.decoration.ArmorStand
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.features.entity.EspFeature
-import net.wapic.wpcmod.util.headTexture
 import net.wapic.wpcmod.util.HeadTextures
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.Utils
-import net.wapic.wpcmod.util.render.state.EspRenderState
+import net.wapic.wpcmod.util.headTexture
+import net.wapic.wpcmod.util.render.state.EntityState
 
 object PestESP : EspFeature() {
 
@@ -16,9 +16,9 @@ object PestESP : EspFeature() {
 
 	fun init() = Unit
 
-	override fun compute(entity: Entity): EspRenderState? {
-		if(entity is ArmorStand && entity.headTexture in HeadTextures.allPests) {
-			return EspRenderState.fromArmorStand(entity, config)
+	override fun compute(entity: Entity): EntityState? {
+		if (entity is ArmorStand && entity.headTexture in HeadTextures.allPests) {
+			return EntityState(config, .8f, .8f, 1.35f)
 		}
 
 		return null

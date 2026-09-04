@@ -15,11 +15,12 @@ import net.wapic.wpcmod.features.dungeons.floor7.terminals.Terminal
 import net.wapic.wpcmod.util.MC
 
 abstract class TerminalSimulatorHandler(private val menu: ChestMenu) {
+
 	protected val emptyNameData =
 		DataComponentPatch.builder().set(DataComponents.CUSTOM_NAME, Component.literal("")).build()
 	protected val glintOverrideData =
 		DataComponentPatch.builder().set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true).build()
-	protected val blackPane = ItemStackTemplate(Items.BLACK_STAINED_GLASS_PANE, emptyNameData).create()
+	protected val blackPane = ItemStackTemplate(Items.STAINED_GLASS_PANE.black, emptyNameData).create()
 	private val slots: List<Slot> get() = menu.slots.subList(0, menu.container.containerSize)
 
 	abstract fun create()

@@ -1,4 +1,4 @@
-package net.wapic.wpcmod.util.render
+package net.wapic.wpcmod.util.render.gui.state
 
 import com.mojang.blaze3d.pipeline.RenderPipeline
 import com.mojang.blaze3d.vertex.BufferBuilder
@@ -8,6 +8,7 @@ import net.minecraft.client.gui.navigation.ScreenRectangle
 import net.minecraft.client.gui.render.TextureSetup
 import net.minecraft.client.renderer.state.gui.GuiElementRenderState
 import net.wapic.wpcmod.render.DirectVertexConsumer
+import net.wapic.wpcmod.util.render.WpcModRenderPipelines
 import org.joml.Matrix3x2f
 
 @JvmRecord
@@ -37,7 +38,7 @@ data class RoundedRectangleRenderState(
 	}
 
 	override fun pipeline(): RenderPipeline {
-		return WpcModRenderPipelines.GUI_THING
+		return WpcModRenderPipelines.GUI_CUSTOM
 	}
 
 	override fun textureSetup(): TextureSetup {
@@ -53,6 +54,7 @@ data class RoundedRectangleRenderState(
 	}
 
 	companion object {
+
 		fun createBounds(matrix3x2f: Matrix3x2f, x: Float, y: Float, width: Float, height: Float): ScreenRectangle {
 			return (ScreenRectangle(x.toInt(), y.toInt(), width.toInt(), height.toInt())).transformMaxBounds(matrix3x2f)
 		}

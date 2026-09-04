@@ -12,12 +12,12 @@ import net.wapic.wpcmod.events.BlockEvents
 import net.wapic.wpcmod.events.ServerTickEvent
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.hud.SimpleHudElement
-import net.wapic.wpcmod.util.DungeonUtils.DungeonFloor
-import net.wapic.wpcmod.util.DungeonUtils.bossSpawned
-import net.wapic.wpcmod.util.DungeonUtils.currentFloor
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 import net.wapic.wpcmod.util.Utils.toFixed
+import net.wapic.wpcmod.util.dungeons.DungeonUtils.DungeonFloor
+import net.wapic.wpcmod.util.dungeons.DungeonUtils.bossSpawned
+import net.wapic.wpcmod.util.dungeons.DungeonUtils.currentFloor
 
 object SpiritBearTimer : SimpleHudElement("Spirit Bear Timer", 90, 12) {
 

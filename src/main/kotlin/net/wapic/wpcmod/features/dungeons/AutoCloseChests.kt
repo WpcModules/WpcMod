@@ -2,16 +2,9 @@ package net.wapic.wpcmod.features.dungeons
 
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.contents.TranslatableContents
-import net.minecraft.sounds.SoundEvents
-import net.minecraft.world.item.ItemStack
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.events.EntityEvents
 import net.wapic.wpcmod.events.GuiEvents
-import net.wapic.wpcmod.util.ChatUtils
-import net.wapic.wpcmod.util.DungeonUtils
-import net.wapic.wpcmod.util.HeadTextures
-import net.wapic.wpcmod.util.MC
-import net.wapic.wpcmod.util.headTexture
+import net.wapic.wpcmod.util.dungeons.DungeonUtils
 
 object AutoCloseChests {
 
@@ -20,16 +13,6 @@ object AutoCloseChests {
 
 	fun init() {
 		GuiEvents.BEFORE_OPEN.register(::onScreenInit)
-		EntityEvents.ITEM_DATA_SET.register(::onItemDataSet)
-	}
-
-	fun onItemDataSet(stack: ItemStack) {
-		if (!config.alertOnTreasureTalismans || !DungeonUtils.inDungeons) return
-		if (stack.headTexture == HeadTextures.TREASURE_TALISMAN) {
-			ChatUtils.sendAlert(stack.hoverName)
-			ChatUtils.sendMessage(stack.hoverName.string, stack.hoverName.style)
-			MC.player?.makeSound(SoundEvents.EXPERIENCE_ORB_PICKUP)
-		}
 	}
 
 	fun onScreenInit(screen: Screen) {

@@ -8,7 +8,7 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.phys.BlockHitResult
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.util.DungeonUtils
+import net.wapic.wpcmod.util.dungeons.DungeonUtils
 import net.wapic.wpcmod.util.skyblockId
 
 object PreventPlacingItems {

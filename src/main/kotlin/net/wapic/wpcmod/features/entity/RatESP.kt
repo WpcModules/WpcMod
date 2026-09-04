@@ -5,9 +5,9 @@ import net.minecraft.world.entity.Entity
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.HeadTextures
 import net.wapic.wpcmod.util.Island
-import net.wapic.wpcmod.util.headTexture
 import net.wapic.wpcmod.util.Utils
-import net.wapic.wpcmod.util.render.state.EspRenderState
+import net.wapic.wpcmod.util.headTexture
+import net.wapic.wpcmod.util.render.state.EntityState
 
 object RatESP : EspFeature() {
 
@@ -15,9 +15,9 @@ object RatESP : EspFeature() {
 
 	fun init() = Unit
 
-	override fun compute(entity: Entity): EspRenderState? {
+	override fun compute(entity: Entity): EntityState? {
 		if (entity is Display.ItemDisplay && entity.itemStack.headTexture == HeadTextures.RAT) {
-			return EspRenderState.fromArmorStand(entity, config, .3)
+			return EntityState(config, .8f, .8f)
 		}
 		return null
 	}

@@ -3,32 +3,43 @@ package net.wapic.wpcmod.features.dungeons.floor7
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.network.chat.Component
+import net.minecraft.resources.Identifier
 import net.minecraft.util.CommonColors
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.ServerTickEvent
 import net.wapic.wpcmod.events.WorldChangeEvent
+import net.wapic.wpcmod.hud.Mutable
 import net.wapic.wpcmod.hud.SimpleHudElement
 import net.wapic.wpcmod.util.ChatUtils
-import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.Utils.toFixed
+import net.wapic.wpcmod.util.dungeons.DungeonUtils
+import net.wapic.wpcmod.util.render.gui.drawTexture
 
-object InvincibilityTimer : SimpleHudElement("Invincibility Timer", 160, 33) {
+object InvincibilityTimer : SimpleHudElement("Invincibility Timer", 48, 45), Mutable {
 
 	private val config get() = WpcMod.config.dungeon.invincibilityTimer
 	override val isEnabled: Boolean get() = config.enabled
-	override val isActive: Boolean get() = DungeonUtils.inDungeons && isEnabled
+	override val isActive: Boolean get() = DungeonUtils.inDungeons && isEnabled && config.hud
 
 	fun init() {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
-		ServerTickEvent.EVENT.register { InvincibilityType.entries.forEach(InvincibilityType::tick) }
-		WorldChangeEvent.AFTER.register { InvincibilityType.entries.forEach(InvincibilityType::reset) }
+		ServerTickEvent.EVENT.register { config.enabledItems.get().forEach(::tick) }
+		WorldChangeEvent.AFTER.register { config.enabledItems.get().forEach(::reset) }
+		config.enabledItems.addObserver(::onUpdateEnabledItems)
 	}
+
+	fun onUpdateEnabledItems(old: MutableList<InvincibilityType>, new: MutableList<InvincibilityType>) {
+		this.height = new.size * 15
+	}
+
+	override fun notifyObserver() = config.enabledItems.notifyObservers()
 
 	fun onMessageReceived(text: Component, actionBar: Boolean) {
 		if (!isActive || actionBar) return
-		InvincibilityType.entries.firstOrNull { it.regex.matches(text.string) }?.proc()
+		val type = config.enabledItems.get().firstOrNull { it.regex.matches(text.string) } ?: return
+		proc(type)
 	}
 
 	override fun render(drawContext: GuiGraphicsExtractor, deltaTicks: Float) {
@@ -37,50 +48,46 @@ object InvincibilityTimer : SimpleHudElement("Invincibility Timer", 160, 33) {
 		matrixStack.pushMatrix()
 		applyTransformations(matrixStack)
 
-		InvincibilityType.entries.filter { it.currentCooldown > 0 || it.activeTime > 0 }.forEachIndexed { index, type ->
-			val time =
-				if (type.activeTime > 0) "Immunity: ${(type.activeTime / 20f).toFixed()}" else "Cooldown: ${(type.currentCooldown / 20f).toFixed()}"
-			drawContext.text(MC.font, "§6${type} ${time}s", 2, 2 + index * 10, CommonColors.WHITE, true)
+		config.enabledItems.get().forEachIndexed { index, type ->
+			drawContext.drawTexture(type.icon, -1, -1 + index * 15, 0f, 0f, 16, 16, 16, 16)
+			val time = when {
+				type.currentCooldown <= 0 -> "§aREADY"
+				type.activeTime > 0 -> "§6${(type.activeTime / 20f).toFixed(1)}s"
+				else -> "§c${(type.currentCooldown / 20f).toFixed(1)}s"
+			}
+			drawContext.text(MC.font, time, 15, 4 + index * 15, CommonColors.WHITE, true)
 		}
 
 		matrixStack.popMatrix()
 	}
 
-	private enum class InvincibilityType(
-		val regex: Regex,
-		private val maxInvincibilityTicks: Int,
-		val maxCooldownTicks: Int,
-	) {
-		SPIRIT(Regex("^Second Wind Activated! Your Spirit Mask saved your life!$"), 30, 600),
-		BONZO(Regex("^Your (?:. )?Bonzo's Mask saved your life!$"), 60, 3600),
-		PHOENIX(Regex("^Your Phoenix Pet saved you from certain death!$"), 40, 1200);
+	fun tick(type: InvincibilityType) {
+		if (!isEnabled) return
+		if (type.currentCooldown > 0) type.currentCooldown--
+		if (type.activeTime > 0) type.activeTime--
+	}
+
+	fun proc(type: InvincibilityType) {
+		if (!isActive) return
+		if (config.title) ChatUtils.sendAlert(Component.literal("$type procced"))
+		if (config.message) Utils.runCommand("pc $type procced")
+		type.currentCooldown = type.maxCooldownTicks
+		type.activeTime = type.maxInvincibilityTicks
+	}
+
+	fun reset(type: InvincibilityType) {
+		type.currentCooldown = 0
+		type.activeTime = 0
+	}
+
+	enum class InvincibilityType(val regex: Regex, val maxInvincibilityTicks: Int, val maxCooldownTicks: Int, val icon: Identifier) {
+		SPIRIT_MASK(Regex("^Second Wind Activated! Your Spirit Mask saved your life!$"), 60, 600, WpcMod.Identifier("dungeon/immunity/spirit_mask.png")),
+		BONZO_MASK(Regex("^Your (?:. )?Bonzo's Mask saved your life!$"), 60, 3600, WpcMod.Identifier("dungeon/immunity/bonzo_mask.png")),
+		PHOENIX_PET(Regex("^Your Phoenix Pet saved you from certain death!$"), 40, 1200, WpcMod.Identifier("dungeon/immunity/phoenix_pet.png"));
 
 		var activeTime: Int = 0
-			private set
 		var currentCooldown: Int = 0
-			private set
 
-		fun proc() {
-			if (!isActive) return
-			if (config.title) ChatUtils.sendAlert(Component.literal("${toString()} Procced"))
-			if (config.message) Utils.runCommand("pc ${toString()} Procced")
-			activeTime = maxInvincibilityTicks
-			currentCooldown = maxCooldownTicks
-		}
-
-		fun tick() {
-			if (!isEnabled) return
-			if (currentCooldown > 0) currentCooldown--
-			if (activeTime > 0) activeTime--
-		}
-
-		fun reset() {
-			currentCooldown = 0
-			activeTime = 0
-		}
-
-		override fun toString(): String {
-			return name.lowercase().replaceFirstChar { it.uppercase() }
-		}
+		override fun toString(): String = name.lowercase().replace("_", " ").replaceFirstChar { it.uppercase() }
 	}
 }

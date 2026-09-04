@@ -6,10 +6,10 @@ import net.minecraft.world.item.Items
 import net.minecraft.world.item.MapItem
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.DungeonScan
-import net.wapic.wpcmod.util.DungeonUtils
-import net.wapic.wpcmod.util.DungeonUtils.inDungeons
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.equalsOneOf
+import net.wapic.wpcmod.util.dungeons.DungeonUtils
+import net.wapic.wpcmod.util.dungeons.DungeonUtils.inDungeons
 
 object MapUtils {
 

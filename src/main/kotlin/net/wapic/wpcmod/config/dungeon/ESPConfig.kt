@@ -39,9 +39,9 @@ class ESPConfig {
 
 	class WitherDoorConfig {
 
-		@ConfigOption(name = "Box", desc = "Draw a box around the object")
+		@ConfigOption(name = "Enable Wither Door ESP", desc = "Enables Wither Door ESP")
 		@ConfigEditorBoolean
-		var box: Boolean = false
+		var enabled: Boolean = false
 
 		@ConfigOption(name = "Show All Doors", desc = "Show all doors or only the next door")
 		@ConfigEditorBoolean

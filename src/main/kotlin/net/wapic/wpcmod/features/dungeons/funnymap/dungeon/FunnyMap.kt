@@ -5,24 +5,20 @@ import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
 import net.minecraft.network.chat.Component
-import net.minecraft.util.Util
 import net.minecraft.util.profiling.Profiler
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
-import net.wapic.wpcmod.features.dungeons.funnymap.core.DungeonPlayer
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.*
 import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils
 import net.wapic.wpcmod.util.ChatUtils
-import net.wapic.wpcmod.util.DungeonUtils.inDungeons
-import net.wapic.wpcmod.util.DungeonUtils.isMimicFloor
-import net.wapic.wpcmod.util.TabListUtil
+import net.wapic.wpcmod.util.dungeons.DungeonUtils.inDungeons
+import net.wapic.wpcmod.util.dungeons.DungeonUtils.isMimicFloor
 
 object FunnyMap {
 
 	val config get() = WpcMod.config.dungeon.funnyMap
 
-	val dungeonTeammates = mutableMapOf<String, DungeonPlayer>()
 	val espDoors = mutableListOf<Door>()
 
 	private val keyPickupRegex = Regex(".+ (has obtained .+|Key was picked) (Key|up)!")
@@ -32,7 +28,6 @@ object FunnyMap {
 		ClientTickEvents.START_CLIENT_TICK.register(::onTick)
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 		DungeonEvents.END.register(::onDungeonEnd)
-		DungeonEvents.START.register(::onDungeonStart)
 		WorldChangeEvent.BEFORE.register { _ -> reset() }
 	}
 
@@ -60,11 +55,6 @@ object FunnyMap {
 			MapUtils.mapDataUpdated = false
 		}
 
-		profiler.popPush("updatePlayers")
-		TabListUtil.getDungeonTabList()?.let {
-			MapUpdate.updatePlayers(it)
-		}
-
 		profiler.popPush("scan")
 		if (DungeonScan.shouldScan) {
 			DungeonScan.scan()
@@ -75,11 +65,6 @@ object FunnyMap {
 
 	fun onDungeonEnd() {
 		Info.ended = true
-	}
-
-	fun onDungeonStart() {
-		TabListUtil.getDungeonTabList()?.let(MapUpdate::getPlayers)
-		Info.startTime = Util.getMillis()
 	}
 
 	fun onMessageReceived(text: Component, isActionBar: Boolean) {
@@ -94,14 +79,10 @@ object FunnyMap {
 			Info.keys--
 		}
 
-		if (text.string == "Starting in 4 seconds.") {
-			MapUpdate.preloadHeads()
-		}
 	}
 
 	fun reset() {
 		Info.reset()
-		dungeonTeammates.clear()
 		espDoors.clear()
 		MapUtils.calibrated = false
 		MapUtils.mapData = null
@@ -115,33 +96,32 @@ object FunnyMap {
 		// 6 x 6 room grid, 11 x 11 with connections
 		val dungeonList = Array<Tile>(121) { Unknown(0, 0) }
 		val uniqueRooms = mutableSetOf<UniqueRoom>()
-		var roomCount = 0
 		val puzzles = mutableMapOf<Puzzle, Boolean>()
 
 		var trapType = ""
+		var roomCount = 0
 		var witherDoors = 0
 		var cryptCount = 0
 		var secretCount = 0
-		var mimicFound = false
-
-		var startTime = 0L
-		var ended = false
 		var keys = 0
+
+		var mimicFound = false
+		var ended = false
+
 		fun reset() {
 			dungeonList.fill(Unknown(0, 0))
 			uniqueRooms.clear()
-			roomCount = 0
 			puzzles.clear()
 
 			trapType = ""
+			roomCount = 0
 			witherDoors = 0
 			cryptCount = 0
 			secretCount = 0
-			mimicFound = false
-
-			startTime = 0L
-			ended = false
 			keys = 0
+
+			mimicFound = false
+			ended = false
 		}
 	}
 }

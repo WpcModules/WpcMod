@@ -54,7 +54,7 @@ class RubixTerminalScreen(menu: ChestMenu, title: Component) : AbstractTerminalS
 	}
 
 	override fun solveTerminal(slots: List<Slot>): List<Int> {
-		val gameArea = slots.filterNot { it.item.item == Items.BLACK_STAINED_GLASS_PANE }
+		val gameArea = slots.filterNot { it.item.item == Items.STAINED_GLASS_PANE.black }
 		if (goal == null) {
 			val goalItem = gameArea.groupingBy { it.item.item }.eachCount().maxBy { it.value }.key
 			goal = Terminal.RUBIX_ORDER.indexOf(goalItem)

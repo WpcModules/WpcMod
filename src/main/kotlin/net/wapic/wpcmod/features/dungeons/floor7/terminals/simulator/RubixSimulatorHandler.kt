@@ -8,6 +8,7 @@ import net.minecraft.world.item.Items
 import net.wapic.wpcmod.features.dungeons.floor7.terminals.Terminal
 
 class RubixSimulatorHandler(menu: ChestMenu, title: Component) : TerminalSimulatorHandler(menu) {
+
 	override fun create() {
 		this.setSlots { slot ->
 			if (slot.index % 9 in 3..5 && slot.index / 9 in 1..3) {
@@ -18,7 +19,7 @@ class RubixSimulatorHandler(menu: ChestMenu, title: Component) : TerminalSimulat
 	}
 
 	override fun slotClicked(slot: Slot, slotId: Int, buttonNum: Int, containerInput: ContainerInput) {
-		if (slot.item.item == Items.BLACK_STAINED_GLASS_PANE) return
+		if (slot.item.item == Items.STAINED_GLASS_PANE.black) return
 		val delta = if (buttonNum == 0) 1 else -1
 		val index =
 			(Terminal.RUBIX_ORDER.indexOf(slot.item.item) + delta + Terminal.RUBIX_ORDER.size) % Terminal.RUBIX_ORDER.size
@@ -27,7 +28,7 @@ class RubixSimulatorHandler(menu: ChestMenu, title: Component) : TerminalSimulat
 	}
 
 	override fun isTerminalSolved(slots: List<Slot>): Boolean {
-		val gameArea = slots.filterNot { it.item.item == Items.BLACK_STAINED_GLASS_PANE }
+		val gameArea = slots.filterNot { it.item.item == Items.STAINED_GLASS_PANE.black }
 		return gameArea.distinctBy { it.item.item }.size == 1
 	}
 }

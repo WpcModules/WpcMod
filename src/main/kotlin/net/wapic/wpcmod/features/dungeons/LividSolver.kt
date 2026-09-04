@@ -11,12 +11,12 @@ import net.wapic.wpcmod.events.BlockEvents
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.features.entity.EspFeature
 import net.wapic.wpcmod.util.ChatUtils
-import net.wapic.wpcmod.util.copyWithColor
-import net.wapic.wpcmod.util.DungeonUtils
-import net.wapic.wpcmod.util.DungeonUtils.DungeonFloor
-import net.wapic.wpcmod.util.DungeonUtils.currentFloor
 import net.wapic.wpcmod.util.Utils.equalsOneOf
-import net.wapic.wpcmod.util.render.state.EspRenderState
+import net.wapic.wpcmod.util.copyWithColor
+import net.wapic.wpcmod.util.dungeons.DungeonUtils
+import net.wapic.wpcmod.util.dungeons.DungeonUtils.DungeonFloor
+import net.wapic.wpcmod.util.dungeons.DungeonUtils.currentFloor
+import net.wapic.wpcmod.util.render.state.EntityState
 import net.wapic.wpcmod.util.render.toChromaColour
 
 object LividSolver : EspFeature() {
@@ -61,10 +61,11 @@ object LividSolver : EspFeature() {
 		correctColor = DyeColor.RED
 	}
 
-	override fun compute(entity: Entity): EspRenderState? {
+	override fun compute(entity: Entity): EntityState? {
 		if (entity.plainTextName != lividTypes[correctColor]) return null
-		val usedConfig = if (config.useLividColor) config.copyWithColor(correctColor.textColor.toChromaColour()) else config
-		return EspRenderState.fromEntity(entity, usedConfig)
+		val usedConfig =
+			if (config.useLividColor) config.copyWithColor(correctColor.textColor.toChromaColour()) else config
+		return EntityState(usedConfig)
 	}
 
 	override fun isEnabled(): Boolean = isInLividBossRoom && (config.glow || config.tracer || config.box)

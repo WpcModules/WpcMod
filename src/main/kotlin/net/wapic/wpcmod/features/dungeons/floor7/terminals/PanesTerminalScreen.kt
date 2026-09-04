@@ -29,6 +29,6 @@ class PanesTerminalScreen(menu: ChestMenu, title: Component) : AbstractTerminalS
 	}
 
 	override fun solveTerminal(slots: List<Slot>): List<Int> {
-		return slots.mapNotNull { slot -> slot.index.takeIf { slot.item.item == Items.RED_STAINED_GLASS_PANE } }
+		return slots.mapNotNull { slot -> slot.index.takeIf { slot.item.item == Items.STAINED_GLASS_PANE.red } }
 	}
 }

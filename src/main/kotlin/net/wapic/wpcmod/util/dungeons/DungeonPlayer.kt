@@ -1,24 +1,15 @@
-package net.wapic.wpcmod.features.dungeons.funnymap.core
+package net.wapic.wpcmod.util.dungeons
 
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.entity.player.PlayerSkin
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Room
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
 import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils
-import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.MC
 
 data class DungeonPlayer(val skin: PlayerSkin) {
 
 	var name = ""
-
-	/** Minecraft formatting code for the player's name */
-	var colorPrefix = 'f'
-
-	/** The player's name with formatting code */
-	val formattedName: String
-		get() = "§$colorPrefix$name"
-
 	var dungeonClass: DungeonUtils.DungeonClass = DungeonUtils.DungeonClass.EMPTY
 
 	var mapX = 0f

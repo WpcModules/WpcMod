@@ -8,7 +8,7 @@ import net.minecraft.world.entity.decoration.ArmorStand
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.getNearbyArmorStands
-import net.wapic.wpcmod.util.render.state.EspRenderState
+import net.wapic.wpcmod.util.render.state.EntityState
 import java.util.*
 
 object TagESP : EspFeature() {
@@ -58,8 +58,8 @@ object TagESP : EspFeature() {
 		return false
 	}
 
-	override fun compute(entity: Entity): EspRenderState? {
-		return if (isTagged(entity)) EspRenderState.fromEntity(entity, config) else null
+	override fun compute(entity: Entity): EntityState? {
+		return if (isTagged(entity)) EntityState(config) else null
 	}
 
 	override fun isEnabled(): Boolean = tagList.isNotEmpty() && (config.box || config.tracer || config.glow)

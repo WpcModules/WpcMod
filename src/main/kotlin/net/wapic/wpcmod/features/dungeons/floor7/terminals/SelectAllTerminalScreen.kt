@@ -46,29 +46,30 @@ class SelectAllTerminalScreen(menu: ChestMenu, title: Component) : AbstractTermi
 	}
 
 	companion object {
+
 		private val ITEM_OVERRIDES = mapOf(
 			// All this because Hypixel hates us. some of these items might not even be in the damn menu. I just put them there to be sure
 			DyeColor.WHITE to setOf(
 				Items.BONE_MEAL,
-				Items.WHITE_WOOL,
-				Items.WHITE_CARPET,
-				Items.WHITE_BANNER
+				Items.WOOL.white,
+				Items.CARPET.white,
+				Items.BANNER.white
 			),
 			DyeColor.BLACK to setOf(Items.INK_SAC),
 			DyeColor.BLUE to setOf(Items.LAPIS_LAZULI),
 			DyeColor.BROWN to setOf(Items.COCOA_BEANS),
 
 			// Green/Red/Yellow Dye still uses legacy names, so .startsWith won't match.
-			DyeColor.GREEN to setOf(Items.GREEN_DYE),
-			DyeColor.RED to setOf(Items.RED_DYE),
-			DyeColor.YELLOW to setOf(Items.YELLOW_DYE),
+			DyeColor.GREEN to setOf(Items.DYE.green),
+			DyeColor.RED to setOf(Items.DYE.red),
+			DyeColor.YELLOW to setOf(Items.DYE.yellow),
 
 			// Light Gray is called Silver, because why not?? except Light Gray Dye cause fuck me, I guess.
 			DyeColor.LIGHT_GRAY to setOf(
-				Items.LIGHT_GRAY_STAINED_GLASS_PANE,
-				Items.LIGHT_GRAY_STAINED_GLASS,
-				Items.LIGHT_GRAY_TERRACOTTA,
-				Items.LIGHT_GRAY_WOOL
+				Items.STAINED_GLASS_PANE.lightGray,
+				Items.STAINED_GLASS.lightGray,
+				Items.DYED_TERRACOTTA.lightGray,
+				Items.WOOL.lightGray
 			),
 		)
 	}

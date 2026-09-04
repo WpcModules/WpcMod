@@ -1,7 +1,7 @@
 package net.wapic.wpcmod.features.entity
 
 import net.minecraft.world.entity.Entity
-import net.wapic.wpcmod.util.render.state.EspRenderState
+import net.wapic.wpcmod.util.render.state.EntityState
 
 abstract class EspFeature {
 
@@ -9,7 +9,7 @@ abstract class EspFeature {
 		EspCache.add(this)
 	}
 
-	abstract fun compute(entity: Entity): EspRenderState?
+	abstract fun compute(entity: Entity): EntityState?
 
 	abstract fun isEnabled(): Boolean
 }

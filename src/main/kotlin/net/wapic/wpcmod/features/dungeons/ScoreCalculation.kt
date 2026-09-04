@@ -23,17 +23,18 @@ import net.wapic.wpcmod.events.*
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.DungeonScan
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
+import net.wapic.wpcmod.hud.Mutable
 import net.wapic.wpcmod.hud.SimpleHudElement
 import net.wapic.wpcmod.util.*
-import net.wapic.wpcmod.util.DungeonUtils.DungeonFloor
-import net.wapic.wpcmod.util.DungeonUtils.isMimicFloor
-import net.wapic.wpcmod.util.headTexture
 import net.wapic.wpcmod.util.Utils.equalsOneOf
+import net.wapic.wpcmod.util.dungeons.DungeonUtils
+import net.wapic.wpcmod.util.dungeons.DungeonUtils.DungeonFloor
+import net.wapic.wpcmod.util.dungeons.DungeonUtils.isMimicFloor
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.roundToInt
 
-object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 162) {
+object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 162), Mutable {
 
 	private val config get() = WpcMod.config.dungeon.scoreCalculation
 	override val isEnabled: Boolean get() = config.enabled
@@ -480,4 +481,6 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 162) {
 		}
 		drawContext.pose().popMatrix()
 	}
+
+	override fun notifyObserver() = config.scoreHudType.notifyObservers()
 }

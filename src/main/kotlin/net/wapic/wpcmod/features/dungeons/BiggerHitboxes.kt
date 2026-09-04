@@ -6,7 +6,7 @@ import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.dungeon.DungeonConfig.InteractableBlocks
-import net.wapic.wpcmod.util.DungeonUtils
+import net.wapic.wpcmod.util.dungeons.DungeonUtils
 
 object BiggerHitboxes {
 

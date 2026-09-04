@@ -5,15 +5,15 @@ import net.minecraft.util.CommonColors
 import net.minecraft.util.Mth
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.dungeon.FunnyConfig
-import net.wapic.wpcmod.features.dungeons.funnymap.core.DungeonPlayer
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.RoomState
 import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils
-import net.wapic.wpcmod.util.skyblockId
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.equalsOneOf
-import net.wapic.wpcmod.util.render.drawBorder
-import net.wapic.wpcmod.util.render.drawTexture
+import net.wapic.wpcmod.util.dungeons.DungeonPlayer
+import net.wapic.wpcmod.util.render.gui.drawBorder
+import net.wapic.wpcmod.util.render.gui.drawTexture
 import net.wapic.wpcmod.util.render.toChromaColour
+import net.wapic.wpcmod.util.skyblockId
 import java.awt.Color
 import kotlin.math.roundToInt
 

@@ -11,12 +11,13 @@ import net.wapic.wpcmod.util.MC
 import kotlin.random.Random
 
 class MelodySimulatorHandler(menu: ChestMenu, title: Component) : TerminalSimulatorHandler(menu) {
-	private val pointerItem = ItemStack(Items.LIME_STAINED_GLASS_PANE)
-	private val columnItem = ItemStack(Items.MAGENTA_STAINED_GLASS_PANE)
-	private val rowItem = ItemStack(Items.RED_STAINED_GLASS_PANE)
-	private val activeButton = ItemStack(Items.LIME_TERRACOTTA)
-	private val inactiveButton = ItemStack(Items.RED_TERRACOTTA)
-	private val background = ItemStack(Items.WHITE_STAINED_GLASS_PANE)
+
+	private val pointerItem = ItemStack(Items.STAINED_GLASS_PANE.lime)
+	private val columnItem = ItemStack(Items.STAINED_GLASS_PANE.magenta)
+	private val rowItem = ItemStack(Items.STAINED_GLASS_PANE.red)
+	private val activeButton = ItemStack(Items.DYED_TERRACOTTA.lime)
+	private val inactiveButton = ItemStack(Items.DYED_TERRACOTTA.red)
+	private val background = ItemStack(Items.STAINED_GLASS_PANE.white)
 
 	private var currentRow = 1
 	private var pointerLocation = 1
@@ -59,7 +60,7 @@ class MelodySimulatorHandler(menu: ChestMenu, title: Component) : TerminalSimula
 	}
 
 	override fun slotClicked(slot: Slot, slotId: Int, buttonNum: Int, containerInput: ContainerInput) {
-		if (slot.item.item != Items.LIME_TERRACOTTA) return
+		if (slot.item.item != Items.DYED_TERRACOTTA.lime) return
 		if (currentColumn != pointerLocation) {
 			MC.playSound(SoundEvents.ENDERMAN_TELEPORT, 1f, 1f)
 			frozenTicks = 40

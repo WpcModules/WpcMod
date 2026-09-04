@@ -4,9 +4,11 @@ enum class DoorType {
 	BLOOD,
 	ENTRANCE,
 	NORMAL,
+	FAIRY,
 	WITHER;
 
 	companion object {
+
 		fun fromMapColor(color: Int): DoorType? = when (color) {
 			18 -> BLOOD
 			30 -> ENTRANCE

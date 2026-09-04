@@ -11,6 +11,7 @@ import net.wapic.wpcmod.util.Utils
 import java.io.File
 
 object ShortcutHandler {
+
 	private val file = File(WpcMod.configDir, "shortcuts.json")
 	private val backupFile = File(file.parentFile, "${file.name}.bak")
 	private val gson: Gson = GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().create()
@@ -18,10 +19,7 @@ object ShortcutHandler {
 
 	fun init() {
 		ClientTickEvents.END_CLIENT_TICK.register(::onTick)
-
-		ClientLifecycleEvents.CLIENT_STARTED.register {
-			loadShortcuts()
-		}
+		loadShortcuts()
 
 		ClientLifecycleEvents.CLIENT_STOPPING.register {
 			saveShortcuts()

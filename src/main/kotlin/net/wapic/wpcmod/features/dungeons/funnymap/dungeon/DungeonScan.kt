@@ -8,9 +8,9 @@ import net.minecraft.world.level.levelgen.Heightmap
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.*
 import net.wapic.wpcmod.util.ChatUtils
-import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.equalsOneOf
+import net.wapic.wpcmod.util.dungeons.DungeonUtils
 
 /**
  * Handles everything related to scanning the dungeon. Running [scan] will update the instance of [FunnyMap].

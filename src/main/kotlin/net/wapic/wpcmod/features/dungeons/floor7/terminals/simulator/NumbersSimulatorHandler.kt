@@ -8,8 +8,9 @@ import net.minecraft.world.item.ItemStackTemplate
 import net.minecraft.world.item.Items
 
 class NumbersSimulatorHandler(menu: ChestMenu, title: Component) : TerminalSimulatorHandler(menu) {
-	private val redPane = ItemStackTemplate(Items.RED_STAINED_GLASS_PANE)
-	private val limePane = ItemStackTemplate(Items.LIME_STAINED_GLASS_PANE)
+
+	private val redPane = ItemStackTemplate(Items.STAINED_GLASS_PANE.red)
+	private val limePane = ItemStackTemplate(Items.STAINED_GLASS_PANE.lime)
 	private val counts = mutableListOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 
 	override fun create() {
@@ -24,7 +25,7 @@ class NumbersSimulatorHandler(menu: ChestMenu, title: Component) : TerminalSimul
 	}
 
 	override fun slotClicked(slot: Slot, slotId: Int, buttonNum: Int, containerInput: ContainerInput) {
-		if (slot.item.item != Items.RED_STAINED_GLASS_PANE) return
+		if (slot.item.item != Items.STAINED_GLASS_PANE.red) return
 		if (slot.item.count != counts.size + 1) return
 		slot.setItem(limePane.apply(slot.item.count, emptyNameData))
 		playTerminalSound()
@@ -32,6 +33,6 @@ class NumbersSimulatorHandler(menu: ChestMenu, title: Component) : TerminalSimul
 	}
 
 	override fun isTerminalSolved(slots: List<Slot>): Boolean {
-		return slots.none { it.item.item == Items.RED_STAINED_GLASS_PANE }
+		return slots.none { it.item.item == Items.STAINED_GLASS_PANE.red }
 	}
 }

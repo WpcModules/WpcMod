@@ -2,7 +2,7 @@ package net.wapic.wpcmod.events.skyblock
 
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
-import net.minecraft.world.inventory.Slot
+import net.minecraft.world.item.ItemStack
 import net.wapic.wpcmod.features.dungeons.floor7.terminals.AbstractTerminalScreen
 import net.wapic.wpcmod.features.dungeons.floor7.terminals.Terminal
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Room
@@ -96,16 +96,16 @@ object DungeonEvents {
 	@JvmField
 	val TERMINAL_UPDATED: Event<TerminalUpdate> =
 		EventFactory.createArrayBacked(TerminalUpdate::class.java) { listeners ->
-			TerminalUpdate { screen, slots ->
+			TerminalUpdate { screen, slotIndex, itemStack ->
 				for (listener in listeners) {
-					listener.onUpdate(screen, slots)
+					listener.onUpdate(screen, slotIndex, itemStack)
 				}
 			}
 		}
 
 	fun interface TerminalUpdate {
 
-		fun onUpdate(screen: AbstractTerminalScreen, slots: List<Slot>)
+		fun onUpdate(screen: AbstractTerminalScreen, slotIndex: Int, itemStack: ItemStack)
 	}
 
 	@JvmField

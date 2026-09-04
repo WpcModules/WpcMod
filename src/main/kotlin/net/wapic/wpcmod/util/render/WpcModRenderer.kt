@@ -8,16 +8,16 @@ import com.mojang.blaze3d.vertex.VertexConsumer
 import net.minecraft.client.gui.render.TextureSetup
 import net.minecraft.client.renderer.StagedVertexBuffer
 import net.minecraft.client.renderer.rendertype.RenderType
-import net.minecraft.util.profiling.Profiler
+import net.minecraft.util.profiling.ProfilerFiller
 import net.wapic.wpcmod.util.MC
 import org.joml.Vector4f
-import java.util.Optional
-import java.util.OptionalDouble
+import java.util.*
 
 // Modified from Skyblocker
 object WpcModRenderer {
 
-	private val vertexBuffer: StagedVertexBuffer = StagedVertexBuffer({ "WpcMod Renderer Vertex Buffer" }, RenderType.SMALL_BUFFER_SIZE)
+	private val vertexBuffer: StagedVertexBuffer =
+		StagedVertexBuffer({ "WpcMod Renderer Vertex Buffer" }, RenderType.SMALL_BUFFER_SIZE)
 
 	private var previousPipeline: RenderPipeline? = null
 	private var previousDraw: StagedVertexBuffer.Draw? = null
@@ -26,16 +26,16 @@ object WpcModRenderer {
 
 	private val DRAWS = mutableListOf<Draw>()
 
-	fun getBuffer(pipeline: RenderPipeline): VertexConsumer {
-		return getBuffer(pipeline, TextureSetup.noTexture(), 1f)
+	fun getConsumer(pipeline: RenderPipeline): VertexConsumer {
+		return getConsumer(pipeline, TextureSetup.noTexture(), 1f)
 	}
 
-	fun getBuffer(pipeline: RenderPipeline, textureSetup: TextureSetup): VertexConsumer {
-		return getBuffer(pipeline, textureSetup, 1f)
+	fun getConsumer(pipeline: RenderPipeline, textureSetup: TextureSetup): VertexConsumer {
+		return getConsumer(pipeline, textureSetup, 1f)
 	}
 
-	fun getBuffer(pipeline: RenderPipeline, textureSetup: TextureSetup, alphaModifier: Float): VertexConsumer {
-		if(previousDraw == null || previousPipeline != pipeline || previousTextureSetup != textureSetup || previousAlphaModifier != alphaModifier) {
+	fun getConsumer(pipeline: RenderPipeline, textureSetup: TextureSetup, alphaModifier: Float): VertexConsumer {
+		if (previousDraw == null || previousPipeline != pipeline || previousTextureSetup != textureSetup || previousAlphaModifier != alphaModifier) {
 			previousDraw = vertexBuffer.appendDraw(pipeline.getVertexFormatBinding(0)!!, pipeline.primitiveTopology)
 			DRAWS.add(Draw(previousDraw!!, pipeline, textureSetup, alphaModifier))
 		}
@@ -49,8 +49,7 @@ object WpcModRenderer {
 		previousAlphaModifier = 1f
 	}
 
-	fun executeDraws() {
-		val profiler = Profiler.get()
+	fun executeDraws(profiler: ProfilerFiller) {
 		profiler.push("upload")
 		vertexBuffer.upload()
 
@@ -60,7 +59,6 @@ object WpcModRenderer {
 		profiler.popPush("endFrame")
 		vertexBuffer.endFrame()
 		DRAWS.clear()
-
 		profiler.pop()
 	}
 
@@ -68,7 +66,7 @@ object WpcModRenderer {
 		val mainRenderTarget = MC.instance.gameRenderer.mainRenderTarget()
 
 		RenderSystem.getDevice().createCommandEncoder().createRenderPass(
-			{"Custom Level Renderer"},
+			{ "Custom Level Renderer" },
 			mainRenderTarget.colorTextureView!!,
 			Optional.empty(),
 			mainRenderTarget.depthTextureView,
@@ -77,7 +75,7 @@ object WpcModRenderer {
 
 			RenderSystem.bindDefaultUniforms(renderPass)
 
-			for(draw in DRAWS) {
+			for (draw in DRAWS) {
 				draw(draw, renderPass)
 			}
 		}
@@ -108,7 +106,8 @@ object WpcModRenderer {
 	}
 
 	private fun setupDynamicTransforms(alphaModifier: Float): GpuBufferSlice {
-		return RenderSystem.getDynamicUniforms().writeTransform(RenderSystem.getModelViewMatrixCopy(), Vector4f(1f, 1f, 1f, alphaModifier))
+		return RenderSystem.getDynamicUniforms()
+			.writeTransform(RenderSystem.getModelViewMatrixCopy(), Vector4f(1f, 1f, 1f, alphaModifier))
 	}
 
 	private fun applyViewOffsetZLayering() {
@@ -125,5 +124,10 @@ object WpcModRenderer {
 		vertexBuffer.close()
 	}
 
-	data class Draw(val draw: StagedVertexBuffer.Draw, val pipeline: RenderPipeline, val textureSetup: TextureSetup, val alphaModifier: Float)
+	data class Draw(
+		val draw: StagedVertexBuffer.Draw,
+		val pipeline: RenderPipeline,
+		val textureSetup: TextureSetup,
+		val alphaModifier: Float
+	)
 }

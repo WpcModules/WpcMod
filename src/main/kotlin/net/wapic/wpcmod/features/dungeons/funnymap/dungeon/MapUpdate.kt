@@ -1,114 +1,17 @@
 package net.wapic.wpcmod.features.dungeons.funnymap.dungeon
 
-import net.minecraft.client.multiplayer.PlayerInfo
 import net.minecraft.core.BlockPos
-import net.minecraft.network.chat.Component
-import net.minecraft.util.Util
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.chunk.EmptyLevelChunk
-import net.minecraft.world.level.saveddata.maps.MapDecorationTypes
-import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.dungeons.ScoreCalculation
-import net.wapic.wpcmod.features.dungeons.funnymap.core.DungeonPlayer
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.*
 import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils
-import net.wapic.wpcmod.util.DungeonUtils.DungeonClass
 import net.wapic.wpcmod.util.MC
-import net.wapic.wpcmod.util.TabListUtil
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 
 object MapUpdate {
 
 	var roomAdded = false
-
-	fun preloadHeads() {
-		val tabEntries = TabListUtil.getDungeonTabList() ?: return
-		for (i in listOf(5, 9, 13, 17, 1)) {
-			tabEntries[i].first.skin
-		}
-	}
-
-	fun getPlayers(tabEntries: List<Pair<PlayerInfo, Component>>) {
-		var iconNum = 0
-		for (i in listOf(5, 9, 13, 17, 1)) {
-			with(tabEntries[i]) {
-				val name = second.string.trim().substringAfterLast("] ").split(" ")[0]
-				if (name != "") {
-					FunnyMap.dungeonTeammates[name] = DungeonPlayer(first.skin).apply {
-						MC.level?.players()?.find { it.name.string == name }?.let { setData(it) }
-						colorPrefix = second.string.substringBefore(name, "f").last()
-						this.name = name
-						icon = "icon-$iconNum"
-					}
-					iconNum++
-				}
-			}
-		}
-	}
-
-	fun updatePlayers(tabEntries: List<Pair<PlayerInfo, Component>>) {
-		if (FunnyMap.dungeonTeammates.isEmpty()) return
-		val time = Util.getMillis() - FunnyMap.Info.startTime
-
-		for ((index, value) in listOf(5, 9, 13, 17, 1).withIndex()) {
-			val tabText = tabEntries[value].second.string.trim()
-			val name = tabText.substringAfterLast("] ").split(" ")[0]
-			if (name.isEmpty()) continue
-
-			FunnyMap.dungeonTeammates[name]?.run {
-				dead = tabText.contains("(DEAD)")
-				if (dead) continue
-
-				if (dungeonClass == DungeonClass.EMPTY) {
-					val classText = tabText.substringAfter("(").substringBefore(")").substringBefore(" ")
-					dungeonClass = DungeonClass.fromTabText(classText)
-				}
-
-				val player = MC.level?.players()?.find { it.stringUUID == uuid }?.let {
-					if (!playerLoaded) setData(it)
-					this.updatePos(
-						((it.x - DungeonScan.START_X + 13) * MapUtils.coordMultiplier + MapUtils.startCorner.first).toFloat(),
-						((it.z - DungeonScan.START_Z + 13) * MapUtils.coordMultiplier + MapUtils.startCorner.second).toFloat(),
-						it.yRot
-					)
-					return@let it
-				}
-
-				if (player == null) {
-					MapUtils.mapData?.decorations?.elementAtOrNull(index)?.let { decoration ->
-						if (decoration.type == MapDecorationTypes.FRAME) return@let // no need to update local player from map
-						this.updatePos(
-							((decoration.x + 128) shr 1).toFloat(),
-							((decoration.y + 128) shr 1).toFloat(),
-							decoration.rot * 22.5f
-						)
-					}
-				}
-
-				val room = getCurrentRoom()
-				room?.let { current ->
-					if (time <= 1000) return@let
-					if (lastRoom == null) {
-						lastRoom = current
-					} else if (lastRoom?.data?.name != current.data.name) {
-
-						if (current.state.equalsOneOf(RoomState.UNDISCOVERED, RoomState.UNOPENED)) {
-							current.uniqueRoom?.setRoomState(RoomState.DISCOVERED)
-						}
-
-						lastRoom?.let { last ->
-							if (isPlayer) {
-								DungeonEvents.ROOM_ENTERED.invoker().onRoomEntered(last, current)
-							}
-							roomVisits.add(Pair(time - lastTime, last))
-							lastTime = time
-							lastRoom = current
-						}
-					}
-				}
-			}
-		}
-	}
 
 	fun updateRooms() {
 		if (FunnyMap.Info.ended) return

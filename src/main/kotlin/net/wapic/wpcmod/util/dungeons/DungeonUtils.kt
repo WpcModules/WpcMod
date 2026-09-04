@@ -1,8 +1,13 @@
-package net.wapic.wpcmod.util
+package net.wapic.wpcmod.util.dungeons
 
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
+import net.minecraft.client.Minecraft
+import net.minecraft.client.multiplayer.PlayerInfo
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket
+import net.minecraft.util.Util
+import net.minecraft.world.level.saveddata.maps.MapDecorationTypes
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.PlayerListChangeEvent
 import net.wapic.wpcmod.events.ScoreboardChangeEvent
@@ -10,7 +15,11 @@ import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.dungeons.ScoreCalculation
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Room
+import net.wapic.wpcmod.features.dungeons.funnymap.core.map.RoomState
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.UniqueRoom
+import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.DungeonScan
+import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils
+import net.wapic.wpcmod.util.*
 import net.wapic.wpcmod.util.ChatUtils.removeFormatting
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 
@@ -25,14 +34,17 @@ object DungeonUtils {
 	private val floorRegex = Regex("^ \uE067 The Catacombs \\((?<floor>[FME][1-7]?)\\)$")
 	private val incompletePuzzles: HashSet<String> = hashSetOf()
 	private val failedPuzzles: HashSet<String> = hashSetOf()
-	var bossSpawned = false
+
+	val inDungeons get() = Utils.getLocation() == Island.DUNGEON
+	var currentFloor: DungeonFloor = DungeonFloor.NONE
 		private set
 	var currentRoom: UniqueRoom? = null
 		private set
 
-	val inDungeons get() = Utils.getLocation() == Island.DUNGEON
-
-	var currentFloor: DungeonFloor = DungeonFloor.NONE
+	var startTime = 0L
+		private set
+	val dungeonTeammates = mutableMapOf<String, DungeonPlayer>()
+	var bossSpawned = false
 		private set
 
 	val isMimicFloor: Boolean
@@ -48,20 +60,118 @@ object DungeonUtils {
 		PlayerListChangeEvent.EVENT.register(::onPlayerListChange)
 		ScoreboardChangeEvent.EVENT.register(::onScoreboardUpdate)
 		DungeonEvents.ROOM_ENTERED.register(::onRoomEntered)
+		ClientTickEvents.END_CLIENT_TICK.register(::onTick)
 
 		WorldChangeEvent.BEFORE.register { _ ->
 			incompletePuzzles.clear()
 			failedPuzzles.clear()
 			bossSpawned = false
 			currentFloor = DungeonFloor.NONE
+			startTime = 0L
+			dungeonTeammates.clear()
+		}
+	}
+
+	private fun onTick(client: Minecraft) {
+		if (!inDungeons) return
+		TabListUtil.getDungeonTabList()?.let(::updatePlayers)
+	}
+
+	fun preloadPlayerHeads(tabEntries: List<Pair<PlayerInfo, Component>>) {
+		for (i in listOf(5, 9, 13, 17, 1)) tabEntries[i].first.skin
+	}
+
+	fun getPlayers(tabEntries: List<Pair<PlayerInfo, Component>>) {
+		for (i in listOf(5, 9, 13, 17, 1)) {
+			with(tabEntries[i]) {
+				val tabText = second.string.trim()
+				val name = tabText.substringAfterLast("] ").split(" ")[0]
+				if (name != "") {
+					dungeonTeammates[name] = DungeonPlayer(first.skin).apply {
+						MC.level?.players()?.find { it.name.string == name }?.let { setData(it) }
+						this.name = name
+						this.dungeonClass = DungeonClass.fromTabText(tabText.substringAfter("(").substringBefore(")").substringBefore(" "))
+					}
+				}
+			}
+		}
+	}
+
+	fun updatePlayers(tabEntries: List<Pair<PlayerInfo, Component>>) {
+		if (dungeonTeammates.isEmpty()) return
+		val time = Util.getMillis() - startTime
+
+		for ((index, value) in listOf(5, 9, 13, 17, 1).withIndex()) {
+			val tabText = tabEntries[value].second.string.trim()
+			val name = tabText.substringAfterLast("] ").split(" ")[0]
+			if (name.isEmpty()) continue
+
+			dungeonTeammates[name]?.run {
+				dead = tabText.contains("(DEAD)")
+				if (dead) continue
+
+				if (dungeonClass == DungeonClass.EMPTY) {
+					val classText = tabText.substringAfter("(").substringBefore(")").substringBefore(" ")
+					dungeonClass = DungeonClass.fromTabText(classText)
+				}
+
+				val player = MC.level?.players()?.find { it.stringUUID == uuid }?.let {
+					if (!playerLoaded) setData(it)
+					this.updatePos(
+						((it.x - DungeonScan.START_X + 13) * MapUtils.coordMultiplier + MapUtils.startCorner.first).toFloat(),
+						((it.z - DungeonScan.START_Z + 13) * MapUtils.coordMultiplier + MapUtils.startCorner.second).toFloat(),
+						it.yRot
+					)
+					return@let it
+				}
+
+				if (player == null) {
+					MapUtils.mapData?.decorations?.elementAtOrNull(index)?.let { decoration ->
+						if (decoration.type == MapDecorationTypes.FRAME) return@let // no need to update local player from map
+						this.updatePos(
+							((decoration.x + 128) shr 1).toFloat(),
+							((decoration.y + 128) shr 1).toFloat(),
+							decoration.rot * 22.5f
+						)
+					}
+				}
+
+				val room = getCurrentRoom()
+				room?.let { current ->
+					if (time <= 1000) return@let
+					if (lastRoom == null) {
+						lastRoom = current
+					} else if (lastRoom?.data?.name != current.data.name) {
+
+						if (current.state.equalsOneOf(RoomState.UNDISCOVERED, RoomState.UNOPENED)) {
+							current.uniqueRoom?.setRoomState(RoomState.DISCOVERED)
+						}
+
+						lastRoom?.let { last ->
+							if (isPlayer) {
+								DungeonEvents.ROOM_ENTERED.invoker().onRoomEntered(last, current)
+							}
+							roomVisits.add(Pair(time - lastTime, last))
+							lastTime = time
+							lastRoom = current
+						}
+					}
+				}
+			}
 		}
 	}
 
 	private fun onMessageReceived(message: Component, actionBar: Boolean) {
 		if (actionBar || !inDungeons) return
 
+		if (message.string.removeFormatting() == "Starting in 4 seconds.") {
+			TabListUtil.getDungeonTabList()?.let(::preloadPlayerHeads)
+		}
+
 		if (message.string == DUNGEON_START_MESSAGE) {
 			WpcMod.LOGGER.debug("Dungeon Started")
+			TabListUtil.getDungeonTabList()?.let(::getPlayers)
+			startTime = Util.getMillis()
 			DungeonEvents.START.invoker().onStart()
 			if (currentFloor == DungeonFloor.NONE) {
 				WpcMod.LOGGER.warn("Current dungeon floor was not found!")
@@ -76,11 +186,7 @@ object DungeonUtils {
 
 		if (message.string.startsWith("[BOSS]") && message.string.contains(":")) {
 			val bossName = message.string.substringAfter("[BOSS] ").substringBefore(":").trim()
-			if (!bossSpawned && bossName != "The Watcher" && currentFloor != DungeonFloor.NONE && checkBossName(
-					currentFloor,
-					bossName
-				)
-			) {
+			if (!bossSpawned && bossName != "The Watcher" && currentFloor != DungeonFloor.NONE && checkBossName(currentFloor, bossName)) {
 				bossSpawned = true
 				ScoreCalculation.bloodCleared = true
 			}
@@ -155,11 +261,7 @@ object DungeonUtils {
 
 	fun getF7Phase(): F7Phase {
 		if (!inDungeons) return F7Phase.UNKNOWN
-		if (!currentFloor.equalsOneOf(
-				DungeonFloor.FLOOR_7,
-				DungeonFloor.MASTER_MODE_FLOOR_7
-			) || !bossSpawned
-		) return F7Phase.UNKNOWN
+		if (!currentFloor.equalsOneOf(DungeonFloor.FLOOR_7, DungeonFloor.MASTER_MODE_FLOOR_7) || !bossSpawned) return F7Phase.UNKNOWN
 
 		with(MC.player ?: return F7Phase.UNKNOWN) {
 			return when {

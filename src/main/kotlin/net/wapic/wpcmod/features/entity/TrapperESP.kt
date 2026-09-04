@@ -7,7 +7,7 @@ import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.TrapperAPI
 import net.wapic.wpcmod.util.Utils
-import net.wapic.wpcmod.util.render.state.EspRenderState
+import net.wapic.wpcmod.util.render.state.EntityState
 import net.wapic.wpcmod.util.skyBlockMaxHealth
 
 object TrapperESP : EspFeature() {
@@ -22,10 +22,8 @@ object TrapperESP : EspFeature() {
 		return TrapperAPI.currentType?.maxHealth == (entity as? Animal).skyBlockMaxHealth
 	}
 
-	override fun compute(entity: Entity): EspRenderState? {
-		if (isTrapperAnimal(entity)) {
-			return EspRenderState.fromEntity(entity, config)
-		}
+	override fun compute(entity: Entity): EntityState? {
+		if (isTrapperAnimal(entity)) return EntityState(config)
 		return null
 	}
 

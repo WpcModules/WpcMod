@@ -10,10 +10,6 @@ class Floor7Config {
 	@ConfigEditorBoolean
 	var melodyMessage: Boolean = false
 
-	@ConfigOption(name = "Terminal Simulator Ping", desc = "Set emulated ping for terminal simulators")
-	@ConfigEditorSlider(minValue = 1f, maxValue = 300f, minStep = 1f)
-	var termSimPing: Float = 50f
-
 	@Transient
 	@ConfigOption(name = "Terminal Simulator", desc = "Open terminal simulator, can also be accessed with /wpc term.")
 	@ConfigEditorButton(buttonText = "Open")

@@ -31,6 +31,16 @@ object WpcModRenderPipelines {
 			.build()
 	)
 
+	val TEXT: RenderPipeline = RenderPipelines.register(
+		RenderPipeline.builder(RenderPipelines.TEXT_SNIPPET)
+			.withLocation(WpcMod.Identifier("pipeline/wpcmod_text"))
+			.withVertexShader("core/text")
+			.withFragmentShader("core/text")
+			.withShaderDefine("IS_SEE_THROUGH")
+			.withDepthStencilState(Optional.empty())
+			.build()
+	)
+
 	val GUI_CUSTOM: RenderPipeline = RenderPipelines.register(
 		RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
 			.withLocation(WpcMod.Identifier("pipeline/wpcmod_gui_rounded"))

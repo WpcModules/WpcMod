@@ -38,7 +38,7 @@ class NumbersTerminalScreen(menu: ChestMenu, title: Component) : AbstractTermina
 
 	override fun solveTerminal(slots: List<Slot>): List<Int> {
 		return slots.sortedBy { it.item.count }.mapNotNull { slot ->
-			slot.index.takeIf { slot.item.item == Items.RED_STAINED_GLASS_PANE }
+			slot.index.takeIf { slot.item.item == Items.STAINED_GLASS_PANE.red }
 		}
 	}
 }

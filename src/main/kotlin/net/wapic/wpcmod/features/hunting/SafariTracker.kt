@@ -7,10 +7,10 @@ import net.minecraft.util.CommonColors
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.hud.SimpleHudElement
-import net.wapic.wpcmod.util.EntityUtils.biome
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.SafariAPI
 import net.wapic.wpcmod.util.SafariAPI.SafariBiome.Companion.isSimilarTo
+import net.wapic.wpcmod.util.biome
 
 object SafariTracker : SimpleHudElement("Safari Tracker", 90, 408) {
 
@@ -58,8 +58,8 @@ object SafariTracker : SimpleHudElement("Safari Tracker", 90, 408) {
 
 		var y = 1
 		for ((critter, count) in tracker) {
-			val color = critter.biome.color.char
-			drawContext.text(MC.font, "§$color${critter.entityName}§r: $count", 2, y, CommonColors.WHITE, true)
+			val color = "§${critter.biome.color}"
+			drawContext.text(MC.font, "$color${critter.entityName}§r: $count", 2, y, CommonColors.WHITE, true)
 			y += 11
 		}
 

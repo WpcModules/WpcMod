@@ -57,6 +57,7 @@ import net.wapic.wpcmod.features.slayer.GummyBearTimer
 import net.wapic.wpcmod.hud.HudManager
 import net.wapic.wpcmod.listeners.NetworkListener
 import net.wapic.wpcmod.util.*
+import net.wapic.wpcmod.util.dungeons.DungeonUtils
 import net.wapic.wpcmod.util.render.WpcModRenderSystem
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -180,6 +181,7 @@ object WpcMod : ModInitializer {
 		AutoDebuff.init()
 		AutoShowExtraStats.init()
 		Terminal.init()
+		MelodyMessage.init()
 
 		// Kuudra
 		KuudraESP.init()
@@ -236,7 +238,9 @@ object WpcMod : ModInitializer {
 		// Dev
 		SkyBlockID.init()
 
-		WpcModRenderSystem.init()
+		WpcModRenderSystem()
+
+		LOGGER.info("WpcMod Initialized")
 	}
 
 	fun checkUpdate() {

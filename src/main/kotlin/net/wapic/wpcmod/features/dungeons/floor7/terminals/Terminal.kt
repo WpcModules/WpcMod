@@ -20,8 +20,8 @@ import net.wapic.wpcmod.events.GuiEvents
 import net.wapic.wpcmod.events.SoundEvents
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.dungeons.floor7.terminals.simulator.*
-import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.dungeons.DungeonUtils
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 
 object Terminal {
@@ -32,11 +32,11 @@ object Terminal {
 	val STARTS_WITH_PATTERN = Regex("^What starts with: '(\\w)'\\?$")
 	val SELECT_ALL_PATTERN = Regex("^Select all the (.+) items!$")
 	val RUBIX_ORDER = listOf(
-		Items.ORANGE_STAINED_GLASS_PANE,
-		Items.YELLOW_STAINED_GLASS_PANE,
-		Items.GREEN_STAINED_GLASS_PANE,
-		Items.BLUE_STAINED_GLASS_PANE,
-		Items.RED_STAINED_GLASS_PANE,
+		Items.STAINED_GLASS_PANE.orange,
+		Items.STAINED_GLASS_PANE.yellow,
+		Items.STAINED_GLASS_PANE.green,
+		Items.STAINED_GLASS_PANE.blue,
+		Items.STAINED_GLASS_PANE.red,
 	)
 
 	var handler: TerminalSimulatorHandler? = null
@@ -99,9 +99,7 @@ object Terminal {
 
 		val title = Component.literal(type.windowName)
 		if (type == Type.STARTS_WITH) title.append(" '${"ABCDEFGHIJLMNOW".random()}'?")
-		if (type == Type.SELECT_ALL) title.append(
-			" ${DyeColor.entries.random().name.uppercase().replace("_", " ")} items!"
-		)
+		if (type == Type.SELECT_ALL) title.append(" ${DyeColor.entries.random().name.uppercase().replace("_", " ")} items!")
 
 		val menuType = when (type) {
 			Type.NUMBERS -> MenuType.GENERIC_9x4
@@ -117,8 +115,7 @@ object Terminal {
 		handler = type.simulatorFactory(menu, title)
 
 		player.containerMenu = menu
-		MC.screen =
-			if (config.enabled) type.screenFactory(menu, title) else TerminalSimulatorScreen(menu, inventory, title)
+		MC.screen = if (config.enabled) type.screenFactory(menu, title) else TerminalSimulatorScreen(menu, inventory, title)
 	}
 
 	fun removeSimulator() {

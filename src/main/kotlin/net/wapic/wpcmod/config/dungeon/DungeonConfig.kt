@@ -1,7 +1,9 @@
 package net.wapic.wpcmod.config.dungeon
 
 import io.github.notenoughupdates.moulconfig.annotations.*
+import io.github.notenoughupdates.moulconfig.observer.Property
 import net.wapic.wpcmod.config.components.GlowableESPConfig
+import net.wapic.wpcmod.features.dungeons.floor7.InvincibilityTimer.InvincibilityType
 import net.wapic.wpcmod.features.instance.AutoGFS
 
 class DungeonConfig {
@@ -9,10 +11,6 @@ class DungeonConfig {
 	@ConfigOption(name = "Auto Close Chests", desc = "Automatically close secret chests")
 	@ConfigEditorBoolean
 	var autoCloseChests: Boolean = false
-
-	@ConfigOption(name = "Alert on Treasure Talisman", desc = "Alerts when a treasure talisman spawns nearby")
-	@ConfigEditorBoolean
-	var alertOnTreasureTalismans: Boolean = false
 
 	@ConfigOption(name = "Spirit Bear Timer", desc = "Show a timer until spirit bear spawns")
 	@ConfigEditorBoolean
@@ -48,6 +46,7 @@ class DungeonConfig {
 	var dungeonbreaker: DungeonbreakerConfig = DungeonbreakerConfig()
 
 	class DungeonbreakerConfig {
+
 		@ConfigOption(
 			name = "Zero Ping Dungeon Breaker",
 			desc = "Sets the block you're breaking to AIR to remove the delay"
@@ -82,6 +81,7 @@ class DungeonConfig {
 	var hitboxes: HitBoxConfig = HitBoxConfig()
 
 	class HitBoxConfig {
+
 		@ConfigOption(name = "Enable Bigger Hitboxes", desc = "Enables bigger hitboxes on blocks selected below")
 		@ConfigEditorBoolean
 		var enabled = false
@@ -96,6 +96,7 @@ class DungeonConfig {
 	var autoGFS: AutoGetFromSack = AutoGetFromSack()
 
 	class AutoGetFromSack {
+
 		@ConfigOption(
 			name = "Enable Auto GFS",
 			desc = "Enables automatically getting items from sack at the start of dungeon run"
@@ -116,9 +117,15 @@ class DungeonConfig {
 	var invincibilityTimer: InvincibilityTimerConfig = InvincibilityTimerConfig()
 
 	class InvincibilityTimerConfig {
+
 		@ConfigOption(name = "Enable Invincibility Timers", desc = "Enables invincibility timer features")
 		@ConfigEditorBoolean
 		var enabled = false
+
+		@ConfigOption(name = "Enabled Items", desc = "Items which to enable features for")
+		@ConfigEditorDraggableList
+		var enabledItems: Property<MutableList<InvincibilityType>> =
+			Property.of(mutableListOf(InvincibilityType.BONZO_MASK, InvincibilityType.PHOENIX_PET, InvincibilityType.SPIRIT_MASK))
 
 		@ConfigOption(name = "Show Hud", desc = "Show cooldown in a HUD element")
 		@ConfigEditorBoolean

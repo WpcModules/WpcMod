@@ -7,9 +7,9 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.ServerTickEvent
-import net.wapic.wpcmod.util.DungeonUtils
-import net.wapic.wpcmod.util.skyblockId
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.dungeons.DungeonUtils
+import net.wapic.wpcmod.util.skyblockId
 
 object AutoDebuff {
 

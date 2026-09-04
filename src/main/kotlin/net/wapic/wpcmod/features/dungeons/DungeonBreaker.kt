@@ -10,7 +10,7 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.*
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.dungeon.DungeonConfig.InteractableBlocks
-import net.wapic.wpcmod.util.DungeonUtils
+import net.wapic.wpcmod.util.dungeons.DungeonUtils
 import net.wapic.wpcmod.util.skyblockId
 
 object DungeonBreaker {

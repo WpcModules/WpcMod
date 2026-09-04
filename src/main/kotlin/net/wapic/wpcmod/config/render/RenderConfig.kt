@@ -17,6 +17,13 @@ class RenderConfig {
 	@ConfigEditorSlider(minValue = 0.0f, maxValue = 1.0f, minStep = 0.1f)
 	var blindnessOpacity: Float = 1.0f
 
+	@ConfigOption(
+		name = "Darkness Opacity",
+		desc = "Set the opacity of Darkness, 0.0 = no darkness, 1.0 = normal darkness"
+	)
+	@ConfigEditorSlider(minValue = 0.0f, maxValue = 1.0f, minStep = 0.1f)
+	var darknessOpacity: Float = 1.0f
+
 	@ConfigOption(name = "Disable Fluid Fog", desc = "Disable fog in fluids")
 	@ConfigEditorBoolean
 	var disableFluidFog: Boolean = false

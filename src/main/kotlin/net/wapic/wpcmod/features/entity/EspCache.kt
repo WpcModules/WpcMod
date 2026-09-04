@@ -1,17 +1,17 @@
 package net.wapic.wpcmod.features.entity
 
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey
-import net.fabricmc.fabric.api.client.rendering.v1.level.LevelExtractionContext
-import net.fabricmc.fabric.api.client.rendering.v1.level.LevelExtractionEvents
-import net.minecraft.util.profiling.Profiler
+import net.minecraft.client.Minecraft
+import net.minecraft.util.profiling.ProfilerFiller
 import net.minecraft.world.entity.Entity
 import net.wapic.wpcmod.events.WorldRenderEvent
-import net.wapic.wpcmod.util.render.WorldRenderContext
-import net.wapic.wpcmod.util.render.state.EspRenderState
+import net.wapic.wpcmod.util.render.WpcModExtractionContext
+import net.wapic.wpcmod.util.render.state.EntityState
 
 object EspCache {
 
-	private val CACHE = hashMapOf<Entity, EspRenderState>()
+	private val CACHE = hashMapOf<Entity, EntityState>()
 
 	@JvmField
 	val ENTITY_HAS_CUSTOM_GLOW: RenderStateDataKey<Boolean> =
@@ -19,33 +19,25 @@ object EspCache {
 	private val ADDERS = mutableListOf<EspFeature>()
 
 	fun init() {
-		LevelExtractionEvents.END_EXTRACTION.register(::rebuildCache)
-		WorldRenderEvent.EVENT.register(::renderEsp)
+		ClientTickEvents.END_CLIENT_TICK.register(::clearCache)
+		WorldRenderEvent.EVENT.register(::onRenderWorld)
 	}
 
-	private fun rebuildCache(levelExtractionContext: LevelExtractionContext) {
-		val profiler = Profiler.get()
-		profiler.push("WpcModRebuildCache")
-		val level = levelExtractionContext.level()
-		CACHE.clear()
-		level.entitiesForRendering().forEach(::getOrCompute)
-		profiler.pop()
-	}
-
-	private fun renderEsp(worldRenderContext: WorldRenderContext) {
-		worldRenderContext.profiler.push("Render-ESPCache")
-		for ((config, width, height, pos) in CACHE.values) {
-			if (config.box) worldRenderContext.drawBoundingBox(pos, width, height, config.color)
-			if (config.tracer) worldRenderContext.drawTracer(pos, config.color, config.tracerWidth)
+	private fun clearCache(client: Minecraft) = CACHE.clear()
+	private fun onRenderWorld(context: WpcModExtractionContext, profiler: ProfilerFiller) {
+		profiler.push("cache")
+		for (entity in context.level.entitiesForRendering()) {
+			val state = getOrCompute(entity) ?: continue
+			context.entityESP(entity, state)
 		}
-		worldRenderContext.profiler.pop()
+		profiler.pop()
 	}
 
 	fun add(feature: EspFeature) {
 		ADDERS.add(feature)
 	}
 
-	fun getOrCompute(entity: Entity): EspRenderState? {
+	fun getOrCompute(entity: Entity): EntityState? {
 		if (CACHE.containsKey(entity)) return CACHE[entity]
 
 		val renderState = compute(entity)
@@ -53,7 +45,7 @@ object EspCache {
 		return renderState
 	}
 
-	fun compute(entity: Entity): EspRenderState? {
+	fun compute(entity: Entity): EntityState? {
 		for (adder in ADDERS) {
 			if (!adder.isEnabled()) continue
 

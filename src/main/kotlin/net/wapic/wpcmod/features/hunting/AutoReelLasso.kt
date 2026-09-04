@@ -9,13 +9,14 @@ import net.minecraft.world.entity.ambient.Bat
 import net.minecraft.world.entity.decoration.ArmorStand
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.EntityEvents
-import net.wapic.wpcmod.util.ItemUtils.skyblockId
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.skyblockId
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 object AutoReelLasso {
+
 	private val config get() = WpcMod.config.hunting
 
 	private val LASSO_IDS = listOf("ABYSMAL_LASSO", "VINERIP_LASSO", "ENTANGLER_LASSO", "EVERSTRETCH_LASSO")
@@ -49,7 +50,7 @@ object AutoReelLasso {
 
 		val leashEntity = potentialLeash?.takeIf { it.leashHolder == client.player } ?: return clearLeash()
 
-		if(leashEntity.canBeReeled()){
+		if (leashEntity.canBeReeled()) {
 			isProcessing = true
 			reelLasso()
 		}
@@ -58,7 +59,6 @@ object AutoReelLasso {
 	fun reelLasso() = WpcMod.coroutineScope.launch {
 		val reelDelay = Random.nextLong(80, 180).milliseconds
 		delay(reelDelay)
-		WpcMod.LOGGER.info("Reeling Lasso $reelDelay")
 		MC.useItem()
 		delay(1.seconds) // Prevent redetecting old leash
 		isProcessing = false

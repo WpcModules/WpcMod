@@ -18,7 +18,7 @@ import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.equalsOneOf
-import net.wapic.wpcmod.util.render.drawRoundedRect
+import net.wapic.wpcmod.util.render.gui.drawRoundedRect
 
 abstract class AbstractTerminalScreen(initialMenu: ChestMenu, title: Component) : Screen(title), MenuAccess<ChestMenu> {
 
@@ -204,6 +204,7 @@ abstract class AbstractTerminalScreen(initialMenu: ChestMenu, title: Component) 
 	fun slotChanged(container: AbstractContainerMenu, slotIndex: Int, itemStack: ItemStack) {
 		Terminal.handler?.isTerminalSolved(slots)
 		confirmClickedSlotUpdate(slotIndex, itemStack)
+		DungeonEvents.TERMINAL_UPDATED.invoker().onUpdate(this, slotIndex, itemStack)
 
 		if (slotIndex == menu.container.containerSize - 1 && !isInitialized) {
 			solution.addAll(solveTerminal(slots))

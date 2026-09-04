@@ -1,23 +1,23 @@
 package net.wapic.wpcmod.features.dungeons.floor7
 
+import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.network.chat.Component
 import net.minecraft.util.CommonColors
+import net.minecraft.util.profiling.ProfilerFiller
 import net.minecraft.world.entity.decoration.ArmorStand
-import net.minecraft.world.phys.AABB
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.events.WorldRenderEvent
 import net.wapic.wpcmod.hud.SimpleHudElement
-import net.wapic.wpcmod.util.DungeonUtils
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.equalsOneOf
-import net.wapic.wpcmod.util.render.WorldRenderContext
-import net.wapic.wpcmod.util.render.brighter
-import net.wapic.wpcmod.util.render.darker
+import net.wapic.wpcmod.util.dungeons.DungeonUtils
+import net.wapic.wpcmod.util.render.WHITE
+import net.wapic.wpcmod.util.render.WpcModExtractionContext
 
 object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
 
@@ -25,23 +25,23 @@ object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
 	override val isEnabled: Boolean get() = config.enabled
 	override val isActive: Boolean get() = isEnabled && shouldRender
 
-    private var inactiveList = setOf<ArmorStand>()
-    private var firstInSection = false
-    private var shouldRender = false
-    private var isComplete = false
-    private var lastCompleted = 0
-    private var device = false
-    private var terminals = 0
-    private var gate = false
-    private var section = 1
-    private var levers = 0
+	private var inactiveList = setOf<ArmorStand>()
+	private var firstInSection = false
+	private var shouldRender = false
+	private var isComplete = false
+	private var lastCompleted = 0
+	private var device = false
+	private var terminals = 0
+	private var gate = false
+	private var section = 1
+	private var levers = 0
 
-    private val completedRegex = Regex("^(.{1,16}) (activated|completed) a (terminal|lever|device)! \\((\\d)/(\\d)\\)$")
-    private val goldorRegex = Regex("^\\[BOSS] Goldor: Who dares trespass into my domain\\?$")
-    private val coreOpeningRegex = Regex("^The Core entrance is opening!$")
-    private val gateRegex = Regex("^The gate has been destroyed!$")
+	private val completedRegex = Regex("^(.{1,16}) (activated|completed) a (terminal|lever|device)! \\((\\d)/(\\d)\\)$")
+	private val goldorRegex = Regex("^\\[BOSS] Goldor: Who dares trespass into my domain\\?$")
+	private val coreOpeningRegex = Regex("^The Core entrance is opening!$")
+	private val gateRegex = Regex("^The gate has been destroyed!$")
 
-    fun init() {
+	fun init() {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 		WorldChangeEvent.BEFORE.register(::onWorldLoad)
 		WorldRenderEvent.EVENT.register(::onRenderWorld)
@@ -52,7 +52,7 @@ object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
 				entity.name.string.equalsOneOf("Inactive Terminal", "Inactive", "Not Activated", "CLICK HERE")
 			}.toSet()
 		}
-    }
+	}
 
 	override fun render(drawContext: GuiGraphicsExtractor, deltaTicks: Float) {
 		if (!isActive) return
@@ -79,91 +79,86 @@ object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
 		matrixStack.popMatrix()
 	}
 
-    fun onMessageReceived(text: Component, actionBar: Boolean) {
+	fun onMessageReceived(text: Component, actionBar: Boolean) {
 		if (actionBar || !DungeonUtils.bossSpawned || !config.enabled) return
-        val text = text.string
+		val text = text.string
 
-        when {
-            completedRegex.matches(text) -> {
-                val it = completedRegex.find(text) ?: return
-                val completed = (it.groupValues[4].toIntOrNull() ?: 0).apply { if (this == 1) firstInSection = true }
+		when {
+			completedRegex.matches(text) -> {
+				val it = completedRegex.find(text) ?: return
+				val completed = (it.groupValues[4].toIntOrNull() ?: 0).apply { if (this == 1) firstInSection = true }
 
-                if (completed == (it.groupValues[5].toIntOrNull() ?: 0)) {
-                    if (gate) newSection() else isComplete = true
-                    return
-                }
+				if (completed == (it.groupValues[5].toIntOrNull() ?: 0)) {
+					if (gate) newSection() else isComplete = true
+					return
+				}
 
-                when (it.groupValues[3]) {
-                    "lever" -> levers++
-                    "terminal" -> terminals++
-                    "device" -> if (!firstInSection || lastCompleted != completed) device = true
-                }
-                lastCompleted = completed
-            }
+				when (it.groupValues[3]) {
+					"lever" -> levers++
+					"terminal" -> terminals++
+					"device" -> if (!firstInSection || lastCompleted != completed) device = true
+				}
+				lastCompleted = completed
+			}
 
-            gateRegex.matches(text) -> {
-                gate = true
-                if (isComplete) newSection()
-            }
+			gateRegex.matches(text) -> {
+				gate = true
+				if (isComplete) newSection()
+			}
 
-            goldorRegex.matches(text) -> {
-                shouldRender = true
-                resetState()
-                section = 1
-            }
+			goldorRegex.matches(text) -> {
+				shouldRender = true
+				resetState()
+				section = 1
+			}
 
-            coreOpeningRegex.matches(text) -> {
-                shouldRender = false
-                resetState()
-            }
-        }
-    }
+			coreOpeningRegex.matches(text) -> {
+				shouldRender = false
+				resetState()
+			}
+		}
+	}
 
-    fun onWorldLoad(world: ClientLevel) {
-        shouldRender = false
-        resetState()
-    }
+	fun onWorldLoad(world: ClientLevel) {
+		shouldRender = false
+		resetState()
+	}
 
-    private fun resetState() {
-        inactiveList = emptySet()
-        firstInSection = false
-        lastCompleted = 0
-        isComplete = false
-        device = false
-        terminals = 0
-        gate = false
-        section = 1
-        levers = 0
-    }
+	private fun resetState() {
+		inactiveList = emptySet()
+		firstInSection = false
+		lastCompleted = 0
+		isComplete = false
+		device = false
+		terminals = 0
+		gate = false
+		section = 1
+		levers = 0
+	}
 
-    private fun newSection() {
-        firstInSection = false
-        isComplete = false
-        device = false
-        terminals = 0
-        gate = false
-        levers = 0
-        section++
-    }
+	private fun newSection() {
+		firstInSection = false
+		isComplete = false
+		device = false
+		terminals = 0
+		gate = false
+		levers = 0
+		section++
+	}
 
-    fun onRenderWorld(worldRenderContext: WorldRenderContext) {
-        if (inactiveList.isEmpty() || DungeonUtils.getF7Phase() != DungeonUtils.F7Phase.GOLDOR || !config.enabled) return
-		worldRenderContext.profiler.push("InactiveWaypoints")
-        inactiveList.forEach {
-            val name = it.name.string
-            if ((name == "Inactive Terminal" && config.showTerminals) || (name == "Inactive" && config.showDevices) || (name == "Not Activated" && config.showLevers)) {
-                val customName = Component.nullToEmpty(if (name == "Inactive Terminal") "Terminal" else if (name == "Inactive") "Device" else "Lever").visualOrderText
-                if (config.renderBox)
-					worldRenderContext.drawFilledBoxWithOutline(
-						AABB.unitCubeFromLowerCorner(it.position().add(-0.5, 0.0, -0.5)),
-						config.color.darker(),
-						config.color.brighter()
-					)
-                if (config.renderText)
-					worldRenderContext.drawText(customName, it.position().add(0.0, 2.0, 0.0), 1.5f, true)
-            }
-            it.isCustomNameVisible = !config.hideDefault
-        }
-		worldRenderContext.profiler.pop()
-    }
+	fun onRenderWorld(extractor: WpcModExtractionContext, profiler: ProfilerFiller) {
+		if (inactiveList.isEmpty() || DungeonUtils.getF7Phase() != DungeonUtils.F7Phase.GOLDOR || !config.enabled) return
+		profiler.push("InactiveWaypoints")
+		inactiveList.forEach {
+			val name = it.name.string
+			if ((name == "Inactive Terminal" && config.showTerminals) || (name == "Inactive" && config.showDevices) || (name == "Not Activated" && config.showLevers)) {
+				val customName = if (name == "Inactive Terminal") "Terminal" else if (name == "Inactive") "Device" else "Lever"
+				val pos = it.position().add(-0.5, if (customName == "Lever") -1.0 else 1.0, -0.5)
+				if (config.renderBox) extractor.blockPos(it.blockPosition().above(1), config.color)
+				if (config.renderText) extractor.text(customName, pos, ChromaColour.WHITE, 2f, true, true)
+			}
+			it.isCustomNameVisible = !config.hideDefault
+		}
+		profiler.pop()
+	}
 }

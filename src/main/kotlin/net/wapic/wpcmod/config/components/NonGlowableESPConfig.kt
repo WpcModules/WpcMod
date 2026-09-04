@@ -23,8 +23,4 @@ abstract class NonGlowableESPConfig : EspConfig {
 	@ConfigOption(name = "Tracer Width", desc = "The width of the tracer drawn")
 	@ConfigEditorSlider(maxValue = 5f, minStep = 0.1f, minValue = 1f)
 	override var tracerWidth = 2f
-
-	override var glow: Boolean
-		get() = false
-		set(value) {}
 }

@@ -12,6 +12,6 @@ public class GameRendererMixin {
 
 	@Inject(method = "close", at = @At("TAIL"))
 	private void wpcmod$closeRenderer(CallbackInfo ci) {
-		WpcModRenderSystem.INSTANCE.close();
+		WpcModRenderSystem.Companion.close();
 	}
 }

@@ -2,6 +2,7 @@ package net.wapic.wpcmod.features.general
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.Entity
@@ -9,17 +10,16 @@ import net.minecraft.world.entity.decoration.ArmorStand
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.components.GlowableESPConfig
 import net.wapic.wpcmod.features.entity.EspFeature
-import net.wapic.wpcmod.util.ConfigUtils.copyWithColor
 import net.wapic.wpcmod.util.FileManager
 import net.wapic.wpcmod.util.Island
-import net.wapic.wpcmod.util.ItemUtils.headTexture
 import net.wapic.wpcmod.util.Utils
+import net.wapic.wpcmod.util.headTexture
+import net.wapic.wpcmod.util.render.state.EntityState
 import java.io.File
 
 object CenturyCakeHelper : EspFeature() {
 
 	private val config get() = WpcMod.config.general.centuryCake
-	private val cakeConfig = CakeEatenConfig()
 
 	private val EAT_MESSAGE = Regex("^(?:Big )?Yum! You (?:gain|refresh) \\+\\d+. (.+) for 48 hours!$")
 
@@ -47,16 +47,17 @@ object CenturyCakeHelper : EspFeature() {
 		}
 	}
 
-	override fun compute(entity: Entity): GlowableESPConfig? {
+	override fun compute(entity: Entity): EntityState? {
 		if (entity !is ArmorStand) return null
 
 		val cakeType = CakeType.entries.find { it.texture == entity.mainHandItem.headTexture } ?: return null
 		eatenCakes[cakeType]?.let { expiration ->
-			if (System.currentTimeMillis() < expiration) {
-				return if (config.highlightEaten) cakeConfig.copyWithColor(config.cakeEatenColor) else null
+			if (System.currentTimeMillis() < expiration && config.highlightEaten) {
+				return EntityState(CakeEatenConfig(config.cakeEatenColor))
 			}
 		}
-		return cakeConfig
+
+		return EntityState(CakeEatenConfig(config.cakeReadyColor))
 	}
 
 	override fun isEnabled(): Boolean {
@@ -160,10 +161,9 @@ object CenturyCakeHelper : EspFeature() {
 		);
 	}
 
-	class CakeEatenConfig : GlowableESPConfig() {
+	class CakeEatenConfig(override var color: ChromaColour) : GlowableESPConfig() {
 		init {
 			glow = true
-			color = config.cakeReadyColor
 		}
 	}
 }
