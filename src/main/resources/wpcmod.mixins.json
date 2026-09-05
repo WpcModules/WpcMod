@@ -37,6 +37,7 @@
 		"OptionsMixin",
 		"PacketUtilsMixin",
 		"PlayerMixin",
+		"ScreenEffectRendererMixin",
 		"ScreenMixin",
 		"SimpleContainerMixin",
 		"SkullBlockMixin",

@@ -1,5 +1,6 @@
 package net.wapic.wpcmod.config.render
 
+import io.github.notenoughupdates.moulconfig.annotations.Accordion
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorBoolean
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorSlider
 import io.github.notenoughupdates.moulconfig.annotations.ConfigOption
@@ -32,4 +33,24 @@ class RenderConfig {
 	@ConfigEditorBoolean
 	var disableFrontCamera: Boolean = false
 
+	@Accordion
+	@ConfigOption(name = "Flame Overlay", desc = "")
+	var flameOverlay = FlameOverlayConfig()
+
+	class FlameOverlayConfig {
+
+		@ConfigOption(
+			name = "Flame Overlay Height",
+			desc = "Sets the height of the flame overlay"
+		)
+		@ConfigEditorSlider(minValue = 0.0f, maxValue = 1.0f, minStep = 0.1f)
+		var flameOverlayHeight: Float = 1.0f
+
+		@ConfigOption(
+			name = "Flame Overlay Opacity",
+			desc = "Sets the height of the flame overlay"
+		)
+		@ConfigEditorSlider(minValue = 0.0f, maxValue = 1.0f, minStep = 0.1f)
+		var flameOverlayOpacity: Float = 1.0f
+	}
 }
