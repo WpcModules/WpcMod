@@ -32,7 +32,7 @@ object WpcModRenderPipelines {
 	)
 
 	val TEXT: RenderPipeline = RenderPipelines.register(
-		RenderPipeline.builder(RenderPipelines.TEXT_SNIPPET)
+		RenderPipeline.builder(RenderPipelines.WORLD_TEXT_SNIPPET)
 			.withLocation(WpcMod.Identifier("pipeline/wpcmod_text"))
 			.withVertexShader("core/text")
 			.withFragmentShader("core/text")

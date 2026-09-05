@@ -8,7 +8,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer
 import net.minecraft.client.gui.Font.GlyphVisitor
 import net.minecraft.client.gui.font.TextRenderable
 import net.minecraft.client.gui.render.TextureSetup
-import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.util.ARGB
 import net.minecraft.util.LightCoordsUtil
 import net.wapic.wpcmod.util.MC
@@ -29,11 +28,10 @@ object TextRenderer : Renderer<TextRenderState> {
 	) {
 		poseStack.pushPose()
 		val scale = state.scale * 0.025f
-		val positionMatrix: Matrix4f = Matrix4f()
-			.translate(state.pos.add(.5f, .5f, .5f) - state.cameraPos)
+		val pose: Matrix4f = Matrix4f()
+			.translate(state.pos.add(.5f, .62f, .5f) - state.cameraPos)
 			.rotate(state.cameraOrientation)
 			.scale(scale, -scale, scale)
-
 		val backgroundColor = if (state.background) ARGB.color(0.25f, -16777216) else 0
 		val color = state.color.getEffectiveColourRGB()
 
@@ -41,13 +39,15 @@ object TextRenderer : Renderer<TextRenderState> {
 
 		preparedText.visit(object : GlyphVisitor {
 			override fun acceptRenderable(renderable: TextRenderable) {
-				val textureSetup =
-					TextureSetup.singleTextureWithLightmap(renderable.textureView(), RenderSystem.getSamplerCache().getClampToEdge(FilterMode.NEAREST))
-				val builder: VertexConsumer = WpcModRenderer.getConsumer(RenderPipelines.TEXT, textureSetup)
-				renderable.render(positionMatrix, builder, LightCoordsUtil.FULL_BRIGHT, false)
+				val consumer: VertexConsumer = WpcModRenderer.getConsumer(pipeline, getTextureSetup(renderable))
+				renderable.render(pose, consumer, LightCoordsUtil.FULL_BRIGHT, false)
 			}
 		})
 
 		poseStack.popPose()
+	}
+
+	fun getTextureSetup(renderable: TextRenderable): TextureSetup {
+		return TextureSetup.singleTextureWithLightmap(renderable.textureView(), RenderSystem.getSamplerCache().getClampToEdge(FilterMode.NEAREST))
 	}
 }
