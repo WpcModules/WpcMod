@@ -1,7 +1,6 @@
 package net.wapic.wpcmod.features.dungeons.floor7
 
 import io.github.notenoughupdates.moulconfig.ChromaColour
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.multiplayer.ClientLevel
@@ -14,10 +13,10 @@ import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.events.WorldRenderEvent
 import net.wapic.wpcmod.hud.SimpleHudElement
 import net.wapic.wpcmod.util.MC
-import net.wapic.wpcmod.util.Utils.equalsOneOf
 import net.wapic.wpcmod.util.dungeons.DungeonUtils
 import net.wapic.wpcmod.util.render.WHITE
 import net.wapic.wpcmod.util.render.WpcModExtractionContext
+import net.wapic.wpcmod.util.render.darker
 
 object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
 
@@ -25,7 +24,6 @@ object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
 	override val isEnabled: Boolean get() = config.enabled
 	override val isActive: Boolean get() = isEnabled && shouldRender
 
-	private var inactiveList = setOf<ArmorStand>()
 	private var firstInSection = false
 	private var shouldRender = false
 	private var isComplete = false
@@ -45,13 +43,6 @@ object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 		WorldChangeEvent.BEFORE.register(::onWorldLoad)
 		WorldRenderEvent.EVENT.register(::onRenderWorld)
-
-		ClientTickEvents.END_LEVEL_TICK.register {
-			if (DungeonUtils.getF7Phase() != DungeonUtils.F7Phase.GOLDOR || !config.enabled) return@register
-			inactiveList = it.entitiesForRendering().filterIsInstance<ArmorStand>().filter { entity ->
-				entity.name.string.equalsOneOf("Inactive Terminal", "Inactive", "Not Activated", "CLICK HERE")
-			}.toSet()
-		}
 	}
 
 	override fun render(drawContext: GuiGraphicsExtractor, deltaTicks: Float) {
@@ -125,7 +116,6 @@ object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
 	}
 
 	private fun resetState() {
-		inactiveList = emptySet()
 		firstInSection = false
 		lastCompleted = 0
 		isComplete = false
@@ -146,18 +136,29 @@ object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
 		section++
 	}
 
-	fun onRenderWorld(extractor: WpcModExtractionContext, profiler: ProfilerFiller) {
-		if (inactiveList.isEmpty() || DungeonUtils.getF7Phase() != DungeonUtils.F7Phase.GOLDOR || !config.enabled) return
+	fun onRenderWorld(context: WpcModExtractionContext, profiler: ProfilerFiller) {
+		if (DungeonUtils.getF7Phase() != DungeonUtils.F7Phase.GOLDOR || !config.enabled) return
 		profiler.push("InactiveWaypoints")
-		inactiveList.forEach {
-			val name = it.name.string
-			if ((name == "Inactive Terminal" && config.showTerminals) || (name == "Inactive" && config.showDevices) || (name == "Not Activated" && config.showLevers)) {
-				val customName = if (name == "Inactive Terminal") "Terminal" else if (name == "Inactive") "Device" else "Lever"
-				val pos = it.position().add(-0.5, if (customName == "Lever") -1.0 else 1.0, -0.5)
-				if (config.renderBox) extractor.blockPos(it.blockPosition().above(1), config.color)
-				if (config.renderText) extractor.text(customName, pos, ChromaColour.WHITE, 2f, true, true)
+		context.level.entitiesForRendering().filterIsInstance<ArmorStand>().forEach {
+			if (it.name.string == "CLICK HERE") {
+				it.isCustomNameVisible = !(config.showTerminals && config.hideDefault)
+				return@forEach
 			}
-			it.isCustomNameVisible = !config.hideDefault
+
+			val (customName, yOffset, isEnabled) = when (it.name.string) {
+				"Inactive Terminal" -> Triple("Terminal", 1.0, config.showTerminals)
+				"Inactive" -> Triple("Device", 1.5, config.showDevices)
+				"Not Activated" -> Triple("Lever", 2.0, config.showLevers)
+				else -> return@forEach
+			}
+
+			// set visibility before returning in case players decide to re-enable default nametags mid-run
+			it.isCustomNameVisible = !(config.hideDefault && isEnabled)
+			if (!isEnabled) return@forEach
+
+			val pos = it.position().add(-0.5, yOffset, -0.5)
+			if (config.renderBox) context.filledBox(pos, 1f, 1f, config.color.darker(), config.color)
+			if (config.renderText) context.text(customName, pos, ChromaColour.WHITE, 2f, shadow = true, background = true)
 		}
 		profiler.pop()
 	}
