@@ -10,7 +10,7 @@ import net.wapic.wpcmod.util.Utils
 
 object AutoAcceptTrapper {
 
-	private val config = WpcMod.config.chat
+	private val config get() = WpcMod.config.chat
 	private const val TRAPPER_MESSAGE =
 		"\nAccept the trapper's task to hunt the animal?\nClick an option: §a§l[YES] - §c§l[NO]"
 

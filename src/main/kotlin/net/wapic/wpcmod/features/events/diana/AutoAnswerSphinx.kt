@@ -11,7 +11,7 @@ import net.wapic.wpcmod.util.Utils
 
 object AutoAnswerSphinx {
 
-	private val config = WpcMod.config.events.diana
+	private val config get() = WpcMod.config.events.diana
 
 	private val questionsToAnswers = mapOf(
 		"Who owns the Gold Essence Shop?" to "Marigold",

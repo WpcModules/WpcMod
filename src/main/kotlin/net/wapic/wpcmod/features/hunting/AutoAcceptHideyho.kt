@@ -10,7 +10,7 @@ import net.wapic.wpcmod.util.Utils
 
 object AutoAcceptHideyho {
 
-	private val config = WpcMod.config.hunting.safari
+	private val config get() = WpcMod.config.hunting.safari
 
 	// Hypixel, trim your damn messages please
 	private const val HIDEYHO_ACCEPT_MESSAGE = "§eSelect an option: §a[Sure] §c[No thanks...] "
