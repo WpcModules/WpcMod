@@ -6,6 +6,10 @@ import com.mojang.blaze3d.pipeline.ColorTargetState
 import com.mojang.blaze3d.pipeline.RenderPipeline
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import net.minecraft.client.renderer.RenderPipelines
+import net.minecraft.client.renderer.rendertype.LayeringTransform
+import net.minecraft.client.renderer.rendertype.OutputTarget
+import net.minecraft.client.renderer.rendertype.RenderSetup
+import net.minecraft.client.renderer.rendertype.RenderType
 import net.wapic.wpcmod.WpcMod
 import java.util.*
 
@@ -16,6 +20,13 @@ object WpcModRenderPipelines {
 			.withLocation(WpcMod.Identifier("pipeline/wpcmod_lines"))
 			.withDepthStencilState(Optional.empty())
 			.build()
+	)
+	val LINES_TYPE: RenderType = RenderType.create(
+		"wpcmod_lines",
+		RenderSetup.builder(LINES)
+			.setLayeringTransform(LayeringTransform.VIEW_OFFSET_Z_LAYERING)
+			.setOutputTarget(OutputTarget.MAIN_TARGET)
+			.createRenderSetup()
 	)
 
 	val QUADS: RenderPipeline = RenderPipelines.register(
@@ -29,6 +40,14 @@ object WpcModRenderPipelines {
 			.withDepthStencilState(Optional.empty())
 			.withCull(false)
 			.build()
+	)
+	val QUADS_TYPE: RenderType = RenderType.create(
+		"wpcmod_quads",
+		RenderSetup.builder(QUADS)
+			.sortOnUpload()
+			.setLayeringTransform(LayeringTransform.VIEW_OFFSET_Z_LAYERING)
+			.setOutputTarget(OutputTarget.MAIN_TARGET)
+			.createRenderSetup()
 	)
 
 	val TEXT: RenderPipeline = RenderPipelines.register(
