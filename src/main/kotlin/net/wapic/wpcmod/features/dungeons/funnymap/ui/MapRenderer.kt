@@ -44,7 +44,7 @@ object MapRenderer {
 		matrixStack.scale(config.textScale * scale, config.textScale * scale)
 
 		if (config.mapRotate) {
-			matrixStack.rotate(Math.toRadians(player.yRot + 180.0).toFloat())
+			matrixStack.rotate((player.yRot + 180f) * Mth.DEG_TO_RAD)
 		}
 
 		val font = MC.font
@@ -93,24 +93,18 @@ object MapRenderer {
 		matrixStack.pushMatrix()
 
 		try {
-
-			val interpolatedX = Mth.lerp(deltaTicks, player.lastMapX, player.mapX)
-			val interpolatedZ = Mth.lerp(deltaTicks, player.lastMapZ, player.mapZ)
-			val interpolatedYaw = Mth.lerp(deltaTicks, player.lastYaw, player.yaw)
-			matrixStack.translate(interpolatedX, interpolatedZ)
+			val pos = player.getPosition(deltaTicks)
+			val yaw = player.getYaw(deltaTicks)
+			matrixStack.translate(pos.x, pos.y)
 
 			matrixStack.scale(config.playerHeadScale, config.playerHeadScale)
-			matrixStack.rotate(Math.toRadians(interpolatedYaw + 180.0).toFloat())
+			matrixStack.rotate((yaw + 180f) * Mth.DEG_TO_RAD)
 
 			if (config.mapVanillaMarker && player.isPlayer) {
 				drawContext.drawTexture(mapIcons, -4, -4, 0f, 0f, 8, 8, 8, 8)
 			} else {
 				drawContext.drawTexture(player.skin.body.texturePath(), -4, -4, 8f, 8f, 8, 8, 64, 64)
-				if (config.drawClassBorder) drawContext.drawBorder(
-					-5, -5,
-					10, 10,
-					player.dungeonClass.color.toChromaColour()
-				)
+				if (config.drawClassBorder) drawContext.drawBorder(-5, -5, 10, 10, player.dungeonClass.color.toChromaColour())
 			}
 
 			// Handle player names
@@ -121,10 +115,10 @@ object MapRenderer {
 					"HAUNT_ABILITY"
 				))
 			) {
-				matrixStack.rotate(-Math.toRadians(interpolatedYaw + 180.0).toFloat())
+				matrixStack.rotate(-(yaw * Mth.DEG_TO_RAD))
 
 				if (config.mapRotate) {
-					matrixStack.rotate(Math.toRadians(realPlayer.yRot + 180.0).toFloat())
+					matrixStack.rotate((realPlayer.yRot + 180f) * Mth.DEG_TO_RAD)
 				}
 
 				matrixStack.translate(0f, 6f)

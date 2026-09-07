@@ -8,6 +8,7 @@ import net.minecraft.world.level.saveddata.maps.MapItemSavedData
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.DungeonScan
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.Utils.equalsOneOf
+import net.wapic.wpcmod.util.dungeons.DungeonPlayer
 import net.wapic.wpcmod.util.dungeons.DungeonUtils
 import net.wapic.wpcmod.util.dungeons.DungeonUtils.inDungeons
 
@@ -92,5 +93,16 @@ object MapUtils {
 			}
 		}
 		return Pair(start, currLength)
+	}
+
+	fun updatePlayerFromMap(player: DungeonPlayer, iconNumber: Int) {
+		if (player.isPlayer) return
+		mapData?.decorations?.elementAtOrNull(iconNumber)?.let { decoration ->
+			player.updatePos(
+				((decoration.x + 128) shr 1).toFloat(),
+				((decoration.y + 128) shr 1).toFloat(),
+				decoration.rot * 22.5f
+			)
+		}
 	}
 }

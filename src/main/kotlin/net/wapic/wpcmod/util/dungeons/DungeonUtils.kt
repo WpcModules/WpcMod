@@ -7,16 +7,13 @@ import net.minecraft.client.multiplayer.PlayerInfo
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket
 import net.minecraft.util.Util
-import net.minecraft.world.level.saveddata.maps.MapDecorationTypes
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.PlayerListChangeEvent
 import net.wapic.wpcmod.events.ScoreboardChangeEvent
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.dungeons.ScoreCalculation
-import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Room
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.RoomState
-import net.wapic.wpcmod.features.dungeons.funnymap.core.map.UniqueRoom
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.DungeonScan
 import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils
 import net.wapic.wpcmod.util.*
@@ -38,8 +35,6 @@ object DungeonUtils {
 	val inDungeons get() = Utils.getLocation() == Island.DUNGEON
 	var currentFloor: DungeonFloor = DungeonFloor.NONE
 		private set
-	var currentRoom: UniqueRoom? = null
-		private set
 
 	var startTime = 0L
 		private set
@@ -59,7 +54,6 @@ object DungeonUtils {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 		PlayerListChangeEvent.EVENT.register(::onPlayerListChange)
 		ScoreboardChangeEvent.EVENT.register(::onScoreboardUpdate)
-		DungeonEvents.ROOM_ENTERED.register(::onRoomEntered)
 		ClientTickEvents.END_CLIENT_TICK.register(::onTick)
 
 		WorldChangeEvent.BEFORE.register { _ ->
@@ -83,16 +77,15 @@ object DungeonUtils {
 
 	fun getPlayers(tabEntries: List<Pair<PlayerInfo, Component>>) {
 		for (i in listOf(5, 9, 13, 17, 1)) {
-			with(tabEntries[i]) {
-				val tabText = second.string.trim()
-				val name = tabText.substringAfterLast("] ").split(" ")[0]
-				if (name != "") {
-					dungeonTeammates[name] = DungeonPlayer(first.skin).apply {
-						MC.level?.players()?.find { it.name.string == name }?.let { setData(it) }
-						this.name = name
-						this.dungeonClass = DungeonClass.fromTabText(tabText.substringAfter("(").substringBefore(")").substringBefore(" "))
-					}
-				}
+			val tabText = tabEntries[i].second.string.trim()
+
+			val name = tabText.substringAfterLast("] ").split(" ")[0]
+			if (name.isEmpty()) continue
+
+			dungeonTeammates[name] = DungeonPlayer(tabEntries[i].first.skin).apply {
+				MC.level?.players()?.find { it.name.string == name }?.let { setData(it) }
+				this.name = name
+				this.dungeonClass = DungeonClass.fromTabText(tabText.substringAfter("(").substringBefore(")").substringBefore(" "))
 			}
 		}
 	}
@@ -115,7 +108,7 @@ object DungeonUtils {
 					dungeonClass = DungeonClass.fromTabText(classText)
 				}
 
-				val player = MC.level?.players()?.find { it.stringUUID == uuid }?.let {
+				MC.level?.players()?.find { it.name.string == name }?.let {
 					if (!playerLoaded) setData(it)
 					this.updatePos(
 						((it.x - DungeonScan.START_X + 13) * MapUtils.coordMultiplier + MapUtils.startCorner.first).toFloat(),
@@ -123,38 +116,26 @@ object DungeonUtils {
 						it.yRot
 					)
 					return@let it
-				}
-
-				if (player == null) {
-					MapUtils.mapData?.decorations?.elementAtOrNull(index)?.let { decoration ->
-						if (decoration.type == MapDecorationTypes.FRAME) return@let // no need to update local player from map
-						this.updatePos(
-							((decoration.x + 128) shr 1).toFloat(),
-							((decoration.y + 128) shr 1).toFloat(),
-							decoration.rot * 22.5f
-						)
-					}
-				}
+				} ?: MapUtils.updatePlayerFromMap(this, index)
 
 				val room = getCurrentRoom()
 				room?.let { current ->
 					if (time <= 1000) return@let
+					if (current.state.equalsOneOf(RoomState.UNDISCOVERED, RoomState.UNOPENED)) {
+						current.uniqueRoom?.setRoomState(RoomState.DISCOVERED)
+					}
+
 					if (lastRoom == null) {
 						lastRoom = current
-					} else if (lastRoom?.data?.name != current.data.name) {
+						continue
+					}
+					if (lastRoom?.data?.name == current.data.name) continue
 
-						if (current.state.equalsOneOf(RoomState.UNDISCOVERED, RoomState.UNOPENED)) {
-							current.uniqueRoom?.setRoomState(RoomState.DISCOVERED)
-						}
-
-						lastRoom?.let { last ->
-							if (isPlayer) {
-								DungeonEvents.ROOM_ENTERED.invoker().onRoomEntered(last, current)
-							}
-							roomVisits.add(Pair(time - lastTime, last))
-							lastTime = time
-							lastRoom = current
-						}
+					lastRoom?.let { last ->
+						if (isPlayer) DungeonEvents.ROOM_ENTERED.invoker().onRoomEntered(last, current)
+						roomVisits.add(Pair(time - lastTime, last))
+						lastTime = time
+						lastRoom = current
 					}
 				}
 			}
@@ -200,11 +181,6 @@ object DungeonUtils {
 			val matcher = floorRegex.find(line)
 			currentFloor = DungeonFloor.fromShortName(matcher?.groups["floor"]?.value)
 		}
-	}
-
-	private fun onRoomEntered(oldRoom: Room, newRoom: Room) {
-		currentRoom = newRoom.uniqueRoom
-		WpcMod.LOGGER.debug("Current room set: {}, old room: {}", newRoom.data.name, oldRoom.data.name)
 	}
 
 	private fun checkBossName(floor: DungeonFloor, bossName: String): Boolean {

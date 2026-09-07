@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper
 import net.minecraft.client.KeyMapping
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.util.CommonColors
+import net.minecraft.util.Mth
 import net.minecraft.util.profiling.Profiler
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.*
@@ -55,7 +56,7 @@ object MapElement : SimpleHudElement("Dungeon Map", 128, 128) {
 			drawContext.enableScissor(0, 0, width, height)
 
 			matrixStack.translate(64f, 64f)
-			matrixStack.rotate(Math.toRadians(-player.yRot + 180.0).toFloat())
+			matrixStack.rotate((-player.yRot + 180f) * Mth.DEG_TO_RAD)
 
 			if (config.mapCenter) {
 				matrixStack.translate(

@@ -1,11 +1,13 @@
 package net.wapic.wpcmod.util.dungeons
 
+import net.minecraft.util.Mth
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.entity.player.PlayerSkin
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Room
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
 import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils
 import net.wapic.wpcmod.util.MC
+import org.joml.Vector2f
 
 data class DungeonPlayer(val skin: PlayerSkin) {
 
@@ -15,7 +17,6 @@ data class DungeonPlayer(val skin: PlayerSkin) {
 	var mapX = 0f
 	var mapZ = 0f
 	var yaw = 0f
-
 	var lastMapX = 0f
 	var lastMapZ = 0f
 	var lastYaw = 0f
@@ -38,6 +39,9 @@ data class DungeonPlayer(val skin: PlayerSkin) {
 		isPlayer = uuid == MC.player?.stringUUID
 		playerLoaded = true
 	}
+
+	fun getPosition(deltaTicks: Float) = Vector2f(Mth.lerp(deltaTicks, lastMapX, mapX), Mth.lerp(deltaTicks, lastMapZ, mapZ))
+	fun getYaw(deltaTicks: Float) = Mth.lerp(deltaTicks, lastYaw, yaw)
 
 	fun updatePos(x: Float, z: Float, yRot: Float) {
 		lastMapX = mapX
