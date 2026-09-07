@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.hypixel.modapi.HypixelModAPI
 import net.hypixel.modapi.packet.impl.clientbound.event.ClientboundLocationPacket
 import net.minecraft.ChatFormatting
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Style
 import net.minecraft.util.Util
 import net.minecraft.world.level.ChunkPos
@@ -24,7 +25,6 @@ object Utils {
 	private var location: Island? = null
 
 	fun init() {
-
 		ClientTickEvents.END_CLIENT_TICK.register { onTick() }
 		HypixelModAPI.getInstance().subscribeToEventPacket(ClientboundLocationPacket::class.java)
 		HypixelModAPI.getInstance().createHandler(ClientboundLocationPacket::class.java, ::onHypixelLocationPacket)
@@ -72,7 +72,7 @@ object Utils {
 	fun getLoadedBlockEntities(): List<BlockEntity> {
 		val blockEntities = mutableListOf<BlockEntity>()
 		val chunks = getLoadedChunks()
-		for(chunk in chunks) {
+		for (chunk in chunks) {
 			chunk?.blockEntities?.values?.forEach(blockEntities::add)
 		}
 		return blockEntities
@@ -96,4 +96,5 @@ object Utils {
 			.map { chunk -> MC.level?.getChunk(chunk.x, chunk.z) }
 	}
 
+	fun getSoundFromString(sound: String) = BuiltInRegistries.SOUND_EVENT.find { it.location.path == sound }
 }

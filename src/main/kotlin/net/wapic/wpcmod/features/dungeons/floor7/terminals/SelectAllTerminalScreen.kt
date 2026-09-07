@@ -45,6 +45,10 @@ class SelectAllTerminalScreen(menu: ChestMenu, title: Component) : AbstractTermi
 		return isCorrectColor || hasOverride
 	}
 
+	override fun isExpected(slotIndex: Int, itemStack: ItemStack): Boolean {
+		return itemStack.hasFoil()
+	}
+
 	companion object {
 
 		private val ITEM_OVERRIDES = mapOf(

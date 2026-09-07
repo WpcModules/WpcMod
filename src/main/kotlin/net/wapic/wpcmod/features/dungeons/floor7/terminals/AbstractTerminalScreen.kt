@@ -29,11 +29,12 @@ abstract class AbstractTerminalScreen(initialMenu: ChestMenu, title: Component) 
 	private var isInitialized = false
 	private var hoveredSlot: Int? = null
 	private var nextClickTime: Long = 0
+	private var currentServerTick: Int = 0
 
 	private val slotMap: MutableMap<Int, Box> = mutableMapOf()
 	private val isSimulator = menu.containerId == Int.MAX_VALUE
 	private val scaledSlotSize = 16 * config.customTermSize
-	private val clickedSlots = mutableSetOf<Pair<Int, Long>>()
+	private val clickedSlots = mutableSetOf<Pair<Int, Float>>()
 
 	protected val totalSlotSpace = scaledSlotSize + config.gap * config.customTermSize
 	protected val slots get() = menu.slots.subList(0, menu.container.containerSize)
@@ -43,13 +44,15 @@ abstract class AbstractTerminalScreen(initialMenu: ChestMenu, title: Component) 
 	override fun tick() {
 		super.tick()
 		Terminal.handler?.onTick()
+	}
 
+	fun onServerTick() {
+		currentServerTick++
 		if (clickedSlots.isEmpty()) return
-
 		val iterator = clickedSlots.iterator()
 		while (iterator.hasNext()) {
 			val slotToTime = iterator.next()
-			if (slotToTime.second >= Util.getEpochMillis()) continue
+			if (slotToTime.second >= currentServerTick) continue
 
 			val misingItem = solveTerminal(listOf(menu.getSlot(slotToTime.first)))
 			if (misingItem.isEmpty()) continue
@@ -69,7 +72,7 @@ abstract class AbstractTerminalScreen(initialMenu: ChestMenu, title: Component) 
 
 	override fun init() {
 		Terminal.handler?.create()
-		DungeonEvents.TERMINAL_OPENED.invoker().onOpen(this)
+		if (!isSimulator) DungeonEvents.TERMINAL_OPENED.invoker().onOpen(this)
 	}
 
 	// Prevent init from being called when resizing, no need to rebild widgets since we don't have any.
@@ -105,11 +108,11 @@ abstract class AbstractTerminalScreen(initialMenu: ChestMenu, title: Component) 
 
 		if (!isSimulator) {
 			MC.clickSlot(menu.containerId, slotIndex, button, input)
-			clickedSlots.add(Pair(slotIndex, Util.getEpochMillis() + config.resyncTime.toLong()))
+			clickedSlots.add(Pair(slotIndex, currentServerTick + config.resyncTime / 50f))
+			DungeonEvents.TERMINAL_CLICKED.invoker().onClick(this, slotIndex, button)
 		}
 
 		nextClickTime = Util.getEpochMillis() + config.clickDelay.toLong()
-		DungeonEvents.TERMINAL_CLICKED.invoker().onClick(this, slotIndex, button)
 	}
 
 	override fun extractRenderState(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, a: Float) {
@@ -168,8 +171,12 @@ abstract class AbstractTerminalScreen(initialMenu: ChestMenu, title: Component) 
 
 	override fun onClose() {
 		val player = minecraft.player ?: return
-		if (isSimulator) player.clientSideCloseContainer() else player.closeContainer()
-		DungeonEvents.TERMINAL_CLOSED.invoker().onClose()
+		if (isSimulator) {
+			player.clientSideCloseContainer()
+		} else {
+			player.closeContainer()
+			DungeonEvents.TERMINAL_CLOSED.invoker().onClose(Terminal.lastTerminal ?: return)
+		}
 	}
 
 	override fun removed() {
@@ -204,7 +211,7 @@ abstract class AbstractTerminalScreen(initialMenu: ChestMenu, title: Component) 
 	fun slotChanged(container: AbstractContainerMenu, slotIndex: Int, itemStack: ItemStack) {
 		Terminal.handler?.isTerminalSolved(slots)
 		confirmClickedSlotUpdate(slotIndex, itemStack)
-		DungeonEvents.TERMINAL_UPDATED.invoker().onUpdate(this, slotIndex, itemStack)
+		if (!isSimulator) DungeonEvents.TERMINAL_UPDATED.invoker().onUpdate(this, slotIndex, itemStack)
 
 		if (slotIndex == menu.container.containerSize - 1 && !isInitialized) {
 			solution.addAll(solveTerminal(slots))

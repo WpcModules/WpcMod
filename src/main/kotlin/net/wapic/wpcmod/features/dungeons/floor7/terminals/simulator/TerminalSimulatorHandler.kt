@@ -10,18 +10,19 @@ import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.ItemStackTemplate
 import net.minecraft.world.item.Items
+import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.GuiEvents
 import net.wapic.wpcmod.features.dungeons.floor7.terminals.Terminal
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.Utils
 
 abstract class TerminalSimulatorHandler(private val menu: ChestMenu) {
 
-	protected val emptyNameData =
-		DataComponentPatch.builder().set(DataComponents.CUSTOM_NAME, Component.literal("")).build()
-	protected val glintOverrideData =
-		DataComponentPatch.builder().set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true).build()
+	protected val emptyNameData = DataComponentPatch.builder().set(DataComponents.CUSTOM_NAME, Component.literal("")).build()
+	protected val glintOverrideData = DataComponentPatch.builder().set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true).build()
 	protected val blackPane = ItemStackTemplate(Items.STAINED_GLASS_PANE.black, emptyNameData).create()
 	private val slots: List<Slot> get() = menu.slots.subList(0, menu.container.containerSize)
+	private val config get() = WpcMod.config.dungeon.floor7.terminalSolvers
 
 	abstract fun create()
 	abstract fun slotClicked(slot: Slot, slotId: Int, buttonNum: Int, containerInput: ContainerInput)
@@ -42,7 +43,8 @@ abstract class TerminalSimulatorHandler(private val menu: ChestMenu) {
 	}
 
 	protected fun playTerminalSound() {
-		MC.playSound(SoundEvents.NOTE_BLOCK_PLING.value(), 1f, 2f)
+		val sound = Utils.getSoundFromString(config.soundReplacement) ?: SoundEvents.NOTE_BLOCK_PLING.value()
+		MC.playSound(sound, config.soundVolume, config.soundPitch)
 	}
 
 	protected fun Slot.setItem(stack: ItemStack) {

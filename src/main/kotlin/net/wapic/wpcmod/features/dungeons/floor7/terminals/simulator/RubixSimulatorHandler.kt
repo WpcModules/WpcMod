@@ -21,8 +21,7 @@ class RubixSimulatorHandler(menu: ChestMenu, title: Component) : TerminalSimulat
 	override fun slotClicked(slot: Slot, slotId: Int, buttonNum: Int, containerInput: ContainerInput) {
 		if (slot.item.item == Items.STAINED_GLASS_PANE.black) return
 		val delta = if (buttonNum == 0) 1 else -1
-		val index =
-			(Terminal.RUBIX_ORDER.indexOf(slot.item.item) + delta + Terminal.RUBIX_ORDER.size) % Terminal.RUBIX_ORDER.size
+		val index = (Terminal.RUBIX_ORDER.indexOf(slot.item.item) + delta + Terminal.RUBIX_ORDER.size) % Terminal.RUBIX_ORDER.size
 		slot.setItem(Terminal.RUBIX_ORDER[index].defaultInstance)
 		playTerminalSound()
 	}

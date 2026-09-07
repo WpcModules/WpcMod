@@ -4,7 +4,6 @@ import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.core.Holder
-import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.sounds.SoundEvents.NOTE_BLOCK_PLING
@@ -17,18 +16,19 @@ import net.minecraft.world.item.Items
 import net.minecraft.world.phys.Vec3
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.GuiEvents
+import net.wapic.wpcmod.events.ServerTickEvent
 import net.wapic.wpcmod.events.SoundEvents
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.dungeons.floor7.terminals.simulator.*
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.dungeons.DungeonUtils
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 
 object Terminal {
 
 	private val config get() = WpcMod.config.dungeon.floor7.terminalSolvers
-	private val SOLVED_REGEX = Regex("^solved a terminal!$") //TODO: get actual regex
-
+	private val SOLVED_TERMINAL_REGEX = Regex("^(.+) activated a terminal! \\d/\\d$")
 	val STARTS_WITH_PATTERN = Regex("^What starts with: '(\\w)'\\?$")
 	val SELECT_ALL_PATTERN = Regex("^Select all the (.+) items!$")
 	val RUBIX_ORDER = listOf(
@@ -41,12 +41,14 @@ object Terminal {
 
 	var handler: TerminalSimulatorHandler? = null
 		private set
-	private var lastTerminal: Type? = null
+	var lastTerminal: Type? = null
+		private set
 
 	fun init() {
 		GuiEvents.SLOT_UPDATE.register(::onSlotUpdate)
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 		SoundEvents.PLAY.register(::onPlaySound)
+		ServerTickEvent.EVENT.register(::onServerTick)
 	}
 
 	private fun onPlaySound(
@@ -61,11 +63,9 @@ object Terminal {
 	) {
 		if (MC.screen !is AbstractTerminalScreen || config.soundReplacement.isEmpty()) return
 		if (sound != NOTE_BLOCK_PLING || volume != 8f || pitch != 4.047619f) return
-		val customSound = BuiltInRegistries.SOUND_EVENT.find { it.location.path == config.soundReplacement }
-			?: return WpcMod.LOGGER.error("Unable to find sound from: {}", config.soundReplacement)
+		val customSound = Utils.getSoundFromString(config.soundReplacement) ?: return WpcMod.LOGGER.warn("Could not find sound: ${config.soundReplacement}")
 		callbackInfo.cancel()
 		MC.playSound(customSound, config.soundVolume, config.soundPitch)
-
 	}
 
 	private fun onSlotUpdate(containerId: Int, slotId: Int, itemStack: ItemStack) {
@@ -74,10 +74,17 @@ object Terminal {
 		screen.slotChanged(screen.menu, slotId, itemStack)
 	}
 
+	private fun onServerTick() {
+		val screen = MC.screen as? AbstractTerminalScreen ?: return
+		screen.onServerTick()
+	}
+
 	private fun onMessageReceived(message: Component, isActionBar: Boolean) {
 		if (isActionBar || !DungeonUtils.inDungeons) return
 
-		if (message.string.matches(SOLVED_REGEX)) {
+		val matchResult = SOLVED_TERMINAL_REGEX.matchEntire(message.string) ?: return
+		val player = matchResult.groups[0]?.value ?: return
+		if (player == MC.player?.name?.string) {
 			DungeonEvents.TERMINAL_SOLVED.invoker().onSolve(lastTerminal ?: return)
 			lastTerminal = null
 		}

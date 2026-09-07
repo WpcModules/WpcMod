@@ -81,6 +81,13 @@ class Floor7Config {
 		@ConfigEditorBoolean
 		var debug = false
 
+		@ConfigOption(
+			name = "Allow all Melody Clicks",
+			desc = "Disables block wrong clicks in melody terminal"
+		)
+		@ConfigEditorBoolean
+		var allowMelodyAllClicks = false
+
 		@ConfigOption(name = "Show Numbers", desc = "Show numbers in numbers/order terminal")
 		@ConfigEditorBoolean
 		var showNumbers: Boolean = true
@@ -104,8 +111,8 @@ class Floor7Config {
 			name = "Slot Resync Timeout",
 			desc = "Amount of time to wait before assuming a slot click failed to register.\nRecommended to use at least ping * 2\nincrease value if terminals break"
 		)
-		@ConfigEditorSlider(minValue = 200f, maxValue = 800f, minStep = 1f)
-		var resyncTime: Float = 300f
+		@ConfigEditorSlider(minValue = 200f, maxValue = 800f, minStep = 50f)
+		var resyncTime: Float = 350f
 
 		@ConfigOption(
 			name = "Click Delay",

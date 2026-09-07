@@ -45,7 +45,7 @@ class RubixTerminalScreen(menu: ChestMenu, title: Component) : AbstractTerminalS
 	}
 
 	override fun isExpected(slotIndex: Int, itemStack: ItemStack): Boolean {
-		return getClicks(Terminal.RUBIX_ORDER.indexOf(itemStack.item), goal ?: return false) == 0
+		return getClicks(Terminal.RUBIX_ORDER.indexOf(itemStack.item), goal ?: return false) == solution[gameArea.indexOf(slotIndex)]
 	}
 
 	private fun getClicks(start: Int, goal: Int): Int {

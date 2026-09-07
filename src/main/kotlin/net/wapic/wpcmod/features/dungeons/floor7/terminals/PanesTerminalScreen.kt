@@ -6,6 +6,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.inventory.ChestMenu
 import net.minecraft.world.inventory.ContainerInput
 import net.minecraft.world.inventory.Slot
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 
 class PanesTerminalScreen(menu: ChestMenu, title: Component) : AbstractTerminalScreen(menu, title) {
@@ -26,6 +27,10 @@ class PanesTerminalScreen(menu: ChestMenu, title: Component) : AbstractTerminalS
 			return true
 		}
 		return false
+	}
+
+	override fun isExpected(slotIndex: Int, itemStack: ItemStack): Boolean {
+		return itemStack.item == Items.STAINED_GLASS_PANE.lime
 	}
 
 	override fun solveTerminal(slots: List<Slot>): List<Int> {

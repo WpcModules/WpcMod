@@ -24,12 +24,14 @@ class MelodyTerminalScreen(menu: ChestMenu, title: Component) : AbstractTerminal
 				)
 				Items.STAINED_GLASS_PANE.red -> extractSlot(graphics, slot.index, config.melodyRowColor)
 				Items.STAINED_GLASS_PANE.magenta -> extractSlot(graphics, slot.index, config.melodyColumColor)
+				Items.DYED_TERRACOTTA.red -> extractSlot(graphics, slot.index, config.melodyRowColor)
 				else -> continue
 			}
 		}
 	}
 
 	override fun slotClicked(slotIndex: Int, button: Int, input: ContainerInput): Boolean {
+		var canClick = false
 		var pointer = -1
 		var column = -1
 		var slotToClick = -1
@@ -37,9 +39,13 @@ class MelodyTerminalScreen(menu: ChestMenu, title: Component) : AbstractTerminal
 			if (slot.item.item == Items.STAINED_GLASS_PANE.lime) pointer = slot.index
 			if (slot.item.item == Items.STAINED_GLASS_PANE.magenta) column = slot.index
 			if (slot.item.item == Items.DYED_TERRACOTTA.lime) slotToClick = slot.index
+			if (slotToClick != -1 && column != -1 && pointer != -1) {
+				canClick = pointer % 9 == column % 9
+				break
+			}
 		}
 
-		if (slotIndex == slotToClick && pointer != -1 && column != -1 && pointer % 9 == column % 9) {
+		if (canClick || config.allowMelodyAllClicks) {
 			doTerminalClick(slotIndex, button, input)
 			return true
 		}

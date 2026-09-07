@@ -34,6 +34,10 @@ class StartsWithTerminalScreen(menu: ChestMenu, title: Component) : AbstractTerm
 		return slots.mapNotNull { slot -> slot.index.takeIf { hasLetter(slot.item) } }
 	}
 
+	override fun isExpected(slotIndex: Int, itemStack: ItemStack): Boolean {
+		return itemStack.hasFoil()
+	}
+
 	private fun hasLetter(stack: ItemStack): Boolean {
 		return letter?.let { stack.hoverName.string.startsWith(it, true) } == true
 	}

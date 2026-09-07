@@ -14,13 +14,13 @@ class StartsWithSimulatorHandler(menu: ChestMenu, title: Component) : TerminalSi
 	private val letter = Terminal.STARTS_WITH_PATTERN.matchEntire(title.string)?.groupValues?.get(1)
 	private val allItems = BuiltInRegistries.ITEM.map { it.defaultInstance }
 	private val clickedSlots = mutableSetOf<Int>()
+	private val incorrectItems = allItems.filterNot(::isValidItem)
+	private val correctItems = allItems.filter(::isValidItem)
 
 	override fun create() {
 		this.setSlots { slot ->
 			if (slot.index % 9 in 1..7 && slot.index / 9 in 1..3) {
-				val correct = allItems.filter { isValidItem(it) }
-				val incorrect = allItems.filterNot { isValidItem(it) }
-				return@setSlots if (Random.nextBoolean()) correct.random().copy() else incorrect.random().copy()
+				return@setSlots if (Random.nextDouble() >= 0.65) correctItems.random() else incorrectItems.random()
 			}
 			return@setSlots blackPane
 		}

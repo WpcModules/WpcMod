@@ -50,11 +50,13 @@ class MelodySimulatorHandler(menu: ChestMenu, title: Component) : TerminalSimula
 		this.setSlots { slot ->
 			val column = slot.index % 9
 			val row = slot.index / 9
-			if (column % 9 == pointerLocation && row == currentRow) return@setSlots pointerItem
-			if (column % 9 in 1..5 && row == currentRow) return@setSlots rowItem
+			if (column == pointerLocation && row == currentRow) return@setSlots pointerItem
 			if (column == currentColumn && (row == 0 || row == 4)) return@setSlots columnItem
 			if (column == 7 && row in 1..3) return@setSlots if (row == currentRow) activeButton else inactiveButton
-			if (column in 1..5 && row in 1..3) return@setSlots background
+			if (column in 1..5) {
+				if (row == currentRow) return@setSlots rowItem
+				if (row in 1..3) return@setSlots background
+			}
 			return@setSlots blackPane
 		}
 	}
