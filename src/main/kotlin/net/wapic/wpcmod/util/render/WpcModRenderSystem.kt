@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack
 import net.fabricmc.fabric.api.client.rendering.v1.level.*
 import net.minecraft.CrashReport
 import net.minecraft.ReportedException
-import net.minecraft.client.renderer.state.level.CameraRenderState
+import net.minecraft.client.Camera
 import net.minecraft.util.profiling.Profiler
 import net.wapic.wpcmod.events.WorldRenderEvent
 import net.wapic.wpcmod.util.render.renderer.*
@@ -39,7 +39,7 @@ class WpcModRenderSystem {
 
 		profiler.push("submit")
 		for (state in renderStates) {
-			submit(state, levelRenderContext.poseStack(), levelRenderContext.levelState().cameraRenderState)
+			submit(state, levelRenderContext.poseStack(), levelRenderContext.gameRenderer().mainCamera())
 		}
 		renderStates.clear()
 		profiler.pop()
@@ -61,13 +61,13 @@ class WpcModRenderSystem {
 		profiler.pop()
 	}
 
-	private fun <S : RenderState> submit(state: S, poseStack: PoseStack, camera: CameraRenderState) {
+	private fun <S : RenderState> submit(state: S, poseStack: PoseStack, camera: Camera) {
 		try {
 			poseStack.pushPose()
-			poseStack.translate(-camera.pos)
+			poseStack.translate(-camera.position())
 			val renderer = renderers[state::class.java] as Renderer<S>
 			val consumer = WpcModRenderer.getConsumer(renderer.pipeline)
-			renderer.submit(state, poseStack, consumer)
+			renderer.submit(state, poseStack.last(), camera, consumer)
 			poseStack.popPose()
 		} catch (t: Throwable) {
 			val report = CrashReport.forThrowable(t, "Rendering ESP in world")

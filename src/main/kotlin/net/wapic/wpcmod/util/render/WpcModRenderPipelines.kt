@@ -21,11 +21,12 @@ object WpcModRenderPipelines {
 			.withDepthStencilState(Optional.empty())
 			.build()
 	)
+
 	val LINES_TYPE: RenderType = RenderType.create(
 		"wpcmod_lines",
 		RenderSetup.builder(LINES)
 			.setLayeringTransform(LayeringTransform.VIEW_OFFSET_Z_LAYERING)
-			.setOutputTarget(OutputTarget.MAIN_TARGET)
+			.setOutputTarget(OutputTarget.OUTLINE_TARGET)
 			.createRenderSetup()
 	)
 
@@ -41,6 +42,7 @@ object WpcModRenderPipelines {
 			.withCull(false)
 			.build()
 	)
+
 	val QUADS_TYPE: RenderType = RenderType.create(
 		"wpcmod_quads",
 		RenderSetup.builder(QUADS)

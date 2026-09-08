@@ -118,7 +118,7 @@ object SafariESP : EspFeature() {
 			is Silverfish -> entity.state().takeIf { !entity.isInvisible }
 
 			// Chuckwalla, Flitter, Rockmite mound
-			is Display.ItemDisplay -> entity.state(.5f, .5f, -.35f)
+			is Display.ItemDisplay -> entity.state(.5f, .5f, -.425f)
 				.takeIf { entity.itemStack.item == Items.PLAYER_HEAD }
 
 			is ArmorStand -> {

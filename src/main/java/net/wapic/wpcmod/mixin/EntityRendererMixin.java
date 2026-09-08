@@ -15,17 +15,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class EntityRendererMixin {
 
 	@Inject(method = "extractRenderState", at = @At("TAIL"))
-	private void onUpdateRenderState(Entity entity, EntityRenderState state, float partialTicks, CallbackInfo ci) {
+	private void wpcmod$onExtractRenderState(Entity entity, EntityRenderState state, float partialTicks, CallbackInfo ci) {
 		EntityState renderState = EspCache.INSTANCE.getOrCompute(entity);
 		if (renderState != null && renderState.config() instanceof Glowable) {
-			boolean shouldGlow = ((Glowable) renderState.config()).getGlow();
-
-			if (shouldGlow) {
-				int color = renderState.config().getColor().getEffectiveColourRGB();
+			if (((Glowable) renderState.config()).getGlow()) {
 				if (!entity.isCurrentlyGlowing()) {
-					state.setData(EspCache.ENTITY_HAS_CUSTOM_GLOW, true);
+					state.setData(EspCache.HAS_CUSTOM_GLOW, true);
 				}
-				state.outlineColor = color;
+				state.outlineColor = renderState.config().getColor().getEffectiveColourRGB();
 			}
 		}
 	}

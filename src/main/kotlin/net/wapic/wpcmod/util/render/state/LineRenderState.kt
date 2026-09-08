@@ -4,6 +4,7 @@ import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.wapic.wpcmod.util.render.WHITE
 import org.joml.Vector3fc
 
+@JvmRecord
 data class LineRenderState(
 	val firstPos: Vector3fc,
 	val secondPos: Vector3fc,

@@ -12,11 +12,10 @@ import net.wapic.wpcmod.util.render.state.EntityState
 object EspCache {
 
 	private val CACHE = hashMapOf<Entity, EntityState>()
+	private val ADDERS = mutableListOf<EspFeature>()
 
 	@JvmField
-	val ENTITY_HAS_CUSTOM_GLOW: RenderStateDataKey<Boolean> =
-		RenderStateDataKey.create { "WpcMod entity has custom glow" }
-	private val ADDERS = mutableListOf<EspFeature>()
+	val HAS_CUSTOM_GLOW: RenderStateDataKey<Boolean> = RenderStateDataKey.create { "WpcMod Entity Custom Glow" }
 
 	fun init() {
 		ClientTickEvents.END_CLIENT_TICK.register(::clearCache)

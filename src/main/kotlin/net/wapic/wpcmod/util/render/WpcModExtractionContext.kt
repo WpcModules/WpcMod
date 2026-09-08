@@ -29,19 +29,17 @@ class WpcModExtractionContext {
 		val width = state.width ?: entity.bbWidth
 		val height = state.height ?: entity.bbHeight
 		val yOffset = state.yOffset ?: 0f
-		val cameraPos = camera.position().toVector3f().add(camera.forwardVector())
 		val pos = entity.getPosition(partialTicks).toVector3f().sub(width / 2, -yOffset, width / 2)
-		renderStates.add(EspRenderState(state.config, pos, width, height, cameraPos))
+		renderStates.add(EspRenderState(state.config, pos, width, height))
 	}
 
 	fun blockESP(blockPos: BlockPos, config: EspConfig) {
-		val cameraPos = camera.position().toVector3f().add(camera.forwardVector())
 		val pos = Vector3f(blockPos.x.toFloat(), blockPos.y.toFloat(), blockPos.z.toFloat())
-		renderStates.add(EspRenderState(config, pos, 1f, 1f, cameraPos))
+		renderStates.add(EspRenderState(config, pos, 1f, 1f))
 	}
 
 	fun text(text: String, pos: Vec3, color: ChromaColour = ChromaColour.WHITE, scale: Float = 1f, shadow: Boolean = true, background: Boolean = true) {
-		renderStates.add(TextRenderState(text, pos.toVector3f(), color, scale, shadow, background, camera.position().toVector3f(), camera.rotation()))
+		renderStates.add(TextRenderState(text, pos.toVector3f(), color, scale, shadow, background))
 	}
 
 	fun aabb(aabb: AABB, color: ChromaColour, filled: Boolean = false) {

@@ -2,6 +2,7 @@ package net.wapic.wpcmod.util.render.renderer
 
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.VertexConsumer
+import net.minecraft.client.Camera
 import net.wapic.wpcmod.util.render.WpcModRenderPipelines
 import net.wapic.wpcmod.util.render.line
 import net.wapic.wpcmod.util.render.state.LineRenderState
@@ -10,12 +11,11 @@ object LineRenderer : Renderer<LineRenderState> {
 
 	override val pipeline get() = WpcModRenderPipelines.LINES
 
-	override fun submit(state: LineRenderState, poseStack: PoseStack, consumer: VertexConsumer) {
+	override fun submit(state: LineRenderState, pose: PoseStack.Pose, camera: Camera, consumer: VertexConsumer) {
 		val firstPos = state.firstPos
 		val secondPos = state.secondPos
 		val color = state.color
 		val lineWidth = state.lineWidth
-		val pose = poseStack.last()
 		consumer.line(
 			pose,
 			firstPos.x(), firstPos.y(), firstPos.z(),

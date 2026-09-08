@@ -5,6 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.textures.FilterMode
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.VertexConsumer
+import net.minecraft.client.Camera
 import net.minecraft.client.gui.Font.GlyphVisitor
 import net.minecraft.client.gui.font.TextRenderable
 import net.minecraft.client.gui.render.TextureSetup
@@ -23,14 +24,14 @@ object TextRenderer : Renderer<TextRenderState> {
 
 	override fun submit(
 		state: TextRenderState,
-		poseStack: PoseStack,
+		pose: PoseStack.Pose,
+		camera: Camera,
 		consumer: VertexConsumer
 	) {
-		poseStack.pushPose()
 		val scale = state.scale * 0.025f
 		val pose: Matrix4f = Matrix4f()
-			.translate(state.pos.add(.5f, .62f, .5f) - state.cameraPos)
-			.rotate(state.cameraOrientation)
+			.translate(state.pos.add(.5f, .62f, .5f) - camera.position().toVector3f())
+			.rotate(camera.rotation())
 			.scale(scale, -scale, scale)
 		val backgroundColor = if (state.background) ARGB.color(0.25f, -16777216) else 0
 		val color = state.color.getEffectiveColourRGB()
@@ -44,7 +45,6 @@ object TextRenderer : Renderer<TextRenderState> {
 			}
 		})
 
-		poseStack.popPose()
 	}
 
 	fun getTextureSetup(renderable: TextRenderable): TextureSetup {

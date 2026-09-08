@@ -3,6 +3,7 @@ package net.wapic.wpcmod.util.render.state
 import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.wapic.wpcmod.util.render.WHITE
 
+@JvmRecord
 data class FilledBoxRenderState(
 	val x: Float,
 	val y: Float,

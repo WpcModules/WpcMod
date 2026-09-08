@@ -45,14 +45,7 @@ object TagESP : EspFeature() {
 
 		if (displayName in tagList || plainTextName in tagList) return true
 		if (entity !is ArmorStand) {
-			return entity.getNearbyArmorStands().firstOrNull { e ->
-				tagList.any {
-					e.name.string.contains(
-						it,
-						true
-					)
-				}
-			} != null
+			return entity.getNearbyArmorStands().firstOrNull { e -> tagList.any { e.name.string.contains(it, true) } } != null
 		}
 
 		return false
