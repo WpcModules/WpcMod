@@ -29,6 +29,7 @@ class GeneralConfig {
 	val centuryCake: CenturyCakeConfig = CenturyCakeConfig()
 
 	class CenturyCakeConfig {
+
 		@ConfigOption(name = "Enable Century Cake Helper", desc = "Enables the Century Cake Helper")
 		@ConfigEditorBoolean
 		var enabled: Boolean = false
@@ -45,6 +46,10 @@ class GeneralConfig {
 		@ConfigEditorColour
 		var cakeReadyColor: ChromaColour = ChromaColour.fromStaticRGB(0, 255, 0, 255)
 	}
+
+	@ConfigOption(name = "Window Title", desc = "Set a custom title for the Minecraft window. Leave empty for default")
+	@ConfigEditorText
+	var windowTitle: String = ""
 
 	@Category(name = "ESP", desc = "Configure general ESP features")
 	var esp: ESPConfig = ESPConfig()

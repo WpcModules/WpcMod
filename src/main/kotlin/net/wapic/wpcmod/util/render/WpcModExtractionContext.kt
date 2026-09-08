@@ -11,19 +11,7 @@ import net.wapic.wpcmod.config.components.EspConfig
 import net.wapic.wpcmod.util.render.state.*
 import org.joml.Vector3f
 
-class WpcModExtractionContext {
-
-	private val renderStates: MutableList<RenderState>
-	val level: ClientLevel
-	val camera: Camera
-	val partialTicks: Float
-
-	constructor(renderStates: MutableList<RenderState>, level: ClientLevel, camera: Camera, partialTicks: Float) {
-		this.renderStates = renderStates
-		this.level = level
-		this.camera = camera
-		this.partialTicks = partialTicks
-	}
+class WpcModExtractionContext(val renderStates: MutableList<RenderState>, val level: ClientLevel, val camera: Camera, val partialTicks: Float) {
 
 	fun entityESP(entity: Entity, state: EntityState) {
 		val width = state.width ?: entity.bbWidth

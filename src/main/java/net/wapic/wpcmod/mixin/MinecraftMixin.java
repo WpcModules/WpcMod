@@ -1,10 +1,12 @@
 package net.wapic.wpcmod.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.wapic.wpcmod.WpcMod;
 import net.wapic.wpcmod.events.PlayerPickEvents;
 import net.wapic.wpcmod.events.WorldChangeEvent;
 import org.jetbrains.annotations.Nullable;
@@ -48,5 +50,11 @@ public abstract class MinecraftMixin {
 				default:
 			}
 		}
+	}
+
+	@ModifyExpressionValue(method = "updateTitle", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;createTitle()Ljava/lang/String;"))
+	private String wpcmod$onSetWindowTitle(String original) {
+		String modifiedTitle = WpcMod.config.getGeneral().getWindowTitle();
+		return modifiedTitle.isBlank() ? original : modifiedTitle;
 	}
 }
