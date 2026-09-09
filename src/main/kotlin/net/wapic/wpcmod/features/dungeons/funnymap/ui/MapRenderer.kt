@@ -115,7 +115,7 @@ object MapRenderer {
 					"HAUNT_ABILITY"
 				))
 			) {
-				matrixStack.rotate(-(yaw * Mth.DEG_TO_RAD))
+				matrixStack.rotate(-(yaw + 180f) * Mth.DEG_TO_RAD)
 
 				if (config.mapRotate) {
 					matrixStack.rotate((realPlayer.yRot + 180f) * Mth.DEG_TO_RAD)
