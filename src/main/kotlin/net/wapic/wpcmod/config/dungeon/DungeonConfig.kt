@@ -160,4 +160,7 @@ class DungeonConfig {
 
 	@Category(name = "Score Calculation", desc = "Configure score calculation")
 	var scoreCalculation: ScoreCalculationConfig = ScoreCalculationConfig()
+
+	@Category(name = "Puzzles", desc = "Puzzle solvers & more")
+	var puzzles: PuzzlesConfig = PuzzlesConfig()
 }
