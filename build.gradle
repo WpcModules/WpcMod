@@ -36,10 +36,6 @@ repositories {
         url = "https://repo.nea.moe/releases"
     }
     maven {
-        name = "shedaniel"
-        url = "https://maven.shedaniel.me"
-    }
-    maven {
         name = "Modrinth"
         url = "https://api.modrinth.com/maven"
         content {
@@ -67,17 +63,10 @@ dependencies {
     include(implementation("com.moulberry:mixinconstraints:${project.mixinconstraints_version}"))
     include(implementation("net.hypixel:mod-api:1.0.2"))
 
-    compileOnly("me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}") {
-        exclude group: "net.fabricmc.fabric-api"
-    }
-
     // Dev Runtimes
     localRuntime("me.djtheredstoner:DevAuth-fabric:${project.devauth_version}")
     // DO NOT SWITCH TO TERRAFORMERS MAVEN REPO CAUSE YOU WILL HATE YOURSELF
     localRuntime("maven.modrinth:modmenu:${project.modmenu_version}")
-    // we're using modrinth rei and architectury otherwise it imports the wrong architectury version and won't work properly
-    localRuntime("maven.modrinth:rei:${project.rei_version}+fabric")
-    localRuntime("maven.modrinth:architectury-api:${project.architectury_api}")
 
     localRuntime("maven.modrinth:hypixel-mod-api:${project.hypixel_mod_api_version}")
     localRuntime("maven.modrinth:sodium:${project.sodium_version}-fabric")

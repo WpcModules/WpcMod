@@ -20,9 +20,6 @@
 	"icon": "assets/wpcmod/icon.png",
 	"environment": "*",
 	"entrypoints": {
-		"rei_client": [
-			"net.wapic.wpcmod.compat.ReiCompatibility"
-		],
 		"main": [
 			{
 				"value": "net.wapic.wpcmod.WpcMod",
