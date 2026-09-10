@@ -39,6 +39,12 @@
 	},
 	"accessWidener": "wpcmod.accesswidener",
 	"custom": {
-		"firmament:hide_from_modlist": true
+		"firmament:hide_from_modlist": true,
+		"modmenu": {
+			"links": {
+				"modmenu.discord": "https://discord.gg/2PNCYSfnb4"
+			},
+			"update_checker": false
+		}
 	}
 }

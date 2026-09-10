@@ -67,7 +67,6 @@ dependencies {
     localRuntime("me.djtheredstoner:DevAuth-fabric:${project.devauth_version}")
     // DO NOT SWITCH TO TERRAFORMERS MAVEN REPO CAUSE YOU WILL HATE YOURSELF
     localRuntime("maven.modrinth:modmenu:${project.modmenu_version}")
-
     localRuntime("maven.modrinth:hypixel-mod-api:${project.hypixel_mod_api_version}")
     localRuntime("maven.modrinth:sodium:${project.sodium_version}-fabric")
     localRuntime("maven.modrinth:sodium-extra:${project.sodium_version}+fabric")
