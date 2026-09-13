@@ -15,6 +15,7 @@ import net.wapic.wpcmod.util.render.WpcModExtractionContext
 import net.wapic.wpcmod.util.render.darker
 
 object BlazeSolver {
+
 	private val config get() = WpcMod.config.dungeon.puzzles.blazeSolver
 	private var blazeType: BlazeType = BlazeType.NONE
 
@@ -30,23 +31,23 @@ object BlazeSolver {
 		var blazeNameTags = context.level.entitiesForRendering().filter { it is ArmorStand && it.name.string.contains("Blaze") }
 		if (blazeNameTags.isEmpty()) return
 
-		blazeNameTags = blazeNameTags.sortedBy { it.name.string.removeFormatting().replace(Regex("\\D"),"").takeLast(4).toInt() }
+		blazeNameTags = blazeNameTags.sortedBy { it.name.string.removeFormatting().replace(Regex("\\D"), "").takeLast(4).toInt() }
 
 		if (blazeType == BlazeType.LOWER) blazeNameTags = blazeNameTags.reversed()
-		for (i in 0..(blazeNameTags.size-1).coerceAtMost(config.blazesToShow.toInt() - 1)) {
+		for (i in 0..(blazeNameTags.size - 1).coerceAtMost(config.blazesToShow.toInt() - 1)) {
 			val color = when (i) {
 				0 -> config.blazeColor0
 				1 -> config.blazeColor1
 				else -> config.blazeColor2
 			}
 			val blaze = getAssociatedBlaze(blazeNameTags[i]) ?: continue
-			if(config.filled) context.filledAABB(blaze.boundingBox, color.darker(), color) else context.aabb(blaze.boundingBox, color)
+			if (config.filled) context.filledAABB(blaze.boundingBox, color.darker(), color) else context.aabb(blaze.boundingBox, color)
 
-			if(i > 0) {
+			if (i > 0) {
 				val prevBlaze = getAssociatedBlaze(blazeNameTags[i - 1]) ?: continue
-				if(i < config.linesToShow) context.line(blaze.boundingBox.center, prevBlaze.boundingBox.center, color, config.lineWidth)
+				if (i < config.linesToShow) context.line(blaze.boundingBox.center, prevBlaze.boundingBox.center, color, config.lineWidth)
 			} else {
-				if(config.linesToShow > 0) context.tracer(blaze.boundingBox.center, color, config.lineWidth)
+				if (config.linesToShow > 0) context.tracer(blaze.boundingBox.center, color, config.lineWidth)
 			}
 		}
 	}

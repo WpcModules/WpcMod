@@ -30,6 +30,7 @@ import net.wapic.wpcmod.features.dungeons.floor7.*
 import net.wapic.wpcmod.features.dungeons.floor7.terminals.Terminal
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
 import net.wapic.wpcmod.features.dungeons.puzzles.BlazeSolver
+import net.wapic.wpcmod.features.dungeons.puzzles.CreeperBeamsSolver
 import net.wapic.wpcmod.features.end.EndESP
 import net.wapic.wpcmod.features.entity.*
 import net.wapic.wpcmod.features.events.diana.AutoAnswerSphinx
@@ -184,6 +185,7 @@ object WpcMod : ModInitializer {
 		Terminal.init()
 		MelodyMessage.init()
 		BlazeSolver.init()
+		CreeperBeamsSolver.init()
 
 		// Kuudra
 		KuudraESP.init()

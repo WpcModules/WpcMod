@@ -6,7 +6,7 @@ import io.github.notenoughupdates.moulconfig.annotations.*
 class PuzzlesConfig {
 
 	@Accordion
-	@ConfigOption(name = "Blaze Solver", desc = "")
+	@ConfigOption(name = "Higher / Lower Blaze Solver", desc = "")
 	var blazeSolver = BlazeConfig()
 
 	class BlazeConfig {
@@ -28,7 +28,7 @@ class PuzzlesConfig {
 		var linesToShow = 3f
 
 		@ConfigOption(name = "Line Width", desc = "Width of lines between blazes")
-		@ConfigEditorSlider(maxValue = 5f, minValue = 0f, minStep = 1f)
+		@ConfigEditorSlider(maxValue = 5f, minValue = 1f, minStep = 1f)
 		var lineWidth = 2f
 
 		@ConfigOption(name = "First Blaze Color", desc = "Color of the first blaze to kill")
@@ -42,5 +42,20 @@ class PuzzlesConfig {
 		@ConfigOption(name = "Other Blaze Color", desc = "color of the second next blaze to kill")
 		@ConfigEditorColour
 		var blazeColor2 = ChromaColour.fromStaticRGB(255, 0, 0, 255)
+	}
+
+	@Accordion
+	@ConfigOption(name = "Creeper Beams Solver", desc = "")
+	var creeperBeams = CreeperBeamsConfig()
+
+	class CreeperBeamsConfig {
+
+		@ConfigOption(name = "Enable Creeper Beams Solver", desc = "Global toggle for the creeper beams solver")
+		@ConfigEditorBoolean
+		var enabled = false
+
+		@ConfigOption(name = "Line Width", desc = "Width of the lines between lanterns")
+		@ConfigEditorSlider(maxValue = 10f, minValue = 1f, minStep = 1f)
+		var lineWidth = 2f
 	}
 }

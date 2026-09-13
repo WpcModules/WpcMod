@@ -1,7 +1,11 @@
 package net.wapic.wpcmod.features.dungeons.funnymap.core.map
 
+import net.minecraft.core.BlockPos
 import net.minecraft.util.Mth
 import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.DungeonScan.ROOM_SIZE
+import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.DungeonScan.START_X
+import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.DungeonScan.START_Z
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
 
 class UniqueRoom(arrX: Int, arrY: Int, room: Room) {
@@ -111,6 +115,8 @@ class UniqueRoom(arrX: Int, arrY: Int, room: Room) {
 			WpcMod.LOGGER.debug("Set room {} to state {}", room, state)
 		}
 	}
+
+	fun getCenterBlockPos(y: Int = 69) = BlockPos(START_X + center.first * (ROOM_SIZE shr 1), y, START_Z + center.second * (ROOM_SIZE shr 1))
 
 	// TODO: make it not shit
 	fun getNameScale(): Float = Mth.clamp(this.tiles.size / 12f, 0.5f, 1f)
