@@ -112,6 +112,7 @@ object WpcMod : ModInitializer {
 					.then(FunnyMapCommands.getCommand())
 					.then(HudEditorCommand.getCommand())
 					.then(GFSCommand.getCommand())
+					.then(SimulateCommand.getCommand())
 			)
 
 			dispatcher.register(ClientCommands.literal("itistimetofuckingupdate").executes {
@@ -186,6 +187,7 @@ object WpcMod : ModInitializer {
 		MelodyMessage.init()
 		BlazeSolver.init()
 		CreeperBeamsSolver.init()
+		AutoSelectRelic.init()
 
 		// Kuudra
 		KuudraESP.init()

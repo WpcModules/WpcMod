@@ -251,4 +251,8 @@ class Floor7Config {
 		@ConfigEditorSlider(minValue = 5f, maxValue = 15f, minStep = 1f)
 		var releaseTick: Float = 11f
 	}
+
+	@ConfigOption(name = "Auto Select Relic", desc = "Automatically select the relic slot after leaping")
+	@ConfigEditorBoolean
+	var autoSelectRelic: Boolean = false
 }
