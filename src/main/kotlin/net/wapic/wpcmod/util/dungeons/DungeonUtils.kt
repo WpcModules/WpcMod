@@ -23,7 +23,7 @@ import net.wapic.wpcmod.util.Utils.equalsOneOf
 object DungeonUtils {
 
 	private const val DUNGEON_START_MESSAGE: String =
-		"§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon."
+		"[NPC] Mort: Here, I found this map when I first entered the dungeon."
 
 	private const val DUNGEON_END_MESSAGE: String = "> EXTRA STATS <"
 
@@ -149,7 +149,7 @@ object DungeonUtils {
 			TabListUtil.getDungeonTabList()?.let(::preloadPlayerHeads)
 		}
 
-		if (message.string == DUNGEON_START_MESSAGE) {
+		if (message.string.removeFormatting() == DUNGEON_START_MESSAGE) {
 			WpcMod.LOGGER.debug("Dungeon Started")
 			TabListUtil.getDungeonTabList()?.let(::getPlayers)
 			startTime = Util.getMillis()
