@@ -7,15 +7,14 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.BlockHitResult
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.util.Island
-import net.wapic.wpcmod.util.skyblockId
-import net.wapic.wpcmod.util.MC
-import net.wapic.wpcmod.util.Utils
+import net.wapic.wpcmod.util.*
 
 object CancelInteract {
+
 	private val config get() = WpcMod.config
 	private const val ENDER_PEARL = "ENDER_PEARL"
 
+	@RunOnStartup
 	fun init() {
 		UseBlockCallback.EVENT.register(::onItemUse)
 	}

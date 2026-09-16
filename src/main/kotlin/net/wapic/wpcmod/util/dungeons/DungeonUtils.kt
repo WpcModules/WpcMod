@@ -50,6 +50,7 @@ object DungeonUtils {
 			DungeonFloor.MASTER_MODE_FLOOR_7
 		)
 
+	@RunOnStartup
 	fun init() {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 		PlayerListChangeEvent.EVENT.register(::onPlayerListChange)

@@ -18,6 +18,7 @@ import net.minecraft.world.phys.Vec3
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldRenderEvent
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.dungeons.DungeonUtils
 import net.wapic.wpcmod.util.dungeons.DungeonUtils.F7Phase
 import net.wapic.wpcmod.util.render.WpcModExtractionContext
@@ -32,6 +33,7 @@ object ArrowAlign {
 	private var currentFrameRotations: List<Int>? = null
 	private var targetSolution: List<Int>? = null
 
+	@RunOnStartup
 	fun init() {
 		ClientTickEvents.END_CLIENT_TICK.register(::onTick)
 		UseEntityCallback.EVENT.register(::onEntityInteract)

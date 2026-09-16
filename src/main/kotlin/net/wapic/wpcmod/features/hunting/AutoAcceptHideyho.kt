@@ -5,6 +5,7 @@ import net.minecraft.network.chat.ClickEvent
 import net.minecraft.network.chat.Component
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.ChatUtils
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.SafariAPI
 import net.wapic.wpcmod.util.Utils
 
@@ -15,6 +16,7 @@ object AutoAcceptHideyho {
 	// Hypixel, trim your damn messages please
 	private const val HIDEYHO_ACCEPT_MESSAGE = "§eSelect an option: §a[Sure] §c[No thanks...] "
 
+	@RunOnStartup
 	fun init() {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 	}

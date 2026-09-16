@@ -4,17 +4,15 @@ import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.animal.Animal
 import net.minecraft.world.entity.animal.equine.Horse
 import net.wapic.wpcmod.WpcMod
-import net.wapic.wpcmod.util.Island
-import net.wapic.wpcmod.util.TrapperAPI
-import net.wapic.wpcmod.util.Utils
+import net.wapic.wpcmod.util.*
 import net.wapic.wpcmod.util.render.state.EntityState
-import net.wapic.wpcmod.util.skyBlockMaxHealth
 
 object TrapperESP : EspFeature() {
 
 	private val config get() = WpcMod.config.general.esp.trapperAnimals
 	private val names = listOf("Trackable", "Untrackable", "Undetected", "Endangered", "Elusive")
 
+	@RunOnStartup
 	fun init() = Unit
 
 	fun isTrapperAnimal(entity: Entity): Boolean {

@@ -1,10 +1,11 @@
 package net.wapic.wpcmod.features.inventory
 
-import net.minecraft.world.inventory.Slot
 import net.minecraft.util.Mth
+import net.minecraft.world.inventory.Slot
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.GuiEvents
 import net.wapic.wpcmod.events.TooltipEvents
+import net.wapic.wpcmod.util.RunOnStartup
 import org.joml.Vector2i
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 import kotlin.math.max
@@ -14,6 +15,7 @@ object ScrollableTooltips {
 	private val config get() = WpcMod.config.inventory.scrollableTooltips
 	private var scrolledAmount: Int = 0
 
+	@RunOnStartup
 	fun init() {
 		GuiEvents.MOUSE_SCROLL.register(::onMouseScroll)
 		GuiEvents.CLOSE.register(::reset)

@@ -13,6 +13,7 @@ import net.wapic.wpcmod.features.dungeons.funnymap.core.map.RoomState
 import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
 import net.wapic.wpcmod.features.entity.EspFeature
 import net.wapic.wpcmod.util.HeadTextures
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 import net.wapic.wpcmod.util.dungeons.DungeonUtils
 import net.wapic.wpcmod.util.getNearbyArmorStands
@@ -26,6 +27,7 @@ object DungeonESP : EspFeature() {
 	private val config get() = WpcMod.config.dungeon.esp
 	private val miniBosses: List<String> = listOf("Lost Adventurer", "Shadow Assassin", "Diamond Guy")
 
+	@RunOnStartup
 	fun init() {
 		WorldRenderEvent.EVENT.register(::renderWorld)
 	}

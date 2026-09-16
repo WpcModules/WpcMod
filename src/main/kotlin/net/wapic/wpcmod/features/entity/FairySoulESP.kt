@@ -4,6 +4,7 @@ import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.decoration.ArmorStand
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.HeadTextures
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.headTexture
 import net.wapic.wpcmod.util.render.state.EntityState
 
@@ -11,6 +12,7 @@ object FairySoulESP : EspFeature() {
 
 	private val config get() = WpcMod.config.general.esp.fairySoul
 
+	@RunOnStartup
 	fun init() = Unit
 
 	override fun compute(entity: Entity): EntityState? {

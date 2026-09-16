@@ -10,10 +10,7 @@ import net.minecraft.world.entity.decoration.ArmorStand
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.components.GlowableESPConfig
 import net.wapic.wpcmod.features.entity.EspFeature
-import net.wapic.wpcmod.util.FileManager
-import net.wapic.wpcmod.util.Island
-import net.wapic.wpcmod.util.Utils
-import net.wapic.wpcmod.util.headTexture
+import net.wapic.wpcmod.util.*
 import net.wapic.wpcmod.util.render.state.EntityState
 import java.io.File
 
@@ -30,6 +27,7 @@ object CenturyCakeHelper : EspFeature() {
 	private val backupFile = File(file.parentFile, "${file.name}.bak")
 	private val gson: Gson = GsonBuilder().create()
 
+	@RunOnStartup
 	fun init() {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 		loadTimes()

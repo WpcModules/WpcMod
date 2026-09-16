@@ -8,11 +8,13 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.TooltipFlag
 import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.util.RunOnStartup
 
 object DyeColor {
 
 	private val config get() = WpcMod.config.inventory.dyeColor
 
+	@RunOnStartup
 	fun init() {
 		ItemTooltipCallback.EVENT.register(::onToolTipRender)
 	}

@@ -11,6 +11,7 @@ import net.wapic.wpcmod.events.WorldRenderEvent
 import net.wapic.wpcmod.features.entity.EspFeature
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.render.WpcModExtractionContext
 import net.wapic.wpcmod.util.render.state.EntityState
@@ -19,6 +20,7 @@ object EndESP : EspFeature() {
 
 	private val config get() = WpcMod.config.end.esp
 
+	@RunOnStartup
 	fun init() {
 		WorldRenderEvent.EVENT.register(::renderWorld)
 	}

@@ -3,9 +3,11 @@ package net.wapic.wpcmod.features.chat
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.network.chat.Component
 import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.Utils
 
 object AutoAcceptPartyInvite {
+
 	private val config get() = WpcMod.config.chat.autoPartyAccept
 
 	private val invitePattern = Regex(
@@ -15,12 +17,13 @@ object AutoAcceptPartyInvite {
 				"-----------------------------------------------------"
 	)
 
+	@RunOnStartup
 	fun init() {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 	}
 
 	private fun onMessageReceived(message: Component, actionBar: Boolean) {
-		if(actionBar) return
+		if (actionBar) return
 
 		val inviteMatcher: MatchResult = invitePattern.matchEntire(message.string) ?: return
 		val name = inviteMatcher.groups["name"]?.value?.trim() ?: return

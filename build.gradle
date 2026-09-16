@@ -8,6 +8,7 @@ plugins {
     id 'maven-publish'
     id "org.jetbrains.kotlin.jvm" version "${kotlin_version}"
     id "com.gradleup.shadow" version "9.4.2"
+    id "com.google.devtools.ksp" version "2.3.10"
 }
 
 version = project.mod_version
@@ -56,6 +57,8 @@ dependencies {
     // Fabric API. This is technically optional, but you probably want it anyway.
     implementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}")
     implementation("net.fabricmc:fabric-language-kotlin:${project.fabric_kotlin_version}")
+
+    ksp(project(":processor"))
 
     shadowImplementation("org.notenoughupdates.moulconfig:${project.moulconfig_version}")
     shadowImplementation("moe.nea:libautoupdate:${project.libautoupdate_version}")
@@ -111,11 +114,11 @@ processResources {
 
     filesMatching("fabric.mod.json") {
         expand(
-            "version" : inputs.properties.version,
-            "minecraft_version": inputs.properties.minecraft_version,
-            "loader_version": inputs.properties."loader_version",
-            "fabric_api_version": inputs.properties.fabric_api_version,
-            "fabric_kotlin_version": inputs.properties.fabric_kotlin_version
+                "version": inputs.properties.version,
+                "minecraft_version": inputs.properties.minecraft_version,
+                "loader_version": inputs.properties."loader_version",
+                "fabric_api_version": inputs.properties.fabric_api_version,
+                "fabric_kotlin_version": inputs.properties.fabric_kotlin_version
         )
     }
 }
@@ -136,6 +139,12 @@ java {
 
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(25))
+    }
+}
+
+kotlin {
+    sourceSets.main {
+        kotlin.srcDir("build/generated/ksp/main/kotlin")
     }
 }
 

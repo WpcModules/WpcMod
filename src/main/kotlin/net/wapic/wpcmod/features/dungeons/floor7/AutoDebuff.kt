@@ -8,6 +8,7 @@ import net.minecraft.world.level.Level
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.ServerTickEvent
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.dungeons.DungeonUtils
 import net.wapic.wpcmod.util.skyblockId
 
@@ -18,6 +19,7 @@ object AutoDebuff {
 	private val validItems = listOf("LAST_BREATH", "STARRED_LAST_BREATH")
 	private var tick = -1
 
+	@RunOnStartup
 	fun init() {
 		ServerTickEvent.EVENT.register(::onServerTick)
 		UseItemCallback.EVENT.register(::onUseItem)

@@ -6,6 +6,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.util.CommonColors
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.hud.SimpleHudElement
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.MC
 
 object GummyBearTimer : SimpleHudElement("Gummy Bear Timer", 110, 11) {
@@ -18,6 +19,7 @@ object GummyBearTimer : SimpleHudElement("Gummy Bear Timer", 110, 11) {
 
 	private var endTime: Long = -1
 
+	@RunOnStartup
 	fun init() {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 	}

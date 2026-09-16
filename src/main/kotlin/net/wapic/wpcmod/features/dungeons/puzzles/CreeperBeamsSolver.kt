@@ -7,11 +7,13 @@ import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.events.WorldRenderEvent
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Room
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 import net.wapic.wpcmod.util.render.WpcModExtractionContext
 
@@ -30,14 +32,16 @@ object CreeperBeamsSolver {
 		ChromaColour.fromStaticRGB(125, 0, 255, 255),
 	)
 
+	@RunOnStartup
 	fun init() {
 		DungeonEvents.ROOM_ENTERED.register(::onRoomEntered)
 		WorldRenderEvent.EVENT.register(::onWorldRender)
+		WorldChangeEvent.AFTER.register { targetLines.clear() }
 	}
 
 	private fun onRoomEntered(oldRoom: Room, newRoom: Room) {
-		if (newRoom.data.name != "Creeper Beams" || !config.enabled) return
 		targetLines.clear()
+		if (newRoom.data.name != "Creeper Beams" || !config.enabled) return
 
 		val level = MC.level ?: return
 		val uniqueRoom = newRoom.uniqueRoom ?: return ChatUtils.sendMessage("Unable to find unique room")

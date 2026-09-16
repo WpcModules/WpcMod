@@ -18,6 +18,7 @@ import net.wapic.wpcmod.features.kuudra.KuudraDisplay
 import net.wapic.wpcmod.features.slayer.GummyBearTimer
 import net.wapic.wpcmod.util.FileManager
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.RunOnStartup
 import java.io.File
 
 object HudManager {
@@ -47,6 +48,7 @@ object HudManager {
 		SafariTracker,
 	)
 
+	@RunOnStartup
 	fun init() {
 		ClientTickEvents.END_CLIENT_TICK.register {
 			while (hudKeyBind.consumeClick()) {

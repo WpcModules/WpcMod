@@ -5,17 +5,15 @@ import net.minecraft.world.entity.Display
 import net.minecraft.world.item.Items
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldRenderEvent
-import net.wapic.wpcmod.util.Island
-import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.*
 import net.wapic.wpcmod.util.SafariAPI.SafariBiome.Companion.isSimilarTo
-import net.wapic.wpcmod.util.Utils
-import net.wapic.wpcmod.util.biome
 import net.wapic.wpcmod.util.render.WpcModExtractionContext
 
 object ForestNodeESP {
 
 	private val config get() = WpcMod.config.foraging.esp.forestNode
 
+	@RunOnStartup
 	fun init() {
 		WorldRenderEvent.EVENT.register(::renderWorld)
 	}

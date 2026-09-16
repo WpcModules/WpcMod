@@ -8,8 +8,9 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.Island
-import net.wapic.wpcmod.util.skyblockId
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.Utils
+import net.wapic.wpcmod.util.skyblockId
 
 object PigeonSwapper {
 
@@ -17,9 +18,10 @@ object PigeonSwapper {
 	private val allowedAreas: List<Island> = listOf(Island.DWARVEN_MINES, Island.CRYSTAL_HOLLOWS, Island.MINESHAFT)
 	private const val ROYAL_PIGEON_ID = "ROYAL_PIGEON"
 
+	@RunOnStartup
 	fun init() {
 		UseItemCallback.EVENT.register { player, world, hand -> onUse(player, world, hand) }
-		UseBlockCallback.EVENT.register { player, world, hand, _ -> onUse(player, world, hand)}
+		UseBlockCallback.EVENT.register { player, world, hand, _ -> onUse(player, world, hand) }
 	}
 
 	private fun onUse(player: Player, world: Level, hand: InteractionHand): InteractionResult {

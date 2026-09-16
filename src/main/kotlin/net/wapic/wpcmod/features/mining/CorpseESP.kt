@@ -34,6 +34,7 @@ object CorpseESP : EspFeature() {
 
 	data class Corpse(val boundingBox: AABB, var isLooted: Boolean = false)
 
+	@RunOnStartup
 	fun init() {
 		WorldChangeEvent.BEFORE.register(::reset)
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)

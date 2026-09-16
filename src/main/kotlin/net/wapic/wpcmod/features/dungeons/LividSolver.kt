@@ -11,6 +11,7 @@ import net.wapic.wpcmod.events.BlockEvents
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.features.entity.EspFeature
 import net.wapic.wpcmod.util.ChatUtils
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 import net.wapic.wpcmod.util.copyWithColor
 import net.wapic.wpcmod.util.dungeons.DungeonUtils
@@ -43,6 +44,7 @@ object LividSolver : EspFeature() {
 
 	private var correctColor: DyeColor = DyeColor.RED
 
+	@RunOnStartup
 	fun init() {
 		BlockEvents.CHANGE.register(::onBlockChange)
 		WorldChangeEvent.BEFORE.register(::reset)

@@ -13,6 +13,7 @@ import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.GuiEvents
 import net.wapic.wpcmod.events.ReplaceItemEvent
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.isSimilar
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
@@ -39,6 +40,7 @@ object SuperpairsSolver {
 
 	private val skyHanniRegex = Regex("\\?|(?:Click a(?: seco)?n[dy]|Next) button(?: is instantly rewarded)?!?")
 
+	@RunOnStartup
 	fun init() {
 		GuiEvents.OPEN.register(::onInventoryOpen)
 		GuiEvents.SLOT_UPDATE.register(::onSlotUpdate)

@@ -6,6 +6,7 @@ import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.RunOnStartup
 
 object AutoSelectRelic {
 
@@ -15,6 +16,7 @@ object AutoSelectRelic {
 	private val teleportRegex = Regex("^You have teleported to .{1,16}!$")
 	private var shouldSelectRelic = false
 
+	@RunOnStartup
 	fun init() {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 		WorldChangeEvent.AFTER.register { shouldSelectRelic = false }

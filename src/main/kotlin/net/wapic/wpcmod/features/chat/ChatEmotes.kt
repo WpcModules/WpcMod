@@ -2,6 +2,7 @@ package net.wapic.wpcmod.features.chat
 
 import net.fabricmc.fabric.api.client.message.v1.ClientSendMessageEvents
 import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.util.RunOnStartup
 
 object ChatEmotes {
 
@@ -51,6 +52,7 @@ object ChatEmotes {
 	val pattern = Regex("(?<=\\s|^)(" + chatEmoteMap.keys.joinToString("|") { Regex.escape(it) } + ")(?=\\s|$)")
 	val commandPattern = Regex("^(m(sg|essage)?|w(hisper)?|r(eply)?|[pacg]c(hat)?)\\s.*$")
 
+	@RunOnStartup
 	fun init() {
 		ClientSendMessageEvents.MODIFY_CHAT.register(::onSendMessage)
 		ClientSendMessageEvents.MODIFY_COMMAND.register(::onSendCommand)

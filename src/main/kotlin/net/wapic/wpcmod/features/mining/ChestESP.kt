@@ -7,6 +7,7 @@ import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldRenderEvent
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.render.WpcModExtractionContext
 
@@ -14,6 +15,7 @@ object ChestESP {
 
 	private val config get() = WpcMod.config.mining.esp.chest
 
+	@RunOnStartup
 	fun init() {
 		WorldRenderEvent.EVENT.register(::renderWorld)
 	}

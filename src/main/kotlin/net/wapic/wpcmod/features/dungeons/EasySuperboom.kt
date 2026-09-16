@@ -5,6 +5,7 @@ import net.minecraft.world.entity.player.Inventory
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.PlayerPickEvents
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.dungeons.DungeonUtils
 import net.wapic.wpcmod.util.skyblockId
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
@@ -15,6 +16,7 @@ object EasySuperboom {
 
 	private const val SUPERBOOM_TNT = "SUPERBOOM_TNT"
 
+	@RunOnStartup
 	fun init() {
 		PlayerPickEvents.BLOCK.register(::onPickBlock)
 	}

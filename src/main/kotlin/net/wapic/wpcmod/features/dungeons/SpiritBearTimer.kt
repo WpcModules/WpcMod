@@ -13,6 +13,7 @@ import net.wapic.wpcmod.events.ServerTickEvent
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.hud.SimpleHudElement
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.Utils.equalsOneOf
 import net.wapic.wpcmod.util.Utils.toFixed
 import net.wapic.wpcmod.util.dungeons.DungeonUtils.DungeonFloor
@@ -32,6 +33,7 @@ object SpiritBearTimer : SimpleHudElement("Spirit Bear Timer", 90, 12) {
 
 	private var spawnTime: Int = 0
 
+	@RunOnStartup
 	fun init() {
 		BlockEvents.CHANGE.register(::onBlockChange)
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)

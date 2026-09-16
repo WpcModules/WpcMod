@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.minecraft.client.Minecraft
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.FileManager
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.Utils
 import java.io.File
 
@@ -17,6 +18,7 @@ object ShortcutHandler {
 	private val gson: Gson = GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().create()
 	val loadedShortcuts = mutableListOf<Shortcut>()
 
+	@RunOnStartup
 	fun init() {
 		ClientTickEvents.END_CLIENT_TICK.register(::onTick)
 		loadShortcuts()

@@ -12,6 +12,7 @@ import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.dungeon.DungeonConfig.InteractableBlocks
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Room
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.dungeons.DungeonUtils
 import net.wapic.wpcmod.util.skyblockId
 
@@ -22,6 +23,7 @@ object DungeonBreaker {
 	private val blacklistedBlocks = listOf(Blocks.BEDROCK, Blocks.END_PORTAL_FRAME, Blocks.OBSIDIAN, Blocks.IRON_BARS)
 	private var disableInTicTacToe = false
 
+	@RunOnStartup
 	fun init() {
 		AttackBlockCallback.EVENT.register(::onAttackBlock)
 		DungeonEvents.ROOM_ENTERED.register(::onEnterRoom)
@@ -31,13 +33,7 @@ object DungeonBreaker {
 		disableInTicTacToe = config.fuckTicTacToe && new.data.name == "Tic Tac Toe"
 	}
 
-	private fun onAttackBlock(
-		player: Player,
-		level: Level,
-		hand: InteractionHand,
-		pos: BlockPos,
-		direction: Direction
-	): InteractionResult {
+	private fun onAttackBlock(player: Player, level: Level, hand: InteractionHand, pos: BlockPos, direction: Direction): InteractionResult {
 		if (!DungeonUtils.inDungeons) return InteractionResult.PASS
 		if (player.mainHandItem.skyblockId != DUNGEON_BREAKER_ID) return InteractionResult.PASS
 

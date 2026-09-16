@@ -13,6 +13,7 @@ import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.events.WorldRenderEvent
 import net.wapic.wpcmod.hud.SimpleHudElement
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.dungeons.DungeonUtils
 import net.wapic.wpcmod.util.render.WHITE
 import net.wapic.wpcmod.util.render.WpcModExtractionContext
@@ -39,6 +40,7 @@ object InactiveWaypoints : SimpleHudElement("Term Info", 60, 30) {
 	private val coreOpeningRegex = Regex("^The Core entrance is opening!$")
 	private val gateRegex = Regex("^The gate has been destroyed!$")
 
+	@RunOnStartup
 	fun init() {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 		WorldChangeEvent.BEFORE.register(::onWorldLoad)

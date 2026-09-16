@@ -4,6 +4,7 @@ import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.contents.TranslatableContents
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.GuiEvents
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.dungeons.DungeonUtils
 
 object AutoCloseChests {
@@ -11,6 +12,7 @@ object AutoCloseChests {
 	private val config get() = WpcMod.config.dungeon
 	private val defaultTitles = listOf("container.chest", "container.chestDouble")
 
+	@RunOnStartup
 	fun init() {
 		GuiEvents.BEFORE_OPEN.register(::onScreenInit)
 	}

@@ -12,6 +12,7 @@ import net.minecraft.util.Util
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.mixin.accessors.ChatComponentAccessor
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.RunOnStartup
 
 object CompactChat {
 
@@ -22,6 +23,7 @@ object CompactChat {
 	private var compactingTicks = 0
 	private const val PRUNE_TICK = 15 * SharedConstants.TICKS_PER_SECOND
 
+	@RunOnStartup
 	fun init() {
 		ClientTickEvents.END_CLIENT_TICK.register { _ -> prune() }
 		ClientReceiveMessageEvents.ALLOW_GAME.register { message, _ ->
@@ -92,6 +94,7 @@ object CompactChat {
 		messages.entries.mapNotNull { (it.value.lastLine ?: return@mapNotNull null) to it.value }.toMap()
 
 	class Message(val text: MutableComponent) {
+
 		var lastLine: GuiMessage? = null
 		val lastVisible: MutableList<GuiMessage.Line> = mutableListOf()
 		val dividers: MutableList<Message> = mutableListOf()
@@ -109,7 +112,7 @@ object CompactChat {
 				text.copy().append(
 					Component.literal(" ($timesSeen)").setStyle(Style.EMPTY.applyLegacyFormat(ChatFormatting.DARK_GRAY))
 				)
-		}
+			}
 
 		@get:JvmName("shouldCompact")
 		val shouldCompact: Boolean get() = timesSeen > 1 && !isDivider

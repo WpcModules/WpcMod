@@ -11,6 +11,7 @@ import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.GuiEvents
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.Utils
 import org.lwjgl.glfw.GLFW
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
@@ -53,6 +54,7 @@ object AutoExperiments {
 		Items.DYE.yellow
 	)
 
+	@RunOnStartup
 	fun init() {
 		GuiEvents.OPEN.register(::onScreenInit)
 		GuiEvents.RENDER.register(::onScreenRender)

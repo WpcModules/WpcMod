@@ -6,12 +6,14 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.TooltipFlag
 import net.wapic.wpcmod.WpcMod
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.skyblockId
 
 object SkyBlockID {
 
 	private val config get() = WpcMod.config.dev
 
+	@RunOnStartup
 	fun init() {
 		ItemTooltipCallback.EVENT.register(::onToolTipRender)
 	}

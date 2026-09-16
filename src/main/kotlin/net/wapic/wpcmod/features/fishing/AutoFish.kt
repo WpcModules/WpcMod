@@ -16,8 +16,9 @@ import net.minecraft.world.item.Items
 import net.minecraft.world.level.Level
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldChangeEvent
-import net.wapic.wpcmod.util.getNearbyArmorStands
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.RunOnStartup
+import net.wapic.wpcmod.util.getNearbyArmorStands
 import java.lang.ref.WeakReference
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.random.Random
@@ -31,6 +32,7 @@ object AutoFish {
 	private var lastRodCast = 0
 	private var cachedHook: WeakReference<FishingHook>? = null
 
+	@RunOnStartup
 	fun init() {
 		ClientTickEvents.END_CLIENT_TICK.register(::onTick)
 		UseItemCallback.EVENT.register(::onUseItem)

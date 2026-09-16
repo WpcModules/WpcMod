@@ -10,13 +10,16 @@ import net.minecraft.world.phys.Vec3
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.ParticleEvents
 import net.wapic.wpcmod.events.WorldChangeEvent
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.SafariAPI
 import net.wapic.wpcmod.util.Utils
 
 object SafariSparklingHelper {
-	private val config get() = WpcMod.config.hunting.safari
-	val foundSparkling = mutableSetOf<String>()
 
+	private val config get() = WpcMod.config.hunting.safari
+	private val foundSparkling = mutableSetOf<String>()
+
+	@RunOnStartup
 	fun init() {
 		ParticleEvents.SPAWN.register(::onParticleSpawn)
 		WorldChangeEvent.AFTER.register {

@@ -7,6 +7,7 @@ import net.minecraft.network.chat.HoverEvent
 import net.minecraft.network.chat.Style
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.Calculator
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.Utils
 
 object QuickMathSolver {
@@ -14,6 +15,7 @@ object QuickMathSolver {
 	private val config get() = WpcMod.config.chat.quickMaths
 	private val quickMathsRegex = Regex("^QUICK MATHS! Solve: (?<equation>.*)$")
 
+	@RunOnStartup
 	fun init() {
 		ClientReceiveMessageEvents.MODIFY_GAME.register(::onMessageReceived)
 	}

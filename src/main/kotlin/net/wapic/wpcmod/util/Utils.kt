@@ -24,6 +24,7 @@ object Utils {
 
 	private var location: Island? = null
 
+	@RunOnStartup
 	fun init() {
 		ClientTickEvents.END_CLIENT_TICK.register { onTick() }
 		HypixelModAPI.getInstance().subscribeToEventPacket(ClientboundLocationPacket::class.java)

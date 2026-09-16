@@ -21,6 +21,7 @@ import net.wapic.wpcmod.events.SoundEvents
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.dungeons.floor7.terminals.simulator.*
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.dungeons.DungeonUtils
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
@@ -44,6 +45,7 @@ object Terminal {
 	var lastTerminal: Type? = null
 		private set
 
+	@RunOnStartup
 	fun init() {
 		GuiEvents.SLOT_UPDATE.register(::onSlotUpdate)
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)

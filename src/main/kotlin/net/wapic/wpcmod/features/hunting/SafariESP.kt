@@ -49,6 +49,7 @@ object SafariESP : EspFeature() {
 	private val config get() = WpcMod.config.hunting.safari
 	private val clickableBeehives: MutableSet<BlockPos> = mutableSetOf()
 
+	@RunOnStartup
 	fun init() {
 		ClientChunkEvents.CHUNK_LOAD.register(::onChunkLoad)
 		WorldRenderEvent.EVENT.register(::onRenderWorld)

@@ -7,6 +7,7 @@ import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.Island
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.Utils
 
 object AutoAnswerSphinx {
@@ -32,6 +33,7 @@ object AutoAnswerSphinx {
 	)
 	private var nextAnswer: String? = null
 
+	@RunOnStartup
 	fun init() {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 		WorldChangeEvent.AFTER.register { nextAnswer = null }

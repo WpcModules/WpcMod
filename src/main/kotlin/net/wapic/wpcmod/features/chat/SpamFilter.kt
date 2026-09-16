@@ -13,6 +13,7 @@ import net.minecraft.util.Mth
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.chat.SpamConfig
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.RunOnStartup
 
 object SpamFilter {
 
@@ -29,9 +30,11 @@ object SpamFilter {
 	private val tipRegex = Regex("^§aYou tipped \\d+ players? in \\d+ (?:different\\s)?games?!$")
 
 	data class Notification(val text: Component, var delay: Int) {
+
 		var x = MC.font.width(text.string)
 	}
 
+	@RunOnStartup
 	fun init() {
 		ClientReceiveMessageEvents.ALLOW_GAME.register(::onMessageReceived)
 		ClientTickEvents.END_CLIENT_TICK.register(::onTick)

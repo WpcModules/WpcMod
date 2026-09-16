@@ -6,6 +6,7 @@ import net.minecraft.network.chat.Component
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.Island
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.Utils
 
 object AutoAcceptTrapper {
@@ -14,6 +15,7 @@ object AutoAcceptTrapper {
 	private const val TRAPPER_MESSAGE =
 		"\nAccept the trapper's task to hunt the animal?\nClick an option: §a§l[YES] - §c§l[NO]"
 
+	@RunOnStartup
 	fun init() {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 	}

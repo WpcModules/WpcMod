@@ -3,17 +3,21 @@ package net.wapic.wpcmod.features.instance
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.events.skyblock.KuudraEvents
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.SackUtils
 
 object AutoGFS {
+
 	private val config get() = WpcMod.config
+
+	@RunOnStartup
 	fun init() {
 		KuudraEvents.START.register {
 			if (config.kuudra.autoGfs) SackUtils.queueGetFromSack("ENDER_PEARL", 16)
 		}
 
 		DungeonEvents.START.register {
-			if(!config.dungeon.autoGFS.enabled) return@register
+			if (!config.dungeon.autoGFS.enabled) return@register
 			config.dungeon.autoGFS.items.forEach { SackUtils.queueGetFromSack(it.name, it.maxStackSize) }
 		}
 	}

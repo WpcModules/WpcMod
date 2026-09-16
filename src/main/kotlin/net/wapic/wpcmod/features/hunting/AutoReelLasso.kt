@@ -10,6 +10,7 @@ import net.minecraft.world.entity.decoration.ArmorStand
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.EntityEvents
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.skyblockId
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
@@ -25,6 +26,7 @@ object AutoReelLasso {
 	// Skyblock Lasso is a leash attached to a Bat
 	private var potentialLeash: Bat? = null
 
+	@RunOnStartup
 	fun init() {
 		ClientTickEvents.END_CLIENT_TICK.register(::onTick)
 		EntityEvents.SPAWN.register(::onEntityAdded)

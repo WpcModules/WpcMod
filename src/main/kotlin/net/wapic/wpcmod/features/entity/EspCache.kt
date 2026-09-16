@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft
 import net.minecraft.util.profiling.ProfilerFiller
 import net.minecraft.world.entity.Entity
 import net.wapic.wpcmod.events.WorldRenderEvent
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.render.WpcModExtractionContext
 import net.wapic.wpcmod.util.render.state.EntityState
 
@@ -17,6 +18,7 @@ object EspCache {
 	@JvmField
 	val HAS_CUSTOM_GLOW: RenderStateDataKey<Boolean> = RenderStateDataKey.create { "WpcMod Entity Custom Glow" }
 
+	@RunOnStartup
 	fun init() {
 		ClientTickEvents.END_CLIENT_TICK.register(::clearCache)
 		WorldRenderEvent.EVENT.register(::onRenderWorld)

@@ -7,12 +7,14 @@ import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.dungeons.floor7.terminals.AbstractTerminalScreen
 import net.wapic.wpcmod.features.dungeons.floor7.terminals.MelodyTerminalScreen
 import net.wapic.wpcmod.features.dungeons.floor7.terminals.Terminal
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.Utils
 
 object MelodyMessage {
 
 	private val config get() = WpcMod.config.dungeon.floor7
 
+	@RunOnStartup
 	fun init() {
 		DungeonEvents.TERMINAL_UPDATED.register(::onTerminalUpdated)
 		DungeonEvents.TERMINAL_SOLVED.register(::onTerminalSolved)

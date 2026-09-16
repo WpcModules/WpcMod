@@ -8,15 +8,17 @@ import net.wapic.wpcmod.events.PacketEvents
 import net.wapic.wpcmod.events.PlayerListChangeEvent
 import net.wapic.wpcmod.events.ServerTickEvent
 import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils
+import net.wapic.wpcmod.util.RunOnStartup
 
 object NetworkListener {
 
+	@RunOnStartup
 	fun init() {
 		PacketEvents.RECEIVE.register(::onPacketReceive)
 	}
 
 	private fun onPacketReceive(packet: Packet<*>) {
-		when(packet) {
+		when (packet) {
 			is ClientboundPlayerInfoUpdatePacket -> onTabListUpdate(packet)
 			is ClientboundMapItemDataPacket -> MapUtils.updateMapData(packet)
 			is ClientboundPingPacket -> onPingPacket()

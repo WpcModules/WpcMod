@@ -176,6 +176,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 162), Mutab
 	var mimicOpenTime = 0L
 	var mimicPos: BlockPos? = null
 
+	@RunOnStartup
 	fun init() {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 		PlayerListChangeEvent.EVENT.register(::onPlayerListChange)

@@ -25,6 +25,7 @@ object KuudraUtils {
 		"§e[NPC] §cElle§f: POW! SURELY THAT'S IT! I don't think he has any more in him!"
 	private const val KUUDRA_END_MESSAGE: String = "KUUDRA DOWN!"
 
+	@RunOnStartup
 	fun init() {
 		ClientTickEvents.END_LEVEL_TICK.register(::onTick)
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
@@ -41,9 +42,9 @@ object KuudraUtils {
 		if (kuudraEntity == null) {
 			level.entitiesForRendering().find { it is MagmaCube && it.size == 30 && it.skyBlockMaxHealth == 100000.0f }
 				?.let {
-				kuudraEntity = it as MagmaCube
-				WpcMod.LOGGER.debug("set KuudraEntity to {}", it)
-			}
+					kuudraEntity = it as MagmaCube
+					WpcMod.LOGGER.debug("set KuudraEntity to {}", it)
+				}
 		}
 	}
 

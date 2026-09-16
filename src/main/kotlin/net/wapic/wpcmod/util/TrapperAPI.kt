@@ -25,6 +25,7 @@ object TrapperAPI {
 		ELUSIVE(10000F);
 	}
 
+	@RunOnStartup
 	fun init() {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 		WorldChangeEvent.AFTER.register { reset() }

@@ -7,14 +7,17 @@ import net.minecraft.network.protocol.game.ServerboundContainerClickPacket
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.PacketEvents
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.RunOnStartup
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 
 object AutoCloseWardrobe {
+
 	private val config get() = WpcMod.config.inventory
 
 	private val wardrobeTitle = Regex("^\\((?<page>\\d)/\\d\\) (Armor|Equipment) Sets$")
 	private val loudoutsTitle = Regex("^\\((?<page>\\d)/\\d\\) Loadouts$")
 
+	@RunOnStartup
 	fun init() {
 		PacketEvents.SEND_AFTER.register(::onPacketSent)
 	}

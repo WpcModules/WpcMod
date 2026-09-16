@@ -23,43 +23,11 @@ import net.minecraft.resources.Identifier
 import net.wapic.wpcmod.commands.*
 import net.wapic.wpcmod.config.ConfigManager
 import net.wapic.wpcmod.config.WpcConfig
-import net.wapic.wpcmod.features.chat.*
-import net.wapic.wpcmod.features.dev.SkyBlockID
-import net.wapic.wpcmod.features.dungeons.*
-import net.wapic.wpcmod.features.dungeons.floor7.*
-import net.wapic.wpcmod.features.dungeons.floor7.terminals.Terminal
-import net.wapic.wpcmod.features.dungeons.funnymap.dungeon.FunnyMap
-import net.wapic.wpcmod.features.dungeons.puzzles.BlazeSolver
-import net.wapic.wpcmod.features.dungeons.puzzles.CreeperBeamsSolver
-import net.wapic.wpcmod.features.end.EndESP
-import net.wapic.wpcmod.features.entity.*
-import net.wapic.wpcmod.features.events.diana.AutoAnswerSphinx
-import net.wapic.wpcmod.features.fishing.AutoFish
-import net.wapic.wpcmod.features.foraging.ForestNodeESP
-import net.wapic.wpcmod.features.galatea.GalateaESP
-import net.wapic.wpcmod.features.garden.PestESP
 import net.wapic.wpcmod.features.general.CenturyCakeHelper
 import net.wapic.wpcmod.features.general.Freecam
-import net.wapic.wpcmod.features.general.PreventPlacingItems
-import net.wapic.wpcmod.features.general.shortcut.ShortcutHandler
-import net.wapic.wpcmod.features.hunting.*
-import net.wapic.wpcmod.features.instance.AutoGFS
-import net.wapic.wpcmod.features.instance.CancelInteract
-import net.wapic.wpcmod.features.inventory.AutoCloseWardrobe
-import net.wapic.wpcmod.features.inventory.DyeColor
-import net.wapic.wpcmod.features.inventory.ScrollableTooltips
-import net.wapic.wpcmod.features.inventory.experiments.AutoExperiments
-import net.wapic.wpcmod.features.inventory.experiments.SuperpairsSolver
-import net.wapic.wpcmod.features.kuudra.KuudraESP
-import net.wapic.wpcmod.features.kuudra.RendAnnounce
-import net.wapic.wpcmod.features.mining.ChestESP
-import net.wapic.wpcmod.features.mining.CorpseESP
-import net.wapic.wpcmod.features.mining.PigeonSwapper
-import net.wapic.wpcmod.features.slayer.GummyBearTimer
+import net.wapic.wpcmod.generated.runStartupFunctions
 import net.wapic.wpcmod.hud.HudManager
-import net.wapic.wpcmod.listeners.NetworkListener
-import net.wapic.wpcmod.util.*
-import net.wapic.wpcmod.util.dungeons.DungeonUtils
+import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.render.WpcModRenderSystem
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -141,108 +109,9 @@ object WpcMod : ModInitializer {
 		}
 
 		/* Initialize */
-		Utils.init()
-		SackUtils.init()
-		KuudraUtils.init()
-		DungeonUtils.init()
-		NetworkListener.init()
-		EspCache.init()
-		HudManager.init()
-		TrapperAPI.init()
-
-		// General
-		ShortcutHandler.init()
-		PreventPlacingItems.init()
 		Freecam()
-		RatESP.init()
-		TagESP.init()
-		TrapperESP.init()
-		FairySoulESP.init()
-		CenturyCakeHelper.init()
 
-		//Experiments
-		AutoExperiments.init()
-		SuperpairsSolver.init()
-
-		//Instance
-		CancelInteract.init()
-		AutoGFS.init()
-
-		// Dungeons
-		AutoCloseChests.init()
-		ScoreCalculation.init()
-		DungeonESP.init()
-		TickTimers.init()
-		InactiveWaypoints.init()
-		ArrowAlign.init()
-		FunnyMap.init()
-		SpiritBearTimer.init()
-		DungeonBreaker.init()
-		InvincibilityTimer.init()
-		EasySuperboom.init()
-		LividSolver.init()
-		AutoDebuff.init()
-		AutoShowExtraStats.init()
-		Terminal.init()
-		MelodyMessage.init()
-		BlazeSolver.init()
-		CreeperBeamsSolver.init()
-		AutoSelectRelic.init()
-
-		// Kuudra
-		KuudraESP.init()
-		RendAnnounce.init()
-
-		// Slayers
-		GummyBearTimer.init()
-
-		// Galatea
-		GalateaESP.init()
-
-		// End
-		EndESP.init()
-
-		// Events
-
-		// Diana
-		AutoAnswerSphinx.init()
-
-		// Fishing
-		AutoFish.init()
-
-		// Foraging
-		ForestNodeESP.init()
-
-		// Hunting
-		AutoReelLasso.init()
-		SafariESP.init()
-		SafariTracker.init()
-		SafariSparklingHelper.init()
-		AutoAcceptHideyho.init()
-
-		// Mining
-		PigeonSwapper.init()
-		ChestESP.init()
-		CorpseESP.init()
-
-		// Garden
-		PestESP.init()
-
-		// Chat
-		CompactChat.init()
-		SpamFilter.init()
-		ChatEmotes.init()
-		AutoAcceptPartyInvite.init()
-		AutoAcceptTrapper.init()
-		QuickMathSolver.init()
-
-		// Inventory
-		ScrollableTooltips.init()
-		AutoCloseWardrobe.init()
-		DyeColor.init()
-
-		// Dev
-		SkyBlockID.init()
+		runStartupFunctions()
 
 		WpcModRenderSystem()
 

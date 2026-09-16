@@ -14,6 +14,7 @@ object SackUtils {
 	private val gfsRegex = Regex("^Moved (?<amount>\\d+) (?<item>.+) from your Sacks to your inventory\\.$")
 	private var gfsLock = false
 
+	@RunOnStartup
 	fun init() {
 		ClientTickEvents.END_CLIENT_TICK.register(::onTick)
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
@@ -29,7 +30,7 @@ object SackUtils {
 	}
 
 	private fun onMessageReceived(text: Component, actionBar: Boolean) {
-		if(actionBar) return
+		if (actionBar) return
 
 		if (text.string.matches(gfsRegex)) gfsLock = false
 	}
@@ -44,7 +45,7 @@ object SackUtils {
 	}
 
 	fun getFromSack(item: String, maxStackSize: Int) {
-		if(gfsLock || Util.getMillis() - lastCommand <= COMMAND_DELAY) return
+		if (gfsLock || Util.getMillis() - lastCommand <= COMMAND_DELAY) return
 
 		val inv = MC.player?.inventory ?: return
 		val stackSize = inv.find { it.skyblockId == item.uppercase() }?.count ?: 0

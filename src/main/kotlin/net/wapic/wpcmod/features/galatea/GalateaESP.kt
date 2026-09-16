@@ -11,6 +11,7 @@ import net.minecraft.world.entity.monster.Shulker
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.features.entity.EspFeature
 import net.wapic.wpcmod.util.Island
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.render.state.EntityState
 
@@ -18,6 +19,7 @@ object GalateaESP : EspFeature() {
 
 	private val config get() = WpcMod.config.galatea.esp
 
+	@RunOnStartup
 	fun init() = Unit
 
 	fun isInvisibug(entity: ArmorStand): Boolean {

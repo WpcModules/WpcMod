@@ -11,6 +11,7 @@ import net.wapic.wpcmod.events.ServerTickEvent
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.hud.SimpleHudElement
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.Utils.toFixed
 import net.wapic.wpcmod.util.dungeons.DungeonUtils
 
@@ -32,6 +33,7 @@ object TickTimers : SimpleHudElement("Tick Timers", 120, 12) {
 
 	private var padTickTime: Int = -1
 
+	@RunOnStartup
 	fun init() {
 		ServerTickEvent.EVENT.register(::onServerTick)
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)

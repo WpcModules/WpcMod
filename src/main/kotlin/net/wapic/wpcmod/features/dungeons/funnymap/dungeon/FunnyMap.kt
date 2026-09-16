@@ -12,6 +12,7 @@ import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.*
 import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils
 import net.wapic.wpcmod.util.ChatUtils
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.dungeons.DungeonUtils.inDungeons
 import net.wapic.wpcmod.util.dungeons.DungeonUtils.isMimicFloor
 
@@ -24,6 +25,7 @@ object FunnyMap {
 	private val keyPickupRegex = Regex(".+ (has obtained .+|Key was picked) (Key|up)!")
 	private val keyUseRegex = Regex("(The BLOOD DOOR has been|.+ opened a WITHER) (opened|door)!")
 
+	@RunOnStartup
 	fun init() {
 		ClientTickEvents.START_CLIENT_TICK.register(::onTick)
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)

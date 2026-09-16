@@ -6,6 +6,7 @@ import net.wapic.wpcmod.features.entity.EspFeature
 import net.wapic.wpcmod.util.Island
 import net.wapic.wpcmod.util.KuudraUtils
 import net.wapic.wpcmod.util.KuudraUtils.Phase
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.render.state.EntityState
 
@@ -13,6 +14,7 @@ object KuudraESP : EspFeature() {
 
 	private val config get() = WpcMod.config.kuudra.esp
 
+	@RunOnStartup
 	fun init() = Unit
 
 	override fun compute(entity: Entity): EntityState? {

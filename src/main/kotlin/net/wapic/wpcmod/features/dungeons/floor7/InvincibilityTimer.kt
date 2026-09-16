@@ -12,6 +12,7 @@ import net.wapic.wpcmod.hud.Mutable
 import net.wapic.wpcmod.hud.SimpleHudElement
 import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.MC
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.Utils
 import net.wapic.wpcmod.util.Utils.toFixed
 import net.wapic.wpcmod.util.dungeons.DungeonUtils
@@ -23,6 +24,7 @@ object InvincibilityTimer : SimpleHudElement("Invincibility Timer", 48, 45), Mut
 	override val isEnabled: Boolean get() = config.enabled
 	override val isActive: Boolean get() = DungeonUtils.inDungeons && isEnabled && config.hud
 
+	@RunOnStartup
 	fun init() {
 		ClientReceiveMessageEvents.GAME.register(::onMessageReceived)
 		ServerTickEvent.EVENT.register { config.enabledItems.get().forEach(::tick) }

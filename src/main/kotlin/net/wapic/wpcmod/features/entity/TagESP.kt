@@ -7,6 +7,7 @@ import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.decoration.ArmorStand
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.util.ChatUtils
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.getNearbyArmorStands
 import net.wapic.wpcmod.util.render.state.EntityState
 import java.util.*
@@ -16,6 +17,7 @@ object TagESP : EspFeature() {
 	private val config get() = WpcMod.config.general.esp.tag
 	private val tagList = hashSetOf<String>()
 
+	@RunOnStartup
 	fun init() = Unit
 
 	fun modifyTagList(context: CommandContext<FabricClientCommandSource>) {

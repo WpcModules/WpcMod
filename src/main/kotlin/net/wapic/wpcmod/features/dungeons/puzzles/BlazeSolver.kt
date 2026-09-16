@@ -11,6 +11,7 @@ import net.wapic.wpcmod.events.skyblock.DungeonEvents
 import net.wapic.wpcmod.features.dungeons.floor7.TickTimers.onWorldChange
 import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Room
 import net.wapic.wpcmod.util.ChatUtils.removeFormatting
+import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.render.WpcModExtractionContext
 import net.wapic.wpcmod.util.render.darker
 
@@ -19,6 +20,7 @@ object BlazeSolver {
 	private val config get() = WpcMod.config.dungeon.puzzles.blazeSolver
 	private var blazeType: BlazeType = BlazeType.NONE
 
+	@RunOnStartup
 	fun init() {
 		WorldRenderEvent.EVENT.register(::onRenderWorld)
 		DungeonEvents.ROOM_ENTERED.register(::onRoomEntered)
