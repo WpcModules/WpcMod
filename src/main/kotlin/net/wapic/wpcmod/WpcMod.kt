@@ -28,6 +28,7 @@ import net.wapic.wpcmod.features.general.Freecam
 import net.wapic.wpcmod.generated.runStartupFunctions
 import net.wapic.wpcmod.hud.HudManager
 import net.wapic.wpcmod.util.ChatUtils
+import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.render.WpcModRenderSystem
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -89,7 +90,7 @@ object WpcMod : ModInitializer {
 			})
 
 			dispatcher.register(ClientCommands.literal("wpcmod").executes {
-				ConfigManager.openConfig(it.source.client)
+				MC.screen = ConfigManager.createScreen(null)
 				return@executes 1
 			}.redirect(mainCommand))
 		}

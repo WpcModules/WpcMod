@@ -5,13 +5,16 @@ import com.google.gson.GsonBuilder
 import io.github.notenoughupdates.moulconfig.ChromaColour
 import io.github.notenoughupdates.moulconfig.LegacyStringChromaColourTypeAdapter
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorSlider
-import io.github.notenoughupdates.moulconfig.common.IMinecraft
+import io.github.notenoughupdates.moulconfig.gui.GuiContext
+import io.github.notenoughupdates.moulconfig.gui.GuiElementComponent
 import io.github.notenoughupdates.moulconfig.gui.MoulConfigEditor
 import io.github.notenoughupdates.moulconfig.observer.PropertyTypeAdapterFactory
+import io.github.notenoughupdates.moulconfig.platform.MoulConfigScreenComponent
 import io.github.notenoughupdates.moulconfig.processor.BuiltinMoulConfigGuis
 import io.github.notenoughupdates.moulconfig.processor.ConfigProcessorDriver
 import io.github.notenoughupdates.moulconfig.processor.MoulConfigProcessor
-import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.network.chat.Component
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.config.components.slider.GuiOptionSlider
 import java.io.File
@@ -105,13 +108,8 @@ object ConfigManager {
 		editor = null
 		processor = MoulConfigProcessor(WpcMod.config)
 		BuiltinMoulConfigGuis.addProcessors(processor)
-		processor.registerConfigEditor(ConfigEditorSlider::class.java) { option, configEditorSlider ->
-			GuiOptionSlider(
-				option,
-				configEditorSlider.minValue,
-				configEditorSlider.maxValue,
-				configEditorSlider.minStep
-			)
+		processor.registerConfigEditor(ConfigEditorSlider::class.java) { option, slider ->
+			GuiOptionSlider(option, slider.minValue, slider.maxValue, slider.minStep)
 		}
 		val driver = ConfigProcessorDriver(processor)
 		driver.warnForPrivateFields = false
@@ -120,5 +118,7 @@ object ConfigManager {
 	}
 
 	fun getEditor() = editor ?: MoulConfigEditor(processor).also { editor = it }
-	fun openConfig(client: Minecraft) = client.schedule { IMinecraft.INSTANCE.openWrappedScreen(getEditor()) }
+	fun createScreen(parent: Screen?): Screen {
+		return MoulConfigScreenComponent(Component.empty(), GuiContext(GuiElementComponent(getEditor())), parent)
+	}
 }
