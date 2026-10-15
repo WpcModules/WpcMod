@@ -40,7 +40,7 @@ object TickTimers : SimpleHudElement("Tick Timers", 120, 12) {
 		WorldChangeEvent.BEFORE.register(::onWorldChange)
 	}
 
-	fun onServerTick() {
+	fun onServerTick(tick: Long) {
 		if (!isActive) return
 
 		if (goldorTickTime == 0 && goldorStartTime <= 0) goldorTickTime = 60

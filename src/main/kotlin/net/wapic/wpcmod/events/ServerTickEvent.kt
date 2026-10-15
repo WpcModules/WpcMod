@@ -7,14 +7,15 @@ object ServerTickEvent {
 
 	@JvmField
 	val EVENT: Event<ServerTick> = EventFactory.createArrayBacked(ServerTick::class.java) { listeners ->
-		ServerTick {
+		ServerTick { tick ->
 			for (listener in listeners) {
-				listener.onServerTick()
+				listener.onServerTick(tick)
 			}
 		}
 	}
 
 	fun interface ServerTick {
-		fun onServerTick()
+
+		fun onServerTick(tick: Long)
 	}
 }

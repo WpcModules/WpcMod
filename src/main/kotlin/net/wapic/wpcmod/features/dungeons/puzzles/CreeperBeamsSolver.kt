@@ -15,6 +15,7 @@ import net.wapic.wpcmod.util.ChatUtils
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.RunOnStartup
 import net.wapic.wpcmod.util.Utils.equalsOneOf
+import net.wapic.wpcmod.util.dungeons.DungeonUtils
 import net.wapic.wpcmod.util.render.WpcModExtractionContext
 
 object CreeperBeamsSolver {
@@ -73,7 +74,7 @@ object CreeperBeamsSolver {
 	}
 
 	private fun onWorldRender(context: WpcModExtractionContext, profiler: ProfilerFiller) {
-		if (targetLines.isEmpty()) return
+		if (targetLines.isEmpty() || DungeonUtils.bossSpawned) return
 
 		val mutableColors = colors.toMutableList()
 		for ((start, end) in targetLines) {

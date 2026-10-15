@@ -60,6 +60,8 @@ dependencies {
 
     ksp(project(":processor"))
 
+    implementation("maven.modrinth:modmenu:${project.modmenu_version}")
+
     shadowImplementation("org.notenoughupdates.moulconfig:${project.moulconfig_version}")
     shadowImplementation("moe.nea:libautoupdate:${project.libautoupdate_version}")
 
@@ -142,12 +144,6 @@ java {
     }
 }
 
-kotlin {
-    sourceSets.main {
-        kotlin.srcDir("build/generated/ksp/main/kotlin")
-    }
-}
-
 loom {
     accessWidenerPath = file("src/main/resources/wpcmod.accesswidener")
 }
@@ -167,7 +163,7 @@ publishing {
     repositories {
         maven {
             name = "WapicMavenRepo"
-            url = "https://maven.wapic.net/${project.properties.get("sha") ? "snapshots" : "releases"}"
+            url = "https://maven.wapic.net/${project.hasProperty("sha") ? "snapshots" : "releases"}"
             credentials(PasswordCredentials)
         }
     }

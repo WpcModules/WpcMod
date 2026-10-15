@@ -76,9 +76,9 @@ object Terminal {
 		screen.slotChanged(screen.menu, slotId, itemStack)
 	}
 
-	private fun onServerTick() {
+	private fun onServerTick(tick: Long) {
 		val screen = MC.screen as? AbstractTerminalScreen ?: return
-		screen.onServerTick()
+		screen.onServerTick(tick)
 	}
 
 	private fun onMessageReceived(message: Component, isActionBar: Boolean) {

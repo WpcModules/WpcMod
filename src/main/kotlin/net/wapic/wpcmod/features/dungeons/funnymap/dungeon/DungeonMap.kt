@@ -1,16 +1,11 @@
 package net.wapic.wpcmod.features.dungeons.funnymap.dungeon
 
 import net.wapic.wpcmod.features.dungeons.funnymap.core.RoomData
-import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Door
-import net.wapic.wpcmod.features.dungeons.funnymap.core.map.DoorType
-import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Room
-import net.wapic.wpcmod.features.dungeons.funnymap.core.map.RoomState
-import net.wapic.wpcmod.features.dungeons.funnymap.core.map.RoomType
-import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Tile
-import net.wapic.wpcmod.features.dungeons.funnymap.core.map.Unknown
+import net.wapic.wpcmod.features.dungeons.funnymap.core.map.*
 import net.wapic.wpcmod.features.dungeons.funnymap.utils.MapUtils
 
 class DungeonMap(mapColors: ByteArray) {
+
 	private var centerColors: ByteArray = ByteArray(121)
 	private var sideColors: ByteArray = ByteArray(121)
 	private val cacheTiles: Array<Tile?> = Array(121) { null }

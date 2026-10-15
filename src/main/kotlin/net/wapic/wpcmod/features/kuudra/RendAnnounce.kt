@@ -21,7 +21,7 @@ object RendAnnounce {
 
 	fun format(value: Float): String = DecimalFormat("#,###").format(value)
 
-	private fun onTick() {
+	private fun onTick(tick: Long) {
 		if (!config.rendAnnounce) return
 		if (KuudraUtils.phase != KuudraUtils.Phase.KILL) return
 

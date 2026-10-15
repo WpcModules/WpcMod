@@ -5,6 +5,7 @@ import net.minecraft.network.chat.Component
 import net.wapic.wpcmod.WpcMod
 import net.wapic.wpcmod.events.WorldChangeEvent
 import net.wapic.wpcmod.util.ChatUtils
+import net.wapic.wpcmod.util.ChatUtils.removeFormatting
 import net.wapic.wpcmod.util.MC
 import net.wapic.wpcmod.util.RunOnStartup
 
@@ -24,13 +25,14 @@ object AutoSelectRelic {
 
 	private fun onMessageReceived(message: Component, isActionBar: Boolean) {
 		if (isActionBar || !config.autoSelectRelic) return
+		val unformattedMessage = message.string.removeFormatting()
 
-		if (relicPickupRegex.matchEntire(message.string)?.groups[1]?.value == MC.player?.name?.string) {
+		if (relicPickupRegex.matchEntire(unformattedMessage)?.groups[1]?.value == MC.player?.name?.string) {
 			shouldSelectRelic = true
 			return
 		}
 
-		if (teleportRegex.matches(message.string) && shouldSelectRelic) {
+		if (teleportRegex.matches(unformattedMessage) && shouldSelectRelic) {
 			if (MC.screen == null) {
 				MC.player?.inventory?.selectedSlot = 8
 			} else {

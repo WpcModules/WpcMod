@@ -25,6 +25,9 @@
 				"value": "net.wapic.wpcmod.WpcMod",
 				"adapter": "kotlin"
 			}
+		],
+		"modmenu": [
+			"net.wapic.wpcmod.modmenu.ModMenuImpl"
 		]
 	},
 	"mixins": [

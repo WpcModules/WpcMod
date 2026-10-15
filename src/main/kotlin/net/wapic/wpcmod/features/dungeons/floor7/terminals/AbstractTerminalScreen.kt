@@ -29,7 +29,7 @@ abstract class AbstractTerminalScreen(initialMenu: ChestMenu, title: Component) 
 	private var isInitialized = false
 	private var hoveredSlot: Int? = null
 	private var nextClickTime: Long = 0
-	private var currentServerTick: Int = 0
+	private var currentServerTick: Long = 0
 
 	private val slotMap: MutableMap<Int, Box> = mutableMapOf()
 	private val isSimulator = menu.containerId == Int.MAX_VALUE
@@ -46,8 +46,8 @@ abstract class AbstractTerminalScreen(initialMenu: ChestMenu, title: Component) 
 		Terminal.handler?.onTick()
 	}
 
-	fun onServerTick() {
-		currentServerTick++
+	fun onServerTick(tick: Long) {
+		currentServerTick = tick
 		if (clickedSlots.isEmpty()) return
 		val iterator = clickedSlots.iterator()
 		while (iterator.hasNext()) {
