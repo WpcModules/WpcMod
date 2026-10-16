@@ -37,7 +37,7 @@ class PuzzlesConfig {
 
 		@ConfigOption(name = "Second Blaze Color", desc = "color of the next blaze to kill")
 		@ConfigEditorColour
-		var blazeColor1 = ChromaColour.fromStaticRGB(255, 50, 0, 255)
+		var blazeColor1 = ChromaColour.fromStaticRGB(255, 128, 0, 255)
 
 		@ConfigOption(name = "Other Blaze Color", desc = "color of the second next blaze to kill")
 		@ConfigEditorColour
