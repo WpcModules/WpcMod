@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder
 import io.github.notenoughupdates.moulconfig.ChromaColour
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.network.chat.Component
+import net.minecraft.util.Util
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.decoration.ArmorStand
 import net.wapic.wpcmod.WpcMod
@@ -39,7 +40,7 @@ object CenturyCakeHelper : EspFeature() {
 		EAT_MESSAGE.matchEntire(message.string)?.groupValues[1]?.let { stat ->
 			WpcMod.LOGGER.debug("Detected Century Cake message with stat: $stat")
 			CakeType.entries.find { it.stat == stat }?.let {
-				eatenCakes[it] = System.currentTimeMillis() + TWO_DAYS
+				eatenCakes[it] = Util.getEpochMillis() + TWO_DAYS
 				WpcMod.LOGGER.debug("Set ${it.name} to ${eatenCakes[it]}")
 			}
 		}
@@ -50,8 +51,8 @@ object CenturyCakeHelper : EspFeature() {
 
 		val cakeType = CakeType.entries.find { it.texture == entity.mainHandItem.headTexture } ?: return null
 		eatenCakes[cakeType]?.let { expiration ->
-			if (System.currentTimeMillis() < expiration && config.highlightEaten) {
-				return EntityState(CakeEatenConfig(config.cakeEatenColor))
+			if (Util.getEpochMillis() < expiration) {
+				return if (config.highlightEaten) EntityState(CakeEatenConfig(config.cakeEatenColor)) else null
 			}
 		}
 
