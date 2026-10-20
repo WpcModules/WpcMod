@@ -31,6 +31,13 @@ class ScoreCalculationConfig {
 	@ConfigEditorBoolean
 	var batMessage: Boolean = false
 
+	@ConfigOption(
+		name = "Use Bugged Bat Score",
+		desc = "Currently Bats give +1 score per player, giving up to +5 score. if disabled only count one of the kills"
+	)
+	@ConfigEditorBoolean
+	var buggedBadCounter: Boolean = false
+
 	@ConfigOption(name = "Notify 270 Score", desc = "Configure 270 score notification")
 	@ConfigEditorDropdown
 	var scoreMessage270: ScoreMessageType = ScoreMessageType.MESSAGE

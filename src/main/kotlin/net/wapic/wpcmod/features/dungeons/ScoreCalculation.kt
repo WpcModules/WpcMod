@@ -148,13 +148,15 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 162), Mutab
 	private var isPaul = false
 		get() = config.assumePaul || field
 	private var princeKilled = false
+	private var batsKilled = 0
 	private var batKilled = false
 	private var crypts = 0
 
-	private val calcBonusScore
-		get() = crypts.coerceAtMost(5) + isPaul.ifTrue(10) + mimicKilled.ifTrue(2) + princeKilled.ifTrue(1) + batKilled.ifTrue(
-			1
-		)
+	private val calcBonusScore: Int
+		get() {
+			val batScore = if (config.buggedBadCounter) batsKilled.coerceAtMost(5) else batKilled.ifTrue(1)
+			return crypts.coerceAtMost(5) + isPaul.ifTrue(10) + mimicKilled.ifTrue(2) + princeKilled.ifTrue(1) + batScore
+		}
 	private val bonusScore get() = if (isEntrance) ceil(calcBonusScore * 0.7).toInt() else calcBonusScore
 
 	private var sent300Message = false
@@ -391,7 +393,11 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 162), Mutab
 			when {
 				message.contains(skytilsMimicMessage) || message.contains(mimicMessage) -> setMimicDead(false)
 				message.contains(princeMessage) -> princeKilled = true
-				message.contains(batMessage) -> batKilled = true
+
+				message.contains(batMessage) -> {
+					batsKilled++
+					batKilled = true
+				}
 			}
 		}
 	}
@@ -425,7 +431,7 @@ object ScoreCalculation : SimpleHudElement("Score Calculation", 140, 162), Mutab
 
 		val mimicLine = if (mimicKilled) "§a✔" else "§c✖"
 		val princeLine = if (princeKilled) "§a✔" else "§c✖"
-		val batLine = if (batKilled) "§a✔" else "§c✖"
+		val batLine = if (config.buggedBadCounter) " §a${batsKilled.coerceAtMost(5)}" else if (batKilled) "§a✔" else "§c✖"
 
 		when (config.scoreHudType.get()) {
 			ScoreHudType.FULL -> {
